@@ -9,7 +9,7 @@ async function ask(input,web=false){
 }
 function slug(s){return s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"").slice(0,120)}
 async function cached(question){const key="questions/"+slug(question)+"/latest.json";const x=await list({prefix:key,limit:1});if(!x.blobs?.length)return null;const r=await fetch(x.blobs[0].url,{headers:{Authorization:"Bearer "+process.env.BLOB_READ_WRITE_TOKEN}});if(!r.ok)return null;return r.json()}
-async function persist(q,question){const id=slug(q.normalized_question||question);const now=new Date().toISOString();const record={...q,id,requested_question:question,updated_at:now,version:1};await put("questions/"+id+"/latest.json",JSON.stringify(record),{access:"private",addRandomSuffix:false,allowOverwrite:true,contentType:"application/json"});await put("questions/"+id+"/versions/"+Date.now()+".json",JSON.stringify(record),{access:"private",addRandomSuffix:false,contentType:"application/json"});return record}
+async function persist(q,question,previous=null,pulse=null){const id=slug(q.normalized_question||question);const now=new Date().toISOString();const record={...q,id,requested_question:question,updated_at:now,version:(previous?.version||0)+1,previous_updated_at:previous?.updated_at||null,pulse:pulse||null};await put("questions/"+id+"/latest.json",JSON.stringify(record),{access:"private",addRandomSuffix:false,allowOverwrite:true,contentType:"application/json"});await put("questions/"+id+"/versions/"+Date.now()+".json",JSON.stringify(record),{access:"private",addRandomSuffix:false,contentType:"application/json"});return record}
 function gate(q){
  const errors=[],warnings=[];const claims=q.claims||[];
  if(!claims.length)errors.push("NO_CLAIMS");
@@ -26,9 +26,10 @@ module.exports=async function handler(req,res){
  const question=(body.question||"").trim();if(question.length<8)return res.status(400).json({error:"QUESTION_TOO_SHORT"});
  if(!process.env.openai_api_key)return res.status(503).json({error:"RESEARCH_ENGINE_NOT_CONFIGURED"});
  try{
-  const hit=await cached(question);if(hit)return res.status(200).json({...hit,cache:{hit:true,scope:"persistent"}});
-  const research=await ask(`You are Ubik Researcher. Research: ${question}
-Return JSON only: {"normalized_question":"","scope":"","sources":[{"title":"","url":"","source_type":"","origin_family":"","finding":"","limitations":""}],"counterevidence":[{"title":"","url":"","finding":""}]}.
+  const hit=await cached(question);const maxAge=Number(process.env.UBIK_REFRESH_HOURS||168)*3600000;const age=hit?.updated_at?Date.now()-new Date(hit.updated_at).getTime():Infinity;
+  if(hit&&age<maxAge&&!body.refresh)return res.status(200).json({...hit,cache:{hit:true,scope:"persistent",fresh:true}});
+  const updateContext=hit?` Existing dossier to update: ${JSON.stringify({state:hit.state,claims:hit.claims,updated_at:hit.updated_at})}. Search specifically for evidence published or changed since that dossier and also for evidence that could overturn it.`:"";
+  const research=await ask(`You are Ubik Researcher. Research: ${question}${updateContext}\nReturn JSON only: {"normalized_question":"","scope":"","sources":[{"title":"","url":"","source_type":"","origin_family":"","finding":"","limitations":""}],"counterevidence":[{"title":"","url":"","finding":""}]}.
 Prefer primary sources, systematic reviews, official datasets. Seek evidence both for and against. Do not synthesize a verdict yet.`,true);
   const map=await ask(`You are Ubik Cartographer. Convert this research corpus into an epistemic map. SOURCE IS NOT EVIDENCE. AI IS NEVER A SOURCE.
 Question: ${question}
@@ -41,6 +42,8 @@ Map: ${JSON.stringify(map)}
 Return JSON only: {"critic_findings":[],"counterevidence_searched":true,"independence_checked":true,"citation_entailment_checked":true,"state":"","required_changes":[]}.
 State must describe what evidence supports and what remains uncertain. Never turn association into causation or model output into observed fact.`,true);
   const q={...map,state:critique.state||"",audit:critique,method:{pipeline:["Researcher","Cartographer","Critic","Deterministic Gate"],model:model()}};
-  q.publication_gate=gate(q);if(q.publication_gate.outcome!=="HOLD_FOR_REVIEW"){const saved=await persist(q,question);return res.status(200).json({...saved,cache:{hit:false,scope:"persistent"}})}return res.status(200).json(q);
+  q.publication_gate=gate(q);if(q.publication_gate.outcome!=="HOLD_FOR_REVIEW"){
+   let pulse=null;if(hit){const delta=await ask(`You are Ubik Change Detector. Compare OLD and NEW dossiers. Return JSON only: {"material_change":true|false,"summary":"","changed_claims":[],"reason":""}. A material change exists only if the state of knowledge, a claim status, important evidence, uncertainty, or inference boundary changes; new reporting that merely repeats known evidence is NOT a change. OLD: ${JSON.stringify({state:hit.state,claims:hit.claims,tensions:hit.tensions,inference_boundaries:hit.inference_boundaries})} NEW: ${JSON.stringify({state:q.state,claims:q.claims,tensions:q.tensions,inference_boundaries:q.inference_boundaries})}`);if(delta.material_change)pulse={type:"knowledge_update",created_at:new Date().toISOString(),...delta}}
+   const saved=await persist(q,question,hit,pulse);return res.status(200).json({...saved,cache:{hit:false,scope:"persistent",refreshed:Boolean(hit)}})}return res.status(200).json(q);
  }catch(e){console.error("UBIK_RESEARCH_ERROR",e.message);return res.status(502).json({error:"RESEARCH_PIPELINE_FAILED",detail:e.message})}
 };
