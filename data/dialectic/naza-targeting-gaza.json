@@ -1,0 +1,94 @@
+{
+  "schema_version": "0.15",
+  "id": "naza-targeting-gaza",
+  "topic_id": "gaza-war-since-oct7",
+  "title": "NAZA e il sistema di targeting israeliano a Gaza",
+  "updated_at": "2026-10-04",
+  "access_note": "Ubik ha accesso pubblico alle inchieste e alle risposte citate, ma non ai documenti classificati né all'identità delle fonti anonime dichiarate dagli autori.",
+  "claims": [
+    {
+      "id": "c1",
+      "claim": "L'IDF ha impiegato strumenti digitali e sistemi di machine learning/AI per assistere il processo di individuazione e valutazione dei bersagli a Gaza.",
+      "status": "VALIDATED",
+      "why": "L'esistenza e l'uso di strumenti di questo tipo convergono tra ammissioni/materiali IDF, reporting investigativo e analisi indipendenti HRW.",
+      "supports": [
+        "https://www.hrw.org/news/2024/09/10/questions-and-answers-israeli-militarys-use-of-digital-tools-in-gaza",
+        "https://www.washingtonpost.com/technology/2024/12/29/ai-israel-war-gaza-idf/"
+      ],
+      "contests": [
+        "https://www.idf.il/en/mini-sites/idf-press-releases-israel-at-war/october-26-pr/idf-response-to-the-film-naza/"
+      ],
+      "boundary": "VALIDATED non significa che l'AI decidesse autonomamente chi colpire: l'IDF sostiene che la decisione finale restasse umana."
+    },
+    {
+      "id": "c2",
+      "claim": "Durante la guerra la tecnologia ha contribuito ad aumentare velocità e scala della generazione/valutazione dei bersagli, creando rischi di controllo umano insufficiente.",
+      "status": "VALIDATED_WITH_QUALIFICATIONS",
+      "why": "Materiali IDF e reporting indipendente documentano l'aumento di scala; HRW e una commissione ONU identificano rischi o casi di valutazione umana insufficiente. Non è dimostrato che ogni strike abbia seguito lo stesso processo.",
+      "supports": [
+        "https://www.ohchr.org/sites/default/files/documents/hrbodies/hrcouncil/sessions-regular/session56/a-hrc-56-crp-4.pdf",
+        "https://www.hrw.org/news/2024/09/10/gaza-israeli-militarys-digital-tools-risk-civilian-harm",
+        "https://www.washingtonpost.com/technology/2024/12/29/ai-israel-war-gaza-idf/"
+      ],
+      "contests": [
+        "https://www.idf.il/en/mini-sites/idf-press-releases-israel-at-war/october-26-pr/idf-response-to-the-film-naza/"
+      ],
+      "boundary": "Le valutazioni ONU/HRW incorporano anche reporting giornalistico precedente; non vanno contate come corroborazioni totalmente indipendenti di ogni dettaglio."
+    },
+    {
+      "id": "c3",
+      "claim": "Nei primi mesi della guerra furono autorizzate soglie di 15–20 vittime civili attese per alcuni obiettivi di basso livello e soglie molto maggiori per comandanti senior.",
+      "status": "CONTESTED",
+      "why": "L'inchiesta +972/Local Call lo sostiene sulla base di fonti d'intelligence; l'IDF contesta l'interpretazione delle soglie e nega diversi numeri specifici. Il materiale pubblico disponibile non chiude la controversia.",
+      "supports": [
+        "https://www.972mag.com/lavender-ai-israeli-army-gaza/"
+      ],
+      "contests": [
+        "https://www.idf.il/en/mini-sites/idf-press-releases-israel-at-war/october-26-pr/idf-response-to-the-film-naza/"
+      ],
+      "boundary": "Ubik non assegna VALIDATED a questa formulazione finché non dispone di evidenza pubblica o verificabile sufficiente a risolvere la contestazione."
+    },
+    {
+      "id": "c4",
+      "claim": "NAZA poggia su 24 testimonianze mostrate nel film e, secondo Guardian/autori, su un lavoro più ampio di oltre 100 fonti, documenti classificati trapelati e verifiche di casi specifici.",
+      "status": "VALIDATED_AS_ATTRIBUTION",
+      "why": "È verificabile che Guardian e autori dichiarino questa metodologia; Ubik non può verificare indipendentemente l'intero materiale confidenziale sottostante.",
+      "supports": [
+        "https://www.theguardian.com/film/2026/oct/01/makers-naza-film-spoke-more-than-100-sources-israeli-actions-gaza"
+      ],
+      "contests": [
+        "https://www.idf.il/en/mini-sites/idf-press-releases-israel-at-war/october-26-pr/idf-response-to-the-film-naza/"
+      ],
+      "boundary": "È validata la dichiarazione metodologica, non automaticamente la verità di tutte le conclusioni del film."
+    }
+  ],
+  "provenance": [
+    {
+      "source": "NAZA / Guardian / +972 / Local Call",
+      "role": "ORIGINAL_INVESTIGATION",
+      "access": "PARTIAL_PUBLIC_UNDERLYING_MATERIAL"
+    },
+    {
+      "source": "IDF",
+      "role": "SUBJECT_DIRECT_RESPONSE",
+      "access": "FULL_PUBLIC_RESPONSE"
+    },
+    {
+      "source": "Human Rights Watch",
+      "role": "INDEPENDENT_ANALYSIS",
+      "access": "FULL_PUBLIC",
+      "dependency_note": "usa anche reporting pubblico, incluso materiale sulle stesse inchieste"
+    },
+    {
+      "source": "UN Commission of Inquiry",
+      "role": "INDEPENDENT_INSTITUTIONAL_ANALYSIS",
+      "access": "FULL_PUBLIC",
+      "dependency_note": "per Lavender cita esplicitamente +972"
+    },
+    {
+      "source": "Washington Post",
+      "role": "INDEPENDENT_REPORTING",
+      "access": "PARTIAL_OR_FULL_BY_ARTICLE"
+    }
+  ]
+}
