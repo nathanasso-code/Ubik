@@ -3,11 +3,11 @@ module.exports = async function handler(req,res){
   let body=req.body||{}; if(typeof body==="string"){try{body=JSON.parse(body)}catch{}}
   const question=(body.question||"").trim();
   if(question.length<8) return res.status(400).json({error:"QUESTION_TOO_SHORT"});
-  if(!process.env.OPENAI_API_KEY) return res.status(503).json({error:"RESEARCH_ENGINE_NOT_CONFIGURED"});
+  if(!process.env.openai_api_key) return res.status(503).json({error:"RESEARCH_ENGINE_NOT_CONFIGURED"});
   try{
     const response=await fetch("https://api.openai.com/v1/responses",{
       method:"POST",
-      headers:{"Authorization":"Bearer "+process.env.OPENAI_API_KEY,"Content-Type":"application/json"},
+      headers:{"Authorization":"Bearer "+process.env.openai_api_key,"Content-Type":"application/json"},
       body:JSON.stringify({
         model:process.env.OPENAI_MODEL||"gpt-5.6",
         tools:[{type:"web_search"}],
