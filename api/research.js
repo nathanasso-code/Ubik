@@ -1,3 +1,4 @@
+const { put, list } = require("@vercel/blob");
 const API="https://api.openai.com/v1/responses";
 const model=()=>process.env.OPENAI_MODEL||"gpt-6-luna";
 function output(d){return d.output_text||d.output?.flatMap(x=>x.content||[]).map(x=>x.text||"").join("")||""}
@@ -6,6 +7,9 @@ async function ask(input,web=false){
  const r=await fetch(API,{method:"POST",headers:{Authorization:"Bearer "+process.env.openai_api_key,"Content-Type":"application/json"},body:JSON.stringify({model:model(),tools:web?[{type:"web_search"}]:undefined,input})});
  const d=await r.json();if(!r.ok)throw Error(d?.error?.message||"MODEL_ERROR");return json(output(d))
 }
+function slug(s){return s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"").slice(0,120)}
+async function cached(question){const key="questions/"+slug(question)+"/latest.json";const x=await list({prefix:key,limit:1});if(!x.blobs?.length)return null;const r=await fetch(x.blobs[0].url,{headers:{Authorization:"Bearer "+process.env.BLOB_READ_WRITE_TOKEN}});if(!r.ok)return null;return r.json()}
+async function persist(q,question){const id=slug(q.normalized_question||question);const now=new Date().toISOString();const record={...q,id,requested_question:question,updated_at:now,version:1};await put("questions/"+id+"/latest.json",JSON.stringify(record),{access:"private",addRandomSuffix:false,allowOverwrite:true,contentType:"application/json"});await put("questions/"+id+"/versions/"+Date.now()+".json",JSON.stringify(record),{access:"private",addRandomSuffix:false,contentType:"application/json"});return record}
 function gate(q){
  const errors=[],warnings=[];const claims=q.claims||[];
  if(!claims.length)errors.push("NO_CLAIMS");
@@ -22,6 +26,7 @@ module.exports=async function handler(req,res){
  const question=(body.question||"").trim();if(question.length<8)return res.status(400).json({error:"QUESTION_TOO_SHORT"});
  if(!process.env.openai_api_key)return res.status(503).json({error:"RESEARCH_ENGINE_NOT_CONFIGURED"});
  try{
+  const hit=await cached(question);if(hit)return res.status(200).json({...hit,cache:{hit:true,scope:"persistent"}});
   const research=await ask(`You are Ubik Researcher. Research: ${question}
 Return JSON only: {"normalized_question":"","scope":"","sources":[{"title":"","url":"","source_type":"","origin_family":"","finding":"","limitations":""}],"counterevidence":[{"title":"","url":"","finding":""}]}.
 Prefer primary sources, systematic reviews, official datasets. Seek evidence both for and against. Do not synthesize a verdict yet.`,true);
@@ -36,6 +41,6 @@ Map: ${JSON.stringify(map)}
 Return JSON only: {"critic_findings":[],"counterevidence_searched":true,"independence_checked":true,"citation_entailment_checked":true,"state":"","required_changes":[]}.
 State must describe what evidence supports and what remains uncertain. Never turn association into causation or model output into observed fact.`,true);
   const q={...map,state:critique.state||"",audit:critique,method:{pipeline:["Researcher","Cartographer","Critic","Deterministic Gate"],model:model()}};
-  q.publication_gate=gate(q);return res.status(200).json(q);
+  q.publication_gate=gate(q);if(q.publication_gate.outcome!=="HOLD_FOR_REVIEW"){const saved=await persist(q,question);return res.status(200).json({...saved,cache:{hit:false,scope:"persistent"}})}return res.status(200).json(q);
  }catch(e){console.error("UBIK_RESEARCH_ERROR",e.message);return res.status(502).json({error:"RESEARCH_PIPELINE_FAILED",detail:e.message})}
 };
