@@ -1,23 +1,41 @@
-module.exports = async function handler(req,res){
-  if(req.method!=="POST") return res.status(405).json({error:"METHOD_NOT_ALLOWED"});
-  let body=req.body||{}; if(typeof body==="string"){try{body=JSON.parse(body)}catch{}}
-  const question=(body.question||"").trim();
-  if(question.length<8) return res.status(400).json({error:"QUESTION_TOO_SHORT"});
-  if(!process.env.openai_api_key) return res.status(503).json({error:"RESEARCH_ENGINE_NOT_CONFIGURED"});
-  try{
-    const response=await fetch("https://api.openai.com/v1/responses",{
-      method:"POST",
-      headers:{"Authorization":"Bearer "+process.env.openai_api_key,"Content-Type":"application/json"},
-      body:JSON.stringify({
-        model:process.env.OPENAI_MODEL||"gpt-6-luna",
-        tools:[{type:"web_search"}],
-        input:"Research this question for Ubik: "+question+"\nReturn only JSON with normalized_question, state, claims, tensions, inference_boundaries, audit. Each claim must contain text, status, and evidence. Each evidence item must contain statement, source_title, url, source_type, relation, limitations. Prefer primary sources and deliberately seek counterevidence. Distinguish source from evidence, association from causation, exposure from outcome, and scenario from forecast."
-      })
-    });
-    const data=await response.json();
-    if(!response.ok){const msg=data?.error?.message||"OpenAI API error";console.error("OPENAI_ERROR",response.status,msg);return res.status(502).json({error:"MODEL_ERROR",detail:msg});}
-    const out=data.output_text||data.output?.flatMap(x=>x.content||[]).map(x=>x.text||"").join("")||"";
-    let parsed; try{parsed=JSON.parse(out.replace(/^```json\s*|```$/g,""))}catch{return res.status(502).json({error:"INVALID_RESEARCH_OBJECT"})}
-    return res.status(200).json(parsed);
-  }catch(e){return res.status(500).json({error:"RESEARCH_FAILED"})}
+const API="https://api.openai.com/v1/responses";
+const model=()=>process.env.OPENAI_MODEL||"gpt-6-luna";
+function output(d){return d.output_text||d.output?.flatMap(x=>x.content||[]).map(x=>x.text||"").join("")||""}
+function json(s){const a=s.indexOf("{"),b=s.lastIndexOf("}");if(a<0||b<a)throw Error("INVALID_JSON");return JSON.parse(s.slice(a,b+1))}
+async function ask(input,web=false){
+ const r=await fetch(API,{method:"POST",headers:{Authorization:"Bearer "+process.env.openai_api_key,"Content-Type":"application/json"},body:JSON.stringify({model:model(),tools:web?[{type:"web_search"}]:undefined,input})});
+ const d=await r.json();if(!r.ok)throw Error(d?.error?.message||"MODEL_ERROR");return json(output(d))
+}
+function gate(q){
+ const errors=[],warnings=[];const claims=q.claims||[];
+ if(!claims.length)errors.push("NO_CLAIMS");
+ for(const c of claims){if(!c.text)errors.push("CLAIM_WITHOUT_TEXT");if(!(c.evidence||[]).length)errors.push("CLAIM_WITHOUT_EVIDENCE");for(const e of c.evidence||[]){if(!e.source_title||!e.url)errors.push("EVIDENCE_WITHOUT_SOURCE");if(!e.statement)errors.push("EMPTY_EVIDENCE")}}
+ if(!q.audit?.counterevidence_searched)errors.push("COUNTEREVIDENCE_NOT_SEARCHED");
+ if(!q.audit?.independence_checked)warnings.push("INDEPENDENCE_NOT_CONFIRMED");
+ if(!q.inference_boundaries?.length)warnings.push("NO_INFERENCE_BOUNDARIES");
+ const causal=claims.filter(c=>c.kind==="causal");for(const c of causal)if(!c.causal_identification)warnings.push("CAUSAL_IDENTIFICATION_MISSING");
+ return {outcome:errors.length?"HOLD_FOR_REVIEW":warnings.length?"PASS_WITH_QUALIFICATIONS":"PASS",errors:[...new Set(errors)],warnings:[...new Set(warnings)]}
+}
+module.exports=async function handler(req,res){
+ if(req.method!=="POST")return res.status(405).json({error:"METHOD_NOT_ALLOWED"});
+ let body=req.body||{};if(typeof body==="string"){try{body=JSON.parse(body)}catch{}}
+ const question=(body.question||"").trim();if(question.length<8)return res.status(400).json({error:"QUESTION_TOO_SHORT"});
+ if(!process.env.openai_api_key)return res.status(503).json({error:"RESEARCH_ENGINE_NOT_CONFIGURED"});
+ try{
+  const research=await ask(`You are Ubik Researcher. Research: ${question}
+Return JSON only: {"normalized_question":"","scope":"","sources":[{"title":"","url":"","source_type":"","origin_family":"","finding":"","limitations":""}],"counterevidence":[{"title":"","url":"","finding":""}]}.
+Prefer primary sources, systematic reviews, official datasets. Seek evidence both for and against. Do not synthesize a verdict yet.`,true);
+  const map=await ask(`You are Ubik Cartographer. Convert this research corpus into an epistemic map. SOURCE IS NOT EVIDENCE. AI IS NEVER A SOURCE.
+Question: ${question}
+Corpus: ${JSON.stringify(research)}
+Return JSON only: {"normalized_question":"","claims":[{"id":"","text":"","kind":"descriptive|causal|predictive|interpretive|normative","status":"","causal_identification":"","evidence":[{"statement":"","source_title":"","url":"","source_type":"","origin_family":"","relation":"supports|contradicts|qualifies|contextualizes","limitations":""}]}],"tensions":[],"inference_boundaries":[]}.
+Do not count multiple reports of one origin family as independent confirmation.`);
+  const critique=await ask(`You are Ubik Critic. Adversarially audit this map and search the web for counterevidence or missing qualifications.
+Question: ${question}
+Map: ${JSON.stringify(map)}
+Return JSON only: {"critic_findings":[],"counterevidence_searched":true,"independence_checked":true,"citation_entailment_checked":true,"state":"","required_changes":[]}.
+State must describe what evidence supports and what remains uncertain. Never turn association into causation or model output into observed fact.`,true);
+  const q={...map,state:critique.state||"",audit:critique,method:{pipeline:["Researcher","Cartographer","Critic","Deterministic Gate"],model:model()}};
+  q.publication_gate=gate(q);return res.status(200).json(q);
+ }catch(e){console.error("UBIK_RESEARCH_ERROR",e.message);return res.status(502).json({error:"RESEARCH_PIPELINE_FAILED",detail:e.message})}
 };
