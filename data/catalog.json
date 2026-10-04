@@ -1,0 +1,49 @@
+{
+  "version": "0.12",
+  "topics": [
+    {
+      "id": "israel-palestine",
+      "title": "Conflitto israelo-palestinese",
+      "description": "Storia, territori, sicurezza, autodeterminazione, diritto internazionale e sviluppi contemporanei.",
+      "status": "CURATED",
+      "updated_at": "2026-10-04",
+      "questions": [
+        "Origini e svolte storiche del conflitto israelo-palestinese",
+        "Qual è lo status giuridico dei territori palestinesi occupati?",
+        "Quali sono le principali questioni irrisolte tra israeliani e palestinesi?",
+        "Guerra a Gaza dopo il 7 ottobre 2023",
+        "Qual è la situazione umanitaria attuale a Gaza?"
+      ]
+    },
+    {
+      "id": "ai-work",
+      "title": "AI e lavoro",
+      "description": "Evidenze sull'impatto dell'intelligenza artificiale su occupazione, assunzioni, salari e composizione del lavoro.",
+      "status": "CURATED",
+      "updated_at": "2026-10-04",
+      "questions": [
+        "L’IA sta già causando una riduzione significativa dell’occupazione nei lavori cognitivi?"
+      ]
+    },
+    {
+      "id": "energy-italy",
+      "title": "Energia e transizione in Italia",
+      "description": "Costi, tecnologie, rete e scenari della transizione energetica italiana.",
+      "status": "DEVELOPING",
+      "updated_at": "2026-10-04",
+      "questions": [
+        "Il nucleare ridurrebbe il costo dell’energia elettrica in Italia?"
+      ]
+    },
+    {
+      "id": "social-media-youth",
+      "title": "Social media e adolescenti",
+      "description": "Evidenze causali, associazioni, eterogeneità e meccanismi relativi alla salute mentale.",
+      "status": "DEVELOPING",
+      "updated_at": "2026-10-04",
+      "questions": [
+        "I social media causano un peggioramento della salute mentale negli adolescenti?"
+      ]
+    }
+  ]
+}
