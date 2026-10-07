@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "updated_at": "2026-10-07T00:00:00Z",
+  "updated_at": "2026-10-07T18:00:00Z",
   "scope": "Curated recent events bridging the lag between live signals and UCDP. Documented does not mean Ubik-validated.",
   "method": {
     "minimum": "physical event + identifiable date/place + Russian attribution + traceable source",
@@ -14,29 +14,27 @@
   },
   "events": [
     {
-      "id": "recent-2026-10-07-pryluky",
+      "id": "recent-2026-10-07-kremenchuk",
       "date": "2026-10-07",
-      "place": "Pryluky",
-      "region": "Chernihiv oblast",
-      "lat": 50.5932,
-      "lon": 32.3876,
+      "place": "Kremenchuk",
+      "region": "Poltava oblast",
+      "lat": 49.067,
+      "lon": 33.421,
       "type": "long_range_strike",
-      "weapon": "missile",
+      "weapon": "missiles/drones",
       "attribution": "russia",
       "status": "documented",
       "fatalities": {
-        "best": 18
+        "best": null
       },
       "injured": {
-        "best": 55
+        "best": null
       },
-      "target": "residential building",
-      "summary": "Missile russo su edificio residenziale di cinque piani; almeno 18 morti, tra cui quattro bambini, e circa 55 feriti.",
+      "summary": "Kremenchuk colpita nell'ondata russa del 7 ottobre; Reuters include la città tra le località con vittime.",
       "sources": [
         {
           "publisher": "Reuters",
-          "url": "https://www.reuters.com/world/europe/russia-strikes-ukraines-kyiv-fresh-wave-attacks-2026-10-07/",
-          "independence": "reporting + local officials"
+          "url": "https://www.reuters.com/world/europe/russia-strikes-ukraines-kyiv-fresh-wave-attacks-2026-10-07/"
         }
       ]
     },
@@ -92,27 +90,82 @@
       ]
     },
     {
-      "id": "recent-2026-10-07-kremenchuk",
+      "id": "recent-2026-10-07-pryluky",
       "date": "2026-10-07",
-      "place": "Kremenchuk",
-      "region": "Poltava oblast",
-      "lat": 49.067,
-      "lon": 33.421,
+      "place": "Pryluky",
+      "region": "Chernihiv oblast",
+      "lat": 50.5932,
+      "lon": 32.3876,
       "type": "long_range_strike",
-      "weapon": "missiles/drones",
+      "weapon": "missile",
       "attribution": "russia",
       "status": "documented",
       "fatalities": {
-        "best": null
+        "best": 18
+      },
+      "injured": {
+        "best": 55
+      },
+      "target": "residential building",
+      "summary": "Missile russo su edificio residenziale di cinque piani; almeno 18 morti, tra cui quattro bambini, e circa 55 feriti.",
+      "sources": [
+        {
+          "publisher": "Reuters",
+          "url": "https://www.reuters.com/world/europe/russia-strikes-ukraines-kyiv-fresh-wave-attacks-2026-10-07/",
+          "independence": "reporting + local officials"
+        }
+      ]
+    },
+    {
+      "id": "recent-2026-10-05-kharkiv",
+      "date": "2026-10-05",
+      "place": "Kharkiv",
+      "region": "Kharkiv oblast",
+      "lat": 49.9935,
+      "lon": 36.2304,
+      "type": "long_range_strike",
+      "weapon": "aerial bombs",
+      "attribution": "russia",
+      "status": "documented",
+      "coordinate_precision": "city",
+      "fatalities": {
+        "best": 5
+      },
+      "injured": {
+        "best": 53
+      },
+      "target": "residential areas / warehouses",
+      "summary": "Tre bombe russe colpiscono diverse aree di Kharkiv: cinque morti e 53 feriti, tra cui bambini; edifici residenziali e magazzini danneggiati.",
+      "sources": [
+        {
+          "publisher": "Reuters",
+          "url": "https://www.internazionale.it/ultime-notizie-reuters/2026/10/05/russian-attack-kills-five-in-ukraine-s-kharkiv-shatters-residences"
+        }
+      ]
+    },
+    {
+      "id": "recent-2026-10-02-kyiv-southern-bridge",
+      "date": "2026-10-02",
+      "place": "Kyiv",
+      "region": "Kyiv city",
+      "lat": 50.4006,
+      "lon": 30.589,
+      "type": "long_range_strike",
+      "weapon": "drone",
+      "attribution": "russia",
+      "status": "documented",
+      "fatalities": {
+        "best": 0
       },
       "injured": {
         "best": null
       },
-      "summary": "Kremenchuk colpita nell'ondata russa del 7 ottobre; Reuters include la città tra le località con vittime.",
+      "target": "Southern Bridge",
+      "summary": "Nuovo attacco russo con drone sul Southern Bridge per il secondo giorno consecutivo, nel quadro di una campagna contro le infrastrutture di attraversamento del Dnipro.",
       "sources": [
         {
           "publisher": "Reuters",
-          "url": "https://www.reuters.com/world/europe/russia-strikes-ukraines-kyiv-fresh-wave-attacks-2026-10-07/"
+          "url": "https://www.internazionale.it/ultime-notizie-reuters/2026/10/02/russian-air-strikes-hit-southern-bridge-in-kyiv-again-mayor-says"
         }
       ]
     },
@@ -196,32 +249,6 @@
       ]
     },
     {
-      "id": "recent-2026-09-28-kyiv",
-      "date": "2026-09-28",
-      "place": "Kyiv",
-      "region": "Kyiv city",
-      "lat": 50.4501,
-      "lon": 30.5234,
-      "type": "long_range_strike",
-      "weapon": "jet-powered drones",
-      "attribution": "russia",
-      "status": "documented",
-      "fatalities": {
-        "best": 2
-      },
-      "injured": {
-        "best": 24
-      },
-      "target": "National Academy of Sciences and other sites",
-      "summary": "Drone colpisce l'Accademia Nazionale delle Scienze nel centro di Kyiv; due morti e 24 feriti negli attacchi sulla capitale.",
-      "sources": [
-        {
-          "publisher": "Reuters",
-          "url": "https://www.reuters.com/world/europe/kyiv-science-academy-hit-russian-jet-drones-strike-across-ukraine-2026-09-28/"
-        }
-      ]
-    },
-    {
       "id": "recent-2026-09-28-dnipro",
       "date": "2026-09-28",
       "place": "Dnipro",
@@ -240,6 +267,32 @@
       },
       "target": "business centre",
       "summary": "Attacco russo con drone su un business centre: tre morti e 19 feriti.",
+      "sources": [
+        {
+          "publisher": "Reuters",
+          "url": "https://www.reuters.com/world/europe/kyiv-science-academy-hit-russian-jet-drones-strike-across-ukraine-2026-09-28/"
+        }
+      ]
+    },
+    {
+      "id": "recent-2026-09-28-kyiv",
+      "date": "2026-09-28",
+      "place": "Kyiv",
+      "region": "Kyiv city",
+      "lat": 50.4501,
+      "lon": 30.5234,
+      "type": "long_range_strike",
+      "weapon": "jet-powered drones",
+      "attribution": "russia",
+      "status": "documented",
+      "fatalities": {
+        "best": 2
+      },
+      "injured": {
+        "best": 24
+      },
+      "target": "National Academy of Sciences and other sites",
+      "summary": "Drone colpisce l'Accademia Nazionale delle Scienze nel centro di Kyiv; due morti e 24 feriti negli attacchi sulla capitale.",
       "sources": [
         {
           "publisher": "Reuters",
