@@ -1,0 +1,191 @@
+{
+  "schema_version": "1.0",
+  "updated_at": "2026-10-07",
+  "scope": {
+    "country": "Ukraine",
+    "from": "2022-02-24",
+    "rule": "Russian attacks on internationally recognized Ukrainian territory; occupied-area strikes excluded from this view."
+  },
+  "events": [
+    {
+      "id": "ua-2026-10-07-pryluky",
+      "date": "2026-10-07",
+      "place": "Pryluky",
+      "region": "Chernihiv",
+      "lat": 50.5947,
+      "lon": 32.3876,
+      "type": "missile/drone wave",
+      "target": "residential",
+      "status": "reported",
+      "summary": "Residential building hit during a large Russian strike wave.",
+      "sources": [
+        {
+          "publisher": "Reuters",
+          "url": "https://www.reuters.com/world/europe/russia-strikes-ukraines-kyiv-fresh-wave-attacks-2026-10-07/"
+        }
+      ]
+    },
+    {
+      "id": "ua-2026-10-07-kyiv",
+      "date": "2026-10-07",
+      "place": "Kyiv",
+      "region": "Kyiv",
+      "lat": 50.4501,
+      "lon": 30.5234,
+      "type": "missile/drone wave",
+      "target": "urban/infrastructure",
+      "status": "reported",
+      "summary": "Kyiv targeted during a large Russian strike wave.",
+      "sources": [
+        {
+          "publisher": "Reuters",
+          "url": "https://www.reuters.com/world/europe/russia-strikes-ukraines-kyiv-fresh-wave-attacks-2026-10-07/"
+        }
+      ]
+    },
+    {
+      "id": "ua-2026-10-03-kyiv",
+      "date": "2026-10-03",
+      "place": "Kyiv",
+      "region": "Kyiv",
+      "lat": 50.493,
+      "lon": 30.54,
+      "type": "air strike",
+      "target": "transport",
+      "status": "reported",
+      "summary": "Northern Bridge across the Dnipro damaged.",
+      "sources": [
+        {
+          "publisher": "Reuters",
+          "url": "https://www.reuters.com/world/europe/bridge-across-dnipro-river-kyiv-hit-during-russian-attack-mayor-says-2026-10-03/"
+        }
+      ]
+    },
+    {
+      "id": "ua-2026-10-01-kyiv",
+      "date": "2026-10-01",
+      "place": "Kyiv",
+      "region": "Kyiv",
+      "lat": 50.4501,
+      "lon": 30.5234,
+      "type": "drone strike",
+      "target": "school/infrastructure",
+      "status": "reported",
+      "summary": "School and infrastructure damaged during Russian air strikes.",
+      "sources": [
+        {
+          "publisher": "Reuters",
+          "url": "https://www.reuters.com/world/europe/russian-air-strikes-injure-two-ukraines-kyiv-odesa-officials-say-2026-10-01/"
+        }
+      ]
+    },
+    {
+      "id": "ua-2026-10-01-odesa",
+      "date": "2026-10-01",
+      "place": "Odesa",
+      "region": "Odesa",
+      "lat": 46.4825,
+      "lon": 30.7233,
+      "type": "air strike",
+      "target": "infrastructure",
+      "status": "reported",
+      "summary": "Damage reported in Odesa region during Russian air strikes.",
+      "sources": [
+        {
+          "publisher": "Reuters",
+          "url": "https://www.reuters.com/world/europe/russian-air-strikes-injure-two-ukraines-kyiv-odesa-officials-say-2026-10-01/"
+        }
+      ]
+    },
+    {
+      "id": "ua-2026-09-23-kyiv",
+      "date": "2026-09-23",
+      "place": "Kyiv",
+      "region": "Kyiv",
+      "lat": 50.4501,
+      "lon": 30.5234,
+      "type": "drone strike",
+      "target": "rail/fuel/infrastructure",
+      "status": "reported",
+      "summary": "Prolonged drone attack damaged railway and fuel infrastructure.",
+      "sources": [
+        {
+          "publisher": "Reuters",
+          "url": "https://www.reuters.com/world/europe/russia-hits-kyiv-petrol-stations-kills-one-2026-09-23/"
+        }
+      ]
+    },
+    {
+      "id": "ua-2025-04-23-marhanets",
+      "date": "2025-04-23",
+      "place": "Marhanets",
+      "region": "Dnipropetrovsk",
+      "lat": 47.6354,
+      "lon": 34.6277,
+      "type": "short-range drone",
+      "target": "civilian transport",
+      "status": "documented",
+      "summary": "Drone struck a bus carrying workers.",
+      "sources": [
+        {
+          "publisher": "OHCHR",
+          "url": "https://ukraine.ohchr.org/en/Deadly-drones-Civilians-at-risk-from-short-range-drones-in-frontline-areas-of-Ukraine-24-February-2022-30-April-2025"
+        }
+      ]
+    },
+    {
+      "id": "ua-2024-07-08-kyiv-okhmatdyt",
+      "date": "2024-07-08",
+      "place": "Kyiv",
+      "region": "Kyiv",
+      "lat": 50.4501,
+      "lon": 30.5234,
+      "type": "missile strike",
+      "target": "hospital/urban",
+      "status": "documented",
+      "summary": "Large missile attack; Okhmatdyt children's hospital was hit.",
+      "sources": [
+        {
+          "publisher": "OHCHR",
+          "url": "https://ukraine.ohchr.org/"
+        }
+      ]
+    },
+    {
+      "id": "ua-2023-01-14-dnipro",
+      "date": "2023-01-14",
+      "place": "Dnipro",
+      "region": "Dnipropetrovsk",
+      "lat": 48.4647,
+      "lon": 35.0462,
+      "type": "missile strike",
+      "target": "residential",
+      "status": "documented",
+      "summary": "Missile struck a residential apartment building.",
+      "sources": [
+        {
+          "publisher": "OHCHR",
+          "url": "https://ukraine.ohchr.org/"
+        }
+      ]
+    },
+    {
+      "id": "ua-2022-10-10-kyiv",
+      "date": "2022-10-10",
+      "place": "Kyiv",
+      "region": "Kyiv",
+      "lat": 50.4501,
+      "lon": 30.5234,
+      "type": "missile wave",
+      "target": "urban/energy",
+      "status": "documented",
+      "summary": "Major nationwide missile wave including Kyiv and energy infrastructure.",
+      "sources": [
+        {
+          "publisher": "OHCHR",
+          "url": "https://ukraine.ohchr.org/"
+        }
+      ]
+    }
+  ]
+}
