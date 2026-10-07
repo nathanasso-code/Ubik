@@ -1,0 +1,2 @@
+event_id_cnty,event_date,admin1,location,latitude,longitude,event_type,sub_event_type,civilian_targeting,source,notes,fatalities
+SAMPLE1,2026-10-07,Chernihiv,Pryluky,50.5947,32.3876,Explosions/Remote violence,Air/drone strike,Civilians targeted,Example source,Example import row,0
