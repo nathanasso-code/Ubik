@@ -470,5 +470,36 @@
         }
       ]
     }
+  ],
+  "campaigns": [
+    {
+      "id": "wave-2026-10-07",
+      "date": "2026-10-07",
+      "title": "Ondata nazionale di missili e droni del 7 ottobre",
+      "status": "documented",
+      "attribution": "russia",
+      "event_ids": [
+        "recent-2026-10-07-kremenchuk",
+        "recent-2026-10-07-kyiv",
+        "recent-2026-10-07-oleksandriia",
+        "recent-2026-10-07-pryluky"
+      ],
+      "aggregate": {
+        "fatalities_min": 25,
+        "injured_approx": 100,
+        "weapons": "70 missiles + dozens of attack drones"
+      },
+      "note": "I bilanci aggregati descrivono l'ondata nazionale e non vanno sommati ai bilanci locali senza controllo delle sovrapposizioni.",
+      "sources": [
+        {
+          "publisher": "Reuters",
+          "url": "https://www.reuters.com/world/europe/russia-strikes-ukraines-kyiv-fresh-wave-attacks-2026-10-07/"
+        },
+        {
+          "publisher": "AP",
+          "url": "https://apnews.com/article/650e298d7bc3881351533683ff4040ed"
+        }
+      ]
+    }
   ]
 }
