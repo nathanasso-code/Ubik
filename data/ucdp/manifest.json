@@ -1,0 +1,18 @@
+{
+  "source": "UCDP public CSV",
+  "license": "CC BY 4.0",
+  "releases": {
+    "ged": {
+      "version": "26.1",
+      "ukraine_rows": 36813
+    },
+    "candidate": {
+      "version": "26.0.8",
+      "ukraine_rows": 297
+    }
+  },
+  "ukraine_total": 37110,
+  "attack_candidates": 236,
+  "front_events": 36874,
+  "other": 0
+}
