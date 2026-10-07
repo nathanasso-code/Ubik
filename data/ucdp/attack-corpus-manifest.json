@@ -1,0 +1,22 @@
+{
+  "schema_version": "1.0",
+  "scope": {
+    "country": "Ukraine",
+    "from": "2022-02-24",
+    "description": "Conservative UCDP-derived candidates for Russian attacks on internationally recognized Ukrainian territory, including occupied areas; territorial control does not determine inclusion. Not a complete census and not Ubik-validated.",
+    "territorial_rule": "Include occupied Ukrainian territory. Inclusion is based on event-level Russian attribution, not territorial control."
+  },
+  "counts": {
+    "events": 1938,
+    "long_range_input": 1793,
+    "civilian_unique_input": 194,
+    "merged_duplicates": 49,
+    "russia_attributed": 550,
+    "attribution_pending": 1388
+  },
+  "period": {
+    "from": "2022-02-24",
+    "to": "2026-08-31"
+  },
+  "status": "derived_candidates_not_ubik_validated"
+}
