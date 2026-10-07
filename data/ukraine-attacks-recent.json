@@ -1,0 +1,411 @@
+{
+  "schema_version": "1.0",
+  "updated_at": "2026-10-07T00:00:00Z",
+  "scope": "Curated recent events bridging the lag between live signals and UCDP. Documented does not mean Ubik-validated.",
+  "method": {
+    "minimum": "physical event + identifiable date/place + Russian attribution + traceable source",
+    "states": [
+      "reported",
+      "documented",
+      "corroborated",
+      "validated"
+    ],
+    "notes": "City-level or approximate coordinates are explicitly marked; casualty figures remain revisable."
+  },
+  "events": [
+    {
+      "id": "recent-2026-10-07-pryluky",
+      "date": "2026-10-07",
+      "place": "Pryluky",
+      "region": "Chernihiv oblast",
+      "lat": 50.5932,
+      "lon": 32.3876,
+      "type": "long_range_strike",
+      "weapon": "missile",
+      "attribution": "russia",
+      "status": "documented",
+      "fatalities": {
+        "best": 18
+      },
+      "injured": {
+        "best": 55
+      },
+      "target": "residential building",
+      "summary": "Missile russo su edificio residenziale di cinque piani; almeno 18 morti, tra cui quattro bambini, e circa 55 feriti.",
+      "sources": [
+        {
+          "publisher": "Reuters",
+          "url": "https://www.reuters.com/world/europe/russia-strikes-ukraines-kyiv-fresh-wave-attacks-2026-10-07/",
+          "independence": "reporting + local officials"
+        }
+      ]
+    },
+    {
+      "id": "recent-2026-10-07-kyiv",
+      "date": "2026-10-07",
+      "place": "Kyiv",
+      "region": "Kyiv city",
+      "lat": 50.4501,
+      "lon": 30.5234,
+      "type": "long_range_strike",
+      "weapon": "missiles/drones",
+      "attribution": "russia",
+      "status": "documented",
+      "fatalities": {
+        "best": null
+      },
+      "injured": {
+        "best": null
+      },
+      "target": "multiple sites",
+      "summary": "Kyiv colpita durante una vasta ondata russa di missili e droni; Reuters riporta vittime complessive anche a Kyiv, Oleksandria e Kremenchuk.",
+      "sources": [
+        {
+          "publisher": "Reuters",
+          "url": "https://www.reuters.com/world/europe/russia-strikes-ukraines-kyiv-fresh-wave-attacks-2026-10-07/"
+        }
+      ]
+    },
+    {
+      "id": "recent-2026-10-07-oleksandriia",
+      "date": "2026-10-07",
+      "place": "Oleksandriia",
+      "region": "Kirovohrad oblast",
+      "lat": 48.6696,
+      "lon": 33.1209,
+      "type": "long_range_strike",
+      "weapon": "missiles/drones",
+      "attribution": "russia",
+      "status": "documented",
+      "fatalities": {
+        "best": null
+      },
+      "injured": {
+        "best": null
+      },
+      "summary": "Oleksandriia colpita nell'ondata russa del 7 ottobre; Reuters include la città tra le località con vittime.",
+      "sources": [
+        {
+          "publisher": "Reuters",
+          "url": "https://www.reuters.com/world/europe/russia-strikes-ukraines-kyiv-fresh-wave-attacks-2026-10-07/"
+        }
+      ]
+    },
+    {
+      "id": "recent-2026-10-07-kremenchuk",
+      "date": "2026-10-07",
+      "place": "Kremenchuk",
+      "region": "Poltava oblast",
+      "lat": 49.067,
+      "lon": 33.421,
+      "type": "long_range_strike",
+      "weapon": "missiles/drones",
+      "attribution": "russia",
+      "status": "documented",
+      "fatalities": {
+        "best": null
+      },
+      "injured": {
+        "best": null
+      },
+      "summary": "Kremenchuk colpita nell'ondata russa del 7 ottobre; Reuters include la città tra le località con vittime.",
+      "sources": [
+        {
+          "publisher": "Reuters",
+          "url": "https://www.reuters.com/world/europe/russia-strikes-ukraines-kyiv-fresh-wave-attacks-2026-10-07/"
+        }
+      ]
+    },
+    {
+      "id": "recent-2026-10-01-kyiv-school",
+      "date": "2026-10-01",
+      "place": "Kyiv",
+      "region": "Kyiv city",
+      "lat": 50.4501,
+      "lon": 30.5234,
+      "type": "long_range_strike",
+      "weapon": "drone",
+      "attribution": "russia",
+      "status": "documented",
+      "fatalities": {
+        "best": 0
+      },
+      "injured": {
+        "best": 0
+      },
+      "target": "school",
+      "summary": "Drone russo colpisce una scuola; oltre 100 studenti erano nei rifugi e non risultano feriti.",
+      "sources": [
+        {
+          "publisher": "Reuters",
+          "url": "https://www.reuters.com/world/europe/russian-air-strikes-injure-two-ukraines-kyiv-odesa-officials-say-2026-10-01/",
+          "verification": "Reuters verified CCTV"
+        }
+      ]
+    },
+    {
+      "id": "recent-2026-10-01-kyiv-southern-bridge",
+      "date": "2026-10-01",
+      "place": "Kyiv",
+      "region": "Kyiv city",
+      "lat": 50.4006,
+      "lon": 30.589,
+      "type": "long_range_strike",
+      "weapon": "drone",
+      "attribution": "russia",
+      "status": "documented",
+      "fatalities": {
+        "best": 0
+      },
+      "injured": {
+        "best": null
+      },
+      "target": "Southern Bridge",
+      "summary": "Due droni colpiscono il Southern Bridge; un successivo attacco danneggia supporto, carreggiata e protezioni della metro.",
+      "sources": [
+        {
+          "publisher": "Reuters",
+          "url": "https://www.reuters.com/world/europe/russian-air-strikes-injure-two-ukraines-kyiv-odesa-officials-say-2026-10-01/"
+        }
+      ]
+    },
+    {
+      "id": "recent-2026-10-01-odesa",
+      "date": "2026-10-01",
+      "place": "Odesa",
+      "region": "Odesa oblast",
+      "lat": 46.4825,
+      "lon": 30.7233,
+      "type": "long_range_strike",
+      "weapon": "drone",
+      "attribution": "russia",
+      "status": "documented",
+      "fatalities": {
+        "best": 0
+      },
+      "injured": {
+        "best": 1
+      },
+      "target": "business centre / infrastructure",
+      "summary": "Attacco russo a Odesa danneggia infrastrutture e ferisce almeno una persona.",
+      "sources": [
+        {
+          "publisher": "Reuters",
+          "url": "https://www.reuters.com/world/europe/russian-air-strikes-injure-two-ukraines-kyiv-odesa-officials-say-2026-10-01/"
+        }
+      ]
+    },
+    {
+      "id": "recent-2026-09-28-kyiv",
+      "date": "2026-09-28",
+      "place": "Kyiv",
+      "region": "Kyiv city",
+      "lat": 50.4501,
+      "lon": 30.5234,
+      "type": "long_range_strike",
+      "weapon": "jet-powered drones",
+      "attribution": "russia",
+      "status": "documented",
+      "fatalities": {
+        "best": 2
+      },
+      "injured": {
+        "best": 24
+      },
+      "target": "National Academy of Sciences and other sites",
+      "summary": "Drone colpisce l'Accademia Nazionale delle Scienze nel centro di Kyiv; due morti e 24 feriti negli attacchi sulla capitale.",
+      "sources": [
+        {
+          "publisher": "Reuters",
+          "url": "https://www.reuters.com/world/europe/kyiv-science-academy-hit-russian-jet-drones-strike-across-ukraine-2026-09-28/"
+        }
+      ]
+    },
+    {
+      "id": "recent-2026-09-28-dnipro",
+      "date": "2026-09-28",
+      "place": "Dnipro",
+      "region": "Dnipropetrovsk oblast",
+      "lat": 48.4647,
+      "lon": 35.0462,
+      "type": "long_range_strike",
+      "weapon": "drone",
+      "attribution": "russia",
+      "status": "documented",
+      "fatalities": {
+        "best": 3
+      },
+      "injured": {
+        "best": 19
+      },
+      "target": "business centre",
+      "summary": "Attacco russo con drone su un business centre: tre morti e 19 feriti.",
+      "sources": [
+        {
+          "publisher": "Reuters",
+          "url": "https://www.reuters.com/world/europe/kyiv-science-academy-hit-russian-jet-drones-strike-across-ukraine-2026-09-28/"
+        }
+      ]
+    },
+    {
+      "id": "recent-2026-09-28-synelnykove",
+      "date": "2026-09-28",
+      "place": "Synelnykove",
+      "region": "Dnipropetrovsk oblast",
+      "lat": 48.3204,
+      "lon": 35.5179,
+      "type": "long_range_strike",
+      "weapon": "drone",
+      "attribution": "russia",
+      "status": "documented",
+      "fatalities": {
+        "best": 1
+      },
+      "injured": {
+        "best": null
+      },
+      "target": "logistics office",
+      "summary": "Una persona uccisa in un ufficio logistico durante gli attacchi russi.",
+      "sources": [
+        {
+          "publisher": "Reuters",
+          "url": "https://www.reuters.com/world/europe/kyiv-science-academy-hit-russian-jet-drones-strike-across-ukraine-2026-09-28/"
+        }
+      ]
+    },
+    {
+      "id": "recent-2026-09-28-zaporizhzhia",
+      "date": "2026-09-28",
+      "place": "Zaporizhzhia",
+      "region": "Zaporizhzhia oblast",
+      "lat": 47.8388,
+      "lon": 35.1396,
+      "type": "long_range_strike",
+      "weapon": "drone",
+      "attribution": "russia",
+      "status": "documented",
+      "fatalities": {
+        "best": null
+      },
+      "injured": {
+        "best": 32
+      },
+      "target": "infrastructure",
+      "summary": "Attacco a infrastrutture di Zaporizhzhia: 32 feriti secondo i servizi di emergenza.",
+      "sources": [
+        {
+          "publisher": "Reuters",
+          "url": "https://www.reuters.com/world/europe/kyiv-science-academy-hit-russian-jet-drones-strike-across-ukraine-2026-09-28/"
+        }
+      ]
+    },
+    {
+      "id": "recent-2026-09-24-stara-hnylytsia",
+      "date": "2026-09-24",
+      "place": "Stara Hnylytsia",
+      "region": "Kharkiv oblast",
+      "lat": 49.75,
+      "lon": 36.8,
+      "type": "long_range_strike",
+      "weapon": "reported Russian strike",
+      "attribution": "russia",
+      "status": "documented",
+      "coordinate_precision": "approximate locality",
+      "fatalities": {
+        "best": 7
+      },
+      "injured": {
+        "best": 12
+      },
+      "target": "vegetable sorting facility / farm",
+      "summary": "Forze russe colpiscono un impianto di selezione ortaggi in una fattoria: sette lavoratori uccisi e 12 feriti.",
+      "sources": [
+        {
+          "publisher": "UN HRMMU",
+          "url": "https://ukraine.ohchr.org/en/node/582",
+          "verification": "UN monitoring; local authorities cited"
+        }
+      ]
+    },
+    {
+      "id": "recent-2026-09-11-kyiv-petrol",
+      "date": "2026-09-11",
+      "place": "Kyiv",
+      "region": "Kyiv city",
+      "lat": 50.4501,
+      "lon": 30.5234,
+      "type": "long_range_strike",
+      "weapon": "jet-powered drones",
+      "attribution": "russia",
+      "status": "documented",
+      "coordinate_precision": "city",
+      "fatalities": {
+        "best": 2
+      },
+      "injured": {
+        "best": null
+      },
+      "target": "two petrol stations",
+      "summary": "Droni russi a reazione colpiscono due stazioni di servizio a Kyiv, uccidendo due persone.",
+      "sources": [
+        {
+          "publisher": "Reuters",
+          "url": "https://www.internazionale.it/ultime-notizie-reuters/2026/09/11/russian-air-strikes-injure-two-cause-fire-in-9-storey-apartment-building-in-kyiv-officials-say"
+        }
+      ]
+    },
+    {
+      "id": "recent-2026-09-09-sumy",
+      "date": "2026-09-09",
+      "place": "Sumy",
+      "region": "Sumy oblast",
+      "lat": 50.9077,
+      "lon": 34.7981,
+      "type": "long_range_strike",
+      "weapon": "drone",
+      "attribution": "russia",
+      "status": "documented",
+      "fatalities": {
+        "best": 2
+      },
+      "injured": {
+        "best": 20
+      },
+      "target": "shopping centre",
+      "summary": "Drone russo colpisce un centro commerciale: due morti e 20 feriti; il bilancio iniziale di tre morti è stato successivamente corretto.",
+      "sources": [
+        {
+          "publisher": "Reuters",
+          "url": "https://www.reuters.com/world/strike-shopping-centre-sumy-northern-ukraine-kills-three-governor-says-2026-09-09/",
+          "revision": "death toll corrected from 3 to 2"
+        }
+      ]
+    },
+    {
+      "id": "recent-2026-09-02-kyiv",
+      "date": "2026-09-02",
+      "place": "Kyiv",
+      "region": "Kyiv city",
+      "lat": 50.4501,
+      "lon": 30.5234,
+      "type": "long_range_strike",
+      "weapon": "drones",
+      "attribution": "russia",
+      "status": "documented",
+      "fatalities": {
+        "best": 0
+      },
+      "injured": {
+        "best": 11
+      },
+      "target": "residential and university buildings",
+      "summary": "Droni russi colpiscono il centro di Kyiv, ferendo 11 persone e danneggiando edifici residenziali e universitari.",
+      "sources": [
+        {
+          "publisher": "Reuters",
+          "url": "https://www.internazionale.it/ultime-notizie-reuters/2026/09/02/russian-attacks-damage-infrastructure-in-ukraine-s-odesa-official-says"
+        }
+      ]
+    }
+  ]
+}
