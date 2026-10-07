@@ -23,3 +23,18 @@ The browser must not eventually load tens of thousands of full source records at
 
 ## ACLED adapter
 ACLED programmatic access requires authenticated API access. API responses are paginated for large result sets. Credentials must remain server-side; never commit them to this repository.
+
+
+## Source genealogy and independence
+
+Ubik counts information lines, not article volume. The first deterministic pass lives in `scripts/infer_source_dependencies.py`.
+
+Rules:
+- explicit agency attribution and explicit upstream URLs create inspectable dependency candidates;
+- textual similarity alone never proves dependency or independence;
+- absence of a detected dependency never upgrades sources to independent;
+- shared official statements, documents, datasets, papers, images, video, wire copy, or eyewitnesses should become common upstream nodes;
+- a later model may propose ambiguous relations, but must return evidence for review rather than silently changing independence;
+- publication surfaces should report unknown/partial reconstruction when genealogy is incomplete.
+
+Target graph: `event -> claim -> evidence line -> origin -> dependency/republication -> revision`. Validation operates at claim level, not publisher-count level.
