@@ -1,0 +1,7 @@
+{
+  "input": 36874,
+  "strike_candidates": 5268,
+  "ground_front": 335,
+  "ambiguous": 31271,
+  "rule": "lexical routing over UCDP source_article/source_office; ambiguous is never auto-published"
+}
