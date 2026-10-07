@@ -20,16 +20,17 @@ def fnum(v):
     except:return None
 
 def normalize(r):
-    # Native Ubik and ACLED-compatible aliases.
+    # Native Ubik, ACLED-compatible aliases, and explicit UCDP GED/Candidate mapping.
+    is_ucdp = bool(val(r,"where_coordinates","side_a","side_b","type_of_violence"))
     date=str(val(r,"date","event_date"))[:10]
-    place=str(val(r,"place","location"))
-    region=str(val(r,"region","admin1"))
+    place=str(val(r,"place","location","where_coordinates"))
+    region=str(val(r,"region","admin1","adm_1"))
     lat=fnum(val(r,"lat","latitude")); lon=fnum(val(r,"lon","longitude"))
-    typ=str(val(r,"type","sub_event_type","event_type"))
+    typ=str(val(r,"type","sub_event_type","event_type","type_of_violence"))
     target=str(val(r,"target","civilian_targeting","tags"))
-    source=str(val(r,"source","publisher"))
+    source=str(val(r,"source","publisher","source_article"))
     source_url=str(val(r,"source_url","url"))
-    notes=str(val(r,"summary","notes"))
+    notes=str(val(r,"summary","notes","source_headline"))
     external=str(val(r,"external_id","event_id_cnty","id"))
     if not external:
         external=hashlib.sha1(f"{date}|{place}|{lat}|{lon}|{typ}|{notes[:120]}".encode()).hexdigest()[:16]
@@ -39,9 +40,14 @@ def normalize(r):
     return {
       "id":"ua-"+external.lower().replace(" ","-"),"date":date,"place":place,"region":region,
       "lat":lat,"lon":lon,"type":typ or "conflict event","target":target or "unspecified",
-      "status":str(val(r,"status")) or "signal","summary":notes or typ or "Imported conflict event",
-      "fatalities":int(float(val(r,"fatalities") or 0)),
-      "sources":[{"publisher":source or "import","url":source_url}]}
+      "status":str(val(r,"status")) or ("reported" if is_ucdp else "signal"),"summary":notes or typ or "Imported conflict event",
+      "fatalities":int(float(val(r,"fatalities","best") or 0)),
+      "fatalities_low":int(float(val(r,"low") or 0)) if is_ucdp else None,
+      "fatalities_high":int(float(val(r,"high") or 0)) if is_ucdp else None,
+      "actor_a":str(val(r,"actor_a","side_a")),"actor_b":str(val(r,"actor_b","side_b")),
+      "geo_precision":str(val(r,"geo_precision","where_prec")),
+      "dataset":"UCDP" if is_ucdp else (str(val(r,"dataset")) or "import"),
+      "sources":[{"publisher":"UCDP" if is_ucdp else (source or "import"),"url":source_url,"citation":source if is_ucdp else ""}]}
 
 def key(e):
     # Conservative first-pass duplicate key; provenance is merged, not discarded.
@@ -55,7 +61,15 @@ def load_input(p):
 
 def main():
     if len(sys.argv)<2:raise SystemExit("Usage: import_attacks.py <csv|json>")
-    incoming=[x for x in (normalize(r) for r in load_input(Path(sys.argv[1]))) if x]
+    raw=load_input(Path(sys.argv[1]))
+    scoped=[]
+    for r in raw:
+        country=str(val(r,"country")).strip().lower()
+        date=str(val(r,"date","event_date"))[:10]
+        if country and country!="ukraine": continue
+        if date and date<"2022-02-24": continue
+        scoped.append(r)
+    incoming=[x for x in (normalize(r) for r in scoped) if x]
     corpus=json.loads(OUT.read_text(encoding="utf-8")) if OUT.exists() else {"schema_version":"1.0","events":[]}
     merged={key(e):e for e in corpus.get("events",[])}
     added=combined=0
