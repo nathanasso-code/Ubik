@@ -1,0 +1,44 @@
+{
+  "title": "Ubik Event Corpus",
+  "version": "1.0",
+  "required": [
+    "id",
+    "date",
+    "place",
+    "region",
+    "lat",
+    "lon",
+    "type",
+    "target",
+    "status",
+    "summary",
+    "sources"
+  ],
+  "status": [
+    "signal",
+    "reported",
+    "corroborated",
+    "documented",
+    "disputed"
+  ],
+  "source_fields": [
+    "publisher",
+    "url",
+    "origin_id",
+    "published_at"
+  ],
+  "optional": [
+    "weapon",
+    "fatalities",
+    "injuries",
+    "damage",
+    "actor",
+    "control_status",
+    "confidence",
+    "duplicate_of",
+    "relations",
+    "notes",
+    "created_by",
+    "ingested_at"
+  ]
+}
