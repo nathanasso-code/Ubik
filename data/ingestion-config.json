@@ -1,0 +1,17 @@
+{
+  "pipeline_version":"1.0",
+  "canonical_store":"supabase",
+  "adapters":["ubik-json","generic-json","csv","acled"],
+  "rules":{
+    "default_status":"signal",
+    "country_code":"UA",
+    "exclude_from_attack_view_when":["outside_ukraine","occupied_area"],
+    "merge_source_provenance":true,
+    "validation_on_import":false
+  },
+  "frontend":{
+    "archive_page_size":50,
+    "map_query":"viewport",
+    "cluster_threshold":250
+  }
+}
