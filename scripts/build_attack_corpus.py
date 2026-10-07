@@ -8,8 +8,15 @@ def load(n): return json.loads((D/n).read_text(encoding="utf-8"))
 def key(e):
  try:return (e.get("date"),round(float(e["lat"]),3),round(float(e["lon"]),3))
  except:return (e.get("date"),e.get("place"),e.get("ucdp_id"))
+RUSSIAN_ATTR=[r"russian (?:forces|army|troops|military|attack|strike|missile|drone|shelling)",r"russia(?:n)? (?:launched|fired|struck|attacked|shelled|bombed)",r"moscow(?:'s)? (?:forces|troops|attack|strike)"]
+def russian_attribution(e,kind):
+ if kind=="one_sided_civilian" and "russia" in str(e.get("side_a") or "").lower(): return ("russia","ucdp_one_sided_perpetrator")
+ t=str(e.get("source_article") or "")
+ if any(re.search(p,t,re.I) for p in RUSSIAN_ATTR): return ("russia","explicit_source_citation")
+ return ("pending","insufficient_event_level_attribution")
 def canon(e,kind):
  src=str(e.get("source_article") or "").strip()
+ attribution,attr_basis=russian_attribution(e,kind)
  return {
   "id":"ucdp-"+str(e.get("ucdp_id")),
   "date":e.get("date"),"date_end":e.get("date_end"),
@@ -17,7 +24,7 @@ def canon(e,kind):
   "lat":float(e["lat"]),"lon":float(e["lon"]),
   "type":"long_range_strike" if kind=="long_range" else "civilian_harm",
   "status":"reported",
-  "validation":"not_ubik_validated",
+  "validation":"not_ubik_validated","attribution":attribution,"attribution_basis":attr_basis,
   "actor_a":e.get("side_a"),"actor_b":e.get("side_b"),
   "fatalities":{"best":int(e.get("best") or 0),"low":int(e.get("low") or 0),"high":int(e.get("high") or 0)},
   "geo_precision":e.get("geo_precision"),
@@ -42,7 +49,9 @@ def main():
       "scope":{"country":"Ukraine","from":"2022-02-24",
        "description":"Conservative UCDP-derived candidates for Russian attacks on internationally recognized Ukrainian territory, including occupied areas; territorial control does not determine inclusion. Not a complete census and not Ubik-validated.",
        "territorial_rule":"Include occupied Ukrainian territory. Inclusion is based on event-level Russian attribution, not territorial control."},
-      "counts":{"events":len(events),"long_range_input":len(lr),"civilian_unique_input":len(civ),"merged_duplicates":overlaps},
+      "counts":{"events":len(events),"long_range_input":len(lr),"civilian_unique_input":len(civ),"merged_duplicates":overlaps,
+                "russia_attributed":sum(1 for e in events if e.get("attribution")=="russia"),
+                "attribution_pending":sum(1 for e in events if e.get("attribution")!="russia")},
       "events":events}
  OUT.write_text(json.dumps(doc,ensure_ascii=False,separators=(",",":")),encoding="utf-8")
  manifest={"schema_version":"1.0","scope":doc["scope"],"counts":doc["counts"],
