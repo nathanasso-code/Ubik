@@ -40,9 +40,15 @@ def main():
  events=sorted(merged.values(),key=lambda x:(x.get("date") or "",x["id"]),reverse=True)
  doc={"schema_version":"2.0","generated_at":datetime.now(timezone.utc).isoformat(),
       "scope":{"country":"Ukraine","from":"2022-02-24",
-       "description":"Conservative UCDP-derived candidates for the Ubik Attacks view; not a complete census and not Ubik-validated."},
+       "description":"Conservative UCDP-derived candidates for Russian attacks on internationally recognized Ukrainian territory, including occupied areas; territorial control does not determine inclusion. Not a complete census and not Ubik-validated.",
+       "territorial_rule":"Include occupied Ukrainian territory. Inclusion is based on event-level Russian attribution, not territorial control."},
       "counts":{"events":len(events),"long_range_input":len(lr),"civilian_unique_input":len(civ),"merged_duplicates":overlaps},
       "events":events}
  OUT.write_text(json.dumps(doc,ensure_ascii=False,separators=(",",":")),encoding="utf-8")
- print(json.dumps(doc["counts"]))
+ manifest={"schema_version":"1.0","scope":doc["scope"],"counts":doc["counts"],
+           "period":{"from":min((e["date"] for e in events if e.get("date")),default=None),
+                     "to":max((e["date"] for e in events if e.get("date")),default=None)},
+           "status":"derived_candidates_not_ubik_validated"}
+ (D/"attack-corpus-manifest.json").write_text(json.dumps(manifest,ensure_ascii=False,indent=2),encoding="utf-8")
+ print(json.dumps(manifest))
 if __name__=="__main__":main()
