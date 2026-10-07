@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Build the public-facing Ubik attack corpus from conservative UCDP routes."""
 import json
+import re
 from pathlib import Path
 from datetime import datetime, timezone
 ROOT=Path(__file__).resolve().parents[1]; D=ROOT/"data"/"ucdp"; OUT=ROOT/"data"/"ukraine-attacks-derived.json"
