@@ -1,0 +1,12 @@
+{
+  "state_based_input": 36874,
+  "one_sided_civilian_input": 236,
+  "long_range_candidates": 1793,
+  "shelling_review": 3567,
+  "ground_front": 334,
+  "ambiguous": 31180,
+  "civilian_unique": 194,
+  "civilian_possible_overlap": 42,
+  "publication_rule": "long_range_candidates are candidates, not validated events; shelling_review requires front/control context; ambiguous is never auto-published",
+  "dedup_rule": "possible overlap = same date and coordinates rounded to 0.001 degrees"
+}
