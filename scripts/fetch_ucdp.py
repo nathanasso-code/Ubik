@@ -1,61 +1,49 @@
 #!/usr/bin/env python3
-"""Fetch current UCDP GED + Candidate and create Ukraine working sets."""
-import csv,io,json,urllib.request,zipfile
+"""Ubik UCDP ingestion. Public CSV by default; token API optional."""
+import csv,io,json,os,urllib.request,zipfile
 from pathlib import Path
-ROOT=Path(__file__).resolve().parents[1]
-URLS={
- "ged":"https://ucdp.uu.se/downloads/ged/ged261-csv.zip",
- "candidate":"https://ucdp.uu.se/downloads/candidateged/GEDEvent_v26_0_8.csv"
+ROOT=Path(__file__).resolve().parents[1]; OUT=ROOT/"data"/"ucdp"; OUT.mkdir(parents=True,exist_ok=True)
+PUBLIC={
+ "ged":("https://ucdp.uu.se/downloads/ged/ged261-csv.zip","26.1"),
+ "candidate":("https://ucdp.uu.se/downloads/candidateged/GEDEvent_v26_0_8.csv","26.0.8")
 }
-UA=ROOT/"data"/"ucdp"
-UA.mkdir(parents=True,exist_ok=True)
-
-def get(url):
-    req=urllib.request.Request(url,headers={"User-Agent":"Ubik/0.1 research corpus"})
-    with urllib.request.urlopen(req,timeout=120) as r:return r.read()
-
-def rows_from_bytes(name,b):
-    if name=="ged":
-        z=zipfile.ZipFile(io.BytesIO(b))
-        csvname=next(n for n in z.namelist() if n.lower().endswith(".csv"))
-        text=z.read(csvname).decode("utf-8-sig")
-    else:text=b.decode("utf-8-sig")
-    return list(csv.DictReader(io.StringIO(text)))
-
-def ukraine(rows):
-    out=[]
-    for r in rows:
-        if str(r.get("country","")).strip().lower()!="ukraine":continue
-        d=str(r.get("date_start") or r.get("date") or "")
-        if d and d[:10]<"2022-02-24":continue
-        out.append(r)
-    return out
-
-def russian_actor(r):
-    a=(str(r.get("side_a",""))+" "+str(r.get("side_b",""))).lower()
-    return any(x in a for x in ("russia","russian"))
-
-def classify(r):
-    # UCDP is lethal-event data. This classification is routing, not Ubik validation.
-    if not russian_actor(r):return "other"
-    # one-sided violence is an attack candidate; state-based events remain front/battle
-    tov=str(r.get("type_of_violence","")).strip()
-    if tov=="3":return "attack_candidates"
-    return "front_events"
-
+def download(url):
+ req=urllib.request.Request(url,headers={"User-Agent":"Mozilla/5.0 Ubik research"})
+ with urllib.request.urlopen(req,timeout=180) as r:return r.read()
+def parse(name,b):
+ if name=="ged":
+  z=zipfile.ZipFile(io.BytesIO(b)); n=next(x for x in z.namelist() if x.lower().endswith(".csv")); b=z.read(n)
+ return list(csv.DictReader(io.StringIO(b.decode("utf-8-sig"))))
+def s(r,k):return str(r.get(k) or "").strip()
+def russian(r):return "russia" in (s(r,"side_a")+" "+s(r,"side_b")).lower()
+def route(r):
+ if not russian(r):return "other"
+ t=s(r,"type_of_violence")
+ if t=="3":return "attack_candidates"
+ if t=="1":return "front_events"
+ return "other"
+def compact(r,dataset):
+ return {"ucdp_id":r.get("id"),"dataset":dataset,"date":s(r,"date_start")[:10],"date_end":s(r,"date_end")[:10],
+ "place":s(r,"where_coordinates"),"region":s(r,"adm_1"),"lat":r.get("latitude"),"lon":r.get("longitude"),
+ "geo_precision":r.get("where_prec"),"side_a":s(r,"side_a"),"side_b":s(r,"side_b"),
+ "type_of_violence":r.get("type_of_violence"),"best":r.get("best"),"low":r.get("low"),"high":r.get("high"),
+ "source_article":s(r,"source_article"),"source_office":s(r,"source_office"),"number_of_sources":r.get("number_of_sources")}
 def main():
-    combined={}
-    for name,url in URLS.items():
-        for r in ukraine(rows_from_bytes(name,get(url))):
-            rid=str(r.get("id") or "")
-            if rid:combined[rid]=r
-    buckets={"attack_candidates":[],"front_events":[],"other":[]}
-    for r in combined.values():buckets[classify(r)].append(r)
-    for k,v in buckets.items():
-        (UA/(k+".json")).write_text(json.dumps(v,ensure_ascii=False),encoding="utf-8")
-    manifest={"source":"UCDP","license":"CC BY 4.0","ged":"26.1","candidate":"26.0.8",
-              "ukraine_total":len(combined),**{k:len(v) for k,v in buckets.items()}}
-    (UA/"manifest.json").write_text(json.dumps(manifest,indent=2),encoding="utf-8")
-    print(json.dumps(manifest))
-
+ canonical={}; releases={}
+ for name,(url,version) in PUBLIC.items():
+  rows=parse(name,download(url)); kept=0
+  for r in rows:
+   if s(r,"country").lower()!="ukraine":continue
+   d=s(r,"date_start")[:10]
+   if d and d<"2022-02-24":continue
+   if not r.get("latitude") or not r.get("longitude"):continue
+   canonical[str(r.get("id"))]=compact(r,name);kept+=1
+  releases[name]={"version":version,"ukraine_rows":kept}
+ buckets={"attack_candidates":[],"front_events":[],"other":[]}
+ for r in canonical.values():buckets[route(r)].append(r)
+ for k,v in buckets.items():
+  v.sort(key=lambda x:x["date"],reverse=True)
+  (OUT/(k+".json")).write_text(json.dumps(v,ensure_ascii=False,separators=(",",":")),encoding="utf-8")
+ manifest={"source":"UCDP public CSV","license":"CC BY 4.0","releases":releases,"ukraine_total":len(canonical),**{k:len(v) for k,v in buckets.items()}}
+ (OUT/"manifest.json").write_text(json.dumps(manifest,ensure_ascii=False,indent=2),encoding="utf-8");print(json.dumps(manifest))
 if __name__=="__main__":main()
