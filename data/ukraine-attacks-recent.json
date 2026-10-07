@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "updated_at": "2026-10-07T18:00:00Z",
+  "updated_at": "2026-10-07T21:00:00+02:00",
   "scope": "Curated recent events bridging the lag between live signals and UCDP. Documented does not mean Ubik-validated.",
   "method": {
     "minimum": "physical event + identifiable date/place + Russian attribution + traceable source",
@@ -101,18 +101,28 @@
       "attribution": "russia",
       "status": "documented",
       "fatalities": {
-        "best": 18
+        "best": 19
       },
       "injured": {
         "best": 55
       },
       "target": "residential building",
-      "summary": "Missile russo su edificio residenziale di cinque piani; almeno 18 morti, tra cui quattro bambini, e circa 55 feriti.",
+      "summary": "Missile russo su edificio residenziale di cinque piani; almeno 19 morti, tra cui cinque bambini, e circa 55 feriti.",
       "sources": [
         {
           "publisher": "Reuters",
           "url": "https://www.reuters.com/world/europe/russia-strikes-ukraines-kyiv-fresh-wave-attacks-2026-10-07/",
           "independence": "reporting + local officials"
+        }
+      ],
+      "revisions": [
+        {
+          "at": "2026-10-07T21:00:00+02:00",
+          "field": "fatalities.best",
+          "from": 18,
+          "to": 19,
+          "reason": "Reuters evening update citing President Zelenskiy; five children among the dead.",
+          "source": "Reuters"
         }
       ]
     },
