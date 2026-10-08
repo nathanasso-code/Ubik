@@ -32,21 +32,7 @@ jobs:
       - name: Summarize coverage
         if: always()
         run: |
-          python - <<'PY'
-          import json
-          from pathlib import Path
-          p = Path("data/discovery/ai-models.json")
-          if p.exists():
-              data = json.loads(p.read_text())
-              coverage = data.get("coverage", {})
-              with open(__import__("os").environ["GITHUB_STEP_SUMMARY"], "a") as out:
-                  out.write("## AI source discovery coverage\n\n")
-                  for key, value in coverage.items():
-                      out.write(f"- **{key}**: {value}\n")
-                  out.write("\n### Feed status\n\n")
-                  for source in data.get("source_reports", []):
-                      out.write(f"- {source['source_id']}: {source['status']}, {source.get('seen', 0)} seen, {source.get('new', 0)} new\n")
-          PY
+          if test -f data/discovery/report.md; then cat data/discovery/report.md >> "$GITHUB_STEP_SUMMARY"; fi
       - name: Upload discovery artifact for review
         uses: actions/upload-artifact@v4
         with:
