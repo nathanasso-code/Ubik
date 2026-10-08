@@ -25,3 +25,4 @@ jobs:
           node tests/provenance-view.test.cjs
           node tests/temporal.test.cjs
           node tests/map-view.test.cjs
+          node tests/integration-static.test.cjs
