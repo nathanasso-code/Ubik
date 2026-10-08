@@ -1,5 +1,13 @@
 name: AI sources discovery pilot
 on:
+  push:
+    branches:
+      - develop/ubik-core
+    paths:
+      - 'scripts/discover_ai_sources.py'
+      - 'config/source-registry.ai-models.json'
+      - 'tests/test_discover_ai_sources.py'
+      - '.github/workflows/ai-discovery-pilot.yml'
   workflow_dispatch:
 permissions:
   contents: read
