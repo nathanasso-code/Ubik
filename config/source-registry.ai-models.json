@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "topic_id": "ai-models",
+  "description": "Pilot discovery sources. Metadata-only; inclusion is not validation or endorsement.",
+  "sources": [
+    {
+      "id": "openai-news",
+      "name": "OpenAI News",
+      "url": "https://openai.com/news/rss.xml",
+      "kind": "rss",
+      "category": "lab",
+      "enabled": true
+    },
+    {
+      "id": "google-deepmind",
+      "name": "Google DeepMind Blog",
+      "url": "https://deepmind.google/blog/rss.xml",
+      "kind": "rss",
+      "category": "lab",
+      "enabled": true
+    },
+    {
+      "id": "arxiv-cs-ai",
+      "name": "arXiv cs.AI",
+      "url": "https://export.arxiv.org/rss/cs.AI",
+      "kind": "rss",
+      "category": "research",
+      "enabled": true
+    },
+    {
+      "id": "arxiv-cs-cl",
+      "name": "arXiv cs.CL",
+      "url": "https://export.arxiv.org/rss/cs.CL",
+      "kind": "rss",
+      "category": "research",
+      "enabled": true
+    },
+    {
+      "id": "huggingface-blog",
+      "name": "Hugging Face Blog",
+      "url": "https://huggingface.co/blog/feed.xml",
+      "kind": "rss",
+      "category": "industry-research",
+      "enabled": true
+    },
+    {
+      "id": "the-batch",
+      "name": "The Batch",
+      "url": "https://www.deeplearning.ai/the-batch/feed/",
+      "kind": "rss",
+      "category": "analysis",
+      "enabled": true
+    },
+    {
+      "id": "bluesky",
+      "name": "Bluesky",
+      "kind": "api",
+      "category": "social",
+      "enabled": false,
+      "reason": "Requires separate access, rate-limit and source-selection policy"
+    },
+    {
+      "id": "major-publishers",
+      "name": "Major news publishers",
+      "kind": "review",
+      "category": "journalism",
+      "enabled": false,
+      "reason": "Verify publisher-specific feed availability and permitted metadata use"
+    }
+  ]
+}
