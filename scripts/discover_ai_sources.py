@@ -15,7 +15,7 @@ ROOT = Path(__file__).resolve().parents[1]
 REGISTRY = ROOT / "config/source-registry.ai-models.json"
 OUTPUT = ROOT / "data/discovery/ai-models.json"
 ATOM = "{http://www.w3.org/2005/Atom}"
-CONTENT = "{http://purl.org/rss/1.0/modules/content/}"
+DC = "{http://purl.org/dc/elements/1.1/}"
 
 def clean(value):
     return re.sub(r"\s+", " ", value or "").strip()
@@ -32,26 +32,43 @@ def text(node, tag):
     el = node.find(tag)
     return clean("".join(el.itertext())) if el is not None else ""
 
+def author_info(node, atom=False, fallback=None):
+    """Keep authorship separate from publisher; never infer a person from a brand."""
+    if atom:
+        names = [text(a, ATOM + "name") for a in node.findall(ATOM + "author")]
+        names = [name for name in names if name]
+        if not names and fallback is not None:
+            names = [text(a, ATOM + "name") for a in fallback.findall(ATOM + "author")]
+            names = [name for name in names if name]
+        return names, "entry" if node.findall(ATOM + "author") and names else ("feed" if names else "missing")
+    names = [text(a, DC + "creator") for a in node.findall(DC + "creator")]
+    if names:
+        return [name for name in names if name], "entry"
+    # RSS author often contains an email address; do not publish personal email as a byline.
+    raw = text(node, "author")
+    match = re.search(r"\\(([^()]+)\\)\\s*$", raw)
+    return ([match.group(1).strip()] if match else []), ("entry" if match else "missing")
+
 def parse_feed(data, source):
     root = ET.fromstring(data)
     items = []
     if root.tag == ATOM + "feed":
         for entry in root.findall(ATOM + "entry"):
             link = next((x.get("href") for x in entry.findall(ATOM + "link") if x.get("rel", "alternate") == "alternate" and x.get("href")), None)
-            items.append((text(entry, ATOM+"title"), link, text(entry, ATOM+"id"), text(entry, ATOM+"published") or text(entry, ATOM+"updated")))
+            items.append((text(entry, ATOM+"title"), link, text(entry, ATOM+"id"), text(entry, ATOM+"published") or text(entry, ATOM+"updated"), *author_info(entry, True, root)))
     else:
         channel = root.find("channel")
         if channel is None:
             raise ValueError("Unsupported feed format")
         for item in channel.findall("item"):
-            items.append((text(item, "title"), text(item, "link"), text(item, "guid"), text(item, "pubDate")))
+            items.append((text(item, "title"), text(item, "link"), text(item, "guid"), text(item, "pubDate"), *author_info(item)))
     results = []
-    for title, link, guid, published in items:
+    for title, link, guid, published, authors, attribution_basis in items:
         url = canonical(link)
         if not title or not url:
             continue
         key = hashlib.sha256((source["id"] + "|" + (guid or url)).encode()).hexdigest()[:24]
-        results.append({"id": key, "source_id": source["id"], "publisher": source["name"], "title": title[:500], "url": url, "external_id": guid or None, "published_raw": published or None, "topic_ids": ["ai-models"], "status": "discovered"})
+        results.append({"id": key, "source_id": source["id"], "publisher": source["name"], "authors": authors, "attribution_basis": attribution_basis, "original_url": link, "discovered_from": source["url"], "title": title[:500], "url": url, "external_id": guid or None, "published_raw": published or None, "topic_ids": ["ai-models"], "status": "discovered"})
     return results
 
 def run(registry, output, fetch):
@@ -72,6 +89,8 @@ def run(registry, output, fetch):
                 if item["url"] not in items:
                     items[item["url"]] = item
                     new += 1
+                elif not items[item["url"]].get("authors") and item["authors"]:
+                    items[item["url"]].update({"authors": item["authors"], "attribution_basis": item["attribution_basis"]})
             reports.append({"source_id": source["id"], "status": "ok", "seen": len(discovered), "new": new})
         except (ValueError, ET.ParseError, urllib.error.URLError, TimeoutError, OSError) as exc:
             reports.append({"source_id": source["id"], "status": "error", "error": str(exc)[:240]})
