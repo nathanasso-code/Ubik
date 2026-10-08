@@ -41,7 +41,7 @@ def author_info(node, atom=False, fallback=None):
             names = [text(a, ATOM + "name") for a in fallback.findall(ATOM + "author")]
             names = [name for name in names if name]
         return names, "entry" if node.findall(ATOM + "author") and names else ("feed" if names else "missing")
-    names = [text(a, DC + "creator") for a in node.findall(DC + "creator")]
+    names = [clean("".join(a.itertext())) for a in node.findall(DC + "creator")]
     if names:
         return [name for name in names if name], "entry"
     # RSS author often contains an email address; do not publish personal email as a byline.
@@ -68,7 +68,7 @@ def parse_feed(data, source):
         if not title or not url:
             continue
         key = hashlib.sha256((source["id"] + "|" + (guid or url)).encode()).hexdigest()[:24]
-        results.append({"id": key, "source_id": source["id"], "publisher": source["name"], "authors": authors, "attribution_basis": attribution_basis, "original_url": link, "discovered_from": source["url"], "title": title[:500], "url": url, "external_id": guid or None, "published_raw": published or None, "topic_ids": ["ai-models"], "status": "discovered"})
+        results.append({"id": key, "source_id": source["id"], "publisher": source["name"], "authors": authors, "attribution_basis": attribution_basis, "original_url": link, "discovered_from": source.get("url"), "title": title[:500], "url": url, "external_id": guid or None, "published_raw": published or None, "topic_ids": ["ai-models"], "status": "discovered"})
     return results
 
 def run(registry, output, fetch):
