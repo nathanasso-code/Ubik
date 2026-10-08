@@ -46,7 +46,7 @@ def author_info(node, atom=False, fallback=None):
         return [name for name in names if name], "entry"
     # RSS author often contains an email address; do not publish personal email as a byline.
     raw = text(node, "author")
-    match = re.search(r"\\(([^()]+)\\)\\s*$", raw)
+    match = re.search(r"\(([^()]+)\)\s*$", raw)
     return ([match.group(1).strip()] if match else []), ("entry" if match else "missing")
 
 def parse_feed(data, source):
