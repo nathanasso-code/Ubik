@@ -1,0 +1,27 @@
+name: Ubik Core checks
+on:
+  push:
+    branches:
+      - develop/ubik-core
+  pull_request:
+    branches:
+      - main
+jobs:
+  core-tests:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check JavaScript syntax
+        run: |
+          for f in assets/*.js tests/*.cjs; do node --check "$f"; done
+      - name: Run contract tests
+        run: |
+          node tests/ubik-core.test.cjs
+          node tests/provenance-view.test.cjs
+          node tests/temporal.test.cjs
+          node tests/map-view.test.cjs
