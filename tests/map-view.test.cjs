@@ -1,0 +1,10 @@
+const assert=require("node:assert/strict");
+const map=require("../assets/map-view.js");
+assert.deepEqual(map.coordinates({lat:48.7,lon:31.3}),[48.7,31.3]);
+assert.deepEqual(map.coordinates({lat:"48.7",lon:"31.3"}),[48.7,31.3]);
+assert.equal(map.coordinates({lat:null,lon:30}),null);
+assert.equal(map.coordinates({lat:91,lon:30}),null);
+assert.equal(map.coordinates({lat:45,lon:-181}),null);
+assert.deepEqual(map.coordinates({latitude:0,longitude:0},"latitude","longitude"),[0,0]);
+assert.throws(()=>map.createMap({elementId:"test"}),/Leaflet is required/);
+console.log("Map adapter: 7 assertions passed");
