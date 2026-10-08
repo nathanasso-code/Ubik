@@ -18,6 +18,19 @@ class DiscoveryTests(unittest.TestCase):
         self.assertEqual(module.parse_feed(ATOM, source)[0]["title"], "Independent study")
         self.assertIsNone(module.canonical("javascript:alert(1)"))
 
+    def test_attribution_and_provenance(self):
+        rss = b'<rss xmlns:dc="http://purl.org/dc/elements/1.1/"><channel><item><title>A</title><link>https://example.org/a</link><dc:creator>Researcher A</dc:creator></item></channel></rss>'
+        item = module.parse_feed(rss, {"id":"x","name":"Publisher","url":"https://example.org/feed"})[0]
+        self.assertEqual(item["authors"], ["Researcher A"])
+        self.assertEqual(item["attribution_basis"], "entry")
+        self.assertEqual(item["discovered_from"], "https://example.org/feed")
+        atom = b'<feed xmlns="http://www.w3.org/2005/Atom"><author><name>Researcher B</name></author><entry><title>B</title><link href="https://example.org/b"/><id>b</id></entry></feed>'
+        item2 = module.parse_feed(atom, {"id":"x","name":"Publisher","url":"https://example.org/feed"})[0]
+        self.assertEqual(item2["authors"], ["Researcher B"])
+        self.assertEqual(item2["attribution_basis"], "feed")
+        email = b'<rss><channel><item><title>C</title><link>https://example.org/c</link><author>private@example.org</author></item></channel></rss>'
+        self.assertEqual(module.parse_feed(email, {"id":"x","name":"Publisher","url":"https://example.org/feed"})[0]["authors"], [])
+
     def test_repeat_and_failure_are_safe(self):
         with tempfile.TemporaryDirectory() as tmp:
             reg, out = Path(tmp)/"registry.json", Path(tmp)/"result.json"
