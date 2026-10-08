@@ -17,4 +17,4 @@ assert.equal(projected.kind,"event");
 assert.equal(projected.schemaVersion,1);
 assert.deepEqual(projected.sourceIds,["https://reuters.com/example"]);
 assert.equal(original.kind,undefined);
-console.log("Ubik Core contracts: 9 assertions passed");
+console.log("Ubik Core contracts: 11 assertions passed");
