@@ -20,8 +20,11 @@ Work on this branch; run `node tests/ubik-core.test.cjs`, syntax-check all JS, t
 ## Temporal extraction
 `assets/temporal.js` provides date validation, month boundaries, monthly counts and independent filter state. The attack topic now consumes it through `attackTime`; map, campaign and archive continue to share the same selected range. Run `node tests/temporal.test.cjs` before release. The live feed is deliberately outside the historical date filter.
 
+## Map extraction
+`assets/map-view.js` now owns the Leaflet lifecycle, cluster markers, overlay layer, point projection and focus behavior. The attack topic provides its detail renderer and live-signal handling; neither belongs in the shared map. Run `node tests/map-view.test.cjs` before release. Integration still requires browser regression checks.
+
 ## Next extraction
 - shared SourceCard, ClaimCard, RevisionList, ProvenanceView;
 - topic-specific adapters for temporal datasets beyond attacks;
-- reusable MapView receiving records and configuration, not reading global `attacks`;
+- add topic-specific map adapters and browser-level map regression checks;
 - topic discovery through search and semantic links; no fixed topic header.
