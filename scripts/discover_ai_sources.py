@@ -18,7 +18,7 @@ ATOM = "{http://www.w3.org/2005/Atom}"
 CONTENT = "{http://purl.org/rss/1.0/modules/content/}"
 
 def clean(value):
-    return re.sub(r"\s+", " ", "".join(ET.fromstring("<x>" + value + "</x>").itertext()) if False else value or "").strip()
+    return re.sub(r"\s+", " ", value or "").strip()
 
 def canonical(url):
     parsed = urllib.parse.urlsplit((url or "").strip())
