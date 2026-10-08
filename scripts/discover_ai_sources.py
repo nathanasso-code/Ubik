@@ -94,7 +94,17 @@ def run(registry, output, fetch):
             reports.append({"source_id": source["id"], "status": "ok", "seen": len(discovered), "new": new})
         except (ValueError, ET.ParseError, urllib.error.URLError, TimeoutError, OSError) as exc:
             reports.append({"source_id": source["id"], "status": "error", "error": str(exc)[:240]})
-    result = {"schema_version": 1, "topic_id": "ai-models", "retrieved_at": dt.datetime.now(dt.timezone.utc).isoformat(), "items": sorted(items.values(), key=lambda x: x["id"]), "source_reports": reports}
+    source_stats = []
+    for report in reports:
+        source_items = [item for item in items.values() if item["source_id"] == report["source_id"]]
+        count = len(source_items)
+        source_stats.append({**report,
+            "stored": count,
+            "with_named_author": sum(bool(item.get("authors")) for item in source_items),
+            "missing_named_author": sum(not bool(item.get("authors")) for item in source_items),
+            "with_publication_date": sum(bool(item.get("published_raw")) for item in source_items),
+            "with_original_link": sum(bool(item.get("original_url")) for item in source_items)})
+    result = {"schema_version": 1, "topic_id": "ai-models", "retrieved_at": dt.datetime.now(dt.timezone.utc).isoformat(), "items": sorted(items.values(), key=lambda x: x["id"]), "source_reports": source_stats, "coverage": {"enabled_feeds": len(reports), "successful_feeds": sum(r["status"] == "ok" for r in reports), "failed_feeds": sum(r["status"] == "error" for r in reports), "stored_items": len(items), "items_with_named_author": sum(bool(item.get("authors")) for item in items.values()), "items_missing_named_author": sum(not bool(item.get("authors")) for item in items.values()), "items_with_publication_date": sum(bool(item.get("published_raw")) for item in items.values())}}
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     return result
