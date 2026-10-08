@@ -20,3 +20,11 @@ Differentiate `unavailable`, `not_configured`, `temporarily_failed`, and `access
 
 ## Operating policy
 Use a small initial set of author and institution feeds with low-cost polling; expand via measured coverage and editorial/user suggestions. Ingestion is not verification. Clustering and nucleus promotion are separate downstream stages. Keep original author attribution and direct outbound links even when a synthetic epistemic card represents the story.
+
+## Attribution implementation (October 2026 pilot)
+
+Discovery now preserves `authors` separately from `publisher`, `original_url` separately from canonical `url`, `discovered_from` feed URL, and `attribution_basis` (`entry`, `feed`, or `missing`). RSS `dc:creator` and named RSS `author` are supported; email-only RSS author fields are not exposed as public bylines. Atom supports entry authors and inherited feed authors according to RFC 4287. Missing authors stay missing: the publisher must not be presented as an invented personal author.
+
+Any future AI-generated card should prominently retain named original authors, publisher and outbound source links, with an expandable source genealogy. Multiple sources with different bylines are not automatically independent evidence. Attribution metadata is publisher-supplied, not identity verification.
+
+Known limitations: no author identity reconciliation, multiple author-role normalization, licensing inference, HTML byline enrichment, or source genealogy yet. The discovery file is an internal artifact, not a public feed.
