@@ -23,6 +23,10 @@ jobs:
         run: python -m unittest discover -s tests -p 'test_discover_ai_sources.py'
       - name: Discover RSS and Atom metadata
         run: python scripts/discover_ai_sources.py
+      - name: Build auditable coverage report
+        if: always()
+        run: |
+          if test -f data/discovery/ai-models.json; then python scripts/report_ai_discovery.py data/discovery/ai-models.json data/discovery/report.md; fi
       - name: Summarize coverage
         if: always()
         run: |
@@ -45,5 +49,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ai-models-discovery
-          path: data/discovery/ai-models.json
+          path: data/discovery/
           retention-days: 14
