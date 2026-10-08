@@ -20,7 +20,7 @@ jobs:
         with:
           python-version: '3.12'
       - name: Offline parser tests
-        run: python -m unittest discover -s tests -p 'test_discover_ai_sources.py'
+        run: python -m unittest discover -s tests -p 'test_*ai_discovery.py'
       - name: Discover RSS and Atom metadata
         run: python scripts/discover_ai_sources.py
       - name: Build auditable coverage report
