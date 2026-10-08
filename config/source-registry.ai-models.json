@@ -66,6 +66,70 @@
       "category": "journalism",
       "enabled": false,
       "reason": "Verify publisher-specific feed availability and permitted metadata use"
+    },
+    {
+      "id": "simon-willison",
+      "name": "Simon Willison — independent blog",
+      "url": "https://simonwillison.net/atom/everything/",
+      "kind": "rss",
+      "category": "independent-expert",
+      "enabled": true
+    },
+    {
+      "id": "bair-blog",
+      "name": "Berkeley AI Research Blog",
+      "url": "https://bair.berkeley.edu/blog/feed.xml",
+      "kind": "rss",
+      "category": "academic-blog",
+      "enabled": true
+    },
+    {
+      "id": "github-releases",
+      "name": "GitHub repository releases",
+      "kind": "github-releases",
+      "category": "developer-primary",
+      "enabled": false,
+      "reason": "Per-repository subscriptions and API quotas require a selected repository list"
+    },
+    {
+      "id": "mastodon",
+      "name": "Mastodon public author feeds",
+      "kind": "mastodon-api",
+      "category": "independent-social",
+      "enabled": false,
+      "reason": "Requires per-instance API policies and selected accounts"
+    },
+    {
+      "id": "bluesky-author",
+      "name": "Bluesky selected author feeds",
+      "kind": "bluesky-author",
+      "category": "independent-social",
+      "enabled": false,
+      "reason": "Public unauthenticated API available; needs curated handles and ingestion adapter"
+    },
+    {
+      "id": "newsletter",
+      "name": "Independent newsletters / Substack",
+      "kind": "feed-discovery",
+      "category": "independent-newsletter",
+      "enabled": false,
+      "reason": "Per-publication feed discovery and rights/access review"
+    },
+    {
+      "id": "video",
+      "name": "Video creators / YouTube channels",
+      "kind": "video-feed",
+      "category": "independent-video",
+      "enabled": false,
+      "reason": "Channel-specific feeds and metadata; transcript access separate"
+    },
+    {
+      "id": "forums",
+      "name": "Reddit, Hacker News and specialized forums",
+      "kind": "forum-api",
+      "category": "community",
+      "enabled": false,
+      "reason": "Platform-specific APIs, rate limits and source selection"
     }
   ]
 }
