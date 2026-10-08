@@ -17,8 +17,11 @@ Development branch: `develop/ubik-core`. This is intentionally **not** a product
 ## Release discipline
 Work on this branch; run `node tests/ubik-core.test.cjs`, syntax-check all JS, then manually inspect topic navigation, map, timeline, search and provenance. Merge only after regression checks. One production deployment per coherent release, not per commit.
 
+## Temporal extraction
+`assets/temporal.js` provides date validation, month boundaries, monthly counts and independent filter state. The attack topic now consumes it through `attackTime`; map, campaign and archive continue to share the same selected range. Run `node tests/temporal.test.cjs` before release. The live feed is deliberately outside the historical date filter.
+
 ## Next extraction
 - shared SourceCard, ClaimCard, RevisionList, ProvenanceView;
-- generic temporal state/filter with topic-specific adapters;
+- topic-specific adapters for temporal datasets beyond attacks;
 - reusable MapView receiving records and configuration, not reading global `attacks`;
 - topic discovery through search and semantic links; no fixed topic header.
