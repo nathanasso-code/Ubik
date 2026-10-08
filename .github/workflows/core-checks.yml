@@ -28,4 +28,4 @@ jobs:
           node tests/integration-static.test.cjs
           node tests/knowledge-pipeline.test.cjs
       - name: Run offline source discovery tests
-        run: python -m unittest discover -s tests -p 'test_discover_ai_sources.py'
+        run: python -m unittest discover -s tests -p 'test_*ai_discovery.py'
