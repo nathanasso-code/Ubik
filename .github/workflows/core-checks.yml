@@ -26,3 +26,4 @@ jobs:
           node tests/temporal.test.cjs
           node tests/map-view.test.cjs
           node tests/integration-static.test.cjs
+          node tests/knowledge-pipeline.test.cjs
