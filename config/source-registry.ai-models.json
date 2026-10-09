@@ -244,6 +244,48 @@
       "language": "en",
       "enabled": true,
       "attribution_note": "Verify article-level byline; publication name is not the author."
+    },
+    {
+      "id": "equitable-growth",
+      "name": "Washington Center for Equitable Growth",
+      "url": "https://equitablegrowth.org/feed",
+      "kind": "rss",
+      "category": "economics-labor",
+      "language": "en",
+      "enabled": true,
+      "discovered_via": "https://rssatlas.com/feeds/475",
+      "attribution_note": "Filter articles for AI relevance; retain original author byline."
+    },
+    {
+      "id": "la-frontiere-economics-ai",
+      "name": "La Frontière — economics and AI research monitor",
+      "url": "https://djidonou.com/frontiere/feed.xml",
+      "kind": "rss",
+      "category": "economics-ai-research",
+      "language": "fr",
+      "enabled": true,
+      "discovered_via": "https://djidonou.com/en/frontier/",
+      "attribution_note": "Secondary discovery source: always follow original research URL and attribute its original authors."
+    },
+    {
+      "id": "economics-of-ai",
+      "name": "The Economics of AI — OpenAI Economic Research",
+      "url": "https://economicsofai.substack.com/feed",
+      "kind": "rss",
+      "category": "economics-ai-research",
+      "language": "en",
+      "enabled": true,
+      "attribution_note": "Organizational perspective; preserve actual article byline."
+    },
+    {
+      "id": "frankly-counterfactual",
+      "name": "Kosali Simon — Frankly the Counterfactual",
+      "url": "https://franklythecounterfactual.substack.com/feed",
+      "kind": "rss",
+      "category": "economics-ai-research",
+      "language": "en",
+      "enabled": true,
+      "attribution_note": "Broad economics feed; filter AI-related articles."
     }
   ]
 }
