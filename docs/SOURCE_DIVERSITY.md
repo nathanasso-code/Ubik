@@ -28,3 +28,15 @@ Discovery now preserves `authors` separately from `publisher`, `original_url` se
 Any future AI-generated card should prominently retain named original authors, publisher and outbound source links, with an expandable source genealogy. Multiple sources with different bylines are not automatically independent evidence. Attribution metadata is publisher-supplied, not identity verification.
 
 Known limitations: no author identity reconciliation, multiple author-role normalization, licensing inference, HTML byline enrichment, or source genealogy yet. The discovery file is an internal artifact, not a public feed.
+
+## Independent author expansion — pilot batch
+
+Six new feed candidates added to `config/source-registry.ai-models.json`:
+- Ethan Mollick / One Useful Thing — AI and work
+- Nathan Lambert / Interconnects — open models and post-training
+- Sebastian Raschka / personal blog — model architecture and engineering
+- Jack Clark / Import AI — research and policy
+- Latent Space — AI engineering (multi-author; do not infer one author)
+- Normal Tech — critical AI analysis (multi-author; do not infer one author)
+
+These URLs are independently documented but **not yet validated by Ubik's runner**. Fetch results and individual bylines must be measured on the next pilot run. The candidate generator `scripts/discover_ai_authors.py` collects names from actual retrieved items and labels identity unverified; exact-name grouping does not imply identity matching. Source breadth, editorial independence and source reliability are separate dimensions.
