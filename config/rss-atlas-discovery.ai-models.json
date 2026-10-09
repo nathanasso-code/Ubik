@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "purpose": "RSS Atlas discovery queries, not endorsements or automatically subscribed feeds",
+  "directory": "https://rssatlas.com/",
+  "documentation": "https://rssatlas.com/mcp/tools",
+  "categories": ["economics", "ai-ml", "programming", "science", "finance-investing", "personal-blogs-essays"],
+  "languages": ["en", "it", "fr", "de", "es", "pt", "ja", "zh"],
+  "queries": ["artificial intelligence labor", "AI productivity", "AI economics", "automation employment", "machine learning research", "AI regulation", "AI energy", "philosophy of mind", "cognitive neuroscience"],
+  "review_rules": [
+    "Directory ranking is not evidence of authority or topic relevance.",
+    "Keep each feed as a candidate until the endpoint is successfully retrieved.",
+    "Filter articles by actual relevance to AI, not only site category.",
+    "Preserve original title, author, publication URL, and discovery provenance.",
+    "Separate primary reporting from rediscovery aggregators and institutional positions.",
+    "Prefer original authors and papers over summaries copied from other feeds."
+  ],
+  "example_verified_listing": {"name": "Equitable Growth", "listing_url": "https://rssatlas.com/feeds/475", "feed_url": "https://equitablegrowth.org/feed"}
+}
