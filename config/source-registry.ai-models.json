@@ -184,6 +184,66 @@
       "category": "independent-analysis",
       "enabled": true,
       "attribution_note": "Author identity and byline must be confirmed from each entry; publisher is not automatically author."
+    },
+    {
+      "id": "julia-evans",
+      "name": "Julia Evans",
+      "url": "https://jvns.ca/atom.xml",
+      "kind": "rss",
+      "category": "software-systems",
+      "language": "en",
+      "enabled": true,
+      "attribution_note": "Verify article-level byline; publication name is not the author."
+    },
+    {
+      "id": "dan-luu",
+      "name": "Dan Luu",
+      "url": "https://danluu.com/atom.xml",
+      "kind": "rss",
+      "category": "software-systems",
+      "language": "en",
+      "enabled": true,
+      "attribution_note": "Verify article-level byline; publication name is not the author."
+    },
+    {
+      "id": "the-feedback",
+      "name": "The Feedback — Philosophy and Neuroscience",
+      "url": "https://thefeedback.blog/feed/",
+      "kind": "rss",
+      "category": "philosophy-neuroscience",
+      "language": "en",
+      "enabled": true,
+      "attribution_note": "Verify article-level byline; publication name is not the author."
+    },
+    {
+      "id": "brains-blog",
+      "name": "The Brains Blog",
+      "url": "https://philosophyofbrains.com/category/philosophy-of-mind/feed",
+      "kind": "rss",
+      "category": "philosophy-of-mind",
+      "language": "en",
+      "enabled": true,
+      "attribution_note": "Verify article-level byline; publication name is not the author."
+    },
+    {
+      "id": "cognitive-neuroscience-society",
+      "name": "Cognitive Neuroscience Society",
+      "url": "https://www.cogneurosociety.org/feed/",
+      "kind": "rss",
+      "category": "cognitive-neuroscience",
+      "language": "en",
+      "enabled": true,
+      "attribution_note": "Verify article-level byline; publication name is not the author."
+    },
+    {
+      "id": "mind-hacks",
+      "name": "Mind Hacks",
+      "url": "https://mindhacks.com/feed/",
+      "kind": "rss",
+      "category": "neuroscience",
+      "language": "en",
+      "enabled": true,
+      "attribution_note": "Verify article-level byline; publication name is not the author."
     }
   ]
 }
