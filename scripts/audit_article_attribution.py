@@ -87,7 +87,7 @@ def fetch(url):
     if not safe_url(url):
         raise ValueError("Unsafe or unresolvable URL")
     request = urllib.request.Request(url, headers={"User-Agent": "UbikAttributionAudit/0.1", "Accept": "text/html"})
-    opener = urllib.request.build_opener(NoRedirect)
+    opener = urllib.request.build_opener(NoRedirect, urllib.request.ProxyHandler({}))
     with opener.open(request, timeout=10) as response:
         if "html" not in response.headers.get("Content-Type", "").lower():
             raise ValueError("Not HTML")
