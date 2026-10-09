@@ -8,7 +8,6 @@ import html.parser
 import json
 import ipaddress
 import socket
-import urllib.error
 import urllib.parse
 import urllib.request
 
@@ -43,12 +42,16 @@ class NoRedirect(urllib.request.HTTPRedirectHandler):
 def discover(url):
     validate_public_https(url)
     req = urllib.request.Request(url, headers={"User-Agent": "Ubik-feed-discovery/0.1"})
-    opener = urllib.request.build_opener(NoRedirect)
+    # No redirects; DNS validation is preliminary and does not pin the connection IP.
+    opener = urllib.request.build_opener(NoRedirect, urllib.request.ProxyHandler({}))
     with opener.open(req, timeout=12) as response:
         final_url = response.geturl()
         if urllib.parse.urlsplit(final_url).scheme != "https":
             raise ValueError("Insecure redirect")
-        body = response.read(512000).decode("utf-8", errors="replace")
+        body = response.read(512001)
+        if len(body) > 512000:
+            raise ValueError("Candidate page exceeds size limit")
+        body = body.decode("utf-8", errors="replace")
     parser = FeedLinks()
     parser.feed(body)
     feeds = []
