@@ -130,6 +130,60 @@
       "category": "community",
       "enabled": false,
       "reason": "Platform-specific APIs, rate limits and source selection"
+    },
+    {
+      "id": "ethan-mollick",
+      "name": "Ethan Mollick — One Useful Thing",
+      "url": "https://www.oneusefulthing.org/feed",
+      "kind": "rss",
+      "category": "independent-expert",
+      "enabled": true,
+      "attribution_note": "Author identity and byline must be confirmed from each entry; publisher is not automatically author."
+    },
+    {
+      "id": "nathan-lambert",
+      "name": "Nathan Lambert — Interconnects",
+      "url": "https://www.interconnects.ai/feed",
+      "kind": "rss",
+      "category": "independent-expert",
+      "enabled": true,
+      "attribution_note": "Author identity and byline must be confirmed from each entry; publisher is not automatically author."
+    },
+    {
+      "id": "sebastian-raschka",
+      "name": "Sebastian Raschka — Blog",
+      "url": "https://sebastianraschka.com/rss_feed.xml",
+      "kind": "rss",
+      "category": "independent-expert",
+      "enabled": true,
+      "attribution_note": "Author identity and byline must be confirmed from each entry; publisher is not automatically author."
+    },
+    {
+      "id": "jack-clark",
+      "name": "Jack Clark — Import AI",
+      "url": "https://importai.substack.com/feed",
+      "kind": "rss",
+      "category": "independent-newsletter",
+      "enabled": true,
+      "attribution_note": "Author identity and byline must be confirmed from each entry; publisher is not automatically author."
+    },
+    {
+      "id": "latent-space",
+      "name": "Latent Space — AI engineering",
+      "url": "https://www.latent.space/feed",
+      "kind": "rss",
+      "category": "independent-newsletter",
+      "enabled": true,
+      "attribution_note": "Author identity and byline must be confirmed from each entry; publisher is not automatically author."
+    },
+    {
+      "id": "normal-tech",
+      "name": "Normal Tech — AI criticism",
+      "url": "https://www.normaltech.ai/feed",
+      "kind": "rss",
+      "category": "independent-analysis",
+      "enabled": true,
+      "attribution_note": "Author identity and byline must be confirmed from each entry; publisher is not automatically author."
     }
   ]
 }
