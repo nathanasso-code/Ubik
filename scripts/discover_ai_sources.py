@@ -3,6 +3,7 @@
 import argparse
 import datetime as dt
 import hashlib
+import html
 import json
 import re
 import urllib.error
@@ -16,6 +17,7 @@ REGISTRY = ROOT / "config/source-registry.ai-models.json"
 OUTPUT = ROOT / "data/discovery/ai-models.json"
 ATOM = "{http://www.w3.org/2005/Atom}"
 DC = "{http://purl.org/dc/elements/1.1/}"
+CONTENT = "{http://purl.org/rss/1.0/modules/content/}"
 
 def clean(value):
     return re.sub(r"\s+", " ", value or "").strip()
@@ -31,6 +33,19 @@ def canonical(url):
 def text(node, tag):
     el = node.find(tag)
     return clean("".join(el.itertext())) if el is not None else ""
+
+def summary_text(value):
+    """Plain text preview of feed-provided markup; never fetch article body here."""
+    value = re.sub(r"<[^>]+>", " ", html.unescape(value or ""))
+    return clean(html.unescape(value))[:1800]
+
+def attribution_type(authors, basis):
+    if not authors:
+        return "not_specified_in_feed"
+    institutional = ("team", "staff", "redazione", "editorial", "newsroom", "research", "laboratory", "lab", "press", "communications")
+    if all(any(token in name.casefold() for token in institutional) for name in authors):
+        return "collective_or_institutional_candidate"
+    return "named_in_feed"
 
 def author_info(node, atom=False, fallback=None):
     """Keep authorship separate from publisher; never infer a person from a brand."""
@@ -55,20 +70,20 @@ def parse_feed(data, source):
     if root.tag == ATOM + "feed":
         for entry in root.findall(ATOM + "entry"):
             link = next((x.get("href") for x in entry.findall(ATOM + "link") if x.get("rel", "alternate") == "alternate" and x.get("href")), None)
-            items.append((text(entry, ATOM+"title"), link, text(entry, ATOM+"id"), text(entry, ATOM+"published") or text(entry, ATOM+"updated"), *author_info(entry, True, root)))
+            items.append((text(entry, ATOM+"title"), link, text(entry, ATOM+"id"), text(entry, ATOM+"published") or text(entry, ATOM+"updated"), *author_info(entry, True, root), summary_text(text(entry, ATOM+"summary") or text(entry, ATOM+"content"))))
     else:
         channel = root.find("channel")
         if channel is None:
             raise ValueError("Unsupported feed format")
         for item in channel.findall("item"):
-            items.append((text(item, "title"), text(item, "link"), text(item, "guid"), text(item, "pubDate"), *author_info(item)))
+            items.append((text(item, "title"), text(item, "link"), text(item, "guid"), text(item, "pubDate"), *author_info(item), summary_text(text(item, "description") or text(item, CONTENT+"encoded"))))
     results = []
-    for title, link, guid, published, authors, attribution_basis in items:
+    for title, link, guid, published, authors, attribution_basis, summary in items:
         url = canonical(link)
         if not title or not url:
             continue
         key = hashlib.sha256((source["id"] + "|" + (guid or url)).encode()).hexdigest()[:24]
-        results.append({"id": key, "source_id": source["id"], "publisher": source["name"], "authors": authors, "attribution_basis": attribution_basis, "original_url": link, "discovered_from": source.get("url"), "title": title[:500], "url": url, "external_id": guid or None, "published_raw": published or None, "topic_ids": ["ai-models"], "status": "discovered"})
+        results.append({"id": key, "source_id": source["id"], "publisher": source["name"], "authors": authors, "attribution_basis": attribution_basis, "attribution_type": attribution_type(authors, attribution_basis), "attribution_status": "feed_only_unverified", "description": summary, "description_basis": "feed", "original_url": link, "discovered_from": source.get("url"), "title": title[:500], "url": url, "external_id": guid or None, "published_raw": published or None, "topic_ids": ["ai-models"], "status": "discovered"})
     return results
 
 def run(registry, output, fetch):
@@ -90,7 +105,10 @@ def run(registry, output, fetch):
                     items[item["url"]] = item
                     new += 1
                 elif not items[item["url"]].get("authors") and item["authors"]:
-                    items[item["url"]].update({"authors": item["authors"], "attribution_basis": item["attribution_basis"]})
+                    items[item["url"]].update({"authors": item["authors"], "attribution_basis": item["attribution_basis"], "attribution_type": item["attribution_type"], "attribution_status": item["attribution_status"]})
+            for item in discovered:
+                if item.get("description") and not items[item["url"]].get("description"):
+                    items[item["url"]].update({"description": item["description"], "description_basis": "feed"})
             reports.append({"source_id": source["id"], "status": "ok", "seen": len(discovered), "new": new})
         except (ValueError, ET.ParseError, urllib.error.URLError, TimeoutError, OSError) as exc:
             reports.append({"source_id": source["id"], "status": "error", "error": str(exc)[:240]})
