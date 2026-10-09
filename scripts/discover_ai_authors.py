@@ -11,7 +11,8 @@ from pathlib import Path
 def build_candidates(discovery):
     groups = collections.defaultdict(lambda: {"publications": [], "source_ids": set(), "source_links": set()})
     for item in discovery.get("items", []):
-        if not item.get("url"):
+        if not item.get("url") or item.get("attribution_basis") != "entry":
+            # Feed-level names describe the source, not necessarily the article byline.
             continue
         for author in item.get("authors") or []:
             name = " ".join(str(author).split())
@@ -41,7 +42,8 @@ def build_candidates(discovery):
     return {
         "schema_version": 1,
         "topic_id": discovery.get("topic_id"),
-        "generated_from": "discovery-metadata",
+        "generated_from": "entry-level-discovery-metadata",
+        "excluded_attribution_basis": ["feed", "missing"],
         "candidate_count": len(result),
         "candidates": sorted(result, key=lambda x: (-x["publication_count"], x["display_name"].casefold()))
     }
