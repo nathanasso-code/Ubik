@@ -6,9 +6,11 @@ on:
     paths:
       - 'scripts/discover_ai_sources.py'
       - 'scripts/report_ai_discovery.py'
+      - 'scripts/discover_ai_authors.py'
       - 'config/source-registry.ai-models.json'
       - 'tests/test_discover_ai_sources.py'
       - 'tests/test_report_ai_discovery.py'
+      - 'tests/test_discover_ai_authors.py'
       - '.github/workflows/ai-discovery-pilot.yml'
   workflow_dispatch:
 permissions:
@@ -34,6 +36,10 @@ jobs:
               print('ERROR: No feeds successfully retrieved; discovery cannot be considered validated.')
               sys.exit(1)
           PY
+      - name: Generate author candidate queue
+        if: always()
+        run: |
+          if test -f data/discovery/ai-models.json; then python scripts/discover_ai_authors.py data/discovery/ai-models.json data/discovery/ai-author-candidates.json; fi
       - name: Build auditable coverage report
         if: always()
         run: |
