@@ -16,6 +16,7 @@ class Metadata(HTMLParser):
         self.meta = []
         self.scripts = []
         self.in_json = False
+        self.json_buffer = []
     def handle_starttag(self, tag, attrs):
         a = dict(attrs)
         if tag == "meta":
@@ -24,11 +25,14 @@ class Metadata(HTMLParser):
                 self.meta.append((key, a.get("content", "").strip()))
         if tag == "script" and "ld+json" in a.get("type", "").lower():
             self.in_json = True
+            self.json_buffer = []
     def handle_data(self, data):
         if self.in_json:
-            self.scripts.append(data)
+            self.json_buffer.append(data)
     def handle_endtag(self, tag):
-        if tag == "script":
+        if tag == "script" and self.in_json:
+            self.scripts.append("".join(self.json_buffer))
+            self.json_buffer = []
             self.in_json = False
 
 def extract(page):
