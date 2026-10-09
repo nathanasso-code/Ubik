@@ -10,6 +10,7 @@ on:
       - 'scripts/discover_social_authors.py'
       - 'scripts/discover_candidate_feeds.py'
       - 'scripts/review_ai_relevance.py'
+      - 'scripts/summarize_discovery.py'
       - 'config/italian-cross-disciplinary-candidates.json'
       - 'config/source-registry.ai-models.json'
       - 'tests/test_discover_ai_sources.py'
@@ -74,6 +75,7 @@ jobs:
       - name: Summarize coverage
         if: always()
         run: |
+          python scripts/summarize_discovery.py data/discovery >> "$GITHUB_STEP_SUMMARY"
           if test -f data/discovery/report.md; then cat data/discovery/report.md >> "$GITHUB_STEP_SUMMARY"; fi
       - name: Upload discovery artifact for review
         if: always()
