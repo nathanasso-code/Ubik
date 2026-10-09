@@ -1,0 +1,134 @@
+{
+  "schema_version": 1,
+  "purpose": "Italian cross-disciplinary author/source candidates; discovery only, no automatic ingestion until feed validated",
+  "candidates": [
+    {
+      "id": "emanuela-logozzo",
+      "name": "Emanuela Logozzo",
+      "url": "https://emanuelalogozzo.it/blog/",
+      "category": "ethics-ai",
+      "type": "individual",
+      "language": "it",
+      "feed_status": "discover",
+      "evidence": "https://emanuelalogozzo.it/blog/"
+    },
+    {
+      "id": "gregorio-galli",
+      "name": "Gregorio Galli",
+      "url": "https://gregoriogalli.substack.com/",
+      "category": "philosophy-neuroscience-ai",
+      "type": "individual",
+      "language": "it",
+      "feed_status": "candidate",
+      "suggested_feed": "https://gregoriogalli.substack.com/feed",
+      "evidence": "https://gregoriogalli.substack.com/about"
+    },
+    {
+      "id": "dario-savarese",
+      "name": "Dario Savarese",
+      "url": "https://dariosavarese.it/ai-insights",
+      "category": "business-ai",
+      "type": "individual",
+      "language": "it",
+      "feed_status": "declared",
+      "suggested_feed": "https://dariosavarese.it/feed.xml",
+      "evidence": "https://dariosavarese.it/ai-insights"
+    },
+    {
+      "id": "andrea-zurini",
+      "name": "Andrea Zurini",
+      "url": "https://andreazurini.it/iscrizione-newsletter/",
+      "category": "economics-governance-ai",
+      "type": "individual",
+      "language": "it",
+      "feed_status": "discover",
+      "evidence": "https://andreazurini.it/iscrizione-newsletter/"
+    },
+    {
+      "id": "guerre-di-rete",
+      "name": "Guerre di Rete",
+      "url": "https://www.guerredirete.it/",
+      "category": "digital-rights-economics-ai",
+      "type": "publication",
+      "language": "it",
+      "feed_status": "discover",
+      "evidence": "https://www.guerredirete.it/"
+    },
+    {
+      "id": "ekonomia",
+      "name": "Ekonomia",
+      "url": "https://www.ekonomia.it/",
+      "category": "macroeconomics-ai",
+      "type": "publication",
+      "language": "it",
+      "feed_status": "discover",
+      "evidence": "https://www.ekonomia.it/"
+    },
+    {
+      "id": "epistemica",
+      "name": "Epistemica",
+      "url": "https://epistemica.it/",
+      "category": "philosophy-ai",
+      "type": "publication",
+      "language": "it",
+      "feed_status": "discover",
+      "evidence": "https://epistemica.it/"
+    },
+    {
+      "id": "pandora",
+      "name": "Pandora Rivista",
+      "url": "https://www.pandorarivista.it/",
+      "category": "political-philosophy-ai",
+      "type": "publication",
+      "language": "it",
+      "feed_status": "discover",
+      "evidence": "https://www.pandorarivista.it/"
+    },
+    {
+      "id": "antigraviti",
+      "name": "Antigraviti",
+      "url": "https://antigraviti.it/",
+      "category": "small-business-ai",
+      "type": "publication",
+      "language": "it",
+      "feed_status": "discover",
+      "evidence": "https://antigraviti.it/"
+    },
+    {
+      "id": "economyup",
+      "name": "EconomyUp",
+      "url": "https://www.economyup.it/",
+      "category": "innovation-economics-ai",
+      "type": "publication",
+      "language": "it",
+      "feed_status": "discover",
+      "evidence": "https://rssamplifier.com/economyup-it"
+    },
+    {
+      "id": "alessandro-del-rosso-vignoli",
+      "name": "AlexTech.ai",
+      "url": "https://www.alextech.ai/blog/",
+      "category": "software-hardware-ai",
+      "type": "publication",
+      "language": "it",
+      "feed_status": "discover",
+      "evidence": "https://www.alextech.ai/blog/"
+    },
+    {
+      "id": "giovanni-pepi",
+      "name": "Giovanni Pepi",
+      "url": "https://giovannipepi.it/",
+      "category": "economics-social-ai",
+      "type": "individual",
+      "language": "it",
+      "feed_status": "discover",
+      "evidence": "https://rssamplifier.com/giovannipepi-it"
+    }
+  ],
+  "rules": [
+    "Only promote candidates to enabled RSS sources after feed endpoint successfully responds and items have original URLs.",
+    "Record per-article bylines, not only publisher names.",
+    "Do not infer a social identity from matching names.",
+    "Retain source's original language and mark translated summaries."
+  ]
+}
