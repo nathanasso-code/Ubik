@@ -8,6 +8,8 @@ on:
       - 'scripts/report_ai_discovery.py'
       - 'scripts/discover_ai_authors.py'
       - 'scripts/discover_social_authors.py'
+      - 'scripts/discover_candidate_feeds.py'
+      - 'config/italian-cross-disciplinary-candidates.json'
       - 'config/source-registry.ai-models.json'
       - 'tests/test_discover_ai_sources.py'
       - 'tests/test_report_ai_discovery.py'
@@ -52,6 +54,12 @@ jobs:
             --instance "https://mastodon.social" \
             --instance "https://fosstodon.org" \
             --output data/discovery/social-author-candidates.json
+      - name: Discover feeds from Italian cross-disciplinary candidates
+        continue-on-error: true
+        run: |
+          python scripts/discover_candidate_feeds.py \
+            config/italian-cross-disciplinary-candidates.json \
+            data/discovery/italian-feed-candidates.json
       - name: Build auditable coverage report
         if: always()
         run: |
