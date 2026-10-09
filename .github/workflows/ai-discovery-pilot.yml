@@ -20,6 +20,8 @@ on:
       - 'tests/test_discover_social_authors.py'
       - 'tests/test_discover_candidate_feeds.py'
       - 'tests/test_review_ai_relevance.py'
+      - 'tests/test_audit_article_attribution.py'
+      - 'tests/test_discovery_metadata_enrichment.py'
       - '.github/workflows/ai-discovery-pilot.yml'
   workflow_dispatch:
 permissions:
