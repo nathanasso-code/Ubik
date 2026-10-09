@@ -9,12 +9,15 @@ on:
       - 'scripts/discover_ai_authors.py'
       - 'scripts/discover_social_authors.py'
       - 'scripts/discover_candidate_feeds.py'
+      - 'scripts/review_ai_relevance.py'
       - 'config/italian-cross-disciplinary-candidates.json'
       - 'config/source-registry.ai-models.json'
       - 'tests/test_discover_ai_sources.py'
       - 'tests/test_report_ai_discovery.py'
       - 'tests/test_discover_ai_authors.py'
       - 'tests/test_discover_social_authors.py'
+      - 'tests/test_discover_candidate_feeds.py'
+      - 'tests/test_review_ai_relevance.py'
       - '.github/workflows/ai-discovery-pilot.yml'
   workflow_dispatch:
 permissions:
@@ -40,6 +43,10 @@ jobs:
               print('ERROR: No feeds successfully retrieved; discovery cannot be considered validated.')
               sys.exit(1)
           PY
+      - name: Generate cross-disciplinary relevance review
+        if: always()
+        run: |
+          if test -f data/discovery/ai-models.json; then python scripts/review_ai_relevance.py data/discovery/ai-models.json data/discovery/ai-relevance-review.json; fi
       - name: Generate author candidate queue
         if: always()
         run: |
