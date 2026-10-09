@@ -19,13 +19,15 @@ def normalize(text):
 
 def assess(item):
     title = normalize(item.get("title"))
+    description = normalize(item.get("description"))[:1800]
     direct = any(re.search(p, title) for p in TERMS["direct"])
+    description_direct = any(re.search(p, description) for p in TERMS["direct"])
     contextual = any(re.search(p, title) for p in TERMS["context"])
     # Only title is available; never treat a contextual word as proof of AI relevance.
-    status = "likely_ai" if direct else ("review_context" if contextual else "unknown")
+    status = "likely_ai" if direct else ("review_context" if (description_direct or contextual) else "unknown")
     return {"id": item.get("id"), "source_id": item.get("source_id"), "url": item.get("url"),
             "title": item.get("title"), "language": item.get("language"),
-            "relevance_status": status, "basis": "title_keywords_only",
+            "relevance_status": status, "basis": "title_keywords" if direct else ("description_keywords" if description_direct else "title_context_keywords" if contextual else "insufficient_feed_metadata"),
             "original_authors": item.get("authors", []), "attribution_basis": item.get("attribution_basis")}
 
 def review(discovery):
