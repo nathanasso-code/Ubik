@@ -100,7 +100,7 @@ def sample(items, limit):
     # Round-robin by source; no single large publisher dominates the audit.
     groups = {}
     for item in items:
-        if not item.get("authors") and item.get("url", "").startswith("https://"):
+        if (not item.get("authors") or item.get("attribution_basis") == "feed") and item.get("url", "").startswith("https://"):
             groups.setdefault(item.get("source_id", "unknown"), []).append(item)
     for group in groups.values():
         group.sort(key=lambda x: (x.get("published_raw") or "", x.get("url", "")), reverse=True)
@@ -120,7 +120,7 @@ def audit(discovery, limit=24, fetcher=fetch):
             rows.append({"source_id": item["source_id"], "url": item["url"], "title": item["title"], "status": status, "candidates": found})
         except Exception as exc:
             rows.append({"source_id": item["source_id"], "url": item["url"], "title": item["title"], "status": "fetch_error", "error": str(exc)[:160]})
-    return {"schema_version": 1, "sample_size": len(rows), "scope": "missing_feed_author_only", "publication_allowed": False, "results": rows}
+    return {"schema_version": 1, "sample_size": len(rows), "scope": "missing_or_inherited_feed_author", "publication_allowed": False, "results": rows}
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
