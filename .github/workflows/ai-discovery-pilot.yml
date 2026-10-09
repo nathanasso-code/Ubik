@@ -11,6 +11,7 @@ on:
       - 'scripts/discover_candidate_feeds.py'
       - 'scripts/review_ai_relevance.py'
       - 'scripts/summarize_discovery.py'
+      - 'scripts/audit_article_attribution.py'
       - 'config/italian-cross-disciplinary-candidates.json'
       - 'config/source-registry.ai-models.json'
       - 'tests/test_discover_ai_sources.py'
@@ -48,6 +49,11 @@ jobs:
         if: always()
         run: |
           if test -f data/discovery/ai-models.json; then python scripts/review_ai_relevance.py data/discovery/ai-models.json data/discovery/ai-relevance-review.json; fi
+      - name: Audit a bounded sample of missing article bylines
+        if: always()
+        continue-on-error: true
+        run: |
+          if test -f data/discovery/ai-models.json; then python scripts/audit_article_attribution.py data/discovery/ai-models.json data/discovery/article-attribution-audit.json --limit 24; fi
       - name: Generate author candidate queue
         if: always()
         run: |
