@@ -40,3 +40,12 @@ Six new feed candidates added to `config/source-registry.ai-models.json`:
 - Normal Tech — critical AI analysis (multi-author; do not infer one author)
 
 These URLs are independently documented but **not yet validated by Ubik's runner**. Fetch results and individual bylines must be measured on the next pilot run. The candidate generator `scripts/discover_ai_authors.py` collects names from actual retrieved items and labels identity unverified; exact-name grouping does not imply identity matching. Source breadth, editorial independence and source reliability are separate dimensions.
+
+
+## Candidate discovery fetch hardening (October 2026)
+
+The curated Italian candidate autodiscovery now requires HTTPS without URL credentials, checks that all resolved addresses are public, refuses automatic redirects, disables environment-configured proxies, and rejects HTML bodies over 512 KB. Discovered feed URLs remain **unverified suggestions** and are not fetched or promoted by this step. The bounded article-attribution audit also bypasses ambient proxies.
+
+**Residual security limitation:** DNS resolution is checked before the HTTP connection, but the connection is not pinned to the validated address. DNS rebinding or a change in resolution between validation and connection is therefore not ruled out. This is not a complete SSRF defense; do not expose either fetcher to arbitrary untrusted user URLs. A future implementation should connect to a validated IP while preserving TLS hostname verification and SNI, and revalidate every explicitly permitted redirect. The current no-redirect policy may reduce discovery coverage; treat redirect failures as review candidates, not as evidence that a publisher has no feed.
+
+Test coverage added for private/loopback DNS, redirect refusal, URL credentials, response-size bounds, and feed-link filtering. These tests are committed but their execution must be confirmed separately from GitHub Actions logs. A green workflow alone does not certify every external source, particularly steps configured with continue-on-error.
