@@ -12,6 +12,7 @@ on:
       - 'scripts/review_ai_relevance.py'
       - 'scripts/summarize_discovery.py'
       - 'scripts/audit_article_attribution.py'
+      - 'scripts/diagnose_source_coverage.py'
       - 'config/italian-cross-disciplinary-candidates.json'
       - 'config/source-registry.ai-models.json'
       - 'tests/test_discover_ai_sources.py'
@@ -56,6 +57,10 @@ jobs:
         continue-on-error: true
         run: |
           if test -f data/discovery/ai-models.json; then python scripts/audit_article_attribution.py data/discovery/ai-models.json data/discovery/article-attribution-audit.json --limit 24; fi
+      - name: Diagnose per-source coverage
+        if: always()
+        run: |
+          if test -f data/discovery/ai-models.json; then python scripts/diagnose_source_coverage.py data/discovery/ai-models.json data/discovery/ai-relevance-review.json data/discovery/source-coverage-diagnostics.json; fi
       - name: Generate author candidate queue
         if: always()
         run: |
