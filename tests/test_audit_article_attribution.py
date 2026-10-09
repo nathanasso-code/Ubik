@@ -25,6 +25,10 @@ class AuditTests(unittest.TestCase):
         chosen = audit.sample(items, 4)
         self.assertEqual([x["source_id"] for x in chosen], ["a","b","a","b"])
 
+    def test_inherited_feed_author_is_audited(self):
+        items = [{"source_id":"a","url":"https://example.org/1","title":"A","authors":["Publisher"],"attribution_basis":"feed"}]
+        self.assertEqual(len(audit.sample(items, 1)), 1)
+
     def test_page_without_author_not_mislabeled(self):
         discovery = {"items":[{"source_id":"a","url":"https://example.org/article","title":"A","authors":[]}]}
         result = audit.audit(discovery, fetcher=lambda _: "<html><title>A</title></html>")
