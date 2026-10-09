@@ -39,6 +39,19 @@ def summarize(folder):
                 rows = data.get("results", [])
                 statuses = ("page_author_candidate", "not_found_in_page_metadata", "fetch_error")
                 detail = f"{len(rows)} pages sampled; " + ", ".join(f"{s}: {sum(r.get('status') == s for r in rows)}" for s in statuses)
+                by_source = {}
+                for row in rows:
+                    source = row.get("source_id", "unknown")
+                    by_source.setdefault(source, {s: 0 for s in statuses})
+                    if row.get("status") in statuses:
+                        by_source[source][row["status"]] += 1
+                lines.append("")
+                lines.append("| Source | Sample | Page byline candidate | Not in metadata | Fetch error |")
+                lines.append("|---|---:|---:|---:|---:|")
+                for source, counts in sorted(by_source.items()):
+                    safe_source = str(source).replace("|", "/").replace("\\n", " ")
+                    lines.append(f"| {safe_source} | {sum(counts.values())} | {counts['page_author_candidate']} | {counts['not_found_in_page_metadata']} | {counts['fetch_error']} |")
+                lines.append("")
             else:
                 detail = ", ".join(f"{k}: {v}" for k, v in data.get("counts", {}).items())
             lines.append(f"- **{label}:** {detail}")
