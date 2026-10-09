@@ -13,11 +13,15 @@ class RelevanceTests(unittest.TestCase):
         self.assertEqual(relevance.assess({"title":"La produttività del lavoro"})["relevance_status"], "review_context")
     def test_unrelated_is_unknown_not_rejected(self):
         self.assertEqual(relevance.assess({"title":"La storia di Roma"})["relevance_status"], "unknown")
+    def test_description_prompts_review_not_auto_approval(self):
+        result = relevance.assess({"title":"Mercati e lavoro", "description":"Gli effetti della intelligenza artificiale sull’occupazione"})
+        self.assertEqual(result["relevance_status"], "review_context")
+        self.assertEqual(result["basis"], "description_keywords")
     def test_authorship_is_preserved(self):
         item = {"title":"Machine learning research", "authors":["A. Researcher"], "attribution_basis":"entry"}
         result = relevance.assess(item)
         self.assertEqual(result["original_authors"], ["A. Researcher"])
-        self.assertEqual(result["basis"], "title_keywords_only")
+        self.assertEqual(result["basis"], "title_keywords")
 
 if __name__ == "__main__":
     unittest.main()
