@@ -23,6 +23,7 @@ on:
       - 'tests/test_review_ai_relevance.py'
       - 'tests/test_audit_article_attribution.py'
       - 'tests/test_discovery_metadata_enrichment.py'
+      - 'tests/test_diagnose_source_coverage.py'
       - '.github/workflows/ai-discovery-pilot.yml'
   workflow_dispatch:
 permissions:
