@@ -12,7 +12,8 @@ def summarize(folder):
         ("ai-author-candidates.json", "Author names"),
         ("italian-feed-candidates.json", "Italian site feed autodiscovery"),
         ("social-author-candidates.json", "Bluesky and Mastodon profile search"),
-        ("ai-relevance-review.json", "Title-only relevance review")
+        ("ai-relevance-review.json", "Feed title and description relevance review"),
+        ("article-attribution-audit.json", "Article page authorship sample")
     ]
     for filename, label in files:
         path = folder / filename
@@ -34,6 +35,10 @@ def summarize(folder):
                 rows = data.get("candidates", [])
                 counts = {s: sum(x.get("platform") == s for x in rows) for s in ("bluesky", "mastodon")}
                 detail = f"{counts['bluesky']} Bluesky + {counts['mastodon']} Mastodon candidate profiles; {len(data.get('errors', []))} search errors"
+            elif filename == "article-attribution-audit.json":
+                rows = data.get("results", [])
+                statuses = ("page_author_candidate", "not_found_in_page_metadata", "fetch_error")
+                detail = f"{len(rows)} pages sampled; " + ", ".join(f"{s}: {sum(r.get('status') == s for r in rows)}" for s in statuses)
             else:
                 detail = ", ".join(f"{k}: {v}" for k, v in data.get("counts", {}).items())
             lines.append(f"- **{label}:** {detail}")
