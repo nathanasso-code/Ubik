@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "purpose": "review_candidate_discovery_not_verified_labels",
+  "anchors": [
+    {
+      "id": "gpt4o_2024_launch",
+      "query": "GPT-4o OpenAI announcement"
+    },
+    {
+      "id": "llama3_2024_launch",
+      "query": "Meta Llama 3 release"
+    },
+    {
+      "id": "gemini15_2024_launch",
+      "query": "Google Gemini 1.5 Pro release"
+    },
+    {
+      "id": "deepseek_r1_2025_release",
+      "query": "DeepSeek R1 release"
+    },
+    {
+      "id": "claude37_2025_launch",
+      "query": "Anthropic Claude 3.7 Sonnet launch"
+    },
+    {
+      "id": "gpt5_2025_launch",
+      "query": "OpenAI GPT-5 launch"
+    }
+  ]
+}
