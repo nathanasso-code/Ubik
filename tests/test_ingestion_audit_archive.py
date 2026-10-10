@@ -6,6 +6,14 @@ from ingestion.audit_archive import audit_directory
 
 
 class AuditArchiveTests(unittest.TestCase):
+    def test_rejects_corrupt_archive(self):
+        with tempfile.TemporaryDirectory() as directory:
+            info = archive_snapshot({"connector": "bluesky", "observations": []}, directory)
+            Path(info["path"]).write_text('{"connector":"bluesky","observations":[{"id":"tampered"}]}')
+            report = audit_directory(directory)
+            self.assertEqual(report["total_observations"], 0)
+            self.assertEqual(report["invalid_snapshot_files"][0]["error"], "ValueError")
+
     def test_end_to_end_offline_archives(self):
         with tempfile.TemporaryDirectory() as directory:
             archive_snapshot({"connector": "bluesky", "observations": [
