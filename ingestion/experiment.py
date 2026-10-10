@@ -7,9 +7,10 @@ from pathlib import Path
 from .audit_archive import audit_directory
 from .experiment_plan import validate_plan
 from .run_batch import run_pages
+from .sqlite_ledger import connect as connect_ledger
 
 
-def run_experiment(plan, *, archive_dir, checkpoint_dir, live=False, runner=run_pages):
+def run_experiment(plan, *, archive_dir, checkpoint_dir, live=False, runner=run_pages, ledger=None):
     sources = validate_plan(plan)
     estimated_requests = sum(s["max_pages"] for s in sources)
     if not live:
@@ -19,10 +20,13 @@ def run_experiment(plan, *, archive_dir, checkpoint_dir, live=False, runner=run_
     results = []
     for item in sources:
         try:
-            result = runner(item["provider"], source=item["source"],
-                            archive_dir=archive_dir, checkpoint_dir=checkpoint_dir,
-                            max_pages=item["max_pages"], page_size=item["page_size"],
-                            from_date=item["from_date"], to_date=item["to_date"])
+            options = dict(source=item["source"], archive_dir=archive_dir,
+                           checkpoint_dir=checkpoint_dir, max_pages=item["max_pages"],
+                           page_size=item["page_size"], from_date=item["from_date"],
+                           to_date=item["to_date"])
+            if ledger is not None:
+                options["ledger"] = ledger
+            result = runner(item["provider"], **options)
             results.append({"provider": item["provider"], "source": item["source"],
                             "status": "ok", "result": result})
         except (OSError, ValueError, RuntimeError, KeyError, TypeError) as exc:
@@ -42,10 +46,16 @@ def main():
     parser.add_argument("--checkpoint-dir", type=Path, default=Path("data/discovery/checkpoints"))
     parser.add_argument("--report", type=Path, default=Path("data/discovery/experiment-report.json"))
     parser.add_argument("--live", action="store_true")
+    parser.add_argument("--sqlite-ledger", type=Path, help="Opt-in transactional local ledger")
     args = parser.parse_args()
     plan = json.loads(args.plan.read_text(encoding="utf-8"))
-    result = run_experiment(plan, archive_dir=args.archive_dir,
-                            checkpoint_dir=args.checkpoint_dir, live=args.live)
+    db = connect_ledger(args.sqlite_ledger) if args.live and args.sqlite_ledger else None
+    try:
+        result = run_experiment(plan, archive_dir=args.archive_dir,
+                                checkpoint_dir=args.checkpoint_dir, live=args.live, ledger=db)
+    finally:
+        if db is not None:
+            db.close()
     if args.live:
         args.report.parent.mkdir(parents=True, exist_ok=True)
         args.report.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
