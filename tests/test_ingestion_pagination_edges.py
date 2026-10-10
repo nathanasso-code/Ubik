@@ -6,7 +6,7 @@ from ingestion.run_batch import run_pages
 
 
 class BatchPaginationEdgesTests(unittest.TestCase):
-    def test_crossref_short_page_is_terminal_even_with_cursor(self):
+    def test_crossref_short_normalized_page_preserves_cursor(self):
         calls = []
         def crossref(from_date, to_date, *, rows, cursor):
             calls.append(cursor)
@@ -22,7 +22,7 @@ class BatchPaginationEdgesTests(unittest.TestCase):
                                max_pages=3, page_size=5,
                                fetchers={"crossref": crossref}, sleep=lambda _: None)
             self.assertEqual(result["status"], "completed")
-            self.assertEqual(calls, ["*"])
+            self.assertEqual(calls, ["*", "provider-next"])
 
     def test_repeated_cursor_is_persisted_as_terminal(self):
         calls = []
