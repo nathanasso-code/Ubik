@@ -4,27 +4,52 @@
   "anchors": [
     {
       "id": "gpt4o_2024_launch",
-      "query": "GPT-4o OpenAI announcement"
+      "query": "GPT-4o OpenAI announcement",
+      "product_aliases": [
+        "gpt-4o",
+        "gpt 4o"
+      ]
     },
     {
       "id": "llama3_2024_launch",
-      "query": "Meta Llama 3 release"
+      "query": "Meta Llama 3 release",
+      "product_aliases": [
+        "llama 3",
+        "llama-3"
+      ]
     },
     {
       "id": "gemini15_2024_launch",
-      "query": "Google Gemini 1.5 Pro release"
+      "query": "Google Gemini 1.5 Pro release",
+      "product_aliases": [
+        "gemini 1.5",
+        "gemini-1.5"
+      ]
     },
     {
       "id": "deepseek_r1_2025_release",
-      "query": "DeepSeek R1 release"
+      "query": "DeepSeek R1 release",
+      "product_aliases": [
+        "deepseek r1",
+        "deepseek-r1",
+        "deepseek r-1"
+      ]
     },
     {
       "id": "claude37_2025_launch",
-      "query": "Anthropic Claude 3.7 Sonnet launch"
+      "query": "Anthropic Claude 3.7 Sonnet launch",
+      "product_aliases": [
+        "claude 3.7",
+        "claude-3.7"
+      ]
     },
     {
       "id": "gpt5_2025_launch",
-      "query": "OpenAI GPT-5 launch"
+      "query": "OpenAI GPT-5 launch",
+      "product_aliases": [
+        "gpt-5",
+        "gpt 5"
+      ]
     }
   ]
 }
