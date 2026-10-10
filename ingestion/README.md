@@ -141,3 +141,19 @@ A checkpoint is read only if its archived snapshot still exists and matches the 
 `ingestion/sqlite_ledger.py` introduces a **local prototype** for persistent, atomic acquisition state. It stores immutable JSON page payloads and provider observation identities in SQLite, with `BEGIN IMMEDIATE` transactions, WAL mode, an expiring owner lease, cursor updates committed together with each page, and idempotent replays of the same page payload. `metrics(db)` distinguishes stored observations from unique provider identities; it does not delete repeats.
 
 The tests exercise lease contention, expiry, stale-owner rejection, duplicate page replay, failed validation, and reopening the database. This module is **not wired into `run_pages`**, does not write to Supabase, and does not authorize background ingestion. SQLite leases require careful TTL renewal during slow fetches; production multi-host operation needs a shared transactional database, fencing tokens and durable retention/deletion policy. Never treat this prototype as a production distributed lock.
+
+## SQLite integration (manual opt-in, development only)
+
+The bounded runner and heterogeneous experiment now accept an optional `ledger` connection. Without it they preserve the existing local append-only archive and POSIX lock behavior. With it, each page is committed atomically with the cursor in SQLite, under an expiring scope lease; the SQLite path does **not** write JSON archive files or local checkpoint files. Both paths retain provider metadata and do not perform editorial selection.
+
+Dry runs make **no network calls** and do not open the database. Real API acquisition still requires `--live`:
+
+```sh
+python -m ingestion.run_batch crossref --source crossref-works --from-date 2026-10-09 --to-date 2026-10-10 --max-pages 2 --page-size 5 --sqlite-ledger data/discovery/ingestion.sqlite3
+python -m ingestion.run_batch crossref --source crossref-works --from-date 2026-10-09 --to-date 2026-10-10 --max-pages 2 --page-size 5 --sqlite-ledger data/discovery/ingestion.sqlite3 --live
+python -m ingestion.experiment config/ingestion-experiment.example.json --sqlite-ledger data/discovery/ingestion.sqlite3 --live
+```
+
+The SQLite experiment coverage report explicitly labels metrics as **cumulative ledger totals**; they are not the incremental output of just one experiment. `ingestion.audit_sqlite.audit_ledger(db)` verifies stored page hashes, normalized observation copies and checkpoint heads without contacting providers.
+
+**Operational restrictions:** this is a local SQLite prototype, not Supabase or distributed cloud storage. The lease TTL is one hour in the runner and is not renewed during long operations. SQLite is unsuitable for independent ephemeral CI workers without shared durable storage. There is no scheduled job, cloud migration, reconciliation of deleted social posts, encrypted-at-rest deployment configuration, backup/restore exercise, or production authorization. Do not enable unattended production ingestion.
