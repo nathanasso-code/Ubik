@@ -1,3 +1,4 @@
+import hashlib
 import tempfile
 import unittest
 from pathlib import Path
@@ -8,9 +9,15 @@ from ingestion.run_batch import run_pages
 class CheckpointTests(unittest.TestCase):
     def test_atomic_roundtrip(self):
         with tempfile.TemporaryDirectory() as directory:
+            archive = Path(directory) / "snapshot.json"
+            archive.write_bytes(b"{}\n")
+            digest = hashlib.sha256(b"{}").hexdigest()
             value = write_checkpoint(directory, "source-1", cursor="next",
-                                     archive_sha256="a" * 64, archive_path="snapshot.json")
+                                     archive_sha256=digest, archive_path=str(archive))
             self.assertEqual(read_checkpoint(directory, "source-1"), value)
+            archive.write_bytes(b"tampered")
+            with self.assertRaises(ValueError):
+                read_checkpoint(directory, "source-1")
 
     def test_rejects_traversal(self):
         with self.assertRaises(ValueError):
