@@ -36,3 +36,11 @@ The next controlled diagnostic should compare a single request on the same insta
 ## Pagination correction
 
 A connector may discard returned records (for example, boosts, missing fields or non-public statuses) yet still receive a valid provider cursor. A zero-length **normalized** observation list therefore does not prove that the provider has reached the end. The bounded batch runner now follows a new cursor even on an empty normalized page, subject to its request budget, and stops if the cursor repeats. This avoids silently truncating discovery because of normalization filters.
+
+## Real Crossref checkpoint resume verification
+
+One-time GitHub Actions run: https://github.com/nathanasso-code/Ubik/actions/runs/38087520133
+
+The experiment used the public Crossref Works endpoint for the publication date interval 2026-10-09 through 2026-10-10, with a page size of two. The first process invocation fetched one page and persisted a nonempty cursor (one normalized observation). A second invocation with the same checkpoint and archive directories fetched another page (two normalized observations); the saved cursor changed. The offline archive audit then read **two snapshots containing three observations**, with **zero invalid archives and zero federation errors**.
+
+This demonstrates checkpoint continuity across two separate calls with real API responses. It does **not** demonstrate recovery from a process crash during the atomic rename, durable cloud storage, or lack of overlapping records across pages. The one-time workflow was removed after execution to avoid further network requests on future pushes.
