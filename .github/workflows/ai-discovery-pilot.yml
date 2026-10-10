@@ -14,6 +14,7 @@ on:
       - 'scripts/audit_article_attribution.py'
       - 'scripts/diagnose_source_coverage.py'
       - 'scripts/build_epistemic_review_queue.py'
+      - 'scripts/build_epistemic_pair_queue.py'
       - 'config/italian-cross-disciplinary-candidates.json'
       - 'config/source-registry.ai-models.json'
       - 'tests/test_discover_ai_sources.py'
@@ -26,6 +27,7 @@ on:
       - 'tests/test_discovery_metadata_enrichment.py'
       - 'tests/test_diagnose_source_coverage.py'
       - 'tests/test_epistemic_review_queue.py'
+      - 'tests/test_epistemic_pair_queue.py'
       - '.github/workflows/ai-discovery-pilot.yml'
   workflow_dispatch:
 permissions:
@@ -68,6 +70,10 @@ jobs:
         if: always()
         run: |
           if test -f data/discovery/ai-models.json; then python scripts/build_epistemic_review_queue.py data/discovery/ai-models.json data/discovery/epistemic-review-queue.json --per-source 3 --max-total 60; fi
+      - name: Prepare unverified candidate event pairs
+        if: always()
+        run: |
+          if test -f data/discovery/epistemic-review-queue.json; then python scripts/build_epistemic_pair_queue.py data/discovery/epistemic-review-queue.json data/discovery/epistemic-pair-review.json --limit 40; fi
       - name: Generate author candidate queue
         if: always()
         run: |
