@@ -1,0 +1,73 @@
+name: Ubik ingestion live smoke (manual)
+on:
+  workflow_dispatch:
+    inputs:
+      provider:
+        description: 'Public metadata provider'
+        type: choice
+        required: true
+        options:
+          - crossref
+          - openalex
+          - bluesky
+          - mastodon
+      source:
+        description: 'Bluesky actor / Mastodon public instance / registry label'
+        required: true
+        type: string
+      from_date:
+        description: 'Publication start date YYYY-MM-DD (scholarly only)'
+        required: false
+        type: string
+      to_date:
+        description: 'Publication end date YYYY-MM-DD (scholarly only)'
+        required: false
+        type: string
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: develop/ubik-core
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Run bounded public metadata smoke
+        env:
+          PROVIDER: ${{ inputs.provider }}
+          SOURCE: ${{ inputs.source }}
+          FROM_DATE: ${{ inputs.from_date }}
+          TO_DATE: ${{ inputs.to_date }}
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          import tempfile
+          from pathlib import Path
+          from ingestion.run_batch import run_pages
+          from ingestion.experiment_plan import validate_plan
+
+          provider = os.environ["PROVIDER"]
+          source = os.environ["SOURCE"]
+          item = {"provider": provider, "source": source, "max_pages": 1, "page_size": 5}
+          if provider in {"openalex", "crossref"}:
+              item["from_date"] = os.environ["FROM_DATE"]
+              item["to_date"] = os.environ["TO_DATE"]
+          validated = validate_plan({"sources": [item]})[0]
+          with tempfile.TemporaryDirectory() as directory:
+              result = run_pages(provider, source=source,
+                                 archive_dir=Path(directory) / "archives",
+                                 checkpoint_dir=Path(directory) / "checkpoints",
+                                 max_pages=1, page_size=5,
+                                 from_date=validated["from_date"],
+                                 to_date=validated["to_date"])
+              # Do not print titles, handles, URLs or raw social post contents.
+              print(json.dumps({"provider": provider,
+                                "pages": result["pages"],
+                                "observations": result["observations"],
+                                "status": result["status"]}))
+          PY
