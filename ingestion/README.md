@@ -193,3 +193,7 @@ The development branch may contain intermediate commits that fail CI while inter
 ## Offline readiness report
 
 `ingestion.readiness.readiness(repo_root)` checks whether core development artifacts are present and returns an explicit, **fail-closed** `production_ready: false` with blockers. It performs no network calls or deployment actions. Artifact presence is not proof of security, privacy compliance, API coverage or operational fitness.
+
+## Cursor correctness
+
+A provider may return fewer **normalized** observations than the requested page size because metadata was filtered by schema normalization, while more raw provider pages remain. The bounded runner therefore follows a supplied Crossref cursor even when the normalized page is short. Repeated cursors terminate the bounded run to prevent endless loops; such repetition is not independent proof of complete provider coverage. Verify raw upstream counts and API semantics before interpreting a terminal checkpoint as exhaustive coverage.
