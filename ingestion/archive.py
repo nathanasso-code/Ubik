@@ -8,6 +8,8 @@ import json
 from datetime import datetime, timezone
 from pathlib import Path
 
+from .payload_codec import canonical_payload
+
 
 def archive_snapshot(snapshot, directory, *, collected_at=None):
     if not isinstance(snapshot, dict) or not isinstance(snapshot.get("observations"), list):
@@ -19,8 +21,7 @@ def archive_snapshot(snapshot, directory, *, collected_at=None):
     if when.tzinfo is None:
         raise ValueError("Timestamp must have timezone")
     timestamp = when.astimezone(timezone.utc).strftime("%Y%m%dT%H%M%S%fZ")
-    payload = json.dumps(snapshot, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8")
-    digest = hashlib.sha256(payload).hexdigest()
+    payload, digest = canonical_payload(snapshot)
     directory = Path(directory)
     directory.mkdir(parents=True, exist_ok=True)
     target = directory / f"{timestamp}-{connector}-{digest[:12]}.json"
