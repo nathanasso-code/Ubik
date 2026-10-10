@@ -19,8 +19,8 @@ def audit_directory(directory, *, output=None):
     for path in files:
         try:
             raw = path.read_bytes()
-            match = re.fullmatch(r"\\d{8}T\\d{12}Z-[a-zA-Z0-9_]+-([0-9a-f]{12})\\.json", path.name)
-            if match and hashlib.sha256(raw.rstrip(b"\\n")).hexdigest()[:12] != match.group(1):
+            match = re.fullmatch(r"\d{8}T\d{12}Z-[a-zA-Z0-9_]+-([0-9a-f]{12})\.json", path.name)
+            if match and hashlib.sha256(raw.rstrip(b"\n")).hexdigest()[:12] != match.group(1):
                 raise ValueError("Archive checksum mismatch")
             data = json.loads(raw)
             if not isinstance(data, dict):
