@@ -7,6 +7,8 @@ No automatically generated task receives a verified label.
 import argparse
 import json
 import re
+from datetime import datetime
+from email.utils import parsedate_to_datetime
 from pathlib import Path
 
 STOP = {"release", "launch", "announced", "announcement", "introducing", "model",
@@ -23,6 +25,18 @@ def tokens(s):
 def distinctive_terms(s):
     return {x for x in tokens(s) if any(ch.isdigit() for ch in x)
             or "-" in x or "." in x}
+
+def publication_year(raw):
+    if not raw:
+        return None
+    try:
+        return datetime.fromisoformat(str(raw).replace("Z", "+00:00")).year
+    except ValueError:
+        try:
+            return parsedate_to_datetime(str(raw)).year
+        except (ValueError, TypeError, IndexError):
+            return None
+
 
 def review_tasks(discovery, anchors, per_anchor=12):
     if type(per_anchor) is not int or per_anchor < 1:
@@ -46,6 +60,8 @@ def review_tasks(discovery, anchors, per_anchor=12):
                 r"(?<![a-z0-9])" + re.escape(alias.lower()) + r"(?![a-z0-9])",
                 title.lower())]
             if not matched:
+                continue
+            if anchor.get("event_year") and publication_year(item.get("published_raw")) != int(anchor["event_year"]):
                 continue
             overlap = terms & tokens(title)
             scored.append((len(overlap), item))
