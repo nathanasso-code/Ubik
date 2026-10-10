@@ -24,6 +24,25 @@ class BatchPaginationEdgesTests(unittest.TestCase):
             self.assertEqual(result["status"], "completed")
             self.assertEqual(calls, ["*"])
 
+    def test_repeated_cursor_is_persisted_as_terminal(self):
+        calls = []
+        def fetch(_from, _to, *, per_page, cursor):
+            calls.append(cursor)
+            return {"connector": "openalex", "observations": [],
+                    "next_cursor": "same"}
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            opts = dict(source="openalex-works", from_date="2026-10-09",
+                        to_date="2026-10-10", archive_dir=root / "a",
+                        checkpoint_dir=root / "c", max_pages=3,
+                        fetchers={"openalex": fetch}, sleep=lambda _: None)
+            first = run_pages("openalex", **opts)
+            self.assertEqual(first["pages"], 2)
+            self.assertEqual(first["status"], "completed")
+            second = run_pages("openalex", **opts)
+            self.assertEqual(second["pages"], 0)
+            self.assertEqual(calls, ["*", "same"])
+
     def test_empty_page_with_cursor_continues_until_cursor_stops(self):
         with tempfile.TemporaryDirectory() as directory:
             result = run_pages("openalex", source="openalex-works",
