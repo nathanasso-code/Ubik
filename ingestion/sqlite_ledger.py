@@ -75,7 +75,7 @@ def acquire(db, scope_key, owner, *, now=None, ttl=120):
         raise
 
 
-def commit_page(db, scope_key, owner, snapshot, next_cursor, *, now=None, ttl=120):
+def commit_page(db, scope_key, owner, snapshot, next_cursor, *, now=None, ttl=120, epoch=None):
     """Atomically persist a raw page and advance cursor under a valid lease."""
     if not isinstance(snapshot, dict) or not isinstance(snapshot.get("observations"), list):
         raise ValueError("Expected snapshot with observations")
@@ -93,9 +93,9 @@ def commit_page(db, scope_key, owner, snapshot, next_cursor, *, now=None, ttl=12
                      item["external_id"], json.dumps(item, sort_keys=True, ensure_ascii=False)))
     db.execute("BEGIN IMMEDIATE")
     try:
-        lease = db.execute("SELECT lease_owner, lease_until FROM ingestion_scopes WHERE scope_key=?",
+        lease = db.execute("SELECT lease_owner, lease_until, lease_epoch FROM ingestion_scopes WHERE scope_key=?",
                            (scope_key,)).fetchone()
-        if not lease or lease[0] != owner or lease[1] <= now:
+        if not lease or lease[0] != owner or lease[1] <= now or (epoch is not None and lease[2] != epoch):
             raise LeaseBusyError("Missing, expired, or superseded lease")
         cursor = db.execute("INSERT OR IGNORE INTO ingestion_pages(scope_key,payload_sha256,payload_json,observed_at) VALUES (?,?,?,?)",
                             (scope_key, digest, payload, now))
