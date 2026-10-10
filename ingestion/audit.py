@@ -6,6 +6,7 @@ import argparse
 import json
 from collections import Counter, defaultdict
 from datetime import datetime, timezone
+from email.utils import parsedate_to_datetime
 from pathlib import Path
 
 
@@ -18,7 +19,13 @@ def _parse_date(value):
             return None
         return parsed.astimezone(timezone.utc)
     except ValueError:
-        return None
+        try:
+            parsed = parsedate_to_datetime(value)
+            if parsed.tzinfo is None:
+                return None
+            return parsed.astimezone(timezone.utc)
+        except (ValueError, TypeError, IndexError):
+            return None
 
 
 def audit(federated, *, now=None):
