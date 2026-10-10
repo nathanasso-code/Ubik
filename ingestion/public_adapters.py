@@ -132,3 +132,40 @@ def openalex_collect(from_date, to_date, per_page=50, cursor="*", fetch=fetch_js
             "observations": results, "invalid": invalid,
             "next_cursor": payload.get("meta", {}).get("next_cursor"),
             "coverage_warning": "Date-bounded works page; cursor needed for complete interval."}
+
+
+def crossref_url(from_date, to_date, rows=50, cursor="*"):
+    import datetime
+    for date in (from_date, to_date):
+        datetime.date.fromisoformat(date)
+    if from_date > to_date or type(rows) is not int or not 1 <= rows <= 100:
+        raise ValueError("Invalid Crossref date window or page size")
+    return "https://api.crossref.org/works?" + urlencode({
+        "filter": f"from-pub-date:{from_date},until-pub-date:{to_date}",
+        "rows": rows, "cursor": cursor,
+        "select": "DOI,title,published,URL,type,publisher",
+    })
+
+
+def crossref_collect(from_date, to_date, rows=50, cursor="*", fetch=fetch_json):
+    payload = fetch(crossref_url(from_date, to_date, rows, cursor))
+    message = payload.get("message", {})
+    results, invalid = [], 0
+    for work in message.get("items", []):
+        try:
+            doi = work["DOI"]
+            title = work["title"][0]
+            results.append(observation(
+                connector="crossref", source_id="crossref-works",
+                external_id=doi, title=title,
+                url="https://doi.org/" + doi, discovered_from="https://api.crossref.org/works",
+                published_raw=None,
+                metadata={"doi": doi, "publisher": work.get("publisher"),
+                          "work_type": work.get("type"),
+                          "content_type": "bibliographic_metadata"}))
+        except (KeyError, ValueError, TypeError, IndexError):
+            invalid += 1
+    return {"schema_version": 1, "connector": "crossref",
+            "observations": results, "invalid": invalid,
+            "next_cursor": message.get("next-cursor"),
+            "coverage_warning": "Date-bounded Crossref page, not complete scholarly corpus."}
