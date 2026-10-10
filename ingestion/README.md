@@ -92,7 +92,7 @@ python -m ingestion.run_batch openalex --source openalex-works --from-date 2026-
 
 Social feeds start a fresh polling cycle after reaching the end; scientific date windows are marked complete. Source scope and date range form the checkpoint identity. This is **at-least-once** acquisition, not exactly-once: overlapping social pages and crash retries may generate duplicate observations; downstream URL and stable external-ID deduplication must preserve their separate provenance.
 
-**Limitations:** no cross-process locking, no cloud checkpoint persistence, no scheduled live execution, no provider-specific quota accounting, no deletion reconciliation, and no proof of real API coverage. Do not run concurrent batches for the same source/scope; a database lease and durable object store are required before unattended distributed execution. No live network requests are made without `--live`.
+**Limitations:** POSIX single-filesystem locking only in file mode; no cloud checkpoint persistence, no scheduled live execution, no provider-specific quota accounting, no deletion reconciliation, and no proof of real API coverage. Do not run concurrent batches for the same source/scope; a database lease and durable object store are required before unattended distributed execution. No live network requests are made without `--live`.
 
 ## Offline coverage and overlap audits
 
@@ -136,11 +136,11 @@ A checkpoint is read only if its archived snapshot still exists and matches the 
 
 **Deployment limits:** This protects only cooperating processes that share the same lock directory on a filesystem with reliable POSIX locking. It does not coordinate separate ephemeral runners, distributed workers, object storage, or Windows. It does not replace durable database transactions or exactly-once semantics. A production scheduler must provide shared durable storage and a distributed lease/lock or transactional claim mechanism. Do not delete lock files while workers may be active.
 
-## Experimental transactional SQLite ledger (not yet connected to runner)
+## Experimental transactional SQLite ledger (opt-in runner integration)
 
 `ingestion/sqlite_ledger.py` introduces a **local prototype** for persistent, atomic acquisition state. It stores immutable JSON page payloads and provider observation identities in SQLite, with `BEGIN IMMEDIATE` transactions, WAL mode, an expiring owner lease, cursor updates committed together with each page, and idempotent replays of the same page payload. `metrics(db)` distinguishes stored observations from unique provider identities; it does not delete repeats.
 
-The tests exercise lease contention, expiry, stale-owner rejection, duplicate page replay, failed validation, and reopening the database. This module is **not wired into `run_pages`**, does not write to Supabase, and does not authorize background ingestion. SQLite leases require careful TTL renewal during slow fetches; production multi-host operation needs a shared transactional database, fencing tokens and durable retention/deletion policy. Never treat this prototype as a production distributed lock.
+The tests exercise lease contention, expiry, stale-owner rejection, duplicate page replay, failed validation, and reopening the database. This module is **opt-in through `run_pages(..., ledger=db)` or `--sqlite-ledger`**, does not write to Supabase, and does not authorize background ingestion. SQLite leases require careful TTL renewal during slow fetches; production multi-host operation needs a shared transactional database, fencing tokens and durable retention/deletion policy. Never treat this prototype as a production distributed lock.
 
 ## SQLite integration (manual opt-in, development only)
 
