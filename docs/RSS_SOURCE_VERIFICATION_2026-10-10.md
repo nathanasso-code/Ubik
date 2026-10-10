@@ -61,3 +61,7 @@ Second successful run: https://github.com/nathanasso-code/Ubik/actions/runs/3808
 - Both `arxiv-cs-ai` and `arxiv-cs-cl` returned **0 raw entries and 0 normalized entries**; this is not a parser rejection. Feed configuration, upstream publication cadence and endpoint behavior still need investigation.
 - The successful source distribution remained the same; these runs are near-contemporaneous independent invocations, **not** 5,276 distinct records or two days of output.
 - Failed feeds were not included in the raw-entry denominator; 403 and size-cap errors remain unresolved.
+
+## Freshness timestamp parsing correction
+
+The source quality audit now recognizes both ISO-8601 dates (common in Atom/API metadata) and RFC 2822 dates (common in RSS `pubDate`). Before this change, many valid RSS publication timestamps would have been classified as unknown. A deterministic regression test checks `Thu, 08 Oct 2026 10:00:00 GMT`. Existing historical audit reports must be regenerated to obtain corrected freshness distributions.
