@@ -117,3 +117,9 @@ python -m ingestion.experiment config/ingestion-experiment.example.json --live
 The example source list is illustrative, not a coverage benchmark. In particular, a Bluesky actor feed is not the entire Bluesky firehose, and a Mastodon local timeline is not the fediverse. The experiment runner does not claim representative sampling, comprehensive coverage, editorial quality, or cross-provider independent verification.
 
 The live mode remains **manual and untested against actual provider responses**; no scheduled workflow or production database writes are enabled. Source archives and checkpoints are local and need external persistence before use on ephemeral runners.
+
+## Live smoke-test readiness (not executed)
+
+`.github/workflows/ingestion-live-smoke.yml` defines a **manual-only** GitHub Actions smoke test for one public provider page, at most five metadata observations, with read-only repository permissions and a temporary archive deleted at job exit. It does not print individual social posts. GitHub normally requires a `workflow_dispatch` workflow to exist on the repository's **default branch** before it can be triggered from the Actions UI; this branch-only workflow is therefore a preparation artifact, **not an already runnable live test**. No changes to `main` were made.
+
+The development environment used for this change cannot resolve public API hosts, so no successful live request has been observed. Before enabling manual dispatch, review source permissions and provider policies, promote the workflow through the normal review process, and verify the actual API response schemas and quotas. Offline archive audits now check the filename SHA256 prefix and report tampered files as invalid.
