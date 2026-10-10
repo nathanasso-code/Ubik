@@ -8,6 +8,8 @@ import sqlite3
 import time
 from pathlib import Path
 
+from .payload_codec import canonical_payload
+
 
 class LeaseBusyError(RuntimeError):
     pass
@@ -84,8 +86,8 @@ def commit_page(db, scope_key, owner, snapshot, next_cursor, *, now=None, ttl=12
     if next_cursor is not None and not isinstance(next_cursor, str):
         raise ValueError("Invalid cursor")
     now = time.time() if now is None else now
-    payload = json.dumps(snapshot, sort_keys=True, ensure_ascii=False, separators=(",", ":"))
-    digest = hashlib.sha256(payload.encode("utf-8")).hexdigest()
+    payload_bytes, digest = canonical_payload(snapshot)
+    payload = payload_bytes.decode("utf-8")
     rows = []
     for position, item in enumerate(snapshot["observations"]):
         if not isinstance(item, dict) or not all(isinstance(item.get(k), str) and item[k]
