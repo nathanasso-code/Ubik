@@ -1,0 +1,45 @@
+name: Ubik one-time social API verification
+on:
+  push:
+    branches:
+      - develop/ubik-core
+jobs:
+  social-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Probe public Bluesky and Mastodon endpoints (5 records maximum each)
+        run: |
+          python - <<'PY'
+          import json
+          import tempfile
+          from pathlib import Path
+          from ingestion.run_batch import run_pages
+          from ingestion.audit_archive import audit_directory
+          with tempfile.TemporaryDirectory() as directory:
+              base = Path(directory)
+              for provider, source in (("bluesky", "bsky.app"), ("mastodon", "mastodon.social")):
+                  try:
+                      report = run_pages(provider, source=source,
+                                         archive_dir=base / "archives",
+                                         checkpoint_dir=base / "checkpoints",
+                                         max_pages=1, page_size=5)
+                      print(json.dumps({"provider": provider, "result": "success",
+                                        "pages": report["pages"],
+                                        "observations": report["observations"]}), flush=True)
+                  except Exception as exc:
+                      print(json.dumps({"provider": provider, "result": "failure",
+                                        "error_type": type(exc).__name__,
+                                        "error": str(exc)[:160]}), flush=True)
+              audit = audit_directory(base / "archives")
+              print(json.dumps({"audit_total": audit["total_observations"],
+                                "by_connector": audit["by_connector"],
+                                "invalid_archives": len(audit["invalid_snapshot_files"]),
+                                "federation_errors": len(audit["federation_errors"])}), flush=True)
+          PY
