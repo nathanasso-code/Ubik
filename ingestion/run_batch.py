@@ -76,11 +76,9 @@ def _run_pages_unlocked(provider, *, source, archive_dir, checkpoint_dir, max_pa
         if not isinstance(records, list) or len(records) > page_size:
             raise ValueError("Unexpected provider page size")
         budget.record_result(len(records))
-        # Cursor-based APIs can supply a cursor even on a short/empty final page.
-        # An empty page is terminal; a short Crossref page ends the interval.
+        # Normalization can drop records while a provider still has more pages.
+        # Never infer upstream exhaustion from a short normalized page.
         if not records and not result.get("next_cursor") and not result.get("next_max_id"):
-            next_cursor = None
-        if provider == "crossref" and len(records) < page_size and result.get("invalid", 0) == 0:
             next_cursor = None
         if next_cursor == cursor and next_cursor is not None:
             next_cursor = None
