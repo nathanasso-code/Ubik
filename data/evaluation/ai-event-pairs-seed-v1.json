@@ -21,7 +21,9 @@
       "review_basis": "titles_and_original_urls",
       "full_text_verified": false,
       "reviewer": "assistant_initial_triage",
-      "review_status": "provisional"
+      "review_status": "provisional",
+      "expected_left_id": "1d313325a663d88e631659ec",
+      "expected_right_id": "5ea77f4e7c498cb96cd344ec"
     },
     {
       "candidate_index": 2,
@@ -30,7 +32,9 @@
       "review_basis": "titles_and_original_urls",
       "full_text_verified": false,
       "reviewer": "assistant_initial_triage",
-      "review_status": "provisional"
+      "review_status": "provisional",
+      "expected_left_id": "e6fbed3c1ca7b081f264c85e",
+      "expected_right_id": "8b3de71902f626143c675d0c"
     },
     {
       "candidate_index": 3,
@@ -39,7 +43,9 @@
       "review_basis": "titles_and_original_urls",
       "full_text_verified": false,
       "reviewer": "assistant_initial_triage",
-      "review_status": "provisional"
+      "review_status": "provisional",
+      "expected_left_id": "567f71632725b3636fd4606e",
+      "expected_right_id": "5ea77f4e7c498cb96cd344ec"
     },
     {
       "candidate_index": 4,
@@ -48,7 +54,9 @@
       "review_basis": "titles_and_original_urls",
       "full_text_verified": false,
       "reviewer": "assistant_initial_triage",
-      "review_status": "provisional"
+      "review_status": "provisional",
+      "expected_left_id": "567f71632725b3636fd4606e",
+      "expected_right_id": "8b3de71902f626143c675d0c"
     },
     {
       "candidate_index": 5,
@@ -57,7 +65,9 @@
       "review_basis": "titles_and_original_urls",
       "full_text_verified": false,
       "reviewer": "assistant_initial_triage",
-      "review_status": "provisional"
+      "review_status": "provisional",
+      "expected_left_id": "de4aace65e2dd1dd11150dc9",
+      "expected_right_id": "5ea77f4e7c498cb96cd344ec"
     },
     {
       "candidate_index": 6,
@@ -66,7 +76,9 @@
       "review_basis": "titles_and_original_urls",
       "full_text_verified": false,
       "reviewer": "assistant_initial_triage",
-      "review_status": "provisional"
+      "review_status": "provisional",
+      "expected_left_id": "de4aace65e2dd1dd11150dc9",
+      "expected_right_id": "8b3de71902f626143c675d0c"
     },
     {
       "candidate_index": 7,
@@ -75,7 +87,9 @@
       "review_basis": "titles_and_original_urls",
       "full_text_verified": false,
       "reviewer": "assistant_initial_triage",
-      "review_status": "provisional"
+      "review_status": "provisional",
+      "expected_left_id": "cf4ee31394e28d7fd2da22af",
+      "expected_right_id": "c6ffe74a000a576484736f91"
     },
     {
       "candidate_index": 8,
@@ -84,7 +98,9 @@
       "review_basis": "titles_and_original_urls",
       "full_text_verified": false,
       "reviewer": "assistant_initial_triage",
-      "review_status": "provisional"
+      "review_status": "provisional",
+      "expected_left_id": "ca9091935c73ac7e4e53744e",
+      "expected_right_id": "b27838f49b7839b499fca4cf"
     },
     {
       "candidate_index": 9,
@@ -93,7 +109,9 @@
       "review_basis": "titles_and_original_urls",
       "full_text_verified": false,
       "reviewer": "assistant_initial_triage",
-      "review_status": "provisional"
+      "review_status": "provisional",
+      "expected_left_id": "e91e2835005703837ac99076",
+      "expected_right_id": "d24e72dbbaf7faa9ea65b3f0"
     },
     {
       "candidate_index": 15,
@@ -102,7 +120,9 @@
       "review_basis": "titles_and_original_urls",
       "full_text_verified": false,
       "reviewer": "assistant_initial_triage",
-      "review_status": "provisional"
+      "review_status": "provisional",
+      "expected_left_id": "f0a72b3b83295a48204be428",
+      "expected_right_id": "6d6f1fb275e2bd789db45ceb"
     },
     {
       "candidate_index": 22,
@@ -111,7 +131,9 @@
       "review_basis": "titles_and_original_urls",
       "full_text_verified": false,
       "reviewer": "assistant_initial_triage",
-      "review_status": "provisional"
+      "review_status": "provisional",
+      "expected_left_id": "ca9091935c73ac7e4e53744e",
+      "expected_right_id": "a6a54999d7cd9926690b3925"
     },
     {
       "candidate_index": 29,
@@ -120,7 +142,9 @@
       "review_basis": "titles_and_original_urls",
       "full_text_verified": false,
       "reviewer": "assistant_initial_triage",
-      "review_status": "provisional"
+      "review_status": "provisional",
+      "expected_left_id": "f0a72b3b83295a48204be428",
+      "expected_right_id": "b218ec1c8f4168a3f92c0109"
     },
     {
       "candidate_index": 0,
@@ -129,7 +153,9 @@
       "review_basis": "titles_and_original_urls",
       "full_text_verified": false,
       "reviewer": "assistant_initial_triage",
-      "review_status": "provisional"
+      "review_status": "provisional",
+      "expected_left_id": "4331f6f8ed8cac715fb44097",
+      "expected_right_id": "4870c15a460c52644b45b1d3"
     },
     {
       "candidate_index": 19,
@@ -138,7 +164,9 @@
       "review_basis": "titles_and_original_urls",
       "full_text_verified": false,
       "reviewer": "assistant_initial_triage",
-      "review_status": "provisional"
+      "review_status": "provisional",
+      "expected_left_id": "80543ba23911a4899308db13",
+      "expected_right_id": "c6ffe74a000a576484736f91"
     },
     {
       "candidate_index": 27,
@@ -147,7 +175,9 @@
       "review_basis": "titles_and_original_urls",
       "full_text_verified": false,
       "reviewer": "assistant_initial_triage",
-      "review_status": "provisional"
+      "review_status": "provisional",
+      "expected_left_id": "c3f4bdc7fbd2ad4987cc108b",
+      "expected_right_id": "ed843ee90cd9a75cd04a725a"
     },
     {
       "candidate_index": 28,
@@ -156,7 +186,9 @@
       "review_basis": "titles_and_original_urls",
       "full_text_verified": false,
       "reviewer": "assistant_initial_triage",
-      "review_status": "provisional"
+      "review_status": "provisional",
+      "expected_left_id": "bfcdba7e9c2769f040aeaac4",
+      "expected_right_id": "35a5c203ba5c9d77b9012808"
     }
   ]
 }
