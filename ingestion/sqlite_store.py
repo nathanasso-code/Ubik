@@ -7,7 +7,7 @@ from .storage_contract import Lease
 
 class SQLiteStore:
     def __init__(self, db, *, ttl=3600):
-        if not 1 <= ttl <= 3600:
+        if type(ttl) is not int or not 1 <= ttl <= 3600:
             raise ValueError("Invalid lease TTL")
         self.db = db
         self.ttl = ttl
