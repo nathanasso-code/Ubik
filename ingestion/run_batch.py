@@ -13,11 +13,12 @@ from pathlib import Path
 from .archive import archive_snapshot
 from .budgets import SourceBudget
 from .checkpoints import read_checkpoint, write_checkpoint
+from .locks import source_lock
 from .public_adapters import (bluesky_collect, crossref_collect,
                               mastodon_collect, openalex_collect)
 
 
-def run_pages(provider, *, source, archive_dir, checkpoint_dir, max_pages=2,
+def _run_pages_unlocked(provider, *, source, archive_dir, checkpoint_dir, max_pages=2,
               page_size=20, from_date=None, to_date=None, pause_seconds=1,
               fetchers=None, sleep=time.sleep):
     if provider not in {"bluesky", "mastodon", "openalex", "crossref"}:
@@ -91,6 +92,22 @@ def run_pages(provider, *, source, archive_dir, checkpoint_dir, max_pages=2,
     return {"provider": provider, "source": source, "pages": len(archived),
             "observations": budget.observations, "status": status,
             "checkpoint": key, "archives": archived, "budget": budget.report()}
+
+
+def run_pages(provider, *, source, archive_dir, checkpoint_dir, max_pages=2,
+              page_size=20, from_date=None, to_date=None, pause_seconds=1,
+              fetchers=None, sleep=time.sleep):
+    """Serialize the entire read/fetch/archive/checkpoint transaction by scope."""
+    scope = {"provider": provider, "source": source,
+             "from_date": from_date if provider in {"openalex", "crossref"} else None,
+             "to_date": to_date if provider in {"openalex", "crossref"} else None}
+    key = str(provider) + "-" + hashlib.sha256(
+        json.dumps(scope, sort_keys=True).encode()).hexdigest()[:24]
+    with source_lock(checkpoint_dir, key):
+        return _run_pages_unlocked(provider, source=source, archive_dir=archive_dir,
+                                   checkpoint_dir=checkpoint_dir, max_pages=max_pages,
+                                   page_size=page_size, from_date=from_date, to_date=to_date,
+                                   pause_seconds=pause_seconds, fetchers=fetchers, sleep=sleep)
 
 
 def main():
