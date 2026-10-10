@@ -14,6 +14,14 @@ class AuditArchiveTests(unittest.TestCase):
             self.assertEqual(report["total_observations"], 0)
             self.assertEqual(report["invalid_snapshot_files"][0]["error"], "ValueError")
 
+    def test_extra_newline_is_detected_as_mutation(self):
+        with tempfile.TemporaryDirectory() as directory:
+            info = archive_snapshot({"connector": "bluesky", "observations": []}, directory)
+            with Path(info["path"]).open("ab") as handle:
+                handle.write(bytes([10]))
+            report = audit_directory(directory)
+            self.assertEqual(len(report["invalid_snapshot_files"]), 1)
+
     def test_end_to_end_offline_archives(self):
         with tempfile.TemporaryDirectory() as directory:
             archive_snapshot({"connector": "bluesky", "observations": [
