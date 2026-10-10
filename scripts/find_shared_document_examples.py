@@ -14,7 +14,7 @@ def same_document_examples(discovery, limit=50):
     if type(limit) is not int or limit < 1:
         raise ValueError("Positive limit required")
     by_url = defaultdict(dict)
-    for item in discovery.get("items", []):
+    for item in sorted(discovery.get("items", []), key=lambda x: (x.get("source_id", ""), x.get("url", ""), x.get("id", ""))):
         if item.get("url") and item.get("source_id") and item.get("title"):
             by_url[item["url"]].setdefault(item["source_id"], item)
     groups = []
