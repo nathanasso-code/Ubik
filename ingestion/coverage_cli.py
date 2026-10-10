@@ -8,6 +8,7 @@ from pathlib import Path
 
 from .coverage_report import evaluate_coverage
 from .cross_topic_inventory import cross_topic_inventory
+from .channel_readiness import assess_channels
 from .source_inventory import inventory
 
 
@@ -21,7 +22,9 @@ def main():
     catalog = inventory(args.root)
     discovery = json.loads(args.discovery.read_text(encoding="utf-8")) if args.discovery else None
     federated = json.loads(args.federated.read_text(encoding="utf-8")) if args.federated else None
-    result = {"cross_topic_inventory": cross_topic_inventory(args.root),
+    cross_topic = cross_topic_inventory(args.root)
+    result = {"cross_topic_inventory": cross_topic,
+              "channel_readiness": assess_channels(cross_topic),
               "inventory": catalog,
               "coverage": evaluate_coverage(catalog, discovery=discovery, federated=federated),
               "input_files": {"discovery": str(args.discovery) if args.discovery else None,
