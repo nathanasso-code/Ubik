@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "dataset": "ubik-verified-event-pairs-v1",
+  "scope": "historical_cross_publisher_launch_event",
+  "review_date": "2026-10-10",
+  "reviewer": "assistant_source_comparison",
+  "event_definition": "OpenAI announced GPT-4o during its 13 May 2024 Spring Update",
+  "notes": "Labels assert common bounded announcement, not independent corroboration of technical performance claims. Publisher independence is not inferred from distinct URLs. This is a tiny initial positive set, not a representative accuracy benchmark.",
+  "documents": [
+    {
+      "id": "openai_gpt4o",
+      "publisher": "OpenAI",
+      "role": "primary_announcement",
+      "date": "2024-05-13",
+      "url": "https://openai.com/index/gpt-4o-and-more-tools-to-chatgpt-free/",
+      "title": "Introducing GPT-4o and more tools to ChatGPT free users",
+      "evidence": "OpenAI states it is introducing GPT-4o and rolling out access to ChatGPT users."
+    },
+    {
+      "id": "reuters_gpt4o",
+      "publisher": "Reuters",
+      "role": "secondary_reporting",
+      "date": "2024-05-13",
+      "url": "https://www.reuters.com/technology/openai-announce-chatgpt-product-improvements-monday-2024-05-13/",
+      "title": "OpenAI unveils new AI model as competition heats up",
+      "evidence": "Reuters reports that OpenAI announced GPT-4o on Monday, covering the model and voice capabilities."
+    },
+    {
+      "id": "ap_gpt4o",
+      "publisher": "Associated Press",
+      "role": "secondary_reporting",
+      "date": "2024-05-13",
+      "url": "https://apnews.com/article/071dd86594bc310bac07b37cf5e9bafc",
+      "title": "OpenAI launches GPTo, improving ChatGPT's text, visual and audio capabilities",
+      "evidence": "AP reports the model was announced during a live-streamed update on May 13, 2024."
+    },
+    {
+      "id": "guardian_gpt4o",
+      "publisher": "The Guardian",
+      "role": "secondary_reporting",
+      "date": "2024-05-13",
+      "url": "https://www.theguardian.com/technology/article/2024/may/13/openai-new-chatgpt-free",
+      "title": "New GPT-4o AI model is faster and free for all users, OpenAI announces",
+      "evidence": "The Guardian describes the Monday announcement of GPT-4o and new voice and desktop features."
+    }
+  ],
+  "pairs": [
+    {
+      "left": "openai_gpt4o",
+      "right": "reuters_gpt4o",
+      "label": "same_event",
+      "review_status": "verified",
+      "basis": "Both explicitly describe OpenAI's 13 May 2024 GPT-4o announcement; different original URLs."
+    },
+    {
+      "left": "openai_gpt4o",
+      "right": "ap_gpt4o",
+      "label": "same_event",
+      "review_status": "verified",
+      "basis": "Both explicitly describe the GPT-4o unveiling at the 13 May 2024 event."
+    },
+    {
+      "left": "reuters_gpt4o",
+      "right": "guardian_gpt4o",
+      "label": "same_event",
+      "review_status": "verified",
+      "basis": "Both cover the same Monday GPT-4o product announcement."
+    },
+    {
+      "left": "ap_gpt4o",
+      "right": "guardian_gpt4o",
+      "label": "same_event",
+      "review_status": "verified",
+      "basis": "Both cover the 13 May 2024 GPT-4o launch announcement."
+    }
+  ],
+  "verification_limits": "Original announcement and article text were compared where accessible through public retrieval. Exact textual independence and all downstream factual claims were not audited."
+}
