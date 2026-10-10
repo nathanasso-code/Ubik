@@ -36,3 +36,13 @@ The live call is explicitly opt-in. No scheduled ingestion, Supabase writes, pro
 
 ## Important limitation
 GDELT DOC search terms impose selection bias. Use it as *supplementary discovery* alongside direct feeds and, where feasible and permitted, broader public export streams. Do not treat query hits as the universe of eligible news.
+
+## Offline federation and budgets
+
+`ingestion/legacy_adapters.py` maps existing RSS and Hacker News snapshots to the shared contract without changing the legacy fetchers. `ingestion/federate.py` merges offline snapshots and reports counts of raw observations, URL hints, source pairs and errors; it **does not** select or cluster stories.
+
+```sh
+python -m ingestion.federate data/discovery/ai-models.json data/discovery/hacker-news.json --output data/discovery/federated-ingestion.json
+```
+
+`ingestion/budgets.py` defines per-source request and observation accounting. This is a reusable primitive, **not yet wired into the network fetchers**. Until integrated, live adapters rely on their own explicit bounded parameters. Never treat the existence of a budget class as proof of enforced rate limiting in production.
