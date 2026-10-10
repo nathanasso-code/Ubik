@@ -21,5 +21,21 @@ class DiagnosticsTests(unittest.TestCase):
         self.assertEqual(b["stored_items"], 0)
         self.assertEqual(result["purpose"], "coverage_only_not_quality_ranking")
 
+    def test_shared_url_is_not_independent_evidence(self):
+        discovery = {"items": [
+            {"source_id": "a", "url": "https://original.example/story"},
+            {"source_id": "b", "url": "https://original.example/story"},
+            {"source_id": "b", "url": "https://original.example/other"}
+        ], "source_reports": [
+            {"source_id": "a", "status": "ok"},
+            {"source_id": "b", "status": "ok"}
+        ]}
+        result = module.diagnose(discovery)
+        self.assertEqual(result["shared_urls_across_sources"], 1)
+        by_id = {row["source_id"]: row for row in result["sources"]}
+        self.assertEqual(by_id["a"]["shared_url_observations"], 1)
+        self.assertEqual(by_id["b"]["shared_url_observations"], 1)
+        self.assertEqual(by_id["b"]["stored_items"], 2)
+
 if __name__ == "__main__":
     unittest.main()
