@@ -17,6 +17,8 @@ on:
       - 'scripts/build_epistemic_pair_queue.py'
       - 'scripts/mine_epistemic_pairs.py'
       - 'scripts/audit_epistemic_pairs.py'
+      - 'scripts/materialize_epistemic_examples.py'
+      - 'data/evaluation/ai-event-pairs-seed-v1.json'
       - 'config/italian-cross-disciplinary-candidates.json'
       - 'config/source-registry.ai-models.json'
       - 'tests/test_discover_ai_sources.py'
@@ -32,6 +34,7 @@ on:
       - 'tests/test_epistemic_pair_queue.py'
       - 'tests/test_mine_epistemic_pairs.py'
       - 'tests/test_audit_epistemic_pairs.py'
+      - 'tests/test_materialize_epistemic_examples.py'
       - '.github/workflows/ai-discovery-pilot.yml'
   workflow_dispatch:
 permissions:
@@ -86,6 +89,10 @@ jobs:
         if: always()
         run: |
           if test -f data/discovery/epistemic-full-archive-pairs.json; then python scripts/audit_epistemic_pairs.py data/discovery/epistemic-full-archive-pairs.json data/discovery/epistemic-pair-audit.json --threshold 0.65; fi
+      - name: Materialize provisional real-article event examples
+        if: always()
+        run: |
+          if test -f data/discovery/epistemic-full-archive-pairs.json; then python scripts/materialize_epistemic_examples.py data/evaluation/ai-event-pairs-seed-v1.json data/discovery/epistemic-full-archive-pairs.json data/discovery/epistemic-labeled-examples.json; fi
       - name: Generate author candidate queue
         if: always()
         run: |
