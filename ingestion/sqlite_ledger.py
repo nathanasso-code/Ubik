@@ -57,7 +57,7 @@ def connect(path):
 
 
 def acquire(db, scope_key, owner, *, now=None, ttl=120):
-    if not scope_key or not owner or not 1 <= ttl <= 3600:
+    if not isinstance(scope_key, str) or not scope_key or not isinstance(owner, str) or not owner or type(ttl) is not int or not 1 <= ttl <= 3600:
         raise ValueError("Invalid lease")
     now = time.time() if now is None else now
     db.execute("BEGIN IMMEDIATE")
