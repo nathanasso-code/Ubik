@@ -2,7 +2,6 @@
 
 Designed for a single shared SQLite database, not distributed cloud storage.
 """
-import hashlib
 import json
 import sqlite3
 import time
