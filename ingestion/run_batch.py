@@ -49,6 +49,8 @@ def run_pages(provider, *, source, archive_dir, checkpoint_dir, max_pages=2,
     archived = []
     status = "budget_exhausted"
     for page in range(max_pages):
+        if not budget.may_request():
+            break
         budget.record_request()
         if provider == "bluesky":
             call = fetchers.get(provider, bluesky_collect)
@@ -70,6 +72,10 @@ def run_pages(provider, *, source, archive_dir, checkpoint_dir, max_pages=2,
         if not isinstance(records, list) or len(records) > page_size:
             raise ValueError("Unexpected provider page size")
         budget.record_result(len(records))
+        # Cursor-based APIs can supply a cursor even on a short/empty final page.
+        # An empty page is terminal; a short Crossref page ends the interval.
+        if not records or (provider == "crossref" and len(records) < page_size):
+            next_cursor = None
         archive = archive_snapshot(result, archive_dir)
         write_checkpoint(checkpoint_dir, key, cursor=next_cursor,
                          archive_sha256=archive["sha256"], archive_path=archive["path"])
