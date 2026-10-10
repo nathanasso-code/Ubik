@@ -189,3 +189,7 @@ The bounded runner now accepts either a **raw SQLite connection** through `ledge
 ## Safety note: temporary CI failures during iteration
 
 The development branch may contain intermediate commits that fail CI while interfaces are tightened; the release criterion is the **latest branch-head workflow**, not an intermediate commit. In particular, the ledger keeps an optional `epoch` parameter for legacy direct-call compatibility, while the `SQLiteStore` adapter always supplies an acquired epoch. Production adoption must remove or restrict unfenced direct commits.
+
+## Offline readiness report
+
+`ingestion.readiness.readiness(repo_root)` checks whether core development artifacts are present and returns an explicit, **fail-closed** `production_ready: false` with blockers. It performs no network calls or deployment actions. Artifact presence is not proof of security, privacy compliance, API coverage or operational fitness.
