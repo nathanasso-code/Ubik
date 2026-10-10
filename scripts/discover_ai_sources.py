@@ -86,6 +86,17 @@ def parse_feed(data, source):
         results.append({"id": key, "source_id": source["id"], "publisher": source["name"], "authors": authors, "attribution_basis": attribution_basis, "attribution_type": attribution_type(authors, attribution_basis), "attribution_status": "feed_only_unverified", "description": summary, "description_basis": "feed", "original_url": link, "discovered_from": source.get("url"), "title": title[:500], "url": url, "external_id": guid or None, "published_raw": published or None, "topic_ids": ["ai-models"], "status": "discovered"})
     return results
 
+def raw_feed_entry_count(data):
+    """Count upstream RSS/Atom entries before normalization and URL validation."""
+    root = ET.fromstring(data)
+    if root.tag == ATOM + "feed":
+        return len(root.findall(ATOM + "entry"))
+    channel = root.find("channel")
+    if channel is None:
+        raise ValueError("Unsupported feed format")
+    return len(channel.findall("item"))
+
+
 def run(registry, output, fetch):
     config = json.loads(registry.read_text(encoding="utf-8"))
     if config.get("topic_id") != "ai-models":
@@ -99,6 +110,7 @@ def run(registry, output, fetch):
             continue
         try:
             payload = fetch(source["url"])
+            raw_entries = raw_feed_entry_count(payload)
             discovered = parse_feed(payload, source)
             new = 0
             for item in discovered:
@@ -110,7 +122,7 @@ def run(registry, output, fetch):
                     items[key].update({"authors": item["authors"], "attribution_basis": item["attribution_basis"], "attribution_type": item["attribution_type"], "attribution_status": item["attribution_status"]})
                 if item.get("description") and not items[key].get("description"):
                     items[key].update({"description": item["description"], "description_basis": "feed"})
-            reports.append({"source_id": source["id"], "status": "ok", "seen": len(discovered), "new": new})
+            reports.append({"source_id": source["id"], "status": "ok", "raw_entries": raw_entries, "seen": len(discovered), "new": new})
         except (ValueError, ET.ParseError, urllib.error.URLError, TimeoutError, OSError) as exc:
             reports.append({"source_id": source["id"], "status": "error", "error": str(exc)[:240]})
     source_stats = []
