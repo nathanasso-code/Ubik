@@ -12,13 +12,15 @@ def materialize(seed, candidates):
     rows = candidates.get("items", [])
     output = []
     seen = set()
+    unavailable = []
     by_pair = {(x.get("left_id"), x.get("right_id")): (i, x) for i, x in enumerate(rows)}
     for entry in seed.get("entries", []):
         index = entry.get("candidate_index")
         if entry.get("expected_left_id") and entry.get("expected_right_id"):
             pair = (entry["expected_left_id"], entry["expected_right_id"])
             if pair not in by_pair:
-                raise ValueError("Pinned source pair missing from candidate artifact: " + repr(pair))
+                unavailable.append({"candidate_index": index, "left_id": pair[0], "right_id": pair[1], "reason": "not_in_current_top_candidates"})
+                continue
             index, source = by_pair[pair]
         else:
             if type(index) is not int or index < 0 or index >= len(rows):
@@ -50,9 +52,11 @@ def materialize(seed, candidates):
         "origin": seed.get("origin"),
         "purpose": "review_dataset_not_gold_standard",
         "entries": output,
+        "unavailable_pinned_pairs": unavailable,
         "summary": {"total": len(output), "same_event": counts["same_event"],
                     "different_event": counts["different_event"], "uncertain": counts["uncertain"],
-                    "gold_standard_eligible": sum(x["review_status"] == "verified" and x["full_text_verified"] for x in output)}
+                    "gold_standard_eligible": sum(x["review_status"] == "verified" and x["full_text_verified"] for x in output),
+                    "unavailable_pinned_pairs": len(unavailable)}
     }
 
 
