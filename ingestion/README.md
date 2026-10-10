@@ -70,3 +70,12 @@ References:
 - https://help.openalex.org/api/filtering/
 - https://help.openalex.org/api/paging/
 \n- https://api.crossref.org/swagger-ui/index.html\n
+## Reliability and archive increment
+
+- `transport.py` provides a shared JSON transport with bounded response size, timeout and at most three attempts by default. Retries are limited to transient HTTP 429/5xx and network errors; `Retry-After` is capped at 30 seconds. It is now used by the Bluesky, Mastodon, OpenAlex and Crossref adapters.
+- `archive.py` provides an immutable, timestamped, SHA256-addressed local snapshot archive. An existing snapshot cannot be overwritten.
+- `discover_public.py --archive-dir data/discovery/runs` uses append-only archival mode instead of overwriting a single JSON file. Files are local to the runner and **not persistent across ephemeral CI runs** unless explicitly uploaded to approved storage.
+- `budgets.py` remains a standalone budget primitive; a fully integrated multi-provider scheduler, persistent cursor/checkpoint store and production-grade request budgets are **not yet implemented**.
+- The Mastodon adapter rejects obvious localhost/private hostname and IP-address targets, but this is **not complete DNS rebinding or redirect SSRF protection**. In production, use a configured instance allowlist and restricted egress.
+
+No recurring job is enabled. Do not interpret offline tests as a live API benchmark.
