@@ -157,3 +157,13 @@ python -m ingestion.experiment config/ingestion-experiment.example.json --sqlite
 The SQLite experiment coverage report explicitly labels metrics as **cumulative ledger totals**; they are not the incremental output of just one experiment. `ingestion.audit_sqlite.audit_ledger(db)` verifies stored page hashes, normalized observation copies and checkpoint heads without contacting providers.
 
 **Operational restrictions:** this is a local SQLite prototype, not Supabase or distributed cloud storage. The lease TTL is one hour in the runner and is not renewed during long operations. SQLite is unsuitable for independent ephemeral CI workers without shared durable storage. There is no scheduled job, cloud migration, reconciliation of deleted social posts, encrypted-at-rest deployment configuration, backup/restore exercise, or production authorization. Do not enable unattended production ingestion.
+
+### Inspecting the local ledger safely
+
+```sh
+python -m ingestion.audit_sqlite_cli data/discovery/ingestion.sqlite3
+```
+
+The audit CLI opens an **existing** SQLite database in read-only mode; it will not create a new database or fetch from external services. It prints cumulative page and observation counts, repeat provider-identity counts, and any hash/content/checkpoint-head mismatches. Do not treat a passing audit as proof that all upstream source records were discovered or that a provider's records are accurate.
+
+The integration suite also checks that two independent SQLite connections cannot acquire the same active source lease before making an API request. This does not replace multi-host PostgreSQL fencing or lease renewal.
