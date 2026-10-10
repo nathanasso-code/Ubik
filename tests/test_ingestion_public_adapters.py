@@ -32,6 +32,10 @@ class PublicAdaptersTests(unittest.TestCase):
         self.assertIn("local=true", mastodon_url("example.social"))
         with self.assertRaises(ValueError):
             mastodon_url("http://example.social")
+        with self.assertRaises(ValueError):
+            mastodon_url("localhost")
+        with self.assertRaises(ValueError):
+            mastodon_url("127.0.0.1")
 
     def test_crossref_metadata_only(self):
         result = crossref_collect("2026-10-01", "2026-10-10", fetch=lambda _: {
