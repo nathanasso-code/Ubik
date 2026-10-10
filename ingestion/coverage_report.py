@@ -62,6 +62,10 @@ def evaluate_coverage(inventory, *, discovery=None, federated=None, now=None):
         feed_rows.append({
             "source_id": source["id"], "status": status,
             "seen": report.get("seen") if report else None,
+            "raw_entries": report.get("raw_entries") if report else None,
+            "normalized_out": (report["raw_entries"] - report["seen"])
+                if report and isinstance(report.get("raw_entries"), int)
+                and isinstance(report.get("seen"), int) else None,
             "stored": report.get("stored") if report else None,
             "error": report.get("error") if report else None,
             "note": "cumulative_stored_not_current_fetch" if report else "no_run_report",
