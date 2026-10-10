@@ -93,3 +93,13 @@ python -m ingestion.run_batch openalex --source openalex-works --from-date 2026-
 Social feeds start a fresh polling cycle after reaching the end; scientific date windows are marked complete. Source scope and date range form the checkpoint identity. This is **at-least-once** acquisition, not exactly-once: overlapping social pages and crash retries may generate duplicate observations; downstream URL and stable external-ID deduplication must preserve their separate provenance.
 
 **Limitations:** no cross-process locking, no cloud checkpoint persistence, no scheduled live execution, no provider-specific quota accounting, no deletion reconciliation, and no proof of real API coverage. Do not run concurrent batches for the same source/scope; a database lease and durable object store are required before unattended distributed execution. No live network requests are made without `--live`.
+
+## Offline coverage and overlap audits
+
+`ingestion.audit` measures raw observation counts by connector and source, distinct URL hints, repeated source IDs, overlapping URL hints across sources/connectors, and timestamp buckets. The timestamp buckets are descriptive only: GDELT seen dates, provider-created dates and scholarly publication dates are **not equivalent clocks**. Overlap does not establish independent corroboration.
+
+```sh
+python -m ingestion.audit_archive data/discovery/runs --output data/discovery/coverage-report.json
+```
+
+The archive auditor federates each archived snapshot without filtering by event, source quality, topic or editorial importance. It reports invalid files and federation errors separately. The archive must already exist; this command does not perform network calls. It does not compute sampling completeness or population recall, which require an independently defined reference universe.
