@@ -10,6 +10,7 @@ from pathlib import Path
 
 from .audit import audit
 from .federate import federate
+from .duplicates import duplicate_report
 
 
 def audit_directory(directory, *, output=None):
@@ -30,6 +31,7 @@ def audit_directory(directory, *, output=None):
             invalid_files.append({"file": path.name, "error": type(exc).__name__})
     merged = federate(snapshots)
     report = audit(merged)
+    report["duplicate_diagnostics"] = duplicate_report(merged)
     report["snapshot_files"] = len(files)
     report["invalid_snapshot_files"] = invalid_files
     report["federation_errors"] = merged["errors"]
