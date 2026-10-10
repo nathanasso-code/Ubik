@@ -37,5 +37,21 @@ class DiagnosticsTests(unittest.TestCase):
         self.assertEqual(by_id["b"]["shared_url_observations"], 1)
         self.assertEqual(by_id["b"]["stored_items"], 2)
 
+    def test_relevance_is_scoped_to_source_observation(self):
+        discovery = {"items": [
+            {"source_id": "a", "url": "https://example.org/story"},
+            {"source_id": "b", "url": "https://example.org/story"}
+        ]}
+        relevance = {"items": [
+            {"source_id": "a", "url": "https://example.org/story", "relevance_status": "likely_ai"},
+            {"source_id": "b", "url": "https://example.org/story", "relevance_status": "review_context"}
+        ]}
+        result = module.diagnose(discovery, relevance)
+        rows = {row["source_id"]: row for row in result["sources"]}
+        self.assertEqual(rows["a"]["likely_ai"], 1)
+        self.assertEqual(rows["a"]["review_context"], 0)
+        self.assertEqual(rows["b"]["likely_ai"], 0)
+        self.assertEqual(rows["b"]["review_context"], 1)
+
 if __name__ == "__main__":
     unittest.main()
