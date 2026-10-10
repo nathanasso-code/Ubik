@@ -18,7 +18,7 @@ jobs:
           node-version: '22'
       - name: Check JavaScript syntax
         run: |
-          for f in assets/*.js tests/*.cjs; do node --check "$f"; done
+          for f in assets/*.js assets/*.cjs tests/*.cjs; do node --check "$f"; done
       - name: Run contract tests
         run: |
           node tests/ubik-core.test.cjs
@@ -27,5 +27,6 @@ jobs:
           node tests/map-view.test.cjs
           node tests/integration-static.test.cjs
           node tests/knowledge-pipeline.test.cjs
+          node tests/epistemic-pilot.test.cjs
       - name: Run offline source discovery tests
         run: python -m unittest discover -s tests -p 'test_*.py'
