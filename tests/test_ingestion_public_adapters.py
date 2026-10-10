@@ -1,6 +1,6 @@
 import unittest
 from ingestion.public_adapters import (bluesky_collect, bluesky_url, mastodon_collect,
-                                       mastodon_url, openalex_collect, openalex_url)
+                                       mastodon_url, openalex_collect, openalex_url, crossref_collect, crossref_url)
 
 
 class PublicAdaptersTests(unittest.TestCase):
@@ -32,6 +32,16 @@ class PublicAdaptersTests(unittest.TestCase):
         self.assertIn("local=true", mastodon_url("example.social"))
         with self.assertRaises(ValueError):
             mastodon_url("http://example.social")
+
+    def test_crossref_metadata_only(self):
+        result = crossref_collect("2026-10-01", "2026-10-10", fetch=lambda _: {
+            "message": {"items": [{"DOI": "10.1000/test", "title": ["Research article"],
+                                   "publisher": "Example"}], "next-cursor": "next"}})
+        self.assertEqual(result["observations"][0]["url"], "https://doi.org/10.1000/test")
+        self.assertEqual(result["next_cursor"], "next")
+        self.assertEqual(result["observations"][0]["validation"], "not_assessed")
+        with self.assertRaises(ValueError):
+            crossref_url("2026-10-10", "2026-10-01")
 
     def test_openalex_date_window_and_cursor(self):
         result = openalex_collect("2026-10-01", "2026-10-10", fetch=lambda _: {
