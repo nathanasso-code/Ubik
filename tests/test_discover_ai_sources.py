@@ -40,6 +40,8 @@ class DiscoveryTests(unittest.TestCase):
             ]}))
             first = module.run(reg, out, lambda url: RSS)
             self.assertEqual(len(first["items"]), 2)
+            self.assertEqual(first["coverage"]["stored_items"], 2)
+            self.assertEqual(first["coverage"]["unique_article_urls"], 1)
             self.assertEqual({item["source_id"] for item in first["items"]}, {"first", "second"})
             self.assertEqual(len({item["url"] for item in first["items"]}), 1)
             self.assertEqual([row["stored"] for row in first["source_reports"]], [1, 1])
