@@ -21,6 +21,9 @@ RETURNING cursor, head_sha256, lease_epoch;
 COMMIT;
 
 -- COMMIT PAGE: one transaction, only if lease owner AND epoch match.
+-- IMPORTANT: :digest is SHA256 of the original canonical UTF-8 JSON payload,
+-- not the bytes obtained by serializing the PostgreSQL jsonb representation.
+-- Re-verify this digest in application code against the canonical input bytes.
 -- Lock scope first and reject an expired or superseded lease.
 BEGIN;
 SELECT lease_owner, lease_epoch, lease_until
