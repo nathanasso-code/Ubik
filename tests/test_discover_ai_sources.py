@@ -31,6 +31,22 @@ class DiscoveryTests(unittest.TestCase):
         email = b'<rss><channel><item><title>C</title><link>https://example.org/c</link><author>private@example.org</author></item></channel></rss>'
         self.assertEqual(module.parse_feed(email, {"id":"x","name":"Publisher","url":"https://example.org/feed"})[0]["authors"], [])
 
+    def test_shared_url_keeps_each_source_provenance(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            reg, out = Path(tmp)/"registry.json", Path(tmp)/"result.json"
+            reg.write_text(json.dumps({"topic_id": "ai-models", "sources": [
+                {"id": "first", "name": "First", "url": "https://first.example/feed", "enabled": True, "kind": "rss"},
+                {"id": "second", "name": "Second", "url": "https://second.example/feed", "enabled": True, "kind": "rss"}
+            ]}))
+            first = module.run(reg, out, lambda url: RSS)
+            self.assertEqual(len(first["items"]), 2)
+            self.assertEqual({item["source_id"] for item in first["items"]}, {"first", "second"})
+            self.assertEqual(len({item["url"] for item in first["items"]}), 1)
+            self.assertEqual([row["stored"] for row in first["source_reports"]], [1, 1])
+            again = module.run(reg, out, lambda url: RSS)
+            self.assertEqual(len(again["items"]), 2)
+            self.assertEqual([row["new"] for row in again["source_reports"]], [0, 0])
+
     def test_repeat_and_failure_are_safe(self):
         with tempfile.TemporaryDirectory() as tmp:
             reg, out = Path(tmp)/"registry.json", Path(tmp)/"result.json"
