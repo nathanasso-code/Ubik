@@ -99,6 +99,10 @@ jobs:
         if: always()
         run: |
           if test -f data/discovery/ai-models.json; then python scripts/find_shared_document_examples.py data/discovery/ai-models.json data/discovery/shared-document-examples.json --limit 50; fi
+      - name: Build multi-event cross-source review queue
+        if: always()
+        run: |
+          if test -f data/discovery/ai-models.json; then python scripts/build_event_anchor_review.py data/discovery/ai-models.json config/epistemic-event-anchors.json data/discovery/epistemic-event-anchor-review.json; fi
       - name: Generate author candidate queue
         if: always()
         run: |
