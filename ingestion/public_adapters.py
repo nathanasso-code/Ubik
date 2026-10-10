@@ -3,19 +3,15 @@
 No publication, ranking, or clustering. No social text bodies retained.
 Network access is performed only by an explicit caller.
 """
-import json
 from html import unescape
 from urllib.parse import urlencode, urlsplit
-from urllib.request import Request, urlopen
 
 from .contracts import observation
+from .transport import get_json
 
 
 def fetch_json(url, timeout=15):
-    with urlopen(Request(url, headers={"Accept": "application/json",
-                                      "User-Agent": "Ubik-research-ingestion/0.1"}), timeout=timeout) as r:
-        return json.load(r)
-
+    return get_json(url, timeout=timeout)
 
 def bluesky_url(actor, limit=30, cursor=None):
     if not isinstance(actor, str) or not actor.strip() or "/" in actor or len(actor) > 255:
