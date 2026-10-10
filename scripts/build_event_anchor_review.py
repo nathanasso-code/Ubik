@@ -40,6 +40,12 @@ def review_tasks(discovery, anchors, per_anchor=12):
             overlap = terms & tokens(title)
             if not overlap or (distinctive and not (overlap & distinctive)):
                 continue
+            # A bare version number such as 3.7 must be accompanied by
+            # the product name (Claude, Gemini, etc.).
+            if distinctive and not (overlap & (terms - distinctive)):
+                if not any(any(ch.isalpha() for ch in term) and any(ch.isdigit() for ch in term)
+                           for term in overlap & distinctive):
+                    continue
             if not distinctive and len(overlap) < min(2, len(terms)):
                 continue
             scored.append((len(overlap), item))
