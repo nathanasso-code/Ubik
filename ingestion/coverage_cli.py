@@ -10,6 +10,7 @@ from .coverage_report import evaluate_coverage
 from .cross_topic_inventory import cross_topic_inventory
 from .channel_readiness import assess_channels
 from .feed_triage import triage_feed_reports
+from .source_quality import acquisition_quality
 from .source_inventory import inventory
 
 
@@ -27,6 +28,7 @@ def main():
     result = {"cross_topic_inventory": cross_topic,
               "channel_readiness": assess_channels(cross_topic),
               "feed_triage": triage_feed_reports((discovery or {}).get("source_reports", [])),
+              "source_quality": acquisition_quality(federated or {"observations": []}),
               "inventory": catalog,
               "coverage": evaluate_coverage(catalog, discovery=discovery, federated=federated),
               "input_files": {"discovery": str(args.discovery) if args.discovery else None,
