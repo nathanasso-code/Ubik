@@ -13,7 +13,7 @@ The workflow fetched the configured RSS/Atom feeds, ran offline normalization an
 - **2,638 normalized observations** from the successful feeds; this is a single run's accumulated result from an initially empty ephemeral workspace, **not** an estimate of new items per day.
 - **17** successful feeds had at least one normalized observation; **2** successful requests produced zero.
 - The workflow's inventory and unselected RSS federation/quality audit steps completed successfully.
-- Raw upstream item counts were **not available in this run**; a later code change adds them to per-feed reports.
+- Raw upstream item counts were **not available in this first run**. A second live run with the new counter is documented below.
 
 | Source ID | Result | Normalized observations |
 | --- | --- | ---: |
@@ -37,7 +37,7 @@ Other successful feed observations contribute to the same 2,638 total; consult t
 
 OpenAI News and Hugging Face account for **2,163/2,638 ≈ 82.0%** of normalized observations in this run. This is source-volume concentration, **not** editorial importance or evidence of independent corroboration. Many older entries may be included: no 24-hour publication window was imposed on the RSS fetch. Do not interpret this as a daily throughput figure.
 
-Two arXiv RSS feeds returned zero normalized records. Without upstream raw-entry counts, one cannot yet tell whether the feed was empty or records were dropped by normalization. The follow-up implementation records both `raw_entries` and `seen`.
+Two arXiv RSS feeds returned zero normalized records. The follow-up live run below confirms that both returned **zero raw entries**, so the normalizer did not discard their records in that run. The cause of the empty upstream feeds remains unverified.
 
 ## What the experiment does and does not prove
 
@@ -51,3 +51,13 @@ It proves that the configured pilot can make live RSS requests, normalize thousa
 4. Report source concentration, publication-age buckets, missing attribution, explicit language unknowns, duplicates and independent source lineage separately.
 5. Expand the source registry into a cross-topic catalog **before** claiming that the full previously discussed source set is covered.
 6. Defer source/card/nucleus selection until the acquisition evidence is evaluated.
+
+## Follow-up live verification: raw versus normalized RSS entries
+
+Second successful run: https://github.com/nathanasso-code/Ubik/actions/runs/38089481756 (commit `3002fc46`). The workflow again tested all 24 enabled RSS feeds.
+
+- **19 successes**, **5 failures** with the same source IDs and error categories as above.
+- **2,638 raw RSS/Atom entries** across successful feeds; **2,638 normalized observations**. Thus **zero records were dropped by normalization** in this run, for feeds that returned data successfully.
+- Both `arxiv-cs-ai` and `arxiv-cs-cl` returned **0 raw entries and 0 normalized entries**; this is not a parser rejection. Feed configuration, upstream publication cadence and endpoint behavior still need investigation.
+- The successful source distribution remained the same; these runs are near-contemporaneous independent invocations, **not** 5,276 distinct records or two days of output.
+- Failed feeds were not included in the raw-entry denominator; 403 and size-cap errors remain unresolved.
