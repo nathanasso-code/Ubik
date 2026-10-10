@@ -35,7 +35,9 @@ def federate(named_snapshots):
             except (ValueError, KeyError, TypeError) as exc:
                 errors.append({"source_file": name, "index": index, "error": type(exc).__name__})
     sources = sorted({(x["connector"], x["source_id"]) for x in observations})
-    urls = {x["canonical_url_hint"] for x in observations}\n    by_connector = {name: sum(x["connector"] == name for x in observations)\n                    for name in sorted({x["connector"] for x in observations})}
+    urls = {x["canonical_url_hint"] for x in observations}
+    by_connector = {name: sum(x["connector"] == name for x in observations)
+                    for name in sorted({x["connector"] for x in observations})}
     return {
         "schema_version": 1,
         "purpose": "unselected_federated_acquisition",
@@ -46,7 +48,8 @@ def federate(named_snapshots):
             "duplicate_url_observations": len(observations) - len(urls),
             "connector_source_pairs": len(sources),
             "source_pairs": [{"connector": a, "source_id": b} for a, b in sources],
-            "errors": len(errors),\n            "by_connector": by_connector,
+            "errors": len(errors),
+            "by_connector": by_connector,
         },
         "errors": errors,
         "selection_applied": False,
