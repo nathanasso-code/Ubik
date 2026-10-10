@@ -4,7 +4,7 @@ import json
 from pathlib import Path
 
 from .public_adapters import (bluesky_collect, bluesky_url, mastodon_collect,
-                              mastodon_url, openalex_collect, openalex_url)
+                              mastodon_url, openalex_collect, openalex_url, crossref_collect, crossref_url)
 
 
 def main():
@@ -23,6 +23,11 @@ def main():
     o.add_argument("--to-date", required=True)
     o.add_argument("--per-page", type=int, default=50)
     o.add_argument("--cursor", default="*")
+    x = sub.add_parser("crossref")
+    x.add_argument("--from-date", required=True)
+    x.add_argument("--to-date", required=True)
+    x.add_argument("--rows", type=int, default=50)
+    x.add_argument("--cursor", default="*")
     p.add_argument("--live", action="store_true")
     p.add_argument("--output", type=Path, default=Path("data/discovery/public-adapter.json"))
     args = p.parse_args()
@@ -32,6 +37,9 @@ def main():
     elif args.provider == "mastodon":
         url = mastodon_url(args.instance, args.limit, args.max_id)
         run = lambda: mastodon_collect(args.instance, args.limit, args.max_id)
+    elif args.provider == "crossref":
+        url = crossref_url(args.from_date, args.to_date, args.rows, args.cursor)
+        run = lambda: crossref_collect(args.from_date, args.to_date, args.rows, args.cursor)
     else:
         url = openalex_url(args.from_date, args.to_date, args.per_page, args.cursor)
         run = lambda: openalex_collect(args.from_date, args.to_date, args.per_page, args.cursor)
