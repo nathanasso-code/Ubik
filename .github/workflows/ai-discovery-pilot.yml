@@ -16,6 +16,7 @@ on:
       - 'scripts/build_epistemic_review_queue.py'
       - 'scripts/build_epistemic_pair_queue.py'
       - 'scripts/mine_epistemic_pairs.py'
+      - 'scripts/audit_epistemic_pairs.py'
       - 'config/italian-cross-disciplinary-candidates.json'
       - 'config/source-registry.ai-models.json'
       - 'tests/test_discover_ai_sources.py'
@@ -30,6 +31,7 @@ on:
       - 'tests/test_epistemic_review_queue.py'
       - 'tests/test_epistemic_pair_queue.py'
       - 'tests/test_mine_epistemic_pairs.py'
+      - 'tests/test_audit_epistemic_pairs.py'
       - '.github/workflows/ai-discovery-pilot.yml'
   workflow_dispatch:
 permissions:
@@ -80,6 +82,10 @@ jobs:
         if: always()
         run: |
           if test -f data/discovery/ai-models.json; then python scripts/mine_epistemic_pairs.py data/discovery/ai-models.json data/discovery/epistemic-full-archive-pairs.json --limit 60; fi
+      - name: Audit cross-source event candidate pairs
+        if: always()
+        run: |
+          if test -f data/discovery/epistemic-full-archive-pairs.json; then python scripts/audit_epistemic_pairs.py data/discovery/epistemic-full-archive-pairs.json data/discovery/epistemic-pair-audit.json --threshold 0.65; fi
       - name: Generate author candidate queue
         if: always()
         run: |
