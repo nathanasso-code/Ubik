@@ -25,5 +25,12 @@ class SQLiteStore:
         return commit_page(self.db, lease.scope_key, lease.owner, snapshot,
                            next_cursor, epoch=lease.epoch, ttl=self.ttl)
 
+    def is_completed(self, lease):
+        row = self.db.execute(
+            "SELECT cursor, archive_sha256 FROM ingestion_scopes WHERE scope_key=?",
+            (lease.scope_key,)
+        ).fetchone()
+        return bool(row and row[0] is None and row[1] is not None)
+
     def release(self, lease):
         release(self.db, lease.scope_key, lease.owner)
