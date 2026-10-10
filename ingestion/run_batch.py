@@ -74,7 +74,9 @@ def run_pages(provider, *, source, archive_dir, checkpoint_dir, max_pages=2,
         budget.record_result(len(records))
         # Cursor-based APIs can supply a cursor even on a short/empty final page.
         # An empty page is terminal; a short Crossref page ends the interval.
-        if not records or (provider == "crossref" and len(records) < page_size):
+        if not records and not result.get("next_cursor") and not result.get("next_max_id"):
+            next_cursor = None
+        if provider == "crossref" and len(records) < page_size and result.get("invalid", 0) == 0:
             next_cursor = None
         archive = archive_snapshot(result, archive_dir)
         write_checkpoint(checkpoint_dir, key, cursor=next_cursor,
