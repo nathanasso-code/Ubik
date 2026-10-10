@@ -26,7 +26,7 @@ def diagnose(discovery, relevance=None):
         row[relevance_status if relevance_status in ("likely_ai", "review_context", "unknown") else "unknown"] += 1
     for sid, report in reports.items():
         row = sources.setdefault(sid, {"source_id": sid, "stored_items": 0, "feed_named": 0, "feed_unspecified": 0,
-                                       "feed_descriptions": 0, "likely_ai": 0, "review_context": 0, "unknown": 0})
+                                       "feed_descriptions": 0, "shared_url_observations": 0, "likely_ai": 0, "review_context": 0, "unknown": 0})
         row["fetch_status"] = report.get("status", "unknown")
         if report.get("error"):
             row["fetch_error"] = report["error"]
