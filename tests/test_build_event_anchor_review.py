@@ -15,6 +15,16 @@ class EventAnchorReviewTests(unittest.TestCase):
         self.assertEqual(result["verified_event_pairs"], 0)
         self.assertTrue(all(x["event_label"] is None for x in items))
 
+    def test_unrelated_numeric_versions_do_not_match(self):
+        discovery = {"items": [
+            {"id": "a", "source_id": "python", "title": "Python 2.7 and Python 3",
+             "url": "https://example.org/python"},
+            {"id": "b", "source_id": "news", "title": "Claude 3.7 Sonnet announced",
+             "url": "https://example.org/claude"},
+        ]}
+        found = review_tasks(discovery, [{"id": "claude", "query": "Anthropic Claude 3.7 Sonnet launch"}])
+        self.assertEqual([x["observation_id"] for x in found["anchors"][0]["candidate_observations"]], ["b"])
+
     def test_empty(self):
         self.assertEqual(review_tasks({}, [{"id": "x", "query": "No matching"}])["anchors"][0]["candidate_observations"], [])
 
