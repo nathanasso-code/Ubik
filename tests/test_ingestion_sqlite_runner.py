@@ -50,10 +50,10 @@ class SQLiteRunnerIntegrationTests(unittest.TestCase):
                         from_date="2026-10-09", to_date="2026-10-10",
                         ledger=db, fetchers={"crossref": fetch})
             first = run_pages("crossref", **opts)
-            self.assertEqual(first["status"], "completed")
+            self.assertEqual(first["status"], "budget_exhausted")
             second = run_pages("crossref", **opts)
-            self.assertEqual(second["pages"], 0)
-            self.assertEqual(calls, ["*"])
+            self.assertEqual(second["pages"], 1)
+            self.assertEqual(calls, ["*", "provider-continues"])
             db.close()
 
     def test_second_database_connection_cannot_fetch_same_scope(self):
