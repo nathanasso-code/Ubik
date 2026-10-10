@@ -3,7 +3,7 @@ import unittest
 from pathlib import Path
 
 from ingestion.run_batch import run_pages
-from ingestion.sqlite_ledger import connect, metrics
+from ingestion.sqlite_ledger import LeaseBusyError, connect, metrics
 
 
 class SQLiteRunnerIntegrationTests(unittest.TestCase):
@@ -55,6 +55,31 @@ class SQLiteRunnerIntegrationTests(unittest.TestCase):
             self.assertEqual(second["pages"], 0)
             self.assertEqual(calls, ["*"])
             db.close()
+
+    def test_second_database_connection_cannot_fetch_same_scope(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            db_path = root / "ledger.sqlite3"
+            first_db, second_db = connect(db_path), connect(db_path)
+            nested_calls = []
+            def other_fetch(*_args, **_kwargs):
+                nested_calls.append("unexpected")
+                raise AssertionError("Must never fetch while leased")
+            def first_fetch(*_args, **_kwargs):
+                with self.assertRaises(LeaseBusyError):
+                    run_pages("bluesky", source="example.bsky.social",
+                              archive_dir=root / "a", checkpoint_dir=root / "c",
+                              ledger=second_db, max_pages=1,
+                              fetchers={"bluesky": other_fetch})
+                return {"connector": "bluesky", "observations": [],
+                        "next_cursor": None}
+            run_pages("bluesky", source="example.bsky.social",
+                      archive_dir=root / "a", checkpoint_dir=root / "c",
+                      ledger=first_db, max_pages=1,
+                      fetchers={"bluesky": first_fetch})
+            self.assertEqual(nested_calls, [])
+            first_db.close()
+            second_db.close()
 
     def test_failure_releases_lease_and_keeps_cursor(self):
         with tempfile.TemporaryDirectory() as directory:
