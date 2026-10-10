@@ -39,6 +39,15 @@ class SourceInventoryCoverageTests(unittest.TestCase):
         self.assertEqual(by_id["arxiv-cs-ai"]["note"],
                          "cumulative_stored_not_current_fetch")
 
+    def test_rss_rfc2822_dates_are_not_marked_missing(self):
+        report = evaluate_coverage(inventory(ROOT), federated={"observations": [{
+            "connector": "rss", "source_id": "example",
+            "external_id": "x", "url": "https://example.org/x",
+            "title": "Example", "published_raw": "Thu, 08 Oct 2026 10:00:00 GMT"
+        }]}, now=datetime(2026, 10, 10, tzinfo=timezone.utc))
+        self.assertEqual(report["source_observations"][0]["missing_publication_dates"], 0)
+        self.assertEqual(report["freshness"]["within_7d"], 1)
+
     def test_unselected_observations_keep_duplicate_and_missing_date(self):
         observation = {"connector": "bluesky", "source_id": "actor",
                        "external_id": "post-1", "url": "https://example.org/p",
