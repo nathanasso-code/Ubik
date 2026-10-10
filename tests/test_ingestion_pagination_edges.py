@@ -24,7 +24,7 @@ class BatchPaginationEdgesTests(unittest.TestCase):
             self.assertEqual(result["status"], "completed")
             self.assertEqual(calls, ["*"])
 
-    def test_empty_page_is_terminal(self):
+    def test_empty_page_with_cursor_continues_until_cursor_stops(self):
         with tempfile.TemporaryDirectory() as directory:
             result = run_pages("openalex", source="openalex-works",
                                from_date="2026-10-09", to_date="2026-10-10",
@@ -35,7 +35,7 @@ class BatchPaginationEdgesTests(unittest.TestCase):
                                    "next_cursor": "next"}},
                                sleep=lambda _: None)
             self.assertEqual(result["status"], "completed")
-            self.assertEqual(result["pages"], 1)
+            self.assertEqual(result["pages"], 2)
 
 
 if __name__ == "__main__":
