@@ -12,15 +12,24 @@ def materialize(seed, candidates):
     rows = candidates.get("items", [])
     output = []
     seen = set()
+    by_pair = {(x.get("left_id"), x.get("right_id")): (i, x) for i, x in enumerate(rows)}
     for entry in seed.get("entries", []):
         index = entry.get("candidate_index")
-        if type(index) is not int or index < 0 or index >= len(rows) or index in seen:
-            raise ValueError("Invalid or duplicate candidate index")
+        if entry.get("expected_left_id") and entry.get("expected_right_id"):
+            pair = (entry["expected_left_id"], entry["expected_right_id"])
+            if pair not in by_pair:
+                raise ValueError("Pinned source pair missing from candidate artifact: " + repr(pair))
+            index, source = by_pair[pair]
+        else:
+            if type(index) is not int or index < 0 or index >= len(rows):
+                raise ValueError("Invalid candidate index")
+            source = rows[index]
+        if index in seen:
+            raise ValueError("Duplicate candidate pair")
         seen.add(index)
         label = entry.get("label")
         if label not in LABELS:
             raise ValueError("Unsupported label")
-        source = rows[index]
         for key in ("left_url", "right_url", "left_title", "right_title", "left_source", "right_source"):
             if not source.get(key):
                 raise ValueError("Missing provenance: " + key)
