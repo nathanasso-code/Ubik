@@ -15,7 +15,7 @@ from .archive import archive_snapshot
 from .budgets import SourceBudget
 from .checkpoints import read_checkpoint, write_checkpoint
 from .locks import source_lock
-from .sqlite_ledger import acquire as acquire_lease, commit_page, release as release_lease
+from .sqlite_ledger import acquire as acquire_lease, commit_page, connect as connect_ledger, release as release_lease
 from .public_adapters import (bluesky_collect, crossref_collect,
                               mastodon_collect, openalex_collect)
 
@@ -121,6 +121,12 @@ def run_pages(provider, *, source, archive_dir, checkpoint_dir, max_pages=2,
     owner = uuid.uuid4().hex
     cursor = acquire_lease(ledger, key, owner, ttl=3600)
     try:
+        if provider in {"crossref", "openalex"} and cursor is None:
+            previous = ledger.execute(
+                "SELECT archive_sha256 FROM ingestion_scopes WHERE scope_key=?", (key,)).fetchone()
+            if previous and previous[0] is not None:
+                return {"provider": provider, "source": source, "pages": 0,
+                        "observations": 0, "status": "completed", "checkpoint": key}
         return _run_pages_unlocked(provider, **args, ledger=ledger,
                                    ledger_owner=owner, initial_cursor=cursor)
     finally:
@@ -138,14 +144,21 @@ def main():
     p.add_argument("--archive-dir", type=Path, default=Path("data/discovery/runs"))
     p.add_argument("--checkpoint-dir", type=Path, default=Path("data/discovery/checkpoints"))
     p.add_argument("--live", action="store_true")
+    p.add_argument("--sqlite-ledger", type=Path, help="Opt-in local transactional SQLite storage")
     args = p.parse_args()
     if not args.live:
         print("Dry run: add --live to acquire public metadata.")
         return
-    report = run_pages(args.provider, source=args.source, archive_dir=args.archive_dir,
-                       checkpoint_dir=args.checkpoint_dir, max_pages=args.max_pages,
-                       page_size=args.page_size, from_date=args.from_date, to_date=args.to_date)
-    print(json.dumps(report, ensure_ascii=False, indent=2))
+    db = connect_ledger(args.sqlite_ledger) if args.sqlite_ledger else None
+    try:
+        report = run_pages(args.provider, source=args.source, archive_dir=args.archive_dir,
+                           checkpoint_dir=args.checkpoint_dir, max_pages=args.max_pages,
+                           page_size=args.page_size, from_date=args.from_date, to_date=args.to_date,
+                           ledger=db)
+        print(json.dumps(report, ensure_ascii=False, indent=2))
+    finally:
+        if db is not None:
+            db.close()
 
 
 if __name__ == "__main__":
