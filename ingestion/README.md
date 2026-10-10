@@ -103,3 +103,17 @@ python -m ingestion.audit_archive data/discovery/runs --output data/discovery/co
 ```
 
 The archive auditor federates each archived snapshot without filtering by event, source quality, topic or editorial importance. It reports invalid files and federation errors separately. The archive must already exist; this command does not perform network calls. It does not compute sampling completeness or population recall, which require an independently defined reference universe.
+
+## Heterogeneous experimental run
+
+`ingestion.experiment_plan` validates a source list with strict per-source limits (at most 24 sources, 10 pages each, 20 observations/page). `ingestion.experiment` runs sources independently, reports failures by source, and audits the resulting archived observations. **Dry-run is the default**.
+
+```sh
+python -m ingestion.experiment config/ingestion-experiment.example.json
+# Only after reviewing source scope, rights, instance rules and egress policy:
+python -m ingestion.experiment config/ingestion-experiment.example.json --live
+```
+
+The example source list is illustrative, not a coverage benchmark. In particular, a Bluesky actor feed is not the entire Bluesky firehose, and a Mastodon local timeline is not the fediverse. The experiment runner does not claim representative sampling, comprehensive coverage, editorial quality, or cross-provider independent verification.
+
+The live mode remains **manual and untested against actual provider responses**; no scheduled workflow or production database writes are enabled. Source archives and checkpoints are local and need external persistence before use on ephemeral runners.
