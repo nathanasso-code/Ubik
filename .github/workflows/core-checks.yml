@@ -32,3 +32,7 @@ jobs:
           node tests/conservative-event-proposals.test.cjs
       - name: Run offline source discovery tests
         run: python -m unittest discover -s tests -p 'test_*.py'
+      - name: Evaluate reference baseline (diagnostic only)
+        run: |
+          python scripts/baseline_verified_event_pairs.py data/evaluation/verified-event-pairs-v1.json /tmp/ubik-event-baseline.json
+          python scripts/evaluate_verified_event_pairs.py data/evaluation/verified-event-pairs-v1.json /tmp/ubik-event-baseline.json
