@@ -36,7 +36,7 @@ class SQLiteRunnerIntegrationTests(unittest.TestCase):
             self.assertFalse((root / "unused-checkpoints").exists())
             db.close()
 
-    def test_scientific_completed_window_is_not_refetched(self):
+    def test_scientific_empty_normalized_page_resumes_by_cursor(self):
         calls = []
         def fetch(_from, _to, *, rows, cursor):
             calls.append(cursor)
