@@ -17,6 +17,9 @@ class AcquisitionStore(Protocol):
     def release(self, lease: "Lease") -> None:
         """Release only the matching lease."""
 
+    def is_completed(self, lease: "Lease") -> bool:
+        """True when this scope has committed a terminal page."""
+
 
 class Lease:
     def __init__(self, scope_key: str, owner: str, epoch: int, cursor: str | None):
