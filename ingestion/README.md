@@ -175,3 +175,9 @@ The integration suite also checks that two independent SQLite connections cannot
 `ingestion/social_lifecycle.py` classifies social observations as temporary retention, review, quarantine or purge candidates based on collection time and explicitly supplied verified-removal IDs. It **never deletes** observations, archives or backups, never probes accounts, and does not treat a failed HTTP request as a deletion signal. A lifecycle policy, source terms, privacy review and end-to-end erasure mechanism remain required.
 
 The SQLite schema now records a monotonically increasing `lease_epoch` for future fencing; existing ledgers receive the column additively on opening. The runner now binds each SQLite page commit to its acquired epoch, rejecting a stale epoch even if an owner token is reused. Existing direct callers of `commit_page` may omit `epoch` for compatibility; **all new callers should pass it**. This is still not a distributed PostgreSQL lease. See `docs/INGESTION_PRODUCTION_READINESS.md` for deployment gates.
+
+## Replaceable storage contract
+
+`ingestion/storage_contract.py` defines the minimal `AcquisitionStore` protocol: acquire a fenced lease, atomically commit an unselected snapshot and cursor, and release only the matching lease. `ingestion/sqlite_store.py` implements this interface on the local SQLite ledger and has contract tests for lease contention, restart and stale-epoch rejection.
+
+The bounded runner currently accepts a **raw SQLite connection** for compatibility; it has not yet been refactored to accept every `AcquisitionStore` implementation. PostgreSQL will need a separately tested implementation of the same protocol, with canonical payload digests and transactional fencing. The protocol is a migration boundary, not a claim that PostgreSQL is already supported.
