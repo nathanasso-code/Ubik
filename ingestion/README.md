@@ -53,13 +53,13 @@ python -m ingestion.federate data/discovery/ai-models.json data/discovery/hacker
 
 - **Bluesky**: public AppView `getAuthorFeed`, bounded to 100 posts per request, actor-specific; retains post URL/AT URI, author DID and a short preview. This is *not* a firehose. Deletion/privacy lifecycle handling is required before continuous archival.
 - **Mastodon**: public **local** timeline for an explicitly named instance, bounded to 40 statuses; ignores nonpublic statuses and boosts; stores a post reference rather than the status HTML body. Some instances disable unauthenticated access; instance rules must be respected. Do not use user-supplied instance URLs without network egress/SSRF controls.
-- **OpenAlex**: publication-date-bounded works metadata, max 100 records/page, with a cursor for further pages. API access, rate limits, and any API-key requirements must be confirmed at deployment. This is not full-text extraction.
+- **Crossref**: date-bounded bibliographic metadata, cursor-based pagination; does not fetch copyrighted full texts.\n- **OpenAlex**: publication-date-bounded works metadata, max 100 records/page, with a cursor for further pages. API access, rate limits, and any API-key requirements must be confirmed at deployment. This is not full-text extraction.
 
 Examples (all offline validation unless `--live` is supplied):
 ```sh
 python -m ingestion.discover_public --live bluesky --actor example.bsky.social --limit 30
 python -m ingestion.discover_public --live mastodon --instance mastodon.social --limit 20
-python -m ingestion.discover_public --live openalex --from-date 2026-10-09 --to-date 2026-10-10 --per-page 50
+python -m ingestion.discover_public --live openalex --from-date 2026-10-09 --to-date 2026-10-10 --per-page 50\npython -m ingestion.discover_public --live crossref --from-date 2026-10-09 --to-date 2026-10-10 --rows 50
 ```
 
 Each connector makes one bounded API call per invocation, not an automatic pagination loop. Output is a replaceable snapshot: use distinct filenames for repeated runs until durable append-only storage is implemented. `ingestion.federate` accepts these snapshots alongside RSS, HN and GDELT. These adapters are not yet scheduled, benchmarked against live endpoints or configured for production.
@@ -69,3 +69,4 @@ References:
 - https://docs.joinmastodon.org/methods/timelines/
 - https://help.openalex.org/api/filtering/
 - https://help.openalex.org/api/paging/
+\n- https://api.crossref.org/swagger-ui/index.html\n
