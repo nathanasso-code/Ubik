@@ -3,6 +3,7 @@
 A checkpoint advances only after its corresponding snapshot has been durably
 archived. No editorial state is stored here.
 """
+import hashlib
 import json
 import os
 import tempfile
@@ -24,6 +25,13 @@ def read_checkpoint(directory, key):
     data = json.loads(path.read_text(encoding="utf-8"))
     if not isinstance(data, dict) or data.get("key") != key:
         raise ValueError("Checkpoint mismatch")
+    archived = Path(data.get("archive_path", ""))
+    digest = data.get("archive_sha256")
+    if not archived.is_file() or not isinstance(digest, str) or len(digest) != 64:
+        raise ValueError("Checkpoint references missing or invalid archive")
+    content = archived.read_bytes()
+    if hashlib.sha256(content.removesuffix(b"\n")).hexdigest() != digest:
+        raise ValueError("Checkpoint archive digest mismatch")
     return data
 
 
