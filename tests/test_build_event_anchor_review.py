@@ -39,6 +39,17 @@ class EventAnchorReviewTests(unittest.TestCase):
                                            "product_aliases": ["claude 3.7"]}])
         self.assertEqual([x["observation_id"] for x in result["anchors"][0]["candidate_observations"]], ["b"])
 
+    def test_historical_year_excludes_later_coverage(self):
+        discovery = {"items": [
+            {"id": "old", "source_id": "a", "title": "GPT-4o launched",
+             "url": "https://example.org/old", "published_raw": "2024-05-13T12:00:00Z"},
+            {"id": "new", "source_id": "b", "title": "GPT-4o retired",
+             "url": "https://example.org/new", "published_raw": "2026-01-01T12:00:00Z"},
+        ]}
+        result = review_tasks(discovery, [{"id": "launch", "query": "GPT-4o launch",
+            "product_aliases": ["gpt-4o"], "event_year": "2024"}])
+        self.assertEqual([x["observation_id"] for x in result["anchors"][0]["candidate_observations"]], ["old"])
+
     def test_missing_aliases_rejected(self):
         with self.assertRaises(ValueError):
             review_tasks({}, [{"id": "x", "query": "Claude 3.7"}])
