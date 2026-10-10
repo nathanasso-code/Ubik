@@ -24,7 +24,7 @@ def summarize(folder):
             data = json.loads(path.read_text(encoding="utf-8"))
             if filename == "ai-models.json":
                 c = data.get("coverage", {})
-                detail = f"{c.get('successful_feeds', 0)}/{c.get('enabled_feeds', 0)} feeds working; {c.get('stored_items', 0)} publications; {c.get('items_with_named_author', 0)} with bylines"
+                detail = f"{c.get('successful_feeds', 0)}/{c.get('enabled_feeds', 0)} feeds working; {c.get('stored_items', 0)} source observations; {c.get('unique_article_urls', len({item.get('url') for item in data.get('items', []) if item.get('url')}))} unique article URLs; {c.get('items_with_named_author', 0)} observations with bylines"
             elif filename == "ai-author-candidates.json":
                 detail = f"{data.get('candidate_count', 0)} name-based candidates (identity unverified)"
             elif filename == "italian-feed-candidates.json":
