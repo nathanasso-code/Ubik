@@ -41,7 +41,7 @@ class BatchRunnerTests(unittest.TestCase):
             third = run_pages("bluesky", source="example.bsky.social",
                               archive_dir=archives, checkpoint_dir=checkpoints,
                               fetchers={"bluesky": fake}, sleep=lambda _: None)
-            self.assertEqual(third["pages"], 0)
+            self.assertEqual(third["pages"], 2)\n            self.assertEqual(calls, [None, "next", None, "next"])
 
     def test_failure_does_not_advance_checkpoint(self):
         def broken(*_args, **_kwargs):
