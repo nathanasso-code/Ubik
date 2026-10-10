@@ -3,8 +3,6 @@
 A snapshot is immutable once written. Explicit file paths are required to avoid
 accidental overwrite; storage does not invoke network or editorial consumers.
 """
-import hashlib
-import json
 from datetime import datetime, timezone
 from pathlib import Path
 
