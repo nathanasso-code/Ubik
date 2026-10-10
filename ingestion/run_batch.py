@@ -92,11 +92,6 @@ def _run_pages_unlocked(provider, *, source, archive_dir, checkpoint_dir, max_pa
             archive = archive_snapshot(result, archive_dir)
             write_checkpoint(checkpoint_dir, key, cursor=next_cursor,
                              archive_sha256=archive["sha256"], archive_path=archive["path"])
-        else:
-            saved = commit_page(ledger, key, ledger_owner, result, next_cursor, ttl=3600,
-                                epoch=ledger_epoch)
-            archive = {"page_id": saved["page_id"], "sha256": saved["sha256"],
-                       "observations": saved["observations"], "new_page": saved["new_page"]}
         archived.append(archive)
         if not next_cursor or next_cursor == cursor:
             status = "completed"
