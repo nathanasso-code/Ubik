@@ -38,6 +38,18 @@ class FederationTests(unittest.TestCase):
         self.assertFalse(result["clustering_applied"])
         self.assertEqual({x["connector"] for x in result["observations"]}, {"rss", "hacker_news"})
 
+    def test_social_science_snapshots_supported(self):
+        result = federate([
+            ("bluesky.json", {"connector": "bluesky", "observations": [
+                {"connector": "bluesky", "source_id": "did:plc:abc",
+                 "url": "https://bsky.app/profile/did:plc:abc/post/1"}]}),
+            ("openalex.json", {"connector": "openalex", "observations": [
+                {"connector": "openalex", "source_id": "openalex-works",
+                 "url": "https://doi.org/10.1000/xyz"}]})
+        ])
+        self.assertEqual(result["metrics"]["observations"], 2)
+        self.assertEqual(result["metrics"]["connector_source_pairs"], 2)
+
     def test_unknown_snapshot_isolated(self):
         result = federate([("bad.json", {"foo": []})])
         self.assertEqual(result["metrics"]["errors"], 1)
