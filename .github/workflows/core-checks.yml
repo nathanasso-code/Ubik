@@ -28,5 +28,6 @@ jobs:
           node tests/integration-static.test.cjs
           node tests/knowledge-pipeline.test.cjs
           node tests/epistemic-pilot.test.cjs
+          node tests/epistemic-evaluation.test.cjs
       - name: Run offline source discovery tests
         run: python -m unittest discover -s tests -p 'test_*.py'
