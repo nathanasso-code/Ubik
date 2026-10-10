@@ -26,3 +26,13 @@ Social verification: https://github.com/nathanasso-code/Ubik/actions/runs/380872
 3. The temporary workflows were deleted to prevent repeated automatic network calls on subsequent pushes. The separate manual-only smoke workflow remains on the development branch and is not yet dispatchable from the default branch.
 4. The live experiments did **not** validate multi-page pagination, long-term checkpoints, deleted-content reconciliation, representativeness, source independence, licensing compliance, or unattended scheduling.
 5. Social content previews are currently stored in ephemeral archive files during execution. Production retention policy, opt-outs and deletion reconciliation remain open requirements.
+
+## Mastodon API contract review
+
+The official Mastodon timeline documentation confirms that `GET /api/v1/timelines/public` supports `limit`, `local`, and `max_id` (https://docs.joinmastodon.org/methods/timelines/). Thus the observed HTTP 422 is **not yet evidence of an invalid query parameter**. Public preview can be disabled by an instance and some instances require authentication. The earlier experiment logged only the HTTP status, not the response body or a trace ID, so its exact cause remains unknown. Do not bypass an instance's access controls or automatically switch to authenticated scraping.
+
+The next controlled diagnostic should compare a single request on the same instance with and without `local=true`, inspect sanitized server error codes (never tokens or post bodies), and test another explicitly approved public instance only if permitted. Keep results at one page and a small request budget.
+
+## Pagination correction
+
+A connector may discard returned records (for example, boosts, missing fields or non-public statuses) yet still receive a valid provider cursor. A zero-length **normalized** observation list therefore does not prove that the provider has reached the end. The bounded batch runner now follows a new cursor even on an empty normalized page, subject to its request budget, and stops if the cursor repeats. This avoids silently truncating discovery because of normalization filters.
