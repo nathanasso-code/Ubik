@@ -36,3 +36,5 @@ jobs:
         run: |
           python scripts/baseline_verified_event_pairs.py data/evaluation/verified-event-pairs-v1.json /tmp/ubik-event-baseline.json
           python scripts/evaluate_verified_event_pairs.py data/evaluation/verified-event-pairs-v1.json /tmp/ubik-event-baseline.json
+      - name: Audit reference-set quality (diagnostic only)
+        run: python scripts/audit_event_reference.py data/evaluation/verified-event-pairs-v1.json
