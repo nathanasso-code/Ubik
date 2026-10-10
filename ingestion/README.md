@@ -167,3 +167,11 @@ python -m ingestion.audit_sqlite_cli data/discovery/ingestion.sqlite3
 The audit CLI opens an **existing** SQLite database in read-only mode; it will not create a new database or fetch from external services. It prints cumulative page and observation counts, repeat provider-identity counts, and any hash/content/checkpoint-head mismatches. Do not treat a passing audit as proof that all upstream source records were discovered or that a provider's records are accurate.
 
 The integration suite also checks that two independent SQLite connections cannot acquire the same active source lease before making an API request. This does not replace multi-host PostgreSQL fencing or lease renewal.
+
+## PostgreSQL and social lifecycle: development designs
+
+`ingestion/postgres/schema.sql` defines an isolated PostgreSQL schema and `transaction_templates.sql` documents owner/expiry/fencing checks. These files are **drafts**: no migration has been executed and no PostgreSQL connector is active. Before using them, validate transaction logic and canonical JSON digest handling against a disposable development database.
+
+`ingestion/social_lifecycle.py` classifies social observations as temporary retention, review, quarantine or purge candidates based on collection time and explicitly supplied verified-removal IDs. It **never deletes** observations, archives or backups, never probes accounts, and does not treat a failed HTTP request as a deletion signal. A lifecycle policy, source terms, privacy review and end-to-end erasure mechanism remain required.
+
+The SQLite schema now records a monotonically increasing `lease_epoch` for future fencing; existing ledgers receive the column additively on opening. **Epoch is not yet passed into SQLite page commits**, so this alone is not a full fencing guarantee. See `docs/INGESTION_PRODUCTION_READINESS.md` for deployment gates.
