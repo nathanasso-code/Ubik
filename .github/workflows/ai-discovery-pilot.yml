@@ -18,6 +18,7 @@ on:
       - 'scripts/mine_epistemic_pairs.py'
       - 'scripts/audit_epistemic_pairs.py'
       - 'scripts/materialize_epistemic_examples.py'
+      - 'scripts/find_shared_document_examples.py'
       - 'data/evaluation/ai-event-pairs-seed-v1.json'
       - 'config/italian-cross-disciplinary-candidates.json'
       - 'config/source-registry.ai-models.json'
@@ -35,6 +36,7 @@ on:
       - 'tests/test_mine_epistemic_pairs.py'
       - 'tests/test_audit_epistemic_pairs.py'
       - 'tests/test_materialize_epistemic_examples.py'
+      - 'tests/test_find_shared_document_examples.py'
       - '.github/workflows/ai-discovery-pilot.yml'
   workflow_dispatch:
 permissions:
@@ -93,6 +95,10 @@ jobs:
         if: always()
         run: |
           if test -f data/discovery/epistemic-full-archive-pairs.json; then python scripts/materialize_epistemic_examples.py data/evaluation/ai-event-pairs-seed-v1.json data/discovery/epistemic-full-archive-pairs.json data/discovery/epistemic-labeled-examples.json; fi
+      - name: Extract shared-document provenance controls
+        if: always()
+        run: |
+          if test -f data/discovery/ai-models.json; then python scripts/find_shared_document_examples.py data/discovery/ai-models.json data/discovery/shared-document-examples.json --limit 50; fi
       - name: Generate author candidate queue
         if: always()
         run: |
