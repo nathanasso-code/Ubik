@@ -41,7 +41,7 @@ def run_pages(provider, *, source, archive_dir, checkpoint_dir, max_pages=2,
     key = provider + "-" + hashlib.sha256(json.dumps(scope, sort_keys=True).encode()).hexdigest()[:24]
     checkpoint = read_checkpoint(checkpoint_dir, key)
     cursor = checkpoint["cursor"] if checkpoint else None
-    if checkpoint and cursor is None:
+    if checkpoint and cursor is None and provider in {"openalex", "crossref"}:
         return {"provider": provider, "source": source, "pages": 0,
                 "observations": 0, "status": "completed", "checkpoint": key}
     budget = SourceBudget(source, max_requests=max_pages, max_observations=max_pages * page_size)
