@@ -50,6 +50,8 @@ class SourceInventoryCoverageTests(unittest.TestCase):
         self.assertEqual(report["duplicate_diagnostics"]["extra_repeated_observations"], 1)
         self.assertEqual(report["source_observations"][0]["missing_publication_dates"], 2)
         self.assertEqual(report["tested_feed_count"], 0)
+        self.assertEqual(report["languages_explicitly_declared"], {"unknown": 2})
+        self.assertEqual(report["source_observations"][0]["missing_titles"], 2)
 
 
 if __name__ == "__main__":
