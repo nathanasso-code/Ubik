@@ -3,6 +3,8 @@
 Does not call external APIs or select stories.
 """
 import argparse
+import hashlib
+import re
 import json
 from pathlib import Path
 
@@ -16,7 +18,11 @@ def audit_directory(directory, *, output=None):
     snapshots, invalid_files = [], []
     for path in files:
         try:
-            data = json.loads(path.read_text(encoding="utf-8"))
+            raw = path.read_bytes()
+            match = re.fullmatch(r"\\d{8}T\\d{12}Z-[a-zA-Z0-9_]+-([0-9a-f]{12})\\.json", path.name)
+            if match and hashlib.sha256(raw.rstrip(b"\\n")).hexdigest()[:12] != match.group(1):
+                raise ValueError("Archive checksum mismatch")
+            data = json.loads(raw)
             if not isinstance(data, dict):
                 raise ValueError("Snapshot is not an object")
             snapshots.append((path.name, data))
