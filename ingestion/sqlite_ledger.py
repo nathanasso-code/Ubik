@@ -26,7 +26,8 @@ def connect(path):
             cursor TEXT,
             archive_sha256 TEXT,
             lease_owner TEXT,
-            lease_until REAL NOT NULL DEFAULT 0
+            lease_until REAL NOT NULL DEFAULT 0,
+            lease_epoch INTEGER NOT NULL DEFAULT 0
         );
         CREATE TABLE IF NOT EXISTS ingestion_pages (
             id INTEGER PRIMARY KEY,
@@ -62,7 +63,7 @@ def acquire(db, scope_key, owner, *, now=None, ttl=120):
                          (scope_key,)).fetchone()
         if row[0] is not None and row[1] > now:
             raise LeaseBusyError("Acquisition scope has an active lease")
-        db.execute("UPDATE ingestion_scopes SET lease_owner=?, lease_until=? WHERE scope_key=?",
+        db.execute("UPDATE ingestion_scopes SET lease_owner=?, lease_until=?, lease_epoch=lease_epoch+1 WHERE scope_key=?",
                    (owner, now + ttl, scope_key))
         db.execute("COMMIT")
         return row[2]
