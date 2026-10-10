@@ -124,16 +124,9 @@ def run_pages(provider, *, source, archive_dir, checkpoint_dir, max_pages=2,
     storage = store if store is not None else SQLiteStore(ledger)
     lease = storage.acquire(key)
     try:
-        if provider in {"crossref", "openalex"} and lease.cursor is None:
-            # A completed scientific window has a committed page but no cursor.
-            db = getattr(storage, "db", None)
-            if db is not None:
-                previous = db.execute(
-                    "SELECT archive_sha256 FROM ingestion_scopes WHERE scope_key=?", (key,)
-                ).fetchone()
-                if previous and previous[0] is not None:
-                    return {"provider": provider, "source": source, "pages": 0,
-                            "observations": 0, "status": "completed", "checkpoint": key}
+        if provider in {"crossref", "openalex"} and lease.cursor is None and storage.is_completed(lease):
+            return {"provider": provider, "source": source, "pages": 0,
+                    "observations": 0, "status": "completed", "checkpoint": key}
         return _run_pages_unlocked(provider, **args, ledger=ledger,
                                    initial_cursor=lease.cursor, store=storage, lease=lease)
     finally:
