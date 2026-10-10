@@ -7,6 +7,7 @@ import argparse
 import hashlib
 import json
 import time
+import uuid
 from datetime import date
 from pathlib import Path
 
@@ -14,13 +15,14 @@ from .archive import archive_snapshot
 from .budgets import SourceBudget
 from .checkpoints import read_checkpoint, write_checkpoint
 from .locks import source_lock
+from .sqlite_ledger import acquire as acquire_lease, commit_page, release as release_lease
 from .public_adapters import (bluesky_collect, crossref_collect,
                               mastodon_collect, openalex_collect)
 
 
 def _run_pages_unlocked(provider, *, source, archive_dir, checkpoint_dir, max_pages=2,
               page_size=20, from_date=None, to_date=None, pause_seconds=1,
-              fetchers=None, sleep=time.sleep):
+              fetchers=None, sleep=time.sleep, ledger=None, ledger_owner=None, initial_cursor=None):
     if provider not in {"bluesky", "mastodon", "openalex", "crossref"}:
         raise ValueError("Unsupported provider")
     if not isinstance(source, str) or not source:
@@ -40,8 +42,8 @@ def _run_pages_unlocked(provider, *, source, archive_dir, checkpoint_dir, max_pa
              "from_date": from_date if provider in {"openalex", "crossref"} else None,
              "to_date": to_date if provider in {"openalex", "crossref"} else None}
     key = provider + "-" + hashlib.sha256(json.dumps(scope, sort_keys=True).encode()).hexdigest()[:24]
-    checkpoint = read_checkpoint(checkpoint_dir, key)
-    cursor = checkpoint["cursor"] if checkpoint else None
+    checkpoint = read_checkpoint(checkpoint_dir, key) if ledger is None else None
+    cursor = checkpoint["cursor"] if checkpoint else initial_cursor
     if checkpoint and cursor is None and provider in {"openalex", "crossref"}:
         return {"provider": provider, "source": source, "pages": 0,
                 "observations": 0, "status": "completed", "checkpoint": key}
@@ -79,9 +81,16 @@ def _run_pages_unlocked(provider, *, source, archive_dir, checkpoint_dir, max_pa
             next_cursor = None
         if provider == "crossref" and len(records) < page_size and result.get("invalid", 0) == 0:
             next_cursor = None
-        archive = archive_snapshot(result, archive_dir)
-        write_checkpoint(checkpoint_dir, key, cursor=next_cursor,
-                         archive_sha256=archive["sha256"], archive_path=archive["path"])
+        if next_cursor == cursor and next_cursor is not None:
+            next_cursor = None
+        if ledger is None:
+            archive = archive_snapshot(result, archive_dir)
+            write_checkpoint(checkpoint_dir, key, cursor=next_cursor,
+                             archive_sha256=archive["sha256"], archive_path=archive["path"])
+        else:
+            saved = commit_page(ledger, key, ledger_owner, result, next_cursor, ttl=3600)
+            archive = {"page_id": saved["page_id"], "sha256": saved["sha256"],
+                       "observations": saved["observations"], "new_page": saved["new_page"]}
         archived.append(archive)
         if not next_cursor or next_cursor == cursor:
             status = "completed"
@@ -96,18 +105,26 @@ def _run_pages_unlocked(provider, *, source, archive_dir, checkpoint_dir, max_pa
 
 def run_pages(provider, *, source, archive_dir, checkpoint_dir, max_pages=2,
               page_size=20, from_date=None, to_date=None, pause_seconds=1,
-              fetchers=None, sleep=time.sleep):
+              fetchers=None, sleep=time.sleep, ledger=None):
     """Serialize the entire read/fetch/archive/checkpoint transaction by scope."""
     scope = {"provider": provider, "source": source,
              "from_date": from_date if provider in {"openalex", "crossref"} else None,
              "to_date": to_date if provider in {"openalex", "crossref"} else None}
     key = str(provider) + "-" + hashlib.sha256(
         json.dumps(scope, sort_keys=True).encode()).hexdigest()[:24]
-    with source_lock(checkpoint_dir, key):
-        return _run_pages_unlocked(provider, source=source, archive_dir=archive_dir,
-                                   checkpoint_dir=checkpoint_dir, max_pages=max_pages,
-                                   page_size=page_size, from_date=from_date, to_date=to_date,
-                                   pause_seconds=pause_seconds, fetchers=fetchers, sleep=sleep)
+    args = dict(source=source, archive_dir=archive_dir, checkpoint_dir=checkpoint_dir,
+                max_pages=max_pages, page_size=page_size, from_date=from_date,
+                to_date=to_date, pause_seconds=pause_seconds, fetchers=fetchers, sleep=sleep)
+    if ledger is None:
+        with source_lock(checkpoint_dir, key):
+            return _run_pages_unlocked(provider, **args)
+    owner = uuid.uuid4().hex
+    cursor = acquire_lease(ledger, key, owner, ttl=3600)
+    try:
+        return _run_pages_unlocked(provider, **args, ledger=ledger,
+                                   ledger_owner=owner, initial_cursor=cursor)
+    finally:
+        release_lease(ledger, key, owner)
 
 
 def main():
