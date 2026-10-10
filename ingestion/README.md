@@ -178,6 +178,6 @@ The SQLite schema now records a monotonically increasing `lease_epoch` for futur
 
 ## Replaceable storage contract
 
-`ingestion/storage_contract.py` defines the minimal `AcquisitionStore` protocol: acquire a fenced lease, atomically commit an unselected snapshot and cursor, and release only the matching lease. `ingestion/sqlite_store.py` implements this interface on the local SQLite ledger and has contract tests for lease contention, restart and stale-epoch rejection.
+`ingestion/storage_contract.py` defines the minimal `AcquisitionStore` protocol: acquire a fenced lease, atomically commit an unselected snapshot and cursor, check whether a scientific scope has completed, and release only the matching lease. `ingestion/sqlite_store.py` implements this interface on the local SQLite ledger and has contract tests for lease contention, restart and stale-epoch rejection.
 
 The bounded runner now accepts either a **raw SQLite connection** through `ledger=db` (wrapped internally with `SQLiteStore`) or an explicit `store=AcquisitionStore` implementation. PostgreSQL still needs a separately tested implementation of this protocol, with canonical payload digests and transactional fencing. The protocol is a migration boundary, not a claim that PostgreSQL is already supported.
