@@ -49,6 +49,9 @@ def connect(path):
         CREATE INDEX IF NOT EXISTS observation_identity
             ON ingestion_observations(connector, source_id, external_id);
     """)
+    columns = {row[1] for row in db.execute("PRAGMA table_info(ingestion_scopes)")}
+    if "lease_epoch" not in columns:
+        db.execute("ALTER TABLE ingestion_scopes ADD COLUMN lease_epoch INTEGER NOT NULL DEFAULT 0")
     return db
 
 
