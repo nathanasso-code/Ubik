@@ -5,9 +5,10 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from .audit_archive import audit_directory
+from .audit_sqlite import audit_ledger
 from .experiment_plan import validate_plan
 from .run_batch import run_pages
-from .sqlite_ledger import connect as connect_ledger
+from .sqlite_ledger import connect as connect_ledger, metrics as ledger_metrics
 
 
 def run_experiment(plan, *, archive_dir, checkpoint_dir, live=False, runner=run_pages, ledger=None):
@@ -32,7 +33,9 @@ def run_experiment(plan, *, archive_dir, checkpoint_dir, live=False, runner=run_
         except (OSError, ValueError, RuntimeError, KeyError, TypeError) as exc:
             results.append({"provider": item["provider"], "source": item["source"],
                             "status": "error", "error_type": type(exc).__name__})
-    report = audit_directory(archive_dir)
+    report = ({"storage": "sqlite", "integrity": audit_ledger(ledger),
+               "metrics": ledger_metrics(ledger), "scope": "cumulative_ledger"}
+              if ledger is not None else audit_directory(archive_dir))
     return {"schema_version": 1, "status": "finished_with_errors" if any(
             x["status"] == "error" for x in results) else "finished",
             "sources": results, "maximum_page_requests": estimated_requests,
