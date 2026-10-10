@@ -28,8 +28,10 @@ def federate(named_snapshots):
             continue
         for index, item in enumerate(normalized):
             try:
-                canonical_url_hint(item["url"])
-                observations.append({**item, "snapshot": name})
+                hint = canonical_url_hint(item["url"])
+                if not isinstance(item.get("connector"), str) or not isinstance(item.get("source_id"), str):
+                    raise ValueError("Missing source identity")
+                observations.append({**item, "canonical_url_hint": hint, "snapshot": name})
             except (ValueError, KeyError, TypeError) as exc:
                 errors.append({"source_file": name, "index": index, "error": type(exc).__name__})
     sources = sorted({(x["connector"], x["source_id"]) for x in observations})
