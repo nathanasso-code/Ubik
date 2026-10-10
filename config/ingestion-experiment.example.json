@@ -1,0 +1,9 @@
+{
+  "purpose": "manual bounded multi-provider metadata acquisition pilot",
+  "sources": [
+    {"provider": "bluesky", "source": "bsky.app", "max_pages": 2, "page_size": 20},
+    {"provider": "mastodon", "source": "mastodon.social", "max_pages": 2, "page_size": 20},
+    {"provider": "openalex", "source": "openalex-works", "from_date": "2026-10-09", "to_date": "2026-10-10", "max_pages": 2, "page_size": 20},
+    {"provider": "crossref", "source": "crossref-works", "from_date": "2026-10-09", "to_date": "2026-10-10", "max_pages": 2, "page_size": 20}
+  ]
+}
