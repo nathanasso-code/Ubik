@@ -26,12 +26,21 @@ def evaluate_coverage(inventory, *, discovery=None, federated=None, now=None):
     missing_ids = Counter()
     missing_dates = Counter()
     freshness = Counter()
+    languages = Counter()
+    missing_urls = Counter()
+    missing_titles = Counter()
     observed_dates = defaultdict(list)
     for item in observations:
         if not isinstance(item, dict):
             raise ValueError("Invalid observation")
         key = (item.get("connector") or "unknown", item.get("source_id") or "unknown")
         per_source[key] += 1
+        language = item.get("language") or (item.get("metadata") or {}).get("language")
+        languages[language if isinstance(language, str) and language.strip() else "unknown"] += 1
+        if not item.get("url"):
+            missing_urls[key] += 1
+        if not item.get("title"):
+            missing_titles[key] += 1
         if not item.get("external_id"):
             missing_ids[key] += 1
         published = _parse_date(item.get("published_raw"))
@@ -60,6 +69,8 @@ def evaluate_coverage(inventory, *, discovery=None, federated=None, now=None):
         "connector": connector, "source_id": source, "observations": count,
         "missing_external_ids": missing_ids[(connector, source)],
         "missing_publication_dates": missing_dates[(connector, source)],
+        "missing_urls": missing_urls[(connector, source)],
+        "missing_titles": missing_titles[(connector, source)],
         "oldest_published": min(observed_dates[(connector, source)]).isoformat()
             if observed_dates[(connector, source)] else None,
         "newest_published": max(observed_dates[(connector, source)]).isoformat()
@@ -76,12 +87,14 @@ def evaluate_coverage(inventory, *, discovery=None, federated=None, now=None):
         "observations_audited": len(observations),
         "source_observations": source_rows,
         "freshness": dict(freshness),
+        "languages_explicitly_declared": dict(sorted(languages.items())),
         "duplicate_diagnostics": duplicates,
         "warnings": [
             "Feed reports are historical observations, not live availability checks.",
             "Cumulative stored counts are not per-run throughput.",
             "Duplicate provider observations do not imply independent corroboration.",
             "No complete expected universe is known; recall/completeness cannot be computed.",
+            "Language is counted only when explicitly declared; no language inference is performed.",
             "No editorial ranking, topic selection, card assignment or nuclei generation.",
         ],
     }
