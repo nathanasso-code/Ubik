@@ -15,14 +15,15 @@ from .archive import archive_snapshot
 from .budgets import SourceBudget
 from .checkpoints import read_checkpoint, write_checkpoint
 from .locks import source_lock
-from .sqlite_ledger import acquire as acquire_lease, commit_page, connect as connect_ledger, release as release_lease
+from .sqlite_ledger import connect as connect_ledger
+from .sqlite_store import SQLiteStore
 from .public_adapters import (bluesky_collect, crossref_collect,
                               mastodon_collect, openalex_collect)
 
 
 def _run_pages_unlocked(provider, *, source, archive_dir, checkpoint_dir, max_pages=2,
               page_size=20, from_date=None, to_date=None, pause_seconds=1,
-              fetchers=None, sleep=time.sleep, ledger=None, ledger_owner=None, ledger_epoch=None, initial_cursor=None):
+              fetchers=None, sleep=time.sleep, ledger=None, ledger_owner=None, ledger_epoch=None, initial_cursor=None, store=None, lease=None):
     if provider not in {"bluesky", "mastodon", "openalex", "crossref"}:
         raise ValueError("Unsupported provider")
     if not isinstance(source, str) or not source:
@@ -83,7 +84,11 @@ def _run_pages_unlocked(provider, *, source, archive_dir, checkpoint_dir, max_pa
             next_cursor = None
         if next_cursor == cursor and next_cursor is not None:
             next_cursor = None
-        if ledger is None:
+        if store is not None:
+            saved = store.commit(lease, result, next_cursor)
+            archive = {"page_id": saved["page_id"], "sha256": saved["sha256"],
+                       "observations": saved["observations"], "new_page": saved["new_page"]}
+        elif ledger is None:
             archive = archive_snapshot(result, archive_dir)
             write_checkpoint(checkpoint_dir, key, cursor=next_cursor,
                              archive_sha256=archive["sha256"], archive_path=archive["path"])
@@ -106,7 +111,7 @@ def _run_pages_unlocked(provider, *, source, archive_dir, checkpoint_dir, max_pa
 
 def run_pages(provider, *, source, archive_dir, checkpoint_dir, max_pages=2,
               page_size=20, from_date=None, to_date=None, pause_seconds=1,
-              fetchers=None, sleep=time.sleep, ledger=None):
+              fetchers=None, sleep=time.sleep, ledger=None, store=None):
     """Serialize the entire read/fetch/archive/checkpoint transaction by scope."""
     scope = {"provider": provider, "source": source,
              "from_date": from_date if provider in {"openalex", "crossref"} else None,
@@ -116,26 +121,28 @@ def run_pages(provider, *, source, archive_dir, checkpoint_dir, max_pages=2,
     args = dict(source=source, archive_dir=archive_dir, checkpoint_dir=checkpoint_dir,
                 max_pages=max_pages, page_size=page_size, from_date=from_date,
                 to_date=to_date, pause_seconds=pause_seconds, fetchers=fetchers, sleep=sleep)
-    if ledger is None:
+    if ledger is not None and store is not None:
+        raise ValueError("Choose either ledger or store")
+    if ledger is None and store is None:
         with source_lock(checkpoint_dir, key):
             return _run_pages_unlocked(provider, **args)
-    owner = uuid.uuid4().hex
-    cursor = acquire_lease(ledger, key, owner, ttl=3600)
-    epoch = ledger.execute(
-        "SELECT lease_epoch FROM ingestion_scopes WHERE scope_key=?", (key,)
-    ).fetchone()[0]
+    storage = store if store is not None else SQLiteStore(ledger)
+    lease = storage.acquire(key)
     try:
-        if provider in {"crossref", "openalex"} and cursor is None:
-            previous = ledger.execute(
-                "SELECT archive_sha256 FROM ingestion_scopes WHERE scope_key=?", (key,)).fetchone()
-            if previous and previous[0] is not None:
-                return {"provider": provider, "source": source, "pages": 0,
-                        "observations": 0, "status": "completed", "checkpoint": key}
+        if provider in {"crossref", "openalex"} and lease.cursor is None:
+            # A completed scientific window has a committed page but no cursor.
+            db = getattr(storage, "db", None)
+            if db is not None:
+                previous = db.execute(
+                    "SELECT archive_sha256 FROM ingestion_scopes WHERE scope_key=?", (key,)
+                ).fetchone()
+                if previous and previous[0] is not None:
+                    return {"provider": provider, "source": source, "pages": 0,
+                            "observations": 0, "status": "completed", "checkpoint": key}
         return _run_pages_unlocked(provider, **args, ledger=ledger,
-                                   ledger_owner=owner, ledger_epoch=epoch, initial_cursor=cursor)
+                                   initial_cursor=lease.cursor, store=storage, lease=lease)
     finally:
-        release_lease(ledger, key, owner)
-
+        storage.release(lease)
 
 def main():
     p = argparse.ArgumentParser()
