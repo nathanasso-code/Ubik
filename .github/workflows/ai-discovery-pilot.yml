@@ -75,6 +75,15 @@ jobs:
         if: always()
         run: |
           if test -f data/discovery/ai-models.json; then python scripts/diagnose_source_coverage.py data/discovery/ai-models.json data/discovery/ai-relevance-review.json data/discovery/source-coverage-diagnostics.json; fi
+      - name: Inventory all configured feeds and audit unselected RSS observations
+        if: always()
+        run: |
+          if test -f data/discovery/ai-models.json; then
+            python -m ingestion.federate data/discovery/ai-models.json --output data/discovery/unselected-rss-federated.json
+            python -m ingestion.coverage_cli --discovery data/discovery/ai-models.json --federated data/discovery/unselected-rss-federated.json --output data/discovery/source-inventory-quality.json
+          else
+            python -m ingestion.coverage_cli --output data/discovery/source-inventory-quality.json
+          fi
       - name: Prepare epistemic event review queue (unlabeled)
         if: always()
         run: |
