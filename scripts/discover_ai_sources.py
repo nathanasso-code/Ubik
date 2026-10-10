@@ -91,7 +91,8 @@ def run(registry, output, fetch):
     if config.get("topic_id") != "ai-models":
         raise ValueError("Unexpected topic")
     previous = json.loads(output.read_text(encoding="utf-8")) if output.exists() else {"items": []}
-    items = {item["url"]: item for item in previous.get("items", [])}
+    # Preserve provenance for each source, even when multiple feeds link to one URL.
+    items = {(item["source_id"], item["url"]): item for item in previous.get("items", [])}
     reports = []
     for source in config["sources"]:
         if not source.get("enabled") or source.get("kind") != "rss":
@@ -101,14 +102,14 @@ def run(registry, output, fetch):
             discovered = parse_feed(payload, source)
             new = 0
             for item in discovered:
-                if item["url"] not in items:
-                    items[item["url"]] = item
+                key = (item["source_id"], item["url"])
+                if key not in items:
+                    items[key] = item
                     new += 1
-                elif not items[item["url"]].get("authors") and item["authors"]:
-                    items[item["url"]].update({"authors": item["authors"], "attribution_basis": item["attribution_basis"], "attribution_type": item["attribution_type"], "attribution_status": item["attribution_status"]})
-            for item in discovered:
-                if item.get("description") and not items[item["url"]].get("description"):
-                    items[item["url"]].update({"description": item["description"], "description_basis": "feed"})
+                elif not items[key].get("authors") and item["authors"]:
+                    items[key].update({"authors": item["authors"], "attribution_basis": item["attribution_basis"], "attribution_type": item["attribution_type"], "attribution_status": item["attribution_status"]})
+                if item.get("description") and not items[key].get("description"):
+                    items[key].update({"description": item["description"], "description_basis": "feed"})
             reports.append({"source_id": source["id"], "status": "ok", "seen": len(discovered), "new": new})
         except (ValueError, ET.ParseError, urllib.error.URLError, TimeoutError, OSError) as exc:
             reports.append({"source_id": source["id"], "status": "error", "error": str(exc)[:240]})
