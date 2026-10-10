@@ -31,23 +31,23 @@ def review_tasks(discovery, anchors, per_anchor=12):
     tasks = []
     for anchor in anchors:
         terms = tokens(anchor["query"])
-        distinctive = distinctive_terms(anchor["query"])
+        aliases = anchor.get("product_aliases", [])
+        if not aliases or not all(isinstance(x, str) and x.strip() for x in aliases):
+            raise ValueError("Event anchor requires explicit product_aliases")
         scored = []
         for item in items:
             title = item.get("title", "")
             if not item.get("url") or not item.get("source_id") or not title:
                 continue
+            # Match the exact model/version phrase with token boundaries. This
+            # prevents Claude 3.7 matching Python 3.7 or Gemini 1.5 matching
+            # GPT-2 1.5B. Similar topic is not sufficient.
+            matched = [alias for alias in aliases if re.search(
+                r"(?<![a-z0-9])" + re.escape(alias.lower()) + r"(?![a-z0-9])",
+                title.lower())]
+            if not matched:
+                continue
             overlap = terms & tokens(title)
-            if not overlap or (distinctive and not (overlap & distinctive)):
-                continue
-            # A bare version number such as 3.7 must be accompanied by
-            # the product name (Claude, Gemini, etc.).
-            if distinctive and not (overlap & (terms - distinctive)):
-                if not any(any(ch.isalpha() for ch in term) and any(ch.isdigit() for ch in term)
-                           for term in overlap & distinctive):
-                    continue
-            if not distinctive and len(overlap) < min(2, len(terms)):
-                continue
             scored.append((len(overlap), item))
         scored.sort(key=lambda x: (-x[0], x[1].get("source_id", ""), x[1]["url"]))
         selected, seen_sources = [], set()
