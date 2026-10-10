@@ -79,6 +79,8 @@ def commit_page(db, scope_key, owner, snapshot, next_cursor, *, now=None, ttl=12
     """Atomically persist a raw page and advance cursor under a valid lease."""
     if not isinstance(snapshot, dict) or not isinstance(snapshot.get("observations"), list):
         raise ValueError("Expected snapshot with observations")
+    if epoch is not None and (type(epoch) is not int or epoch < 1):
+        raise ValueError("Invalid fencing epoch")
     if next_cursor is not None and not isinstance(next_cursor, str):
         raise ValueError("Invalid cursor")
     now = time.time() if now is None else now
