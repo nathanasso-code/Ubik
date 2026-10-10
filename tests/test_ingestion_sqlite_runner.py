@@ -36,6 +36,26 @@ class SQLiteRunnerIntegrationTests(unittest.TestCase):
             self.assertFalse((root / "unused-checkpoints").exists())
             db.close()
 
+    def test_scientific_completed_window_is_not_refetched(self):
+        calls = []
+        def fetch(_from, _to, *, rows, cursor):
+            calls.append(cursor)
+            return {"connector": "crossref", "observations": [],
+                    "next_cursor": "provider-continues", "invalid": 0}
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            db = connect(root / "ledger.sqlite3")
+            opts = dict(source="crossref-works", archive_dir=root / "a",
+                        checkpoint_dir=root / "c", max_pages=1, page_size=5,
+                        from_date="2026-10-09", to_date="2026-10-10",
+                        ledger=db, fetchers={"crossref": fetch})
+            first = run_pages("crossref", **opts)
+            self.assertEqual(first["status"], "completed")
+            second = run_pages("crossref", **opts)
+            self.assertEqual(second["pages"], 0)
+            self.assertEqual(calls, ["*"])
+            db.close()
+
     def test_failure_releases_lease_and_keeps_cursor(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
