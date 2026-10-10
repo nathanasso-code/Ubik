@@ -35,7 +35,8 @@ def evaluate_coverage(inventory, *, discovery=None, federated=None, now=None):
             raise ValueError("Invalid observation")
         key = (item.get("connector") or "unknown", item.get("source_id") or "unknown")
         per_source[key] += 1
-        language = item.get("language") or (item.get("metadata") or {}).get("language")
+        metadata = item.get("metadata")
+        language = item.get("language") or (metadata.get("language") if isinstance(metadata, dict) else None)
         languages[language if isinstance(language, str) and language.strip() else "unknown"] += 1
         if not item.get("url"):
             missing_urls[key] += 1
