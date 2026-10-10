@@ -79,3 +79,17 @@ References:
 - The Mastodon adapter rejects obvious localhost/private hostname and IP-address targets, but this is **not complete DNS rebinding or redirect SSRF protection**. In production, use a configured instance allowlist and restricted egress.
 
 No recurring job is enabled. Do not interpret offline tests as a live API benchmark.
+
+## Resumable bounded batch runner
+
+`python -m ingestion.run_batch` is a **manual, explicitly opt-in** batch runner for Bluesky, Mastodon, OpenAlex and Crossref. It supports at most 20 pages of at most 20 records each, with at least 0.5 seconds between pages. The per-run `SourceBudget` is enforced before each request and after each response. The runner archives each successful page, then atomically updates a source/scope-specific checkpoint with its cursor and archive digest.
+
+```sh
+python -m ingestion.run_batch bluesky --source example.bsky.social --max-pages 2
+python -m ingestion.run_batch bluesky --source example.bsky.social --max-pages 2 --live
+python -m ingestion.run_batch openalex --source openalex-works --from-date 2026-10-09 --to-date 2026-10-10 --live
+```
+
+Social feeds start a fresh polling cycle after reaching the end; scientific date windows are marked complete. Source scope and date range form the checkpoint identity. This is **at-least-once** acquisition, not exactly-once: overlapping social pages and crash retries may generate duplicate observations; downstream URL and stable external-ID deduplication must preserve their separate provenance.
+
+**Limitations:** no cross-process locking, no cloud checkpoint persistence, no scheduled live execution, no provider-specific quota accounting, no deletion reconciliation, and no proof of real API coverage. Do not run concurrent batches for the same source/scope; a database lease and durable object store are required before unattended distributed execution. No live network requests are made without `--live`.
