@@ -48,7 +48,7 @@ class FederationTests(unittest.TestCase):
                  "url": "https://doi.org/10.1000/xyz"}]})
         ])
         self.assertEqual(result["metrics"]["observations"], 2)
-        self.assertEqual(result["metrics"]["connector_source_pairs"], 2)
+        self.assertEqual(result["metrics"]["connector_source_pairs"], 2)\n        self.assertEqual(result["metrics"]["by_connector"], {"bluesky": 1, "openalex": 1})
 
     def test_unknown_snapshot_isolated(self):
         result = federate([("bad.json", {"foo": []})])
