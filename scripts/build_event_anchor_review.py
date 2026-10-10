@@ -9,8 +9,20 @@ import json
 import re
 from pathlib import Path
 
+STOP = {"release", "launch", "announced", "announcement", "introducing", "model",
+        "models", "new", "the", "and", "for", "with", "from", "openai",
+        "google", "meta", "anthropic"}
+
+
 def tokens(s):
-    return set(re.findall(r"[a-z0-9]+(?:-[a-z0-9]+)*", s.lower()))
+    # Keep product-version identifiers; standalone numbers are not evidence.
+    return {x for x in re.findall(r"[a-z0-9]+(?:[.-][a-z0-9]+)*", s.lower())
+            if len(x) >= 3 and x not in STOP and not x.isdigit()}
+
+
+def distinctive_terms(s):
+    return {x for x in tokens(s) if any(ch.isdigit() for ch in x)
+            or "-" in x or "." in x}
 
 def review_tasks(discovery, anchors, per_anchor=12):
     if type(per_anchor) is not int or per_anchor < 1:
@@ -19,13 +31,16 @@ def review_tasks(discovery, anchors, per_anchor=12):
     tasks = []
     for anchor in anchors:
         terms = tokens(anchor["query"])
+        distinctive = distinctive_terms(anchor["query"])
         scored = []
         for item in items:
             title = item.get("title", "")
             if not item.get("url") or not item.get("source_id") or not title:
                 continue
             overlap = terms & tokens(title)
-            if len(overlap) < min(2, len(terms)):
+            if not overlap or (distinctive and not (overlap & distinctive)):
+                continue
+            if not distinctive and len(overlap) < min(2, len(terms)):
                 continue
             scored.append((len(overlap), item))
         scored.sort(key=lambda x: (-x[0], x[1].get("source_id", ""), x[1]["url"]))
