@@ -1,0 +1,48 @@
+name: Ubik one-time multi-page resume verification
+on:
+  push:
+    branches: [develop/ubik-core]
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify live Crossref resume across two separate invocations
+        run: |
+          python - <<'PY'
+          import json
+          import tempfile
+          from pathlib import Path
+          from ingestion.run_batch import run_pages
+          from ingestion.audit_archive import audit_directory
+          from ingestion.checkpoints import read_checkpoint
+          with tempfile.TemporaryDirectory() as directory:
+              root=Path(directory)
+              opts={"provider":"crossref","source":"crossref-works",
+                    "from_date":"2026-10-09","to_date":"2026-10-10",
+                    "archive_dir":root/"archives","checkpoint_dir":root/"checkpoints",
+                    "page_size":2}
+              first=run_pages(**opts,max_pages=1)
+              cp=read_checkpoint(root/"checkpoints",first["checkpoint"])
+              print(json.dumps({"phase":"first","pages":first["pages"],
+                                "observations":first["observations"],
+                                "status":first["status"],
+                                "cursor_present":bool(cp["cursor"])}),flush=True)
+              second=run_pages(**opts,max_pages=1)
+              cp2=read_checkpoint(root/"checkpoints",first["checkpoint"])
+              print(json.dumps({"phase":"resume","pages":second["pages"],
+                                "observations":second["observations"],
+                                "status":second["status"],
+                                "cursor_advanced":cp["cursor"]!=cp2["cursor"]}),flush=True)
+              report=audit_directory(root/"archives")
+              print(json.dumps({"phase":"audit","snapshots":report["snapshot_files"],
+                                "observations":report["total_observations"],
+                                "invalid":len(report["invalid_snapshot_files"]),
+                                "federation_errors":len(report["federation_errors"])}),flush=True)
+          PY
