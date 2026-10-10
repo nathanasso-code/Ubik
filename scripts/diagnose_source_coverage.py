@@ -5,7 +5,7 @@ import json
 from pathlib import Path
 
 def diagnose(discovery, relevance=None):
-    relevance_by_url = {x.get("url"): x.get("relevance_status") for x in (relevance or {}).get("items", [])}
+    relevance_by_observation = {(x.get("source_id"), x.get("url")): x.get("relevance_status") for x in (relevance or {}).get("items", [])}
     reports = {r["source_id"]: r for r in discovery.get("source_reports", [])}
     # Multiple feed observations of one URL are not independent confirmations.
     url_sources = {}
@@ -22,7 +22,7 @@ def diagnose(discovery, relevance=None):
         row["shared_url_observations"] += item.get("url") in shared_urls
         row["feed_named" if item.get("authors") else "feed_unspecified"] += 1
         row["feed_descriptions"] += bool(item.get("description"))
-        relevance_status = relevance_by_url.get(item.get("url"), "unknown")
+        relevance_status = relevance_by_observation.get((sid, item.get("url")), "unknown")
         row[relevance_status if relevance_status in ("likely_ai", "review_context", "unknown") else "unknown"] += 1
     for sid, report in reports.items():
         row = sources.setdefault(sid, {"source_id": sid, "stored_items": 0, "feed_named": 0, "feed_unspecified": 0,
