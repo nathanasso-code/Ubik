@@ -22,7 +22,7 @@ from .public_adapters import (bluesky_collect, crossref_collect,
 
 def _run_pages_unlocked(provider, *, source, archive_dir, checkpoint_dir, max_pages=2,
               page_size=20, from_date=None, to_date=None, pause_seconds=1,
-              fetchers=None, sleep=time.sleep, ledger=None, ledger_owner=None, initial_cursor=None):
+              fetchers=None, sleep=time.sleep, ledger=None, ledger_owner=None, ledger_epoch=None, initial_cursor=None):
     if provider not in {"bluesky", "mastodon", "openalex", "crossref"}:
         raise ValueError("Unsupported provider")
     if not isinstance(source, str) or not source:
@@ -88,7 +88,8 @@ def _run_pages_unlocked(provider, *, source, archive_dir, checkpoint_dir, max_pa
             write_checkpoint(checkpoint_dir, key, cursor=next_cursor,
                              archive_sha256=archive["sha256"], archive_path=archive["path"])
         else:
-            saved = commit_page(ledger, key, ledger_owner, result, next_cursor, ttl=3600)
+            saved = commit_page(ledger, key, ledger_owner, result, next_cursor, ttl=3600,
+                                epoch=ledger_epoch)
             archive = {"page_id": saved["page_id"], "sha256": saved["sha256"],
                        "observations": saved["observations"], "new_page": saved["new_page"]}
         archived.append(archive)
@@ -120,6 +121,9 @@ def run_pages(provider, *, source, archive_dir, checkpoint_dir, max_pages=2,
             return _run_pages_unlocked(provider, **args)
     owner = uuid.uuid4().hex
     cursor = acquire_lease(ledger, key, owner, ttl=3600)
+    epoch = ledger.execute(
+        "SELECT lease_epoch FROM ingestion_scopes WHERE scope_key=?", (key,)
+    ).fetchone()[0]
     try:
         if provider in {"crossref", "openalex"} and cursor is None:
             previous = ledger.execute(
@@ -128,7 +132,7 @@ def run_pages(provider, *, source, archive_dir, checkpoint_dir, max_pages=2,
                 return {"provider": provider, "source": source, "pages": 0,
                         "observations": 0, "status": "completed", "checkpoint": key}
         return _run_pages_unlocked(provider, **args, ledger=ledger,
-                                   ledger_owner=owner, initial_cursor=cursor)
+                                   ledger_owner=owner, ledger_epoch=epoch, initial_cursor=cursor)
     finally:
         release_lease(ledger, key, owner)
 
