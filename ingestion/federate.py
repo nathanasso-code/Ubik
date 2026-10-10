@@ -11,7 +11,7 @@ def normalize_snapshot(snapshot):
     connector = snapshot.get("connector")
     if connector == "hacker_news_newstories":
         return [hacker_news_to_observation(x) for x in snapshot.get("observations", [])]
-    if connector == "gdelt_doc":
+    if connector in {"gdelt_doc", "bluesky", "mastodon", "openalex"}:
         return snapshot.get("observations", [])
     if isinstance(snapshot.get("items"), list):
         return [rss_to_observation(x) for x in snapshot["items"]]
