@@ -23,7 +23,7 @@ from .public_adapters import (bluesky_collect, crossref_collect,
 
 def _run_pages_unlocked(provider, *, source, archive_dir, checkpoint_dir, max_pages=2,
               page_size=20, from_date=None, to_date=None, pause_seconds=1,
-              fetchers=None, sleep=time.sleep, ledger=None, ledger_owner=None, ledger_epoch=None, initial_cursor=None, store=None, lease=None):
+              fetchers=None, sleep=time.sleep, ledger=None, initial_cursor=None, store=None, lease=None):
     if provider not in {"bluesky", "mastodon", "openalex", "crossref"}:
         raise ValueError("Unsupported provider")
     if not isinstance(source, str) or not source:
