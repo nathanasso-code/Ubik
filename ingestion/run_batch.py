@@ -43,7 +43,7 @@ def _run_pages_unlocked(provider, *, source, archive_dir, checkpoint_dir, max_pa
              "from_date": from_date if provider in {"openalex", "crossref"} else None,
              "to_date": to_date if provider in {"openalex", "crossref"} else None}
     key = provider + "-" + hashlib.sha256(json.dumps(scope, sort_keys=True).encode()).hexdigest()[:24]
-    checkpoint = read_checkpoint(checkpoint_dir, key) if ledger is None else None
+    checkpoint = read_checkpoint(checkpoint_dir, key) if ledger is None and store is None else None
     cursor = checkpoint["cursor"] if checkpoint else initial_cursor
     if checkpoint and cursor is None and provider in {"openalex", "crossref"}:
         return {"provider": provider, "source": source, "pages": 0,
