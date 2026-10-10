@@ -4,6 +4,7 @@ No publication, ranking, or clustering. No social text bodies retained.
 Network access is performed only by an explicit caller.
 """
 from html import unescape
+import ipaddress
 from urllib.parse import urlencode, urlsplit
 
 from .contracts import observation
@@ -59,6 +60,15 @@ def mastodon_url(instance, limit=20, max_id=None):
     parsed = urlsplit(instance if "://" in instance else "https://" + instance)
     if parsed.scheme != "https" or not parsed.hostname or parsed.username or parsed.password or parsed.port or parsed.path not in ("", "/"):
         raise ValueError("Expected HTTPS Mastodon instance hostname")
+    host = parsed.hostname.lower()
+    if host == "localhost" or host.endswith((".localhost", ".local", ".internal")) or "." not in host:
+        raise ValueError("Mastodon instance must be a public hostname")
+    try:
+        ipaddress.ip_address(host)
+    except ValueError:
+        pass
+    else:
+        raise ValueError("IP-address instance targets are not allowed")
     if type(limit) is not int or not 1 <= limit <= 40:
         raise ValueError("Mastodon limit must be 1..40")
     params = {"limit": limit, "local": "true"}
