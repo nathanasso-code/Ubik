@@ -1,0 +1,162 @@
+{
+  "schema_version": 1,
+  "dataset": "ubik-ai-event-pairs-seed-v1",
+  "origin": {
+    "workflow_run": 38082631347,
+    "artifact": "ai-models-discovery",
+    "artifact_file": "epistemic-full-archive-pairs.json",
+    "retrieved_date": "2026-10-10"
+  },
+  "scope": "manual_triage_from_titles_and_urls_not_full_text_verification",
+  "label_definitions": {
+    "same_event": "Both independently describe substantially the same occurrence, announcement, or release.",
+    "different_event": "Clearly distinct occurrence or independently authored material; shared topic is insufficient.",
+    "uncertain": "Insufficient evidence to decide; excluded from scoring."
+  },
+  "entries": [
+    {
+      "candidate_index": 1,
+      "label": "different_event",
+      "rationale": "Distinct educational introductions, not coverage of a shared occurrence.",
+      "review_basis": "titles_and_original_urls",
+      "full_text_verified": false,
+      "reviewer": "assistant_initial_triage",
+      "review_status": "provisional"
+    },
+    {
+      "candidate_index": 2,
+      "label": "different_event",
+      "rationale": "Graph-ML introduction and general ML course are different learning materials.",
+      "review_basis": "titles_and_original_urls",
+      "full_text_verified": false,
+      "reviewer": "assistant_initial_triage",
+      "review_status": "provisional"
+    },
+    {
+      "candidate_index": 3,
+      "label": "different_event",
+      "rationale": "Q-learning tutorial and deep-learning course are distinct works.",
+      "review_basis": "titles_and_original_urls",
+      "full_text_verified": false,
+      "reviewer": "assistant_initial_triage",
+      "review_status": "provisional"
+    },
+    {
+      "candidate_index": 4,
+      "label": "different_event",
+      "rationale": "Q-learning tutorial and general ML course are distinct works.",
+      "review_basis": "titles_and_original_urls",
+      "full_text_verified": false,
+      "reviewer": "assistant_initial_triage",
+      "review_status": "provisional"
+    },
+    {
+      "candidate_index": 5,
+      "label": "different_event",
+      "rationale": "Part two of Q-learning tutorial and deep-learning course are distinct works.",
+      "review_basis": "titles_and_original_urls",
+      "full_text_verified": false,
+      "reviewer": "assistant_initial_triage",
+      "review_status": "provisional"
+    },
+    {
+      "candidate_index": 6,
+      "label": "different_event",
+      "rationale": "Part two of Q-learning tutorial and general ML course are distinct works.",
+      "review_basis": "titles_and_original_urls",
+      "full_text_verified": false,
+      "reviewer": "assistant_initial_triage",
+      "review_status": "provisional"
+    },
+    {
+      "candidate_index": 7,
+      "label": "different_event",
+      "rationale": "Philosophy précis and OpenAI image reasoning article concern different works.",
+      "review_basis": "titles_and_original_urls",
+      "full_text_verified": false,
+      "reviewer": "assistant_initial_triage",
+      "review_status": "provisional"
+    },
+    {
+      "candidate_index": 8,
+      "label": "different_event",
+      "rationale": "DiffusionGemma announcement and TensorFlow/XLA optimization tutorial are distinct developments.",
+      "review_basis": "titles_and_original_urls",
+      "full_text_verified": false,
+      "reviewer": "assistant_initial_triage",
+      "review_status": "provisional"
+    },
+    {
+      "candidate_index": 9,
+      "label": "different_event",
+      "rationale": "OpenAI teaching-based interpretability work and an independent ML explainer are distinct publications.",
+      "review_basis": "titles_and_original_urls",
+      "full_text_verified": false,
+      "reviewer": "assistant_initial_triage",
+      "review_status": "provisional"
+    },
+    {
+      "candidate_index": 15,
+      "label": "different_event",
+      "rationale": "Würstchen diffusion announcement and GPT-4o image generation announcement describe different systems.",
+      "review_basis": "titles_and_original_urls",
+      "full_text_verified": false,
+      "reviewer": "assistant_initial_triage",
+      "review_status": "provisional"
+    },
+    {
+      "candidate_index": 22,
+      "label": "different_event",
+      "rationale": "DiffusionGemma and self-speculative decoding are different techniques and developments.",
+      "review_basis": "titles_and_original_urls",
+      "full_text_verified": false,
+      "reviewer": "assistant_initial_triage",
+      "review_status": "provisional"
+    },
+    {
+      "candidate_index": 29,
+      "label": "different_event",
+      "rationale": "Würstchen and a separate API image generation model announcement are different releases.",
+      "review_basis": "titles_and_original_urls",
+      "full_text_verified": false,
+      "reviewer": "assistant_initial_triage",
+      "review_status": "provisional"
+    },
+    {
+      "candidate_index": 0,
+      "label": "uncertain",
+      "rationale": "Both titles name PPO; inspect original publication dates and content before deciding if same occurrence.",
+      "review_basis": "titles_and_original_urls",
+      "full_text_verified": false,
+      "reviewer": "assistant_initial_triage",
+      "review_status": "provisional"
+    },
+    {
+      "candidate_index": 19,
+      "label": "uncertain",
+      "rationale": "Both refer to thinking in images; inspect context and publication identity before deciding.",
+      "review_basis": "titles_and_original_urls",
+      "full_text_verified": false,
+      "reviewer": "assistant_initial_triage",
+      "review_status": "provisional"
+    },
+    {
+      "candidate_index": 27,
+      "label": "uncertain",
+      "rationale": "Both concern Claude Code; need article bodies, dates and precise announced change.",
+      "review_basis": "titles_and_original_urls",
+      "full_text_verified": false,
+      "reviewer": "assistant_initial_triage",
+      "review_status": "provisional"
+    },
+    {
+      "candidate_index": 28,
+      "label": "uncertain",
+      "rationale": "Shared Privacy Filter name; one may be a how-to and the other a release. Review event granularity.",
+      "review_basis": "titles_and_original_urls",
+      "full_text_verified": false,
+      "reviewer": "assistant_initial_triage",
+      "review_status": "provisional"
+    }
+  ]
+}
