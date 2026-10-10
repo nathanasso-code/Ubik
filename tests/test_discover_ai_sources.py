@@ -18,6 +18,11 @@ class DiscoveryTests(unittest.TestCase):
         self.assertEqual(module.parse_feed(ATOM, source)[0]["title"], "Independent study")
         self.assertIsNone(module.canonical("javascript:alert(1)"))
 
+    def test_raw_entries_can_exceed_normalized_entries(self):
+        invalid = b'<rss><channel><item><title>No link</title></item><item><title>Valid</title><link>https://example.org/valid</link></item></channel></rss>'
+        self.assertEqual(module.raw_feed_entry_count(invalid), 2)
+        self.assertEqual(len(module.parse_feed(invalid, {"id": "x", "name": "X"})), 1)
+
     def test_attribution_and_provenance(self):
         rss = b'<rss xmlns:dc="http://purl.org/dc/elements/1.1/"><channel><item><title>A</title><link>https://example.org/a</link><dc:creator>Researcher A</dc:creator></item></channel></rss>'
         item = module.parse_feed(rss, {"id":"x","name":"Publisher","url":"https://example.org/feed"})[0]
@@ -63,6 +68,7 @@ class DiscoveryTests(unittest.TestCase):
             second = module.run(reg, out, fetch)
             self.assertEqual(len(first["items"]), 1)
             self.assertEqual(first["coverage"]["successful_feeds"], 1)
+            self.assertEqual(first["source_reports"][0]["raw_entries"], 1)
             self.assertEqual(first["coverage"]["failed_feeds"], 1)
             self.assertEqual(first["coverage"]["items_missing_named_author"], 1)
             self.assertEqual(len(second["items"]), 1)
