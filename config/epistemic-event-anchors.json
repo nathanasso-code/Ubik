@@ -8,7 +8,8 @@
       "product_aliases": [
         "gpt-4o",
         "gpt 4o"
-      ]
+      ],
+      "event_year": "2024"
     },
     {
       "id": "llama3_2024_launch",
@@ -16,7 +17,8 @@
       "product_aliases": [
         "llama 3",
         "llama-3"
-      ]
+      ],
+      "event_year": "2024"
     },
     {
       "id": "gemini15_2024_launch",
@@ -24,7 +26,8 @@
       "product_aliases": [
         "gemini 1.5",
         "gemini-1.5"
-      ]
+      ],
+      "event_year": "2024"
     },
     {
       "id": "deepseek_r1_2025_release",
@@ -33,7 +36,8 @@
         "deepseek r1",
         "deepseek-r1",
         "deepseek r-1"
-      ]
+      ],
+      "event_year": "2025"
     },
     {
       "id": "claude37_2025_launch",
@@ -41,7 +45,8 @@
       "product_aliases": [
         "claude 3.7",
         "claude-3.7"
-      ]
+      ],
+      "event_year": "2025"
     },
     {
       "id": "gpt5_2025_launch",
@@ -49,7 +54,8 @@
       "product_aliases": [
         "gpt-5",
         "gpt 5"
-      ]
+      ],
+      "event_year": "2025"
     }
   ]
 }
