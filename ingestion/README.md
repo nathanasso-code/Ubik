@@ -185,3 +185,7 @@ The bounded runner now accepts either a **raw SQLite connection** through `ledge
 ## Canonical snapshot bytes
 
 `ingestion/payload_codec.py` is the shared JSON serialization boundary for local archives and SQLite: sorted keys, compact separators, UTF-8, and SHA256 of the exact canonical bytes. Nonfinite JSON numbers are rejected. File archives append a newline **after** hashing; SQLite stores the same canonical JSON text. The PostgreSQL draft must hash the incoming canonical bytes rather than assuming JSONB reserialization preserves them.
+
+## Safety note: temporary CI failures during iteration
+
+The development branch may contain intermediate commits that fail CI while interfaces are tightened; the release criterion is the **latest branch-head workflow**, not an intermediate commit. In particular, the ledger keeps an optional `epoch` parameter for legacy direct-call compatibility, while the `SQLiteStore` adapter always supplies an acquired epoch. Production adoption must remove or restrict unfenced direct commits.
