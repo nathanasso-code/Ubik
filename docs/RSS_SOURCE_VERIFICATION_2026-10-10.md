@@ -65,3 +65,7 @@ Second successful run: https://github.com/nathanasso-code/Ubik/actions/runs/3808
 ## Freshness timestamp parsing correction
 
 The source quality audit now recognizes both ISO-8601 dates (common in Atom/API metadata) and RFC 2822 dates (common in RSS `pubDate`). Before this change, many valid RSS publication timestamps would have been classified as unknown. A deterministic regression test checks `Thu, 08 Oct 2026 10:00:00 GMT`. Existing historical audit reports must be regenerated to obtain corrected freshness distributions.
+
+## Attribution completeness in the same live RSS run
+
+The 2,638 normalized observations included **163 entries with an author named in feed metadata** and **2,475 without a named author** (about **93.8%** missing). All 2,638 had a nonempty publication-date field and an original link according to the feed report, but these fields are **not yet independently verified**. A nonempty date string is not necessarily parseable or correct. Named feed authors are not proof of verified authorship. This is a metadata-quality diagnostic, not a reason to exclude a source from acquisition.
