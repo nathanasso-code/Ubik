@@ -3,6 +3,7 @@ import argparse
 import json
 from pathlib import Path
 
+from .archive import archive_snapshot
 from .public_adapters import (bluesky_collect, bluesky_url, mastodon_collect,
                               mastodon_url, openalex_collect, openalex_url, crossref_collect, crossref_url)
 
@@ -28,6 +29,7 @@ def main():
     x.add_argument("--to-date", required=True)
     x.add_argument("--rows", type=int, default=50)
     x.add_argument("--cursor", default="*")
+    p.add_argument("--archive-dir", type=Path, help="Append-only snapshot directory; recommended for repeated runs")
     p.add_argument("--live", action="store_true")
     p.add_argument("--output", type=Path, default=Path("data/discovery/public-adapter.json"))
     args = p.parse_args()
@@ -47,8 +49,12 @@ def main():
         print("Dry run; --live required. Endpoint:", url)
         return
     result = run()
-    args.output.parent.mkdir(parents=True, exist_ok=True)
-    args.output.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    if args.archive_dir:
+        archive = archive_snapshot(result, args.archive_dir)
+        print(json.dumps({"archive": archive}, ensure_ascii=False))
+    else:
+        args.output.parent.mkdir(parents=True, exist_ok=True)
+        args.output.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(json.dumps({"connector": result["connector"], "observations": len(result["observations"]),
                       "invalid": result["invalid"]}))
 
