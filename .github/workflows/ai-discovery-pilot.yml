@@ -12,6 +12,8 @@ on:
       - 'ingestion/cross_topic_inventory.py'
       - 'tests/test_ingestion_preview_html.py'
       - 'tests/test_ingestion_expanded_source_audit.py'
+      - 'ingestion/topic_feed_pilot.py'
+      - 'tests/test_ingestion_topic_feed_pilot.py'
       - 'scripts/report_ai_discovery.py'
       - 'scripts/discover_ai_authors.py'
       - 'scripts/discover_social_authors.py'
@@ -91,6 +93,10 @@ jobs:
           else
             python -m ingestion.coverage_cli --output data/discovery/source-inventory-quality.json
           fi
+      - name: Build bounded AI topic feed candidate report
+        if: always()
+        run: |
+          if test -f data/discovery/ai-models.json; then python -m ingestion.topic_feed_pilot data/discovery/ai-models.json data/discovery/ai-topic-feed-review.json --limit 30; fi
       - name: Create tangible collected-material HTML preview
         if: always()
         run: |
