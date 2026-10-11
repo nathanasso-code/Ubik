@@ -18,6 +18,8 @@ on:
       - 'ingestion/topic_evidence.py'
       - 'ingestion/topic_review_priority.py'
       - 'ingestion/topic_editorial_worksheet.py'
+      - 'ingestion/topic_annotation_audit.py'
+      - 'tests/test_ingestion_topic_annotation_audit.py'
       - 'tests/test_ingestion_topic_editorial_worksheet.py'
       - 'tests/test_ingestion_topic_review_priority.py'
       - 'tests/test_ingestion_topic_evidence.py'
@@ -138,6 +140,10 @@ jobs:
         if: always()
         run: |
           if test -f data/discovery/ai-topic-priority-review.json; then python -m ingestion.topic_editorial_worksheet data/discovery/ai-topic-priority-review.json data/discovery/ai-topic-editorial-worksheet.csv --limit 30; fi
+      - name: Validate editorial worksheet completion without approving anything
+        if: always()
+        run: |
+          if test -f data/discovery/ai-topic-editorial-worksheet.csv; then python -m ingestion.topic_annotation_audit data/discovery/ai-topic-editorial-worksheet.csv data/discovery/ai-topic-annotation-audit.json; fi
       - name: Render topic feed review in browser
         if: always()
         run: |
