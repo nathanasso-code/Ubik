@@ -13,6 +13,7 @@ on:
       - 'tests/test_ingestion_preview_html.py'
       - 'tests/test_ingestion_expanded_source_audit.py'
       - 'ingestion/topic_feed_pilot.py'
+      - 'ingestion/topic_feed_preview.py'
       - 'tests/test_ingestion_topic_feed_pilot.py'
       - 'scripts/report_ai_discovery.py'
       - 'scripts/discover_ai_authors.py'
@@ -97,6 +98,10 @@ jobs:
         if: always()
         run: |
           if test -f data/discovery/ai-models.json; then python -m ingestion.topic_feed_pilot data/discovery/ai-models.json data/discovery/ai-topic-feed-review.json --limit 30; fi
+      - name: Render topic feed review in browser
+        if: always()
+        run: |
+          if test -f data/discovery/ai-topic-feed-review.json; then python -m ingestion.topic_feed_preview data/discovery/ai-topic-feed-review.json data/discovery/UBIK_TOPIC_AI_REVIEW.html; fi
       - name: Create tangible collected-material HTML preview
         if: always()
         run: |
