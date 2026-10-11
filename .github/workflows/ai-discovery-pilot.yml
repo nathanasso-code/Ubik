@@ -11,6 +11,7 @@ on:
       - 'ingestion/feed_triage.py'
       - 'ingestion/cross_topic_inventory.py'
       - 'tests/test_ingestion_preview_html.py'
+      - 'tests/test_ingestion_expanded_source_audit.py'
       - 'scripts/report_ai_discovery.py'
       - 'scripts/discover_ai_authors.py'
       - 'scripts/discover_social_authors.py'
