@@ -22,7 +22,7 @@
     {
       "id": "arxiv-cs-ai",
       "name": "arXiv cs.AI",
-      "url": "https://export.arxiv.org/rss/cs.AI",
+      "url": "https://rss.arxiv.org/rss/cs.AI",
       "kind": "rss",
       "category": "research",
       "enabled": true
@@ -30,7 +30,7 @@
     {
       "id": "arxiv-cs-cl",
       "name": "arXiv cs.CL",
-      "url": "https://export.arxiv.org/rss/cs.CL",
+      "url": "https://rss.arxiv.org/rss/cs.CL",
       "kind": "rss",
       "category": "research",
       "enabled": true
@@ -286,6 +286,42 @@
       "language": "en",
       "enabled": true,
       "attribution_note": "Broad economics feed; filter AI-related articles."
+    },
+    {
+      "id": "bbc-world",
+      "name": "BBC News World",
+      "url": "https://feeds.bbci.co.uk/news/world/rss.xml",
+      "kind": "rss",
+      "category": "general-world",
+      "enabled": true,
+      "verification_note": "Official/public feed candidate; availability must be confirmed by the GitHub Actions live run."
+    },
+    {
+      "id": "guardian-world",
+      "name": "The Guardian World",
+      "url": "https://www.theguardian.com/world/rss",
+      "kind": "rss",
+      "category": "general-world",
+      "enabled": true,
+      "verification_note": "Official/public feed candidate; availability must be confirmed by the GitHub Actions live run."
+    },
+    {
+      "id": "aljazeera-english",
+      "name": "Al Jazeera English",
+      "url": "https://www.aljazeera.com/xml/rss/all.xml",
+      "kind": "rss",
+      "category": "general-world",
+      "enabled": true,
+      "verification_note": "Official/public feed candidate; availability must be confirmed by the GitHub Actions live run."
+    },
+    {
+      "id": "nyt-world",
+      "name": "New York Times World",
+      "url": "https://rss.nytimes.com/services/xml/rss/nyt/World.xml",
+      "kind": "rss",
+      "category": "general-world",
+      "enabled": true,
+      "verification_note": "Official/public feed candidate; availability must be confirmed by the GitHub Actions live run."
     }
   ]
 }
