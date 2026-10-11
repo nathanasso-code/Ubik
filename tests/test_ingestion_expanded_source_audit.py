@@ -12,9 +12,9 @@ ROOT = Path(__file__).resolve().parents[1]
 class ExpandedSourceAuditTests(unittest.TestCase):
     def test_candidate_sources_remain_disabled(self):
         result = cross_topic_inventory(ROOT)
-        self.assertEqual(result["counts_by_origin"]["ai_models_pilot"], 36)
+        self.assertEqual(result["counts_by_origin"]["ai_models_pilot"], 39)
         self.assertEqual(result["counts_by_origin"]["italian_candidate"], 12)
-        self.assertEqual(result["total_entries"], 48)
+        self.assertEqual(result["total_entries"], 51)
         italian = [x for x in result["sources"] if x["origin"] == "italian_candidate"]
         self.assertTrue(all(not x["acquisition_enabled"] for x in italian))
         self.assertIn("youtube_transcripts", result["unrepresented_channels"])
