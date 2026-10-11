@@ -55,6 +55,19 @@ def fetch(url):
 def qurl(base,params):
     return base+"?"+urllib.parse.urlencode(params)
 
+def bluesky_fetch(params):
+    """Try the alternate AppView; avoid hammering blocked hosts."""
+    failures=[]
+    for host in ("https://api.bsky.app", "https://public.api.bsky.app"):
+        data,err=fetch(qurl(host+"/xrpc/app.bsky.feed.searchPosts",params))
+        if data is not None:
+            return data,[]
+        failures.append(host+": "+str(err))
+        if err and ("403" in err or "429" in err):
+            continue
+    return None,failures
+
+
 def search_bluesky(title,url):
     searches=[url]
     arxiv=re.search(r"arxiv.org/abs/(\d{4}\.\d+)",url)
@@ -65,7 +78,8 @@ def search_bluesky(title,url):
     found={}
     errors=[]
     for query in searches:
-        data,err=fetch(qurl("https://public.api.bsky.app/xrpc/app.bsky.feed.searchPosts",{"q":query,"limit":20,"sort":"latest"}))
+        data,failures=bluesky_fetch({"q":query,"limit":20,"sort":"latest"})
+        err="; ".join(failures) if failures else None
         if err:
             errors.append(err)
             continue
@@ -80,7 +94,7 @@ def search_bluesky(title,url):
             record=post.get("record") or {}
             text=record.get("text","")
             # Explicit relation to queried URL/identifier/title, not vague topic overlap.
-            if query.casefold() not in (text+" "+json.dumps(record.get("facets",[]))).casefold():
+            if query.casefold() not in (text+" "+json.dumps(record.get("facets",[]))+" "+json.dumps((post.get("embed") or {}))).casefold():
                 continue
             found[link]={"url":link,"author":handle,"text":text[:700],"created_at":record.get("createdAt"),"query":query,"relation":"explicit_string_match_unreviewed"}
     return list(found.values()),errors
