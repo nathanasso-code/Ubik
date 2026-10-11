@@ -54,6 +54,39 @@ class DiscoveryTests(unittest.TestCase):
             self.assertEqual(len(again["items"]), 2)
             self.assertEqual([row["new"] for row in again["source_reports"]], [0, 0])
 
+    def test_arxiv_empty_daily_feed_uses_bounded_official_atom_api(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            reg, out = Path(tmp)/"registry.json", Path(tmp)/"result.json"
+            primary = "https://rss.arxiv.org/rss/cs.AI"
+            fallback = "https://export.arxiv.org/api/query?search_query=cat%3Acs.AI&max_results=30"
+            reg.write_text(json.dumps({"topic_id": "ai-models", "sources": [
+                {"id": "arxiv-cs-ai", "name": "arXiv", "url": primary,
+                 "empty_feed_fallback_url": fallback, "enabled": True, "kind": "rss"}]}))
+            called = []
+            def fetch(url):
+                called.append(url)
+                return b"<rss><channel></channel></rss>" if url == primary else ATOM
+            result = module.run(reg, out, fetch)
+            self.assertEqual(called, [primary, fallback])
+            self.assertEqual(len(result["items"]), 1)
+            self.assertTrue(result["source_reports"][0]["fallback_used"])
+            self.assertEqual(result["items"][0]["discovered_from"], fallback)
+
+    def test_arxiv_nonempty_rss_does_not_call_fallback(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            reg, out = Path(tmp)/"registry.json", Path(tmp)/"result.json"
+            reg.write_text(json.dumps({"topic_id": "ai-models", "sources": [
+                {"id": "arxiv-cs-ai", "name": "arXiv", "url": "https://rss.arxiv.org/rss/cs.AI",
+                 "empty_feed_fallback_url": "https://export.arxiv.org/api/query?max_results=30",
+                 "enabled": True, "kind": "rss"}]}))
+            called = []
+            def fetch(url):
+                called.append(url)
+                return RSS
+            result = module.run(reg, out, fetch)
+            self.assertEqual(len(called), 1)
+            self.assertFalse(result["source_reports"][0]["fallback_used"])
+
     def test_repeat_and_failure_are_safe(self):
         with tempfile.TemporaryDirectory() as tmp:
             reg, out = Path(tmp)/"registry.json", Path(tmp)/"result.json"
