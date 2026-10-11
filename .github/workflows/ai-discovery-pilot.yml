@@ -15,6 +15,8 @@ on:
       - 'ingestion/topic_feed_pilot.py'
       - 'ingestion/broad_source_catalog.py'
       - 'ingestion/broad_review_shortlist.py'
+      - 'ingestion/six_stage_pilot.py'
+      - 'tests/test_ingestion_six_stage_pilot.py'
       - 'ingestion/broad_source_preview.py'
       - 'tests/test_ingestion_broad_source_preview.py'
       - 'ingestion/topic_all_candidates_export.py'
@@ -118,6 +120,10 @@ jobs:
         if: always()
         run: |
           if test -f data/discovery/UBIK_ALL_SOURCES_REVIEW.json; then python -m ingestion.broad_review_shortlist data/discovery/UBIK_ALL_SOURCES_REVIEW.json data/discovery/UBIK_AI_REVIEW_300.csv --limit 300; fi
+      - name: Run six-stage source-grounded information pilot
+        if: always()
+        run: |
+          if test -f data/discovery/UBIK_ALL_SOURCES_REVIEW.json; then python -m ingestion.six_stage_pilot data/discovery/UBIK_ALL_SOURCES_REVIEW.json data/discovery/UBIK_SIX_STAGE_PILOT.json --limit 300; fi
       - name: Render complete searchable catalogue
         if: always()
         run: |
