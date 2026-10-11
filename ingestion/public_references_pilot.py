@@ -56,7 +56,13 @@ def fetch(url):
 def qurl(base,params):
     return base+"?"+urllib.parse.urlencode(params)
 
+_SESSION_CACHE = None
+
+
 def bluesky_session():
+    global _SESSION_CACHE
+    if _SESSION_CACHE is not None:
+        return _SESSION_CACHE
     handle=os.environ.get("BLUESKY_HANDLE","").strip().lstrip("@")
     password=os.environ.get("BLUESKY_APP_PASSWORD","").strip()
     if not (handle and password):
@@ -68,7 +74,8 @@ def bluesky_session():
     try:
         with urllib.request.urlopen(request,timeout=12) as response:
             session=json.load(response)
-        return session.get("accessJwt"),None
+        _SESSION_CACHE=(session.get("accessJwt"),None)
+        return _SESSION_CACHE
     except (urllib.error.HTTPError,urllib.error.URLError,TimeoutError,ValueError) as exc:
         return None,str(exc)[:120]
 
