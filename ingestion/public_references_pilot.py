@@ -176,6 +176,8 @@ def main():
              "web_mentions":None,"web_mentions_status":"not_measured",
              "note":"Observed API matches only; zero results is not proof of zero citations"}
         rows.append(row)
+        for post in posts[:5]:
+            print("UBIK_POST_SAMPLE "+json.dumps({"source":title[:65],"url":post["url"],"author":post["author"],"text":post["text"][:450]},ensure_ascii=False),flush=True)
         print(json.dumps({"title":title[:55],"bluesky_posts":len(posts),
                           "openalex_matches":len(scholarly or []),
                           "errors":bsky_errors[:1]+([openalex_error] if openalex_error else [])}),flush=True)
