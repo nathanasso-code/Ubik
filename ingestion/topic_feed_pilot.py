@@ -104,11 +104,11 @@ def select(discovery, *, limit=30, now=None):
         for source in sorted(by_source):
             if by_source[source] and len(chosen) < limit:
                 chosen.append(by_source[source].pop(0))
-    for row in chosen:
+    for row in candidates:
         row.pop("_published")
     return {
         "schema_version": 1, "topic": TOPIC, "feed_limit": limit,
-        "candidate_documents": len(candidates), "visible": chosen,
+        "candidate_documents": len(candidates), "all_candidates": candidates, "visible": chosen,
         "excluded_or_older": len(by_url) - len(candidates),
         "review_required_for_event_merges": True,
         "automatic_nuclei": False, "automatic_publication": False,
