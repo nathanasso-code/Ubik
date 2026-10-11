@@ -112,6 +112,21 @@ def run(registry, output, fetch):
             payload = fetch(source["url"])
             raw_entries = raw_feed_entry_count(payload)
             discovered = parse_feed(payload, source)
+            fallback_used = False
+            if raw_entries == 0 and source.get("empty_feed_fallback_url"):
+                # Use a bounded official arXiv query only for an empty daily feed.
+                # Never bypass failed primary requests or access restrictions.
+                fallback_url = source["empty_feed_fallback_url"]
+                parsed = urllib.parse.urlsplit(fallback_url)
+                if (source.get("id") not in {"arxiv-cs-ai", "arxiv-cs-cl"}
+                        or parsed.scheme != "https"
+                        or parsed.netloc != "export.arxiv.org"
+                        or parsed.path != "/api/query"):
+                    raise ValueError("Unapproved empty-feed fallback")
+                payload = fetch(fallback_url)
+                raw_entries = raw_feed_entry_count(payload)
+                discovered = parse_feed(payload, {**source, "url": fallback_url})
+                fallback_used = True
             new = 0
             for item in discovered:
                 key = (item["source_id"], item["url"])
@@ -122,7 +137,7 @@ def run(registry, output, fetch):
                     items[key].update({"authors": item["authors"], "attribution_basis": item["attribution_basis"], "attribution_type": item["attribution_type"], "attribution_status": item["attribution_status"]})
                 if item.get("description") and not items[key].get("description"):
                     items[key].update({"description": item["description"], "description_basis": "feed"})
-            reports.append({"source_id": source["id"], "status": "ok", "raw_entries": raw_entries, "seen": len(discovered), "new": new})
+            reports.append({"source_id": source["id"], "status": "ok", "raw_entries": raw_entries, "seen": len(discovered), "new": new, "fallback_used": fallback_used})
         except (ValueError, ET.ParseError, urllib.error.URLError, TimeoutError, OSError) as exc:
             reports.append({"source_id": source["id"], "status": "error", "error": str(exc)[:240]})
     source_stats = []
