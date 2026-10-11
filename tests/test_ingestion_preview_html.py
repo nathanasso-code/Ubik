@@ -17,6 +17,18 @@ class PreviewTests(unittest.TestCase):
         self.assertIn("q=1&amp;x=2", page)
         self.assertIn("1 osservazioni", page)
 
+    def test_preview_balances_sources_without_filtering_archive(self):
+        items = [
+            {"source_id": "a", "title": f"A{i}", "url": f"https://a.example/{i}"}
+            for i in range(20)
+        ] + [{"source_id": "b", "title": "B0", "url": "https://b.example/0"}]
+        page = render({"items": items, "source_reports": []}, max_items=3)
+        self.assertIn("A0", page)
+        self.assertIn("B0", page)
+        self.assertIn("A1", page)
+        self.assertNotIn("A2", page)
+        self.assertIn("21 osservazioni", page)
+
     def test_preview_rejects_missing_items(self):
         with self.assertRaises(ValueError):
             render({"source_reports": []})
