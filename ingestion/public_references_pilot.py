@@ -4,6 +4,7 @@ Public endpoints only. Results are *observed* evidence, not exhaustive counts.
 """
 import argparse
 import json
+import os
 import re
 import time
 import urllib.error
@@ -55,6 +56,23 @@ def fetch(url):
 def qurl(base,params):
     return base+"?"+urllib.parse.urlencode(params)
 
+def bluesky_session():
+    handle=os.environ.get("BLUESKY_HANDLE","").strip().lstrip("@")
+    password=os.environ.get("BLUESKY_APP_PASSWORD","").strip()
+    if not (handle and password):
+        return None,"credentials_not_configured"
+    payload=json.dumps({"identifier":handle,"password":password}).encode("utf-8")
+    request=urllib.request.Request("https://bsky.social/xrpc/com.atproto.server.createSession",
+        data=payload,headers={"Content-Type":"application/json","User-Agent":"UbikResearchPilot/0.2"},
+        method="POST")
+    try:
+        with urllib.request.urlopen(request,timeout=12) as response:
+            session=json.load(response)
+        return session.get("accessJwt"),None
+    except (urllib.error.HTTPError,urllib.error.URLError,TimeoutError,ValueError) as exc:
+        return None,str(exc)[:120]
+
+
 def bluesky_fetch(params):
     """Try the alternate AppView; avoid hammering blocked hosts."""
     failures=[]
@@ -65,6 +83,18 @@ def bluesky_fetch(params):
         failures.append(host+": "+str(err))
         if err and ("403" in err or "429" in err):
             continue
+    token,auth_error=bluesky_session()
+    if token:
+        url=qurl("https://bsky.social/xrpc/app.bsky.feed.searchPosts",params)
+        request=urllib.request.Request(url,headers={"Authorization":"Bearer "+token,
+            "User-Agent":"UbikResearchPilot/0.2","Accept":"application/json"})
+        try:
+            with urllib.request.urlopen(request,timeout=12) as response:
+                return json.load(response),[]
+        except (urllib.error.HTTPError,urllib.error.URLError,TimeoutError,ValueError) as exc:
+            failures.append("authenticated: "+str(exc)[:120])
+    elif auth_error!="credentials_not_configured":
+        failures.append("auth_failed: "+auth_error)
     return None,failures
 
 
