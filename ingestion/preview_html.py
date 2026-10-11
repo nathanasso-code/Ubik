@@ -6,7 +6,7 @@ plain escaped HTML, safe to open from a downloaded CI artifact.
 import argparse
 import html
 import json
-from collections import Counter
+from collections import Counter, deque
 from pathlib import Path
 
 
@@ -28,8 +28,19 @@ def render(discovery, *, max_items=250):
         if row.get("status") != "ok":
             errors.append(f"<li><b>{esc(row.get('source_id'))}</b>: {esc(row.get('error', 'unknown error'))}</li>")
     cards = []
-    # Stable input order: not a relevance ranking.
-    for item in items[:max_items]:
+    # Presentation-only round-robin: do not let a large feed hide all others.
+    # Acquisition data remains unchanged and no editorial scores are assigned.
+    grouped = {}
+    for item in items:
+        grouped.setdefault(item.get("source_id", "unknown"), deque()).append(item)
+    selected = []
+    active = deque(sorted(grouped))
+    while active and len(selected) < max_items:
+        source = active.popleft()
+        selected.append(grouped[source].popleft())
+        if grouped[source]:
+            active.append(source)
+    for item in selected:
         url = str(item.get("url") or "")
         if not url.startswith(("https://", "http://")):
             continue
@@ -52,7 +63,7 @@ td,th{{padding:7px 12px;border-bottom:1px solid #8884;text-align:left}}
 <header><h1>Ubik · Materiale realmente raccolto</h1>
 <p class="stats">{len(items):,} osservazioni · {len(sources)} fonti con risultati · {len(discovery.get("source_reports", []))} feed tentati</p>
 <p class="muted">Acquisizione: {esc(discovery.get("retrieved_at"))}. Campione RSS/Atom del registro ai-models.
-Anteprima dei primi {min(len(items), max_items)} elementi nell'ordine dell'archivio, non selezionati per rilevanza.
+Anteprima bilanciata tra fonti di {min(len(items), max_items)} elementi, senza selezione per rilevanza.
 Non è ancora la UI definitiva, né una copertura globale.</p></header>
 <section><h2>Fonti e quantità</h2><table><thead><tr><th>Fonte</th><th>Osservazioni</th><th>Stato</th></tr></thead>
 <tbody>{''.join(source_rows)}</tbody></table></section>
