@@ -5,6 +5,12 @@ on:
       - develop/ubik-core
     paths:
       - 'scripts/discover_ai_sources.py'
+      - 'ingestion/preview_html.py'
+      - 'ingestion/coverage_cli.py'
+      - 'ingestion/source_quality.py'
+      - 'ingestion/feed_triage.py'
+      - 'ingestion/cross_topic_inventory.py'
+      - 'tests/test_ingestion_preview_html.py'
       - 'scripts/report_ai_discovery.py'
       - 'scripts/discover_ai_authors.py'
       - 'scripts/discover_social_authors.py'
@@ -84,6 +90,10 @@ jobs:
           else
             python -m ingestion.coverage_cli --output data/discovery/source-inventory-quality.json
           fi
+      - name: Create tangible collected-material HTML preview
+        if: always()
+        run: |
+          if test -f data/discovery/ai-models.json; then python -m ingestion.preview_html data/discovery/ai-models.json data/discovery/UBIK_PREVIEW.html --max-items 250; fi
       - name: Prepare epistemic event review queue (unlabeled)
         if: always()
         run: |
