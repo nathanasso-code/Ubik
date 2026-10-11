@@ -25,7 +25,8 @@
       "url": "https://rss.arxiv.org/rss/cs.AI",
       "kind": "rss",
       "category": "research",
-      "enabled": true
+      "enabled": true,
+      "empty_feed_fallback_url": "https://export.arxiv.org/api/query?search_query=cat%3Acs.AI&start=0&max_results=30&sortBy=submittedDate&sortOrder=descending"
     },
     {
       "id": "arxiv-cs-cl",
@@ -33,7 +34,8 @@
       "url": "https://rss.arxiv.org/rss/cs.CL",
       "kind": "rss",
       "category": "research",
-      "enabled": true
+      "enabled": true,
+      "empty_feed_fallback_url": "https://export.arxiv.org/api/query?search_query=cat%3Acs.CL&start=0&max_results=30&sortBy=submittedDate&sortOrder=descending"
     },
     {
       "id": "huggingface-blog",
