@@ -104,6 +104,20 @@ jobs:
         if: always()
         run: |
           if test -f data/discovery/ai-topic-feed-review.json; then python -m ingestion.topic_event_review data/discovery/ai-topic-feed-review.json data/discovery/ai-topic-event-pairs-review.json --limit 40; fi
+      - name: Print compact topic candidates for reviewer inspection
+        if: always()
+        run: |
+          if test -f data/discovery/ai-topic-feed-review.json; then
+            python - <<'PY'
+          import json
+          from pathlib import Path
+          data = json.loads(Path('data/discovery/ai-topic-feed-review.json').read_text())
+          for i, row in enumerate(data.get('visible', []), 1):
+              print(json.dumps({'rank': i, 'source': row.get('source_ids'),
+                                'title': row.get('title'), 'url': row.get('url'),
+                                'areas': row.get('area_ids')}, ensure_ascii=False))
+          PY
+          fi
       - name: Render topic feed review in browser
         if: always()
         run: |
