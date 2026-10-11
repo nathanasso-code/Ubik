@@ -33,3 +33,6 @@ Ubik uses matrix topics with tag clouds, then sources, cards and optional episte
 3. Expand practical non-AI source coverage in small verified batches, and test existing HN/GDELT connectors with bounded public requests. Keep the same pipeline; do not start new frameworks.
 
 SQLite is a local experiment; PostgreSQL is not deployed. No production deploy or recurring collection job has been enabled by this work. Check CI after each change. Do not modify main.
+
+## 2026-10-11 next increment: general-world pilot
+Four enabled RSS feed candidates were added to the SAME registry and SAME workflow: BBC World, The Guardian World, Al Jazeera English and NYT World. arXiv category feed URLs were switched to the officially documented rss.arxiv.org host. The pilot now has 36 registry entries, 28 enabled RSS feeds, and the cross-topic inventory has 48 entries including the 12 disabled Italian candidates. These are configuration counts, NOT verified success or material totals. Check the latest AI sources discovery pilot run before claiming results. The five earlier RSS errors remain unresolved unless a newer run proves otherwise. Do not create additional branches or change editorial selection.
