@@ -17,6 +17,8 @@ on:
       - 'ingestion/topic_event_review.py'
       - 'ingestion/topic_evidence.py'
       - 'ingestion/topic_review_priority.py'
+      - 'ingestion/topic_editorial_worksheet.py'
+      - 'tests/test_ingestion_topic_editorial_worksheet.py'
       - 'tests/test_ingestion_topic_review_priority.py'
       - 'tests/test_ingestion_topic_evidence.py'
       - 'tests/test_ingestion_topic_event_review.py'
@@ -132,6 +134,10 @@ jobs:
           if test -f data/discovery/ai-topic-feed-review.json && test -f data/discovery/ai-topic-evidence-review.json && test -f data/discovery/ai-topic-event-pairs-review.json; then
             python -m ingestion.topic_review_priority data/discovery/ai-topic-feed-review.json data/discovery/ai-topic-evidence-review.json data/discovery/ai-topic-event-pairs-review.json data/discovery/ai-topic-priority-review.json
           fi
+      - name: Build 30-document editorial evidence worksheet
+        if: always()
+        run: |
+          if test -f data/discovery/ai-topic-priority-review.json; then python -m ingestion.topic_editorial_worksheet data/discovery/ai-topic-priority-review.json data/discovery/ai-topic-editorial-worksheet.csv --limit 30; fi
       - name: Render topic feed review in browser
         if: always()
         run: |
