@@ -13,6 +13,8 @@ on:
       - 'tests/test_ingestion_preview_html.py'
       - 'tests/test_ingestion_expanded_source_audit.py'
       - 'ingestion/topic_feed_pilot.py'
+      - 'ingestion/broad_source_catalog.py'
+      - 'tests/test_ingestion_broad_source_catalog.py'
       - 'ingestion/topic_feed_preview.py'
       - 'ingestion/topic_event_review.py'
       - 'ingestion/topic_evidence.py'
@@ -104,6 +106,10 @@ jobs:
           else
             python -m ingestion.coverage_cli --output data/discovery/source-inventory-quality.json
           fi
+      - name: Export complete acquired-source catalogue for human review
+        if: always()
+        run: |
+          if test -f data/discovery/ai-models.json; then python -m ingestion.broad_source_catalog data/discovery/ai-models.json data/discovery/UBIK_ALL_SOURCES_REVIEW.json data/discovery/UBIK_ALL_SOURCES_REVIEW.csv; fi
       - name: Build bounded AI topic feed candidate report
         if: always()
         run: |
