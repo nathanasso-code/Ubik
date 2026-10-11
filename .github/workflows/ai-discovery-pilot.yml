@@ -16,6 +16,8 @@ on:
       - 'ingestion/topic_feed_preview.py'
       - 'ingestion/topic_event_review.py'
       - 'ingestion/topic_evidence.py'
+      - 'ingestion/topic_review_priority.py'
+      - 'tests/test_ingestion_topic_review_priority.py'
       - 'tests/test_ingestion_topic_evidence.py'
       - 'tests/test_ingestion_topic_event_review.py'
       - 'tests/test_ingestion_topic_feed_pilot.py'
@@ -123,6 +125,12 @@ jobs:
                                 'title': row.get('title'), 'url': row.get('url'),
                                 'areas': row.get('area_ids')}, ensure_ascii=False))
           PY
+          fi
+      - name: Prepare evidence-gap topic review queue
+        if: always()
+        run: |
+          if test -f data/discovery/ai-topic-feed-review.json && test -f data/discovery/ai-topic-evidence-review.json && test -f data/discovery/ai-topic-event-pairs-review.json; then
+            python -m ingestion.topic_review_priority data/discovery/ai-topic-feed-review.json data/discovery/ai-topic-evidence-review.json data/discovery/ai-topic-event-pairs-review.json data/discovery/ai-topic-priority-review.json
           fi
       - name: Render topic feed review in browser
         if: always()
