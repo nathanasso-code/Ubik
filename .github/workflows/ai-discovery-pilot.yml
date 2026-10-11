@@ -14,6 +14,8 @@ on:
       - 'tests/test_ingestion_expanded_source_audit.py'
       - 'ingestion/topic_feed_pilot.py'
       - 'ingestion/topic_feed_preview.py'
+      - 'ingestion/topic_event_review.py'
+      - 'tests/test_ingestion_topic_event_review.py'
       - 'tests/test_ingestion_topic_feed_pilot.py'
       - 'scripts/report_ai_discovery.py'
       - 'scripts/discover_ai_authors.py'
@@ -98,6 +100,10 @@ jobs:
         if: always()
         run: |
           if test -f data/discovery/ai-models.json; then python -m ingestion.topic_feed_pilot data/discovery/ai-models.json data/discovery/ai-topic-feed-review.json --limit 30; fi
+      - name: Generate bounded same-event review pairs for topic feed
+        if: always()
+        run: |
+          if test -f data/discovery/ai-topic-feed-review.json; then python -m ingestion.topic_event_review data/discovery/ai-topic-feed-review.json data/discovery/ai-topic-event-pairs-review.json --limit 40; fi
       - name: Render topic feed review in browser
         if: always()
         run: |
