@@ -1,0 +1,587 @@
+{
+  "topic": "ai-information",
+  "title": "Intelligenza artificiale",
+  "updated_at": "2026-10-11",
+  "method": "30 originali + selezione motivata di contributi Bluesky. I post non sono conferme indipendenti; link verificati come risultati API, contenuti da verificare alle fonti.",
+  "sources": [
+    {
+      "id": "gemini",
+      "number": 1,
+      "title": "Gemini 4 Argon: il lancio e i limiti da verificare",
+      "url": "https://deepmind.google/blog/gemini-4-argon-our-next-era-of-frontier-intelligence/",
+      "category": "Modelli",
+      "author": "Google DeepMind",
+      "summary": "Annuncio originale; benchmark e affermazioni del produttore da distinguere da test indipendenti.",
+      "tags": [
+        "Gemini",
+        "benchmark",
+        "sicurezza AI"
+      ],
+      "posts": [
+        {
+          "author": "strike007.bsky.social",
+          "url": "https://bsky.app/profile/strike007.bsky.social/post/3mwszic36uc2f",
+          "summary": "Ipotesi sui costi dei token e sulla deriva del contesto",
+          "kind": "interpretazione"
+        },
+        {
+          "author": "maimuwork.bsky.social",
+          "url": "https://bsky.app/profile/maimuwork.bsky.social/post/3mwrvvinzji2f",
+          "summary": "Riflessione sull'adozione pratica di nuovi modelli",
+          "kind": "esperienza"
+        }
+      ]
+    },
+    {
+      "id": "anthropic",
+      "number": 2,
+      "title": "Agente Anthropic: falsa segnalazione alla polizia",
+      "url": "https://www.bbc.co.uk/news/articles/cqkg50j1yd5lo",
+      "category": "Sicurezza",
+      "author": "BBC",
+      "summary": "Incidente specifico; distinguere fatti documentati, responsabilità e interpretazioni.",
+      "tags": [
+        "agenti AI",
+        "sicurezza AI",
+        "responsabilità"
+      ],
+      "posts": [
+        {
+          "author": "j4vv4d.com",
+          "url": "https://bsky.app/profile/j4vv4d.com/post/3mxmbfntr7e2n",
+          "summary": "Critica dei tempi di supervisione e comunicazione",
+          "kind": "critica"
+        },
+        {
+          "author": "jackrunscode82.bsky.social",
+          "url": "https://bsky.app/profile/jackrunscode82.bsky.social/post/3mxmadcktg52u",
+          "summary": "Domanda sulla rilevabilità degli incidenti",
+          "kind": "domanda"
+        },
+        {
+          "author": "datacontroversies.bsky.social",
+          "url": "https://bsky.app/profile/datacontroversies.bsky.social/post/3mxkkksox3226",
+          "summary": "Contesta il termine giornalistico «rogue»",
+          "kind": "critica"
+        }
+      ]
+    },
+    {
+      "id": "finance",
+      "number": 3,
+      "title": "Financing the AI Buildout",
+      "url": "https://www.nber.org/papers/w35865",
+      "category": "Economia",
+      "author": "Stijn Van Nieuwerburgh · NBER",
+      "summary": "Ricerca su scala degli investimenti, leva finanziaria e trasparenza delle infrastrutture AI.",
+      "tags": [
+        "data center",
+        "finanza",
+        "infrastrutture"
+      ],
+      "posts": [
+        {
+          "author": "nber.org",
+          "url": "https://bsky.app/profile/nber.org/post/3mxjxsjopbq2v",
+          "summary": "Diffusione del lavoro originale NBER",
+          "kind": "rilancio"
+        },
+        {
+          "author": "bistline.bsky.social",
+          "url": "https://bsky.app/profile/bistline.bsky.social/post/3mxa4r4hfq222",
+          "summary": "Rimando a un'analisi Brookings collegata",
+          "kind": "riferimento"
+        }
+      ]
+    },
+    {
+      "id": "asana",
+      "number": 4,
+      "title": "Asana: test di agenti browser con costi 76× inferiori",
+      "url": "https://openai.com/index/asana-browser-agent/",
+      "category": "Agenti",
+      "author": "OpenAI / Asana",
+      "summary": "Risultato dichiarato in un caso aziendale; non generalizzare il miglioramento.",
+      "tags": [
+        "agenti AI",
+        "costi"
+      ],
+      "posts": [
+        {
+          "author": "blu3ph4ntom.bsky.social",
+          "url": "https://bsky.app/profile/blu3ph4ntom.bsky.social/post/3mxlj3d6sao2r",
+          "summary": "Interpretazione tecnica: caching e gestione del contesto",
+          "kind": "interpretazione"
+        }
+      ]
+    },
+    {
+      "id": "sabotage",
+      "number": 5,
+      "title": "Caught in the Act: rilevamento del sabotaggio",
+      "url": "https://arxiv.org/abs/2610.12445",
+      "category": "Ricerca",
+      "author": "Hollinsworth et al.",
+      "summary": "Studio sui metodi di rilevamento di sabotaggio e inganno non verbalizzato.",
+      "tags": [
+        "sicurezza AI",
+        "paper"
+      ],
+      "posts": []
+    },
+    {
+      "id": "space",
+      "number": 6,
+      "title": "SpaceCast-Bench: ragionamento spaziale predittivo",
+      "url": "https://arxiv.org/abs/2610.12402",
+      "category": "Ricerca",
+      "author": "Li et al.",
+      "summary": "Benchmark per valutare capacità spaziali dei modelli multimodali.",
+      "tags": [
+        "benchmark",
+        "multimodale"
+      ],
+      "posts": []
+    },
+    {
+      "id": "horizons",
+      "number": 7,
+      "title": "Stime e validità degli AI time horizons",
+      "url": "https://arxiv.org/abs/2610.12466",
+      "category": "Ricerca",
+      "author": "Nguyen e Fithian",
+      "summary": "Analisi statistica delle stime temporali delle capacità AI.",
+      "tags": [
+        "benchmark",
+        "previsioni"
+      ],
+      "posts": [
+        {
+          "author": "mishi21.bsky.social",
+          "url": "https://bsky.app/profile/mishi21.bsky.social/post/3mxh7kiijwc2a",
+          "summary": "Lettura della sensibilità statistica delle proiezioni",
+          "kind": "interpretazione"
+        },
+        {
+          "author": "devstackdaily.bsky.social",
+          "url": "https://bsky.app/profile/devstackdaily.bsky.social/post/3mxjgwesdysmr",
+          "summary": "Sintesi del risultato sulla curva dei compiti brevi",
+          "kind": "sintesi"
+        }
+      ]
+    },
+    {
+      "id": "doom",
+      "number": 8,
+      "title": "Le probabilità di rischio esistenziale AI sono troppo incerte per guidare la politica?",
+      "url": "https://www.normaltech.ai/p/p-doom",
+      "category": "Governance",
+      "author": "Arvind Narayanan e Sayash Kapoor",
+      "summary": "Critica metodologica all'uso delle probabilità soggettive nelle decisioni pubbliche.",
+      "tags": [
+        "governance",
+        "rischio AI"
+      ],
+      "posts": [
+        {
+          "author": "ocramz.bsky.social",
+          "url": "https://bsky.app/profile/ocramz.bsky.social/post/3mwnl7gahpc2i",
+          "summary": "Apprezzamento della critica metodologica",
+          "kind": "opinione"
+        }
+      ]
+    },
+    {
+      "id": "lambert",
+      "number": 9,
+      "title": "Progresso rapido dell'AI, ma non necessariamente superintelligenza",
+      "url": "https://www.interconnects.ai/p/i-expect-rapid-progress-but-not-towards",
+      "category": "Opinioni",
+      "author": "Nathan Lambert",
+      "summary": "Argomento a favore della diffusione e dell'efficienza senza assumere svolte generali.",
+      "tags": [
+        "modelli",
+        "previsioni"
+      ],
+      "posts": [
+        {
+          "author": "natolambert.bsky.social",
+          "url": "https://bsky.app/profile/natolambert.bsky.social/post/3mxhwx5ydch2t",
+          "summary": "Precisazione della tesi da parte dell'autore",
+          "kind": "autore"
+        }
+      ]
+    },
+    {
+      "id": "assurance",
+      "number": 10,
+      "title": "From Reactive Containment to Proactive Assurance",
+      "url": "https://arxiv.org/abs/2610.12463",
+      "category": "Ricerca",
+      "author": "Abbas Raftari",
+      "summary": "Proposta metodologica di valutazione preventiva degli agenti, collegata a più incidenti.",
+      "tags": [
+        "sicurezza AI",
+        "agenti AI"
+      ],
+      "posts": [
+        {
+          "author": "joeythejackal.bsky.social",
+          "url": "https://bsky.app/profile/joeythejackal.bsky.social/post/3mxijn6nnts2r",
+          "summary": "Segnalazione di approfondimento sugli incidenti AI",
+          "kind": "riferimento"
+        }
+      ]
+    },
+    {
+      "id": "fastbench",
+      "number": 11,
+      "title": "FastBench: streaming VLM e scenari dinamici",
+      "url": "https://arxiv.org/abs/2610.12427",
+      "category": "Ricerca",
+      "author": "arXiv",
+      "summary": "Benchmark su flussi visivi dinamici.",
+      "tags": [
+        "benchmark",
+        "multimodale"
+      ],
+      "posts": []
+    },
+    {
+      "id": "tent",
+      "number": 12,
+      "title": "Un movimento AI safety ampio o ristretto?",
+      "url": "https://www.normaltech.ai/p/a-big-tent-or-small-tent-ai-safety",
+      "category": "Governance",
+      "author": "Narayanan e Kapoor",
+      "summary": "Discussione delle priorità tra rischi catastrofici e rischi sistemici.",
+      "tags": [
+        "governance",
+        "rischio AI"
+      ],
+      "posts": [
+        {
+          "author": "raycorrigan.bsky.social",
+          "url": "https://bsky.app/profile/raycorrigan.bsky.social/post/3mx53nzkkbc2p",
+          "summary": "Distingue rischi catastrofici e sistemici",
+          "kind": "interpretazione"
+        }
+      ]
+    },
+    {
+      "id": "sophos",
+      "number": 13,
+      "title": "Sophos: indagini sulle minacce accelerate con AI",
+      "url": "https://openai.com/index/sophos",
+      "category": "Agenti",
+      "author": "OpenAI / Sophos",
+      "summary": "Caso aziendale con metriche di produttività da distinguere da verifiche esterne.",
+      "tags": [
+        "cybersecurity",
+        "agenti AI"
+      ],
+      "posts": [
+        {
+          "author": "druce.ai",
+          "url": "https://bsky.app/profile/druce.ai/post/3mxgxu745qp2t",
+          "summary": "Rilancio delle metriche aziendali dichiarate",
+          "kind": "rilancio"
+        }
+      ]
+    },
+    {
+      "id": "alphafold",
+      "number": 14,
+      "title": "Perché AlphaFold non ha risolto il ripiegamento delle proteine",
+      "url": "https://www.latent.space/p/biohub-deepmind",
+      "category": "Scienza",
+      "author": "Latent Space · Kohli e Candido",
+      "summary": "Discussione dei problemi ancora aperti, incluse le dinamiche proteiche.",
+      "tags": [
+        "biologia",
+        "modelli"
+      ],
+      "posts": [
+        {
+          "author": "druce.ai",
+          "url": "https://bsky.app/profile/druce.ai/post/3mxjnsk3f2t2h",
+          "summary": "Sintesi dei problemi aperti delle dinamiche proteiche",
+          "kind": "sintesi"
+        }
+      ]
+    },
+    {
+      "id": "validity",
+      "number": 15,
+      "title": "Validity Without Ground Truth",
+      "url": "https://arxiv.org/abs/2610.10506",
+      "category": "Ricerca",
+      "author": "Alexander e Kling",
+      "summary": "Approccio dalla stated-preference economics alla valutazione dei modelli.",
+      "tags": [
+        "valutazione",
+        "paper"
+      ],
+      "posts": []
+    },
+    {
+      "id": "posttraining",
+      "number": 16,
+      "title": "Focusing on Post-Training",
+      "url": "https://sebastianraschka.com/blog/2026/focusing-on-llm-post-training.html",
+      "category": "Analisi",
+      "author": "Sebastian Raschka",
+      "summary": "Approfondimento sui metodi di post-training.",
+      "tags": [
+        "training",
+        "modelli"
+      ],
+      "posts": []
+    },
+    {
+      "id": "classification",
+      "number": 17,
+      "title": "Language Models for Text Classification",
+      "url": "https://magazine.sebastianraschka.com/p/classifier-history-and-jev",
+      "category": "Analisi",
+      "author": "Sebastian Raschka",
+      "summary": "Confronto storico tra classificatori semplici, transformer e approcci recenti.",
+      "tags": [
+        "classificazione",
+        "costi"
+      ],
+      "posts": [
+        {
+          "author": "danielnsts.bsky.social",
+          "url": "https://bsky.app/profile/danielnsts.bsky.social/post/3mwuuhclnxk2f",
+          "summary": "Scelta del classificatore secondo compito, costo e complessità",
+          "kind": "interpretazione"
+        }
+      ]
+    },
+    {
+      "id": "woven",
+      "number": 18,
+      "title": "WOVEN: world modeling multimodale",
+      "url": "https://arxiv.org/abs/2610.12417",
+      "category": "Ricerca",
+      "author": "arXiv",
+      "summary": "Studio di integrazione della modellazione del mondo visivo nei modelli multimodali.",
+      "tags": [
+        "multimodale",
+        "paper"
+      ],
+      "posts": []
+    },
+    {
+      "id": "rounding",
+      "number": 19,
+      "title": "Rounding in Preconditioner Space",
+      "url": "https://arxiv.org/abs/2610.12444",
+      "category": "Ricerca",
+      "author": "arXiv",
+      "summary": "Ottimizzazione della quantizzazione dello stato AdamW.",
+      "tags": [
+        "ottimizzazione",
+        "paper"
+      ],
+      "posts": []
+    },
+    {
+      "id": "ouro",
+      "number": 20,
+      "title": "OuroWorld: mondi 3D animati",
+      "url": "https://arxiv.org/abs/2610.12461",
+      "category": "Ricerca",
+      "author": "arXiv",
+      "summary": "Generazione di cinemagraph tridimensionali in loop.",
+      "tags": [
+        "3D",
+        "multimodale"
+      ],
+      "posts": []
+    },
+    {
+      "id": "omni",
+      "number": 21,
+      "title": "OmniCapBench: captioning audiovisivo",
+      "url": "https://arxiv.org/abs/2610.12458",
+      "category": "Ricerca",
+      "author": "arXiv",
+      "summary": "Framework di valutazione strutturata per descrizioni audiovisive.",
+      "tags": [
+        "benchmark",
+        "multimodale"
+      ],
+      "posts": []
+    },
+    {
+      "id": "robots",
+      "number": 22,
+      "title": "AI affidabile nella robotica industriale",
+      "url": "https://www.latent.space/p/standard-bots",
+      "category": "Industria",
+      "author": "Latent Space / Standard Bots",
+      "summary": "Conversazione su esecuzione affidabile e robot industriali.",
+      "tags": [
+        "robotica",
+        "agenti AI"
+      ],
+      "posts": [
+        {
+          "author": "sipirtu.com",
+          "url": "https://bsky.app/profile/sipirtu.com/post/3mxjowbyux525",
+          "summary": "Rilancio delle affermazioni su Standard Bots",
+          "kind": "rilancio"
+        }
+      ]
+    },
+    {
+      "id": "oneblock",
+      "number": 23,
+      "title": "One Block, Multiple Depths",
+      "url": "https://arxiv.org/abs/2610.12448",
+      "category": "Ricerca",
+      "author": "arXiv",
+      "summary": "Architetture ricorrenti per vision transformer.",
+      "tags": [
+        "architetture",
+        "paper"
+      ],
+      "posts": []
+    },
+    {
+      "id": "marformer",
+      "number": 24,
+      "title": "Marformer: distribuzioni dei dati mancanti",
+      "url": "https://arxiv.org/abs/2610.12379",
+      "category": "Ricerca",
+      "author": "arXiv",
+      "summary": "Transformer per predire distribuzioni di dati mancanti.",
+      "tags": [
+        "metodi",
+        "paper"
+      ],
+      "posts": []
+    },
+    {
+      "id": "credal",
+      "number": 25,
+      "title": "Credal Machine Learning",
+      "url": "https://arxiv.org/abs/2610.12115",
+      "category": "Ricerca",
+      "author": "arXiv",
+      "summary": "Apprendimento e decisioni avverse al rischio.",
+      "tags": [
+        "incertezza",
+        "paper"
+      ],
+      "posts": []
+    },
+    {
+      "id": "composite",
+      "number": 26,
+      "title": "Composite Online-to-Nonconvex Conversion",
+      "url": "https://arxiv.org/abs/2610.12328",
+      "category": "Ricerca",
+      "author": "arXiv",
+      "summary": "Risultati teorici sull'ottimizzazione non convessa.",
+      "tags": [
+        "ottimizzazione",
+        "paper"
+      ],
+      "posts": []
+    },
+    {
+      "id": "koopman",
+      "number": 27,
+      "title": "Bilevel optimization for Koopman embeddings",
+      "url": "https://arxiv.org/abs/2610.12370",
+      "category": "Ricerca",
+      "author": "arXiv",
+      "summary": "Ottimizzazione bilevel per rappresentazioni di Koopman.",
+      "tags": [
+        "ottimizzazione",
+        "paper"
+      ],
+      "posts": []
+    },
+    {
+      "id": "transfer",
+      "number": 28,
+      "title": "Verification with Transfer",
+      "url": "https://arxiv.org/abs/2610.12211",
+      "category": "Ricerca",
+      "author": "arXiv",
+      "summary": "Studio teorico sulle frontiere dell'informazione.",
+      "tags": [
+        "teoria",
+        "paper"
+      ],
+      "posts": []
+    },
+    {
+      "id": "quoting",
+      "number": 29,
+      "title": "Quoting The New York Times",
+      "url": "https://simonwillison.net/2026/Oct/10/the-new-york-times/",
+      "category": "Media",
+      "author": "Simon Willison",
+      "summary": "Nota sul riuso e la citazione di contenuti giornalistici.",
+      "tags": [
+        "giornalismo",
+        "fonti"
+      ],
+      "posts": []
+    },
+    {
+      "id": "python",
+      "number": 30,
+      "title": "Python 3.15 aggiunto ad actions/python-versions",
+      "url": "https://simonwillison.net/2026/Oct/10/python-actions/",
+      "category": "Sviluppo",
+      "author": "Simon Willison",
+      "summary": "Aggiornamento dell'ecosistema degli strumenti di sviluppo.",
+      "tags": [
+        "sviluppo",
+        "python"
+      ],
+      "posts": []
+    }
+  ],
+  "related_candidates": [
+    {
+      "title": "Opposizione locale a un data center nello Utah",
+      "url": "https://bsky.app/profile/joshdzieza.bsky.social/post/3mwt7z7ujrk2t",
+      "author": "Josh Dzieza",
+      "summary": "Pista giornalistica autonoma: conflitto territoriale e infrastrutture AI; verificare l'inchiesta completa.",
+      "tags": [
+        "data center",
+        "territorio"
+      ],
+      "relation": "finance"
+    },
+    {
+      "title": "GPU acquistate e capacità AI effettivamente installata",
+      "url": "https://bsky.app/profile/edzitron.com/post/3mw4lbiwgdr2a",
+      "author": "Ed Zitron",
+      "summary": "Tesi critica distinta: spese dichiarate e capacità operativa non sono necessariamente equivalenti.",
+      "tags": [
+        "finanza",
+        "infrastrutture"
+      ],
+      "relation": "finance"
+    },
+    {
+      "title": "Sostenibilità economica del boom infrastrutturale AI",
+      "url": "https://bsky.app/profile/edzitron.com/post/3mwo7mgbctq2d",
+      "author": "Ed Zitron",
+      "summary": "Ipotesi critica su ricavi, debito e rendimento atteso; possibile sovrapposizione con la precedente.",
+      "tags": [
+        "finanza",
+        "data center"
+      ],
+      "relation": "finance"
+    }
+  ]
+}
