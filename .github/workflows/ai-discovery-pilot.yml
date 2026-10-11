@@ -17,6 +17,7 @@ on:
       - 'ingestion/broad_review_shortlist.py'
       - 'ingestion/six_stage_pilot.py'
       - 'ingestion/evidence_linked_demo.py'
+      - 'ingestion/public_references_pilot.py'
       - 'tests/test_ingestion_evidence_linked_demo.py'
       - 'tests/test_ingestion_six_stage_pilot.py'
       - 'ingestion/broad_source_preview.py'
@@ -122,6 +123,10 @@ jobs:
         if: always()
         run: |
           if test -f data/discovery/UBIK_ALL_SOURCES_REVIEW.json; then python -m ingestion.broad_review_shortlist data/discovery/UBIK_ALL_SOURCES_REVIEW.json data/discovery/UBIK_AI_REVIEW_300.csv --limit 300; fi
+      - name: Search Bluesky and OpenAlex for 30 original sources
+        if: always()
+        run: |
+          python -m ingestion.public_references_pilot data/discovery/UBIK_PUBLIC_REFERENCES_30.json --limit 30
       - name: Produce three evidence-linked epistemic cards
         if: always()
         run: |
