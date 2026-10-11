@@ -14,6 +14,7 @@ on:
       - 'tests/test_ingestion_expanded_source_audit.py'
       - 'ingestion/topic_feed_pilot.py'
       - 'ingestion/broad_source_catalog.py'
+      - 'ingestion/topic_all_candidates_export.py'
       - 'tests/test_ingestion_broad_source_catalog.py'
       - 'ingestion/topic_feed_preview.py'
       - 'ingestion/topic_event_review.py'
@@ -114,6 +115,10 @@ jobs:
         if: always()
         run: |
           if test -f data/discovery/ai-models.json; then python -m ingestion.topic_feed_pilot data/discovery/ai-models.json data/discovery/ai-topic-feed-review.json --limit 30; fi
+      - name: Export every AI topic candidate for user inspection
+        if: always()
+        run: |
+          if test -f data/discovery/ai-topic-feed-review.json; then python -m ingestion.topic_all_candidates_export data/discovery/ai-topic-feed-review.json data/discovery/UBIK_ALL_AI_TOPIC_SOURCES.csv; fi
       - name: Extract attributed topic message evidence from feed summaries
         if: always()
         run: |
