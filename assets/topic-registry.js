@@ -2,6 +2,7 @@
 (function(root){
 "use strict";
 const topics=[
+ {id:"ai-information",title:"Intelligenza artificiale",views:["sources","tagcloud"],capabilities:["provenance","semantic-navigation"]},
  {id:"euromaidan",title:"Euromaidan",views:["timeline","sources"],capabilities:["provenance","revisions","semantic-navigation"]},
  {id:"attacks",title:"Attacchi contro l’Ucraina",views:["map","timeline","archive"],capabilities:["provenance","revisions","temporal-filter","live-signals"],dataset:"ukraine-attacks"},
  {id:"economy",title:"Economia ucraina",views:["chart","sources"],capabilities:["provenance","semantic-navigation"]}
