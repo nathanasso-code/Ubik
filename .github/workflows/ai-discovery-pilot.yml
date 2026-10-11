@@ -14,6 +14,8 @@ on:
       - 'tests/test_ingestion_expanded_source_audit.py'
       - 'ingestion/topic_feed_pilot.py'
       - 'ingestion/broad_source_catalog.py'
+      - 'ingestion/broad_source_preview.py'
+      - 'tests/test_ingestion_broad_source_preview.py'
       - 'ingestion/topic_all_candidates_export.py'
       - 'tests/test_ingestion_broad_source_catalog.py'
       - 'ingestion/topic_feed_preview.py'
@@ -111,6 +113,10 @@ jobs:
         if: always()
         run: |
           if test -f data/discovery/ai-models.json; then python -m ingestion.broad_source_catalog data/discovery/ai-models.json data/discovery/UBIK_ALL_SOURCES_REVIEW.json data/discovery/UBIK_ALL_SOURCES_REVIEW.csv; fi
+      - name: Render complete searchable catalogue
+        if: always()
+        run: |
+          if test -f data/discovery/UBIK_ALL_SOURCES_REVIEW.json; then python -m ingestion.broad_source_preview data/discovery/UBIK_ALL_SOURCES_REVIEW.json data/discovery/UBIK_ALL_SOURCES_REVIEW.html; fi
       - name: Build bounded AI topic feed candidate report
         if: always()
         run: |
