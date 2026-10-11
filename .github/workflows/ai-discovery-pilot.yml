@@ -16,6 +16,8 @@ on:
       - 'ingestion/broad_source_catalog.py'
       - 'ingestion/broad_review_shortlist.py'
       - 'ingestion/six_stage_pilot.py'
+      - 'ingestion/evidence_linked_demo.py'
+      - 'tests/test_ingestion_evidence_linked_demo.py'
       - 'tests/test_ingestion_six_stage_pilot.py'
       - 'ingestion/broad_source_preview.py'
       - 'tests/test_ingestion_broad_source_preview.py'
@@ -120,6 +122,10 @@ jobs:
         if: always()
         run: |
           if test -f data/discovery/UBIK_ALL_SOURCES_REVIEW.json; then python -m ingestion.broad_review_shortlist data/discovery/UBIK_ALL_SOURCES_REVIEW.json data/discovery/UBIK_AI_REVIEW_300.csv --limit 300; fi
+      - name: Produce three evidence-linked epistemic cards
+        if: always()
+        run: |
+          python -m ingestion.evidence_linked_demo > data/discovery/UBIK_EPISTEMIC_CARD_DEMO.json
       - name: Run six-stage source-grounded information pilot
         if: always()
         run: |
