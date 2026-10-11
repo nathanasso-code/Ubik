@@ -38,6 +38,36 @@
       "empty_feed_fallback_url": "https://export.arxiv.org/api/query?search_query=cat%3Acs.CL&start=0&max_results=30&sortBy=submittedDate&sortOrder=descending"
     },
     {
+      "id": "arxiv-cs-lg",
+      "name": "arXiv cs.LG — Machine Learning",
+      "url": "https://rss.arxiv.org/rss/cs.LG",
+      "kind": "rss",
+      "category": "research",
+      "enabled": true,
+      "empty_feed_fallback_url": "https://export.arxiv.org/api/query?search_query=cat%3Acs.LG&start=0&max_results=30&sortBy=submittedDate&sortOrder=descending",
+      "verification_note": "Official arXiv API fallback; verify live run and respect API pacing; metadata only"
+    },
+    {
+      "id": "arxiv-cs-cv",
+      "name": "arXiv cs.CV — Computer Vision",
+      "url": "https://rss.arxiv.org/rss/cs.CV",
+      "kind": "rss",
+      "category": "research",
+      "enabled": true,
+      "empty_feed_fallback_url": "https://export.arxiv.org/api/query?search_query=cat%3Acs.CV&start=0&max_results=30&sortBy=submittedDate&sortOrder=descending",
+      "verification_note": "Official arXiv API fallback; verify live run and respect API pacing; metadata only"
+    },
+    {
+      "id": "arxiv-stat-ml",
+      "name": "arXiv stat.ML — Statistics Machine Learning",
+      "url": "https://rss.arxiv.org/rss/stat.ML",
+      "kind": "rss",
+      "category": "research",
+      "enabled": true,
+      "empty_feed_fallback_url": "https://export.arxiv.org/api/query?search_query=cat%3Astat.ML&start=0&max_results=30&sortBy=submittedDate&sortOrder=descending",
+      "verification_note": "Official arXiv API fallback; verify live run and respect API pacing; metadata only"
+    },
+    {
       "id": "huggingface-blog",
       "name": "Hugging Face Blog",
       "url": "https://huggingface.co/blog/feed.xml",
