@@ -6,6 +6,7 @@ import hashlib
 import html
 import json
 import re
+import time
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -118,7 +119,7 @@ def run(registry, output, fetch):
                 # Never bypass failed primary requests or access restrictions.
                 fallback_url = source["empty_feed_fallback_url"]
                 parsed = urllib.parse.urlsplit(fallback_url)
-                if (source.get("id") not in {"arxiv-cs-ai", "arxiv-cs-cl"}
+                if (source.get("id") not in {"arxiv-cs-ai", "arxiv-cs-cl", "arxiv-cs-lg", "arxiv-cs-cv", "arxiv-stat-ml"}
                         or parsed.scheme != "https"
                         or parsed.netloc != "export.arxiv.org"
                         or parsed.path != "/api/query"):
@@ -155,7 +156,16 @@ def run(registry, output, fetch):
     output.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     return result
 
+_last_arxiv_api_call = 0.0
+
+
 def fetch(url):
+    global _last_arxiv_api_call
+    if urllib.parse.urlsplit(url).netloc == "export.arxiv.org":
+        elapsed = time.monotonic() - _last_arxiv_api_call
+        if _last_arxiv_api_call and elapsed < 3:
+            time.sleep(3 - elapsed)
+        _last_arxiv_api_call = time.monotonic()
     req = urllib.request.Request(url, headers={"User-Agent": "UbikDiscoveryPilot/0.1 (metadata only)", "Accept": "application/rss+xml, application/atom+xml, application/xml, text/xml"})
     with urllib.request.urlopen(req, timeout=20) as response:
         if int(response.headers.get("Content-Length", "0")) > 3_000_000:
