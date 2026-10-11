@@ -22,7 +22,7 @@ def tokens(title):
 def suggest(report, *, limit=40, min_shared=3):
     if not 1 <= limit <= 200:
         raise ValueError("limit must be 1..200")
-    rows = report.get("visible", [])
+    rows = report.get("all_candidates", report.get("visible", []))
     pairs = []
     for left, right in itertools.combinations(rows, 2):
         if left["url"] == right["url"]:
@@ -53,7 +53,7 @@ def suggest(report, *, limit=40, min_shared=3):
     return {
         "schema_version": 1,
         "topic_id": report.get("topic", {}).get("id"),
-        "sample_size": len(rows),
+        "candidate_pool_size": len(rows),
         "candidate_pairs": len(pairs),
         "review_pairs": pairs[:limit],
         "automatic_merges": 0,
