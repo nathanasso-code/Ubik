@@ -13,17 +13,19 @@ class _ArticleText(HTMLParser):
     BLOCK={"p","h1","h2","h3","h4","li","blockquote"}
     SKIP={"script","style","nav","footer","header","aside","form","noscript","svg"}
     def __init__(self):
-        super().__init__(convert_charrefs=True);self.depth=0;self.current=[];self.paragraphs=[];self.active=0
+        super().__init__(convert_charrefs=True);self.skip_stack=[];self.current=[];self.paragraphs=[];self.active=0
     def handle_starttag(self,tag,attrs):
-        if tag in self.SKIP:self.depth+=1
-        if self.depth:return
+        if self.skip_stack:
+            self.skip_stack.append(tag);return
+        if tag in self.SKIP:
+            self.skip_stack.append(tag);return
         if tag in self.BLOCK:
             self.active+=1
             if self.active==1:self.current=[]
     def handle_endtag(self,tag):
-        if tag in self.SKIP:
-            self.depth=max(0,self.depth-1);return
-        if self.depth:return
+        if self.skip_stack:
+            if tag==self.skip_stack[-1]:self.skip_stack.pop()
+            return
         if tag in self.BLOCK and self.active:
             self.active-=1
             if self.active==0:
@@ -31,7 +33,7 @@ class _ArticleText(HTMLParser):
                 if len(value)>=35:self.paragraphs.append(value)
                 self.current=[]
     def handle_data(self,data):
-        if not self.depth and self.active:self.current.append(data)
+        if not self.skip_stack and self.active:self.current.append(data)
 
 def capture_authorized_html(url,html_text,*,access_authorized=False,max_chars=100000):
     parts=urlsplit(url)
