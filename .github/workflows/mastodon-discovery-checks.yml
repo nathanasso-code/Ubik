@@ -22,3 +22,32 @@ jobs:
         run: python -m unittest discover -s tests -p test_mastodon_discovery.py
       - name: Dry-run without network
         run: python -m ingestion.mastodon_discovery --instance mastodon.social --approved-instances config/mastodon-instances.pilot.json --mode tag --tag science
+  live-smoke:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    timeout-minutes: 5
+    env:
+      UBIK_MASTODON_TOKEN: ${{ secrets.UBIK_MASTODON_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Require configured token
+        shell: bash
+        run: |
+          if [ -z "$UBIK_MASTODON_TOKEN" ]; then
+            echo "Missing UBIK_MASTODON_TOKEN secret" >&2
+            exit 1
+          fi
+      - name: Acquire one bounded public Mastodon page
+        run: python -m ingestion.mastodon_discovery --instance mastodon.social --approved-instances config/mastodon-instances.pilot.json --mode tag --tag science --limit 10 --live
+      - name: Upload research snapshot
+        uses: actions/upload-artifact@v4
+        with:
+          name: mastodon-live-smoke
+          path: data/discovery/runs/
+          retention-days: 1
+          if-no-files-found: error
