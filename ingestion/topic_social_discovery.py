@@ -10,6 +10,7 @@ from urllib.parse import quote, urlencode, urlsplit
 from .contracts import observation, canonical_url_hint
 from .mastodon_discovery import discovery_url
 from .transport import get_json
+from .topic_query_expansion import propose_expansion
 
 class Links(HTMLParser):
     def __init__(self):
@@ -86,7 +87,7 @@ def collect_bluesky(query,limit=30,fetch=get_json):
                 discovered_from=endpoint,published_raw=record.get("createdAt"),
                 metadata={"topic_query":query,"linked_documents":urls,
                           "like_count":post.get("likeCount"),"repost_count":post.get("repostCount"),
-                          "reply_count":post.get("replyCount"),"text_preview":text[:800]}))
+                          "reply_count":post.get("replyCount"),"text_preview":text[:800],"hashtags":[tag for tag in re.findall(r"(?<!\\w)#([\\w]{3,48})",text)]}))
         except (KeyError,TypeError,ValueError):
             continue
     return results
@@ -123,6 +124,7 @@ def collect_mastodon(instance,tag,limit=30,fetch=get_json):
                 title=" ".join(re.sub(r"<[^>]*>"," ",unescape(html)).split())[:500] or "Public Mastodon post",
                 url=status["url"],discovered_from=endpoint,published_raw=status.get("created_at"),
                 metadata={"topic_query":tag,"linked_documents":urls,
+                          "hashtags":[t.get("name") for t in status.get("tags",[]) if isinstance(t,dict) and isinstance(t.get("name"),str)],
                           "like_count":status.get("favourites_count"),
                           "repost_count":status.get("reblogs_count"),
                           "reply_count":status.get("replies_count")}))
@@ -130,7 +132,7 @@ def collect_mastodon(instance,tag,limit=30,fetch=get_json):
             continue
     return results
 
-def discover(name,aliases=(),*,instances=("mastodon.social",),limit=30,fetch=get_json):
+def discover(name,aliases=(),*,instances=("mastodon.social",),limit=30,fetch=get_json,expand=False,max_expansion_terms=8):
     terms=topic_queries(name,aliases)
     records=[]; errors=[]
     for term in terms:
@@ -147,6 +149,19 @@ def discover(name,aliases=(),*,instances=("mastodon.social",),limit=30,fetch=get
             except (ValueError,RuntimeError,OSError) as exc:
                 errors.append({"provider":"mastodon","term":tag,"instance":instance,
                                "error_type":type(exc).__name__})
+    seed_records=list({x["id"]:x for x in records}.values())
+    expansion=propose_expansion(seed_records,terms,max_terms=max_expansion_terms) if expand else []
+    for item in expansion:
+        term=item["term"]
+        try:
+            records.extend(collect_bluesky("#"+term,limit,fetch))
+        except (ValueError,RuntimeError,OSError) as exc:
+            errors.append({"provider":"bluesky","term":term,"phase":"expansion","error_type":type(exc).__name__})
+        for instance in instances:
+            try:
+                records.extend(collect_mastodon(instance,term,limit,fetch))
+            except (ValueError,RuntimeError,OSError) as exc:
+                errors.append({"provider":"mastodon","term":term,"phase":"expansion","instance":instance,"error_type":type(exc).__name__})
     unique={x["id"]:x for x in records}
     documents={}
     for record in unique.values():
@@ -160,4 +175,5 @@ def discover(name,aliases=(),*,instances=("mastodon.social",),limit=30,fetch=get
                     "post_urls":sorted(x["posts"])} for x in documents.values()),
                   key=lambda x:(-x["distinct_accounts_observed"],-x["post_count"],x["url"]))
     return {"topic":name,"queries":terms,"posts":len(unique),"documents":ranked,
-            "errors":errors,"coverage":"Bounded public search; handles not verified as independent; no automatic claims or summaries."}
+            "errors":errors,"expansion":expansion,"seed_posts":len(seed_records),
+            "coverage":"Bounded public search; handles not verified as independent; no automatic claims or summaries."}
