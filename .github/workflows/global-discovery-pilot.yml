@@ -6,11 +6,15 @@ on:
       - 'ingestion/global_discovery.py'
       - 'ingestion/global_event_pairs.py'
       - 'ingestion/global_cards.py'
+      - 'ingestion/global_social_followup.py'
+      - 'ingestion/hybrid_document_links.py'
+      - 'ingestion/hashtag_topic_routing.py'
       - 'ingestion/global_rss_pilot.py'
       - 'config/source-registry.global-pilot.json'
       - 'tests/test_global_discovery.py'
       - 'tests/test_global_event_pairs.py'
       - 'tests/test_global_cards.py'
+      - 'tests/test_hybrid_discovery.py'
       - 'tests/test_global_rss_pilot.py'
       - '.github/workflows/global-discovery-pilot.yml'
   workflow_dispatch:
@@ -33,6 +37,12 @@ jobs:
         run: python -m ingestion.global_discovery data/discovery/global-rss-pilot.json --output data/discovery/global-candidates-pilot.json
       - name: Generate conservative cross-publisher same-event review pairs
         run: python -m ingestion.global_event_pairs data/discovery/global-rss-pilot.json --output data/discovery/global-event-pairs-review.json
+      - name: Sample public social links from globally discovered terms
+        run: python -m ingestion.global_social_followup --candidates data/discovery/global-candidates-pilot.json --output data/discovery/global-social-followup.json --max-terms 6 --limit 20 --live
+      - name: Join publisher and social-discovered document links
+        run: python -m ingestion.hybrid_document_links --rss data/discovery/global-rss-pilot.json --social data/discovery/global-social-followup.json --output data/discovery/global-hybrid-links.json
+      - name: Propose contextual hashtag links to existing topics
+        run: python -m ingestion.hashtag_topic_routing --social data/discovery/global-social-followup.json --catalog data/catalog.json --output data/discovery/global-hashtag-topic-review.json
       - name: Generate source-grounded review cards
         run: python -m ingestion.global_cards data/discovery/global-rss-pilot.json data/discovery/global-event-pairs-review.json --output data/discovery/global-cards-preview.json --markdown data/discovery/global-cards-preview.md
       - name: Summarize coverage and top unreviewed candidates
@@ -57,5 +67,8 @@ jobs:
             data/discovery/global-event-pairs-review.json
             data/discovery/global-cards-preview.json
             data/discovery/global-cards-preview.md
+            data/discovery/global-social-followup.json
+            data/discovery/global-hybrid-links.json
+            data/discovery/global-hashtag-topic-review.json
           if-no-files-found: warn
           retention-days: 14
