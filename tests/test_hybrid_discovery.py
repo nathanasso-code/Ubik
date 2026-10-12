@@ -26,7 +26,7 @@ class HybridDiscoveryTests(unittest.TestCase):
     def test_social_queries_derived_only_from_global_candidates(self):
         def fetch(url):
             return {"posts":[]} if "bsky" in url else []
-        r=sample({"candidate_terms":[{"term":"riyadh","publisher_hosts":3},
+        r=sample({"candidate_terms":[{"term":"riyadh","publisher_hosts":3,"documents":4},
                                      {"term":"singleton","publisher_hosts":1}]},fetch=fetch)
         self.assertEqual(r["queries"],["riyadh"])
         self.assertEqual(r["observations"],[])
