@@ -39,7 +39,7 @@ def topic_queries(name, aliases=()):
 def bluesky_search_url(query, limit=30):
     if not isinstance(query,str) or not query.strip() or type(limit) is not int or not 1<=limit<=100:
         raise ValueError("Invalid search query")
-    return "https://public.api.bsky.app/xrpc/app.bsky.feed.searchPosts?"+urlencode(
+    return "https://api.bsky.app/xrpc/app.bsky.feed.searchPosts?"+urlencode(
         {"q":query,"limit":limit,"sort":"latest"})
 
 def _external_urls(text, facets=(), embed=None):
