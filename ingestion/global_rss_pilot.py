@@ -7,6 +7,7 @@ import argparse
 import datetime as dt
 import json
 from pathlib import Path
+from xml.etree.ElementTree import ParseError
 from scripts.discover_ai_sources import parse_feed, fetch
 
 def collect(registry,output,fetcher=fetch,*,max_sources=24,max_items_per_source=80):
@@ -27,7 +28,7 @@ def collect(registry,output,fetcher=fetch,*,max_sources=24,max_items_per_source=
                 row["discovery_mode"]="global_unassigned"
             items.extend(discovered)
             reports.append({"source_id":source["id"],"status":"ok","items":len(discovered)})
-        except (ValueError,OSError,TimeoutError) as exc:
+        except (ValueError,OSError,TimeoutError,ParseError) as exc:
             reports.append({"source_id":source["id"],"status":"error","error_type":type(exc).__name__})
     result={"schema_version":1,"purpose":"global_topic_agnostic_rss",
             "retrieved_at":dt.datetime.now(dt.timezone.utc).isoformat(),
