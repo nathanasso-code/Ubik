@@ -186,3 +186,14 @@ Run https://github.com/nathanasso-code/Ubik/actions/runs/38318872281: fasi test,
 **Test:** `tests/test_semantic_topic_router.py` verifica contratto del modello, prove social, astensione per ambiguità e assenza di creazione topic. **Esecuzione modello live:** workflow manuale `.github/workflows/semantic-topic-routing-pilot.yml` installa runtime opzionale, acquisisce RSS+social global-first, genera artifact `semantic-topic-review.json`. Non è attivato automaticamente e non modifica produzione. Va eseguito esplicitamente e valutato prima di dichiarare un miglioramento quantitativo.
 
 **Rischi aperti:** soglie 0.84 e margine 0.06 sono iniziali e **non calibrati**; E5 è retrieval semantico, non riconoscimento certo di causalità, eventi o topic. Query social globali ancora soggette a drift. Servono esempi etichettati positivi/negativi multilingue, calibrazione e un gate editoriale per nuove proposte di topic. Gli hashtag non diventano una tassonomia UI.
+
+
+## 14. Razionalizzazione repository — prima fase non distruttiva
+
+**Audit branch e PR:** API GitHub mostra solo `main` e `develop/ubik-core`; nessun PR. Non esistono branch secchi da cancellare. `main` non è stato toccato.
+
+**Nuovo riferimento canonico:** `docs/ARCHITECTURE_CURRENT.md` mappa la pipeline globale, i moduli attivi, i prototipi storici, i workflow, il debito tecnico e i vincoli di governance (pochi topic editoriali, hashtag non sezioni). `docs/START_HERE_UBIK.md` è marcato esplicitamente come storico e reindirizza al documento canonico. I vecchi rapporti e test non sono stati eliminati senza analisi degli import: molti restano prove di regressione e dei limiti già misurati.
+
+**Debito individuato:** il confine dichiarato in `ingestion/README.md` non corrisponde più alla collocazione dei moduli `global_cards`, `semantic_topic_router` e routing: l'area ingestion ospita anche selezione/review. Necessaria migrazione controllata verso package `discovery/` e `selection/` con wrapper compatibili, test e CI. La nuova architettura è in parte un piano, non ancora un refactor completo.
+
+**Pulizia successiva:** generare manifest di riferimenti per moduli/documenti/workflow, classificare `active / compatibility / experimental / archived / removable`, quindi rimuovere soltanto elementi con zero dipendenze e rollback semplice. Verificare il modello multilingue su dati reali e calibrare le soglie prima di promuoverlo.
