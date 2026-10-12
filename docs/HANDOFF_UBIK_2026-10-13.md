@@ -226,3 +226,10 @@ Nuovo modulo `ingestion/epistemic_evidence_gate.py` e test `tests/test_epistemic
 Workflow `38320735744` completato **success**: 324 documenti, 1.256 coppie semantiche, 60 coppie nella coda di revisione, 80 hashtag eleggibili, 0 proposte e 80 astensioni. Il benchmark cieco datacenter resta ancorato al run congelato `38320346965` (1.258 coppie) e non deve essere confuso con questa esecuzione successiva.
 
 **PROSSIMO PASSO PRATICO:** acquisizione controllata di testi integrali accessibili (senza bypass paywall/robots, con difese SSRF), annotazione di un campione non selezionato sul caso datacenter, misure di falsi positivi e precisione; poi rifattorizzazione di moduli e documenti. Non interpretare test verdi del gate come prova che l'estrazione delle affermazioni sia stata realizzata.
+
+
+## 18. Primo adattatore per testi sorgente (offline, non live)
+
+Implementato `ingestion/authorized_source_text.py` con `tests/test_authorized_source_text.py`: da HTML ottenuto **esternamente con accesso autorizzato**, estrae passaggi testuali, esclude parti di navigazione/script, calcola hash SHA-256 e produce la mappa per il gate `ingestion/epistemic_evidence_gate.py`. Zero chiamate di rete. La flag `--authorized` è una dichiarazione dell'operatore, non un controllo automatico di licenze/robots. Non promettere acquisizione live dei corpi articolo né verifiche di claims: NON sono ancora state eseguite. Prossima implementazione: fetch HTTP con SSRF robusto (pinning IP, controlli redirect, robots/accesso, limiti dimensionali, nessun bypass paywall), poi corpus autorizzato e annotazione di coppie rappresentative. Riferimento canonico: `docs/EPISTEMIC_REVIEW_CONTRACT.md`.
+
+Ultimo controllo prima di questo commit: `Ubik Core checks` `38321135701` success; `global-discovery-pilot` `38321098260` ancora in progress. Verificare i nuovi run prima di dichiarare test conclusi.
