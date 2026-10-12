@@ -1,0 +1,50 @@
+name: Global topic-agnostic discovery pilot
+on:
+  push:
+    branches: [develop/ubik-core]
+    paths:
+      - 'ingestion/global_discovery.py'
+      - 'ingestion/global_rss_pilot.py'
+      - 'config/source-registry.global-pilot.json'
+      - 'tests/test_global_discovery.py'
+      - 'tests/test_global_rss_pilot.py'
+      - '.github/workflows/global-discovery-pilot.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  discover:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Run global discovery unit tests
+        run: python -m unittest tests.test_global_discovery tests.test_global_rss_pilot
+      - name: Collect diverse publisher feeds without topic seed
+        run: python -m ingestion.global_rss_pilot --output data/discovery/global-rss-pilot.json
+      - name: Discover candidate terms globally
+        run: python -m ingestion.global_discovery data/discovery/global-rss-pilot.json --output data/discovery/global-candidates-pilot.json
+      - name: Summarize coverage and top unreviewed candidates
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          a=json.loads(Path("data/discovery/global-rss-pilot.json").read_text())
+          b=json.loads(Path("data/discovery/global-candidates-pilot.json").read_text())
+          print(json.dumps({"coverage":a["coverage"],"source_reports":a["source_reports"],
+                            "candidate_terms":b["candidate_terms"][:25],
+                            "limitations":b["limitations"]},ensure_ascii=False))
+          PY
+      - name: Preserve raw pilot and candidate reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: global-discovery-pilot
+          path: |
+            data/discovery/global-rss-pilot.json
+            data/discovery/global-candidates-pilot.json
+          if-no-files-found: warn
+          retention-days: 14
