@@ -1,0 +1,77 @@
+{
+  "schema_version": 1,
+  "purpose": "global_topic_agnostic_rss",
+  "description": "Initial cross-disciplinary pilot: explicit feeds, not exhaustive or representative",
+  "sources": [
+    {
+      "id": "bbc-world",
+      "name": "BBC World",
+      "url": "https://feeds.bbci.co.uk/news/world/rss.xml",
+      "kind": "rss",
+      "enabled": true
+    },
+    {
+      "id": "guardian-world",
+      "name": "The Guardian World",
+      "url": "https://www.theguardian.com/world/rss",
+      "kind": "rss",
+      "enabled": true
+    },
+    {
+      "id": "aljazeera",
+      "name": "Al Jazeera English",
+      "url": "https://www.aljazeera.com/xml/rss/all.xml",
+      "kind": "rss",
+      "enabled": true
+    },
+    {
+      "id": "nyt-world",
+      "name": "New York Times World",
+      "url": "https://rss.nytimes.com/services/xml/rss/nyt/World.xml",
+      "kind": "rss",
+      "enabled": true
+    },
+    {
+      "id": "nature",
+      "name": "Nature",
+      "url": "https://www.nature.com/nature.rss",
+      "kind": "rss",
+      "enabled": true
+    },
+    {
+      "id": "science-daily",
+      "name": "ScienceDaily Top",
+      "url": "https://www.sciencedaily.com/rss/top/science.xml",
+      "kind": "rss",
+      "enabled": true
+    },
+    {
+      "id": "ars-technica",
+      "name": "Ars Technica",
+      "url": "https://feeds.arstechnica.com/arstechnica/index",
+      "kind": "rss",
+      "enabled": true
+    },
+    {
+      "id": "guardian-environment",
+      "name": "Guardian Environment",
+      "url": "https://www.theguardian.com/environment/rss",
+      "kind": "rss",
+      "enabled": true
+    },
+    {
+      "id": "guardian-business",
+      "name": "Guardian Business",
+      "url": "https://www.theguardian.com/uk/business/rss",
+      "kind": "rss",
+      "enabled": true
+    },
+    {
+      "id": "guardian-technology",
+      "name": "Guardian Technology",
+      "url": "https://www.theguardian.com/uk/technology/rss",
+      "kind": "rss",
+      "enabled": true
+    }
+  ]
+}
