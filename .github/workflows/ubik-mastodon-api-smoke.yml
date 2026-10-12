@@ -1,0 +1,54 @@
+name: Ubik Mastodon manual API smoke
+on:
+  workflow_dispatch:
+jobs:
+  mastodon-readonly:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    timeout-minutes: 5
+    env:
+      UBIK_MASTODON_TOKEN: ${{ secrets.UBIK_MASTODON_TOKEN }}
+    steps:
+      - name: Verify public API access without publishing
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json, os, urllib.request, urllib.error
+          from urllib.parse import urlsplit
+          token = os.environ.get("UBIK_MASTODON_TOKEN", "")
+          if not token:
+              raise SystemExit("Missing UBIK_MASTODON_TOKEN")
+          class NoRedirect(urllib.request.HTTPRedirectHandler):
+              def redirect_request(self, req, fp, code, msg, headers, newurl):
+                  return None
+          opener = urllib.request.build_opener(NoRedirect)
+          root = "https://mastodon.social"
+          for name, path in [
+              ("credential_verification", "/api/v1/accounts/verify_credentials"),
+              ("public_hashtag_science", "/api/v1/timelines/tag/science?limit=10"),
+              ("public_local", "/api/v1/timelines/public?local=true&limit=10"),
+              ("public_federated", "/api/v1/timelines/public?remote=true&limit=10"),
+          ]:
+              req = urllib.request.Request(root + path, headers={
+                  "Accept": "application/json",
+                  "Authorization": "Bearer " + token,
+                  "User-Agent": "Ubik-research-ingestion/0.1"
+              })
+              try:
+                  with opener.open(req, timeout=15) as response:
+                      payload = json.load(response)
+                      if name == "credential_verification":
+                          print(json.dumps({"mode": name, "status": response.status,
+                                            "account": payload.get("acct")}))
+                      else:
+                          public = [s for s in payload if s.get("visibility") == "public"
+                                    and not s.get("reblog")]
+                          print(json.dumps({"mode": name, "status": response.status,
+                                            "received": len(payload), "eligible": len(public),
+                                            "example_urls": [s.get("url") for s in public[:3]]}))
+              except urllib.error.HTTPError as e:
+                  print(json.dumps({"mode": name, "http_error": e.code}))
+              except Exception as e:
+                  print(json.dumps({"mode": name, "error_type": type(e).__name__}))
+          PY
