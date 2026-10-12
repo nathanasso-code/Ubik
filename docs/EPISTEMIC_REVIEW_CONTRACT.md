@@ -57,3 +57,12 @@ Source mapping passed to the gate:
 - Introduce typed claim/entity/time extraction **only as hypotheses**, with reviewer overrides and provenance.
 - Rationalize `ingestion/` into acquisition vs discovery vs review packages via compatibility wrappers and import/tests audit. Do not delete historical modules until dependencies are known.
 - Maintain **few editorial topics, many semantic signals**; never convert hashtags into sections.
+
+
+## Safe source acquisition milestone — offline adapter
+
+`ingestion/authorized_source_text.py` now extracts paragraphs from **externally obtained, explicitly authorized HTML**; it omits common navigation/script blocks, enforces input size, rejects missing/insufficient text and returns a SHA-256 of the exact extracted UTF-8 passage plus original HTTPS URL and extraction metadata. Tests: `tests/test_authorized_source_text.py`. It performs **zero HTTP requests** and must not be described as a live article fetcher. `--authorized` is an explicit operator assertion, not automatic verification of licensing or robots permissions. The extraction is heuristic and does not prove article completeness or source authenticity.
+
+**Security boundary:** Do NOT bolt a plain `urllib.request.urlopen` or `requests.get` onto this function. DNS checks without pinning are vulnerable to rebinding; redirect targets need revalidation, and arbitrary URLs can reach internal resources. Future network acquisition must use a reviewed SSRF-safe transport with resolved-IP pinning, redirect policy, egress allowlisting, rate limits, content-type/size/timeouts, robots and publisher access checks, and no paywall bypass. Until that is in place, authorized HTML must be supplied through a separate controlled acquisition path. A safe offline adapter is a narrower, honest milestone toward claim-level evidence, **not a completed source ingestion system**.
+
+**Integration gap:** the capture adapter returns a URL-keyed mapping with metadata and `text`/`sha256` fields, compatible with `epistemic_evidence_gate.validate`; however, no live source corpus, annotated claims or reviewer decisions have yet been generated.
