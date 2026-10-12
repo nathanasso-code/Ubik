@@ -4,7 +4,7 @@ Piattaforma di informazione topic-first, scoperta multicanale delle fonti e disc
 
 ## Per riprendere lo sviluppo in una nuova chat
 
-**Leggere prima:** [Dossier di continuità — 12 ottobre 2026](docs/HANDOFF_UBIK_2026-10-12.md).
+**Leggere prima:** [Dossier di continuità e sviluppo — 13 ottobre 2026](docs/HANDOFF_UBIK_2026-10-13.md).\n\nStorico precedente: [Dossier del 12 ottobre](docs/HANDOFF_UBIK_2026-10-12.md).
 
 Poi consultare:
 - [Storico e stato precedente](docs/START_HERE_UBIK.md)
