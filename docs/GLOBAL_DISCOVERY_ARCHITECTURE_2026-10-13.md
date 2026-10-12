@@ -66,3 +66,10 @@ Modulo `ingestion/global_event_pairs.py`, test `tests/test_global_event_pairs.py
 Run **completato con successo**: https://github.com/nathanasso-code/Ubik/actions/runs/38317808123 — **324 documenti, 4 coppie proposte, 0 fusioni automatiche**. 10 feed configurati, 9 riusciti, 333 osservazioni. I controlli Core checks sul codice correttivo sono riusciti nel run `38317808091`.
 
 La quantità di coppie non è una metrica di qualità: servono annotazioni umane delle 4 coppie, ricerca di coppie vere non rilevate e precision/recall. L'output `global-event-pairs-review.json` è conservato come artifact del run GitHub (scadenza 14 giorni).
+
+
+## Prime card di scoperta documentale (13 ottobre 2026)
+
+`ingestion/global_cards.py` rende disponibili card non editorializzate da titoli RSS e URL originali. Il risultato è tracciabile e verificabile nei log del run https://github.com/nathanasso-code/Ubik/actions/runs/38318112930 : **24 card (4 coppie di fonti, 20 documenti singoli)**, con `global-cards-preview.json` e `global-cards-preview.md` nell'artifact. Le quattro coppie trattano titoli su Ilhan Omar, RJ Mitte, naufragio presso Gibuti e vicecapo della polizia sudafricana. Tutte restano `unverified`; non sono sintesi fattuali né card pubblicate.
+
+Le card singole sono ordinate per apparizione nel feed, non per importanza. **Non trasformare la dimostrazione in ranking editoriale o prova di indipendenza delle fonti.** Prossimo passaggio: verifica documentale, confronto cross-lingua, valutazione di falsi positivi/negativi, integrazione UI dietro flag di preview.
