@@ -1,0 +1,47 @@
+name: Blind Ukraine topic social discovery
+on:
+  push:
+    branches: [develop/ubik-core]
+    paths:
+      - 'ingestion/topic_social_discovery.py'
+      - 'ingestion/topic_social_discovery_cli.py'
+      - '.github/workflows/topic-social-blind-pilot.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Run topic-led bounded acquisition without issue-specific keywords
+        run: |
+          python -m ingestion.topic_social_discovery_cli 'Guerra russo-ucraina' --alias Ucraina --alias Ukraine --alias Russia --alias Україна --alias Россия --instance mastodon.social --limit 20 --live --output blind-topic-result.json > blind-topic-run.log
+      - name: Summarize ranked source documents
+        if: always()
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('blind-topic-result.json')
+          if p.exists():
+              data=json.loads(p.read_text())
+              print(json.dumps({'topic':data['topic'],'posts':data['posts'],
+                'documents':len(data['documents']),'errors':data['errors'],
+                'top_documents':data['documents'][:25]},ensure_ascii=False))
+          else:
+              print('No result file generated')
+          PY
+      - name: Upload raw discovery artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: blind-ukraine-topic-discovery
+          path: |
+            blind-topic-result.json
+            blind-topic-run.log
+          retention-days: 7
