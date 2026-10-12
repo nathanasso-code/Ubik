@@ -1,0 +1,24 @@
+name: Mastodon discovery offline checks
+on:
+  push:
+    branches:
+      - develop/ubik-core
+    paths:
+      - 'ingestion/mastodon_discovery.py'
+      - 'tests/test_mastodon_discovery.py'
+      - '.github/workflows/mastodon-discovery-checks.yml'
+  workflow_dispatch:
+jobs:
+  offline:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Run Mastodon discovery tests
+        run: python -m unittest tests.test_mastodon_discovery
+      - name: Dry-run without network
+        run: python -m ingestion.mastodon_discovery --instance mastodon.social --approved-instances config/mastodon-instances.pilot.json --mode tag --tag science
