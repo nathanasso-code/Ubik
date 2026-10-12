@@ -85,3 +85,32 @@ jobs:
             data/discovery/global-hashtag-topic-review.json
           if-no-files-found: warn
           retention-days: 14
+
+  semantic-review:
+    needs: discover
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install multilingual semantic model
+        run: python -m pip install 'sentence-transformers>=3,<6'
+      - name: Retrieve immutable discovery inputs from this run
+        uses: actions/download-artifact@v4
+        with:
+          name: global-discovery-pilot
+          path: data/discovery
+      - name: Evaluate closed-catalog multilingual semantic routing
+        run: |
+          python -m unittest discover -s tests -p 'test_semantic_topic_router.py'
+          python -m ingestion.semantic_topic_router --social data/discovery/global-social-followup.json --catalog data/catalog.json --output data/discovery/semantic-topic-review.json --live-model
+      - name: Preserve semantic proposals and abstentions
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: semantic-topic-review
+          path: data/discovery/semantic-topic-review.json
+          retention-days: 14
+          if-no-files-found: warn
