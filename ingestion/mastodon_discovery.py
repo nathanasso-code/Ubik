@@ -5,12 +5,14 @@ scraping, or retention of status HTML. Live mode is explicit.
 """
 import argparse
 import json
+import os
 from pathlib import Path
 from urllib.parse import quote, urlencode, urlsplit
 
 from .archive import archive_snapshot
 from .contracts import observation
 from .public_adapters import mastodon_url, fetch_json
+from .transport import get_json
 
 
 def discovery_url(instance, mode="local", *, tag=None, account_id=None, limit=20, max_id=None):
@@ -94,6 +96,8 @@ def main():
     p.add_argument("--max-id")
     p.add_argument("--archive-dir", type=Path, default=Path("data/discovery/runs"))
     p.add_argument("--live", action="store_true")
+    p.add_argument("--token-env", default="UBIK_MASTODON_TOKEN",
+                   help="Environment variable for optional read-only API token")
     args = p.parse_args()
     endpoint = discovery_url(args.instance, args.mode, tag=args.tag,
                              account_id=args.account_id, limit=args.limit,
@@ -105,9 +109,21 @@ def main():
     if not args.live:
         print(json.dumps({"dry_run": True, "endpoint": endpoint}))
         return
+    token = os.environ.get(args.token_env)
+    if token:
+        # Transport owns retry, byte limits and timeouts. Never log token.
+        from urllib.request import Request, urlopen
+        def authorized_fetch(url):
+            def opener(request, timeout):
+                request.add_header("Authorization", "Bearer " + token)
+                return urlopen(request, timeout=timeout)
+            return get_json(url, opener=opener)
+        fetcher = authorized_fetch
+    else:
+        fetcher = fetch_json
     result = collect(args.instance, args.mode, tag=args.tag,
                      account_id=args.account_id, limit=args.limit,
-                     max_id=args.max_id)
+                     max_id=args.max_id, fetch=fetcher)
     archived = archive_snapshot(result, args.archive_dir)
     print(json.dumps({"observations": len(result["observations"]),
                       "skipped": result["skipped"], "invalid": result["invalid"],
