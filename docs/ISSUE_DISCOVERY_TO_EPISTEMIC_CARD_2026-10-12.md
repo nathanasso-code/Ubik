@@ -84,3 +84,11 @@ Implementati sul branch `develop/ubik-core`:
 - `tests/test_issue_candidates.py`: casi di grounding, duplicati e input invalidi.
 
 **Limite cruciale:** questi sono seed di domande, **non** questioni/eventi raggruppati semanticamente, non riconoscimento di controversie, non classificazione verificata di fonti primarie e non sintesi IA. Il campo `card.summary` resta `null`, `publication=blocked`, `controversy=not_assessed`. Non è stato ancora eseguito il confronto su 5–10 questioni reali del pilot né verificato un esito CI: controllare GitHub Actions e acquisire il report reale prima di dichiarare il test riuscito. Nessun servizio esterno a pagamento è stato attivato.
+
+## Campione concreto e verifica CI (2026-10-12)
+
+Il dossier esistente `data/ai-topic.json` contiene 30 fonti e 18 contributi social associati. La coda di revisione di 10 elementi è salvata in `data/evaluation/ai-issue-review-2026-10-12.json`. **Non** è un campione scoperto automaticamente dalla pipeline live: è ricavato dal dossier editoriale esistente e ordinato per numero di prospettive social associate. I dati non certificano controversie, identità di evento o natura primaria delle fonti.
+
+Aggiunti `ingestion/ai_issue_review.py` e `tests/test_ai_issue_review.py` per una trasformazione riproducibile del dossier in issue seed e per mantenere separati documento originale e post social. La card non ha ancora una sintesi generata, né claim validati. L'esperimento non ha ancora verificato semanticamente i 10 candidati.
+
+**Blocco operativo:** il workflow `Ubik Core checks` su `develop/ubik-core` risulta in **failure** per il run https://github.com/nathanasso-code/Ubik/actions/runs/38307523619 e per il successivo run del commit `d2bee108`. Il job segnala failure nel passo `Run offline source discovery tests`, ma il dettaglio dei test falliti non è stato recuperato. Non affermare che i nuovi test passino o che la baseline CI sia sana. Priorità: recuperare log/annotazioni del job e correggere la causa, quindi ripetere il test.
