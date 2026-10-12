@@ -11,6 +11,8 @@ from .contracts import observation, canonical_url_hint
 from .mastodon_discovery import discovery_url
 from .transport import get_json
 from .topic_query_expansion import propose_expansion
+from .topic_document_expansion import propose_document_terms
+from .topic_event_candidates import group_document_candidates
 
 class Links(HTMLParser):
     def __init__(self):
@@ -132,7 +134,7 @@ def collect_mastodon(instance,tag,limit=30,fetch=get_json):
             continue
     return results
 
-def discover(name,aliases=(),*,instances=("mastodon.social",),limit=30,fetch=get_json,expand=False,max_expansion_terms=8):
+def discover(name,aliases=(),*,instances=("mastodon.social",),limit=30,fetch=get_json,expand=False,max_expansion_terms=8,document_expansion=False,max_document_terms=6):
     terms=topic_queries(name,aliases)
     records=[]; errors=[]
     for term in terms:
@@ -151,7 +153,8 @@ def discover(name,aliases=(),*,instances=("mastodon.social",),limit=30,fetch=get
                                "error_type":type(exc).__name__})
     seed_records=list({x["id"]:x for x in records}.values())
     expansion=propose_expansion(seed_records,terms,max_terms=max_expansion_terms) if expand else []
-    for item in expansion:
+    document_terms=propose_document_terms(seed_records,terms,max_terms=max_document_terms) if document_expansion else []
+    for item in expansion+document_terms:
         term=item["term"]
         try:
             records.extend(collect_bluesky("#"+term,limit,fetch))
@@ -175,5 +178,7 @@ def discover(name,aliases=(),*,instances=("mastodon.social",),limit=30,fetch=get
                     "post_urls":sorted(x["posts"])} for x in documents.values()),
                   key=lambda x:(-x["distinct_accounts_observed"],-x["post_count"],x["url"]))
     return {"topic":name,"queries":terms,"posts":len(unique),"documents":ranked,
+            "event_candidates":group_document_candidates(ranked),
+            "document_expansion":document_terms,
             "errors":errors,"expansion":expansion,"seed_posts":len(seed_records),
             "coverage":"Bounded public search; handles not verified as independent; no automatic claims or summaries."}
