@@ -73,3 +73,17 @@ La quantità di coppie non è una metrica di qualità: servono annotazioni umane
 `ingestion/global_cards.py` rende disponibili card non editorializzate da titoli RSS e URL originali. Il risultato è tracciabile e verificabile nei log del run https://github.com/nathanasso-code/Ubik/actions/runs/38318112930 : **24 card (4 coppie di fonti, 20 documenti singoli)**, con `global-cards-preview.json` e `global-cards-preview.md` nell'artifact. Le quattro coppie trattano titoli su Ilhan Omar, RJ Mitte, naufragio presso Gibuti e vicecapo della polizia sudafricana. Tutte restano `unverified`; non sono sintesi fattuali né card pubblicate.
 
 Le card singole sono ordinate per apparizione nel feed, non per importanza. **Non trasformare la dimostrazione in ranking editoriale o prova di indipendenza delle fonti.** Prossimo passaggio: verifica documentale, confronto cross-lingua, valutazione di falsi positivi/negativi, integrazione UI dietro flag di preview.
+
+
+## Incremento ibrido social e routing hashtag (13 ottobre 2026)
+
+Le 24 card precedenti sono state generate **solo da RSS**. L'integrazione dei link social è ora implementata come stadio distinto, non come conferma automatica delle card.
+
+- `ingestion/global_social_followup.py`: query Bluesky testo e Mastodon hashtag originate da **termini dei titoli RSS globali**, non topic seed; query limitate, errori e provenance conservati. Il primo run `38318744476` ha trovato **236 post, 163 URL social, 1 URL in comune con RSS**, e zero errori registrati. **ATTENZIONE:** il run ha interrogato anche termini generici (`found`, `first`, `their`): deriva reale, non considerarlo un esperimento di qualità.
+- `ingestion/hybrid_document_links.py`: unisce documenti da editori e link social, conservando gli URL dei post e le piattaforme, senza inferire conferma indipendente.
+- `ingestion/hashtag_topic_routing.py`: propone hashtag associabili ai topic di `data/catalog.json` da **testo dei post + descrizione e domande dei topic** con TF-IDF a n-grammi. Nel run iniziale: 64 hashtag eleggibili, 9 suggerimenti; **non validati**. Il metodo è contestuale ma non embedding multilingue; non chiamarlo vera equivalenza semantica.
+- `tests/test_hybrid_discovery.py`: test di join e astensione; un primo test fallito per fixture priva di `documents>=2` è stato corretto.
+- Corretta estrazione degli hashtag Bluesky con rich-text facets e regex, e aggiunto filtro contro query generiche in `global_social_followup.py`.
+- Un run successivo `38318837407` è fallito per XML malformato in un feed: ora `global_rss_pilot.py` cattura `xml.etree.ElementTree.ParseError` **per fonte**, senza interrompere tutta la raccolta. Nuovo run `38318872281` da verificare.
+
+**Gate successivo:** esaminare i suggerimenti con URL dei post e titoli degli articoli, misurare precisione di routing, ridurre drift, introdurre vera rappresentazione semantica multilingue e distinguere sinonimia, associazione causale, co-occorrenza e relazione solo geografica. Nessun tag è automaticamente assegnato ai topic pubblicati.
