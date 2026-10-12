@@ -56,3 +56,10 @@ Live multilingual E5 runs succeeded technically: `38319834727` evaluated 80 elig
 New `ingestion/blind_semantic_neighbors.py` with `tests/test_blind_semantic_neighbors.py` extends the global pilot: multilingual title embeddings find cross-publisher nearest neighbors **without topic names or datacenter terms**. The semantic job uses the exact frozen RSS artifact from the discovery job, alongside hashtag-topic routing, and retains candidate URL/title evidence. Similarity is not corroboration, causal linkage, contradiction, or same-event identity. Run `38320346965` must be inspected before reporting findings.
 
 Next refactor: move discovery and review logic behind separate packages with compatibility wrappers only after current pipeline and tests are stable; prioritize annotated semantic precision and blind held-out evaluation before deleting historical experiments.
+
+
+## Epistemic review gate — mandatory reading for handoff
+
+Read `docs/EPISTEMIC_REVIEW_CONTRACT.md` before editing or displaying epistemic relations. A semantic neighbor is **not** a verified claim. `ingestion/epistemic_evidence_gate.py` is a source-text/quote/hash consistency and editorial-review eligibility gate; it does not fetch documents, validate facts, establish publisher independence or authorize public publication. Tests: `tests/test_epistemic_evidence_gate.py`. Never silently promote its output to `verified` or `published`. Full-article collection and actual claim-level annotations are the next implementation boundary.
+
+Recent run `38320735744` completed successfully: 324 RSS hints, 1,256 semantic pairs, 60 diverse manual review items, 80 eligible hashtag groups and zero topic proposals. The older **frozen** datacenter benchmark is documented against `38320346965`; do not conflate the two run snapshots.
