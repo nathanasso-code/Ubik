@@ -24,7 +24,7 @@ class _Links(HTMLParser):
 def external_links(post):
     parser = _Links()
     parser.feed(post.get("content_html") or "")
-    urls = parser.links + [u for u in re.findall(r'https?://[^\\s<>"]+', unescape(post.get("content_html") or ""))]
+    urls = parser.links + [u for u in re.findall(r'https?://[^\s<>"]+', unescape(post.get("content_html") or ""))]
     for card in (post.get("card"),):
         if isinstance(card, dict) and card.get("url"):
             urls.append(card["url"])
