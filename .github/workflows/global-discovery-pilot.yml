@@ -43,6 +43,14 @@ jobs:
         run: python -m ingestion.hybrid_document_links --rss data/discovery/global-rss-pilot.json --social data/discovery/global-social-followup.json --output data/discovery/global-hybrid-links.json
       - name: Propose contextual hashtag links to existing topics
         run: python -m ingestion.hashtag_topic_routing --social data/discovery/global-social-followup.json --catalog data/catalog.json --output data/discovery/global-hashtag-topic-review.json
+      - name: Show hashtag-topic review candidates with evidence
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          d=json.loads(Path('data/discovery/global-hashtag-topic-review.json').read_text())
+          print(json.dumps({'eligible':d['hashtags_eligible'],'suggestions':d['suggestions'][:20]},ensure_ascii=False))
+          PY
       - name: Generate source-grounded review cards
         run: python -m ingestion.global_cards data/discovery/global-rss-pilot.json data/discovery/global-event-pairs-review.json --output data/discovery/global-cards-preview.json --markdown data/discovery/global-cards-preview.md
       - name: Summarize coverage and top unreviewed candidates
