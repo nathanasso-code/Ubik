@@ -30,6 +30,10 @@ jobs:
               ("public_federated", "/api/v1/timelines/public?remote=true&limit=10"),
               ("public_hashtag_ai", "/api/v1/timelines/tag/ai?limit=10"),
               ("public_hashtag_climate", "/api/v1/timelines/tag/climate?limit=10"),
+              ("public_hashtag_journalism", "/api/v1/timelines/tag/journalism?limit=10"),
+              ("search_accounts_science", "/api/v2/search?q=science&type=accounts&limit=10"),
+              ("search_statuses_ai", "/api/v2/search?q=artificial%20intelligence&type=statuses&limit=10"),
+              ("trending_tags", "/api/v1/trends/tags?limit=10"),
           ]:
               req = urllib.request.Request(root + path, headers={
                   "Accept": "application/json",
@@ -42,7 +46,18 @@ jobs:
                       if name == "credential_verification":
                           print(json.dumps({"mode": name, "status": response.status,
                                             "account": payload.get("acct")}))
+                      elif name == "search_accounts_science":
+                          accounts = payload.get("accounts", [])
+                          print(json.dumps({"mode": name, "status": response.status,
+                                            "received": len(accounts),
+                                            "example_accounts": [a.get("acct") for a in accounts[:3]]}))
+                      elif name == "trending_tags":
+                          print(json.dumps({"mode": name, "status": response.status,
+                                            "received": len(payload),
+                                            "example_tags": [t.get("name") for t in payload[:5]]}))
                       else:
+                          if name == "search_statuses_ai":
+                              payload = payload.get("statuses", [])
                           public = [s for s in payload if s.get("visibility") == "public"
                                     and not s.get("reblog")]
                           print(json.dumps({"mode": name, "status": response.status,
