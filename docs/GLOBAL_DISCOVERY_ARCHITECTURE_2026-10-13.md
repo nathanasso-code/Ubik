@@ -44,3 +44,16 @@ I file di input sono esempi da verificare nel checkout: non si dichiara un run l
 ## Confini di sicurezza
 
 Non attivare scraping indiscriminato, bypass di accessi, scheduler non presidiati, credenziali esposte o migrazioni su `main`. Conservare separatamente osservazioni, documenti, eventi, assegnazioni e revisioni. La presenza di un candidato non autorizza una sintesi fattuale.
+
+
+## Primo pilot live generalista — risultati
+
+Nuovi componenti: `ingestion/global_rss_pilot.py`, `config/source-registry.global-pilot.json`, `tests/test_global_rss_pilot.py`, `.github/workflows/global-discovery-pilot.yml`.
+
+Run di riferimento: https://github.com/nathanasso-code/Ubik/actions/runs/38317573397
+
+**Risultato dei passaggi di acquisizione e analisi nei log:** 10 feed configurati, 9 riusciti, 333 osservazioni, 324 URL distinti; test unitari del workflow superati. Il primo run `38317565952` era fallito per invocazione unittest e la causa è stata corretta nel workflow.
+
+Il catalogo non è ancora bilanciato geograficamente o linguisticamente. Il rapporto osservazioni/URL è diverso da quello dei post social; non comparare i conteggi come se misurassero la stessa cosa. Il ranking dei termini è lessicale: una frequenza alta non identifica automaticamente un evento.
+
+**Prossimo gate:** due snapshot temporali e valutazione della precisione di un campione di candidati; evitare qualsiasi pubblicazione automatica.
