@@ -5,6 +5,7 @@ on:
     paths:
       - 'ingestion/global_discovery.py'
       - 'ingestion/blind_relation_hypotheses.py'
+      - 'ingestion/blind_semantic_neighbors.py'
       - 'ingestion/global_event_pairs.py'
       - 'ingestion/global_cards.py'
       - 'ingestion/global_social_followup.py'
@@ -14,6 +15,7 @@ on:
       - 'config/source-registry.global-pilot.json'
       - 'tests/test_global_discovery.py'
       - 'tests/test_blind_relation_hypotheses.py'
+      - 'tests/test_blind_semantic_neighbors.py'
       - 'tests/test_global_event_pairs.py'
       - 'tests/test_global_cards.py'
       - 'tests/test_hybrid_discovery.py'
@@ -102,6 +104,8 @@ jobs:
         with:
           name: global-discovery-pilot
           path: data/discovery
+      - name: Discover blind multilingual document neighbors on frozen RSS
+        run: python -m ingestion.blind_semantic_neighbors data/discovery/global-rss-pilot.json --output data/discovery/blind-semantic-neighbors.json --live-model
       - name: Evaluate closed-catalog multilingual semantic routing
         run: |
           python -m unittest discover -s tests -p 'test_semantic_topic_router.py'
@@ -111,6 +115,8 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: semantic-topic-review
-          path: data/discovery/semantic-topic-review.json
+          path: |
+            data/discovery/semantic-topic-review.json
+            data/discovery/blind-semantic-neighbors.json
           retention-days: 14
           if-no-files-found: warn
