@@ -4,9 +4,11 @@ on:
     branches: [develop/ubik-core]
     paths:
       - 'ingestion/global_discovery.py'
+      - 'ingestion/global_event_pairs.py'
       - 'ingestion/global_rss_pilot.py'
       - 'config/source-registry.global-pilot.json'
       - 'tests/test_global_discovery.py'
+      - 'tests/test_global_event_pairs.py'
       - 'tests/test_global_rss_pilot.py'
       - '.github/workflows/global-discovery-pilot.yml'
   workflow_dispatch:
@@ -27,6 +29,8 @@ jobs:
         run: python -m ingestion.global_rss_pilot --output data/discovery/global-rss-pilot.json
       - name: Discover candidate terms globally
         run: python -m ingestion.global_discovery data/discovery/global-rss-pilot.json --output data/discovery/global-candidates-pilot.json
+      - name: Generate conservative cross-publisher same-event review pairs
+        run: python -m ingestion.global_event_pairs data/discovery/global-rss-pilot.json --output data/discovery/global-event-pairs-review.json
       - name: Summarize coverage and top unreviewed candidates
         run: |
           python - <<'PY'
@@ -46,5 +50,6 @@ jobs:
           path: |
             data/discovery/global-rss-pilot.json
             data/discovery/global-candidates-pilot.json
+            data/discovery/global-event-pairs-review.json
           if-no-files-found: warn
           retention-days: 14
