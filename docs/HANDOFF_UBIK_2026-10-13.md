@@ -168,3 +168,10 @@ Il motore crea **solo proposte di coppie da revisionare** tra URL distinti di ho
 **Stato run:** `38318744476` era in corso alla scrittura di questo aggiornamento. Nuovo workflow con test hybrid esplicitamente inclusi commit `ddaa2cc2`; verificare run più recente prima di dichiarare successo.
 
 **Priorità:** verificare quali hashtag abbiano davvero evidenza contestuale sufficiente; correggere l'estrazione tag dai facet Bluesky e la qualità del testo Mastodon, calibrare falsi positivi su topic reali; solo dopo introdurre embeddings multilingue e routing probabilistico con soglia di astensione. Non trasformare candidati in tag confermati senza revisione.
+
+
+### Esito controllato del run ibrido corretto
+
+Run https://github.com/nathanasso-code/Ubik/actions/runs/38318872281: fasi test, RSS, social, join, routing, card e artifact riuscite. **232 post, 169 URL social, 324 URL RSS, 0 sovrapposizioni esatte**, 63 hashtag con almeno due post/account e **0 associazioni topic sopra soglia**. Questo è un risultato valido di **astensione** e non va forzato con associazioni arbitrarie. Le query `against`, `scientists`, `review`, `airport`, `india`, `attack` erano ancora troppo ampie; è stato aggiunto un ulteriore filtro, commit `1ff84931`, da valutare in un run successivo. Un corpus così piccolo e una finestra breve possono non coprire i topic esistenti.
+
+**Limite architetturale esplicito:** le query attuali sono token singoli, e una lista stopword che cresce manualmente non risolve il problema generale. Occorre selezione contestuale di frasi specifiche ed entità da almeno due documenti, non ulteriori blacklist come soluzione finale. Per associazione semantica multilingue serve un modello di embeddings con provenienza, calibrazione e controllo di astensione; l'attuale TF-IDF a n-grammi è solo una baseline contestuale. Non rivendicare matching semantico pieno.
