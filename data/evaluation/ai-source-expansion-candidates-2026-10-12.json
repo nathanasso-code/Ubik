@@ -1,0 +1,152 @@
+{
+  "schema_version": 1,
+  "topic_id": "ai-information",
+  "origin": "data/ai-topic.json",
+  "input_sources": 30,
+  "authors": [
+    {
+      "handle": "bistline.bsky.social",
+      "platform": "bluesky",
+      "linked_document_ids": [
+        "finance"
+      ],
+      "status": "candidate_unverified"
+    },
+    {
+      "handle": "blu3ph4ntom.bsky.social",
+      "platform": "bluesky",
+      "linked_document_ids": [
+        "asana"
+      ],
+      "status": "candidate_unverified"
+    },
+    {
+      "handle": "danielnsts.bsky.social",
+      "platform": "bluesky",
+      "linked_document_ids": [
+        "classification"
+      ],
+      "status": "candidate_unverified"
+    },
+    {
+      "handle": "datacontroversies.bsky.social",
+      "platform": "bluesky",
+      "linked_document_ids": [
+        "anthropic"
+      ],
+      "status": "candidate_unverified"
+    },
+    {
+      "handle": "devstackdaily.bsky.social",
+      "platform": "bluesky",
+      "linked_document_ids": [
+        "horizons"
+      ],
+      "status": "candidate_unverified"
+    },
+    {
+      "handle": "druce.ai",
+      "platform": "bluesky",
+      "linked_document_ids": [
+        "sophos",
+        "alphafold"
+      ],
+      "status": "candidate_unverified"
+    },
+    {
+      "handle": "j4vv4d.com",
+      "platform": "bluesky",
+      "linked_document_ids": [
+        "anthropic"
+      ],
+      "status": "candidate_unverified"
+    },
+    {
+      "handle": "jackrunscode82.bsky.social",
+      "platform": "bluesky",
+      "linked_document_ids": [
+        "anthropic"
+      ],
+      "status": "candidate_unverified"
+    },
+    {
+      "handle": "joeythejackal.bsky.social",
+      "platform": "bluesky",
+      "linked_document_ids": [
+        "assurance"
+      ],
+      "status": "candidate_unverified"
+    },
+    {
+      "handle": "maimuwork.bsky.social",
+      "platform": "bluesky",
+      "linked_document_ids": [
+        "gemini"
+      ],
+      "status": "candidate_unverified"
+    },
+    {
+      "handle": "mishi21.bsky.social",
+      "platform": "bluesky",
+      "linked_document_ids": [
+        "horizons"
+      ],
+      "status": "candidate_unverified"
+    },
+    {
+      "handle": "natolambert.bsky.social",
+      "platform": "bluesky",
+      "linked_document_ids": [
+        "lambert"
+      ],
+      "status": "candidate_unverified"
+    },
+    {
+      "handle": "nber.org",
+      "platform": "bluesky",
+      "linked_document_ids": [
+        "finance"
+      ],
+      "status": "candidate_unverified"
+    },
+    {
+      "handle": "ocramz.bsky.social",
+      "platform": "bluesky",
+      "linked_document_ids": [
+        "doom"
+      ],
+      "status": "candidate_unverified"
+    },
+    {
+      "handle": "raycorrigan.bsky.social",
+      "platform": "bluesky",
+      "linked_document_ids": [
+        "tent"
+      ],
+      "status": "candidate_unverified"
+    },
+    {
+      "handle": "sipirtu.com",
+      "platform": "bluesky",
+      "linked_document_ids": [
+        "robots"
+      ],
+      "status": "candidate_unverified"
+    },
+    {
+      "handle": "strike007.bsky.social",
+      "platform": "bluesky",
+      "linked_document_ids": [
+        "gemini"
+      ],
+      "status": "candidate_unverified"
+    }
+  ],
+  "publisher_domains": [],
+  "limitations": [
+    "Existing dossier only, not broad public sampling.",
+    "Authors are discovery candidates; no identity, expertise or independence verification.",
+    "Domains are not confirmed RSS feeds or independent publishers.",
+    "No account was followed, no feed activated, no live acquisition performed."
+  ]
+}
