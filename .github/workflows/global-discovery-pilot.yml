@@ -4,6 +4,7 @@ on:
     branches: [develop/ubik-core]
     paths:
       - 'ingestion/global_discovery.py'
+      - 'ingestion/blind_relation_hypotheses.py'
       - 'ingestion/global_event_pairs.py'
       - 'ingestion/global_cards.py'
       - 'ingestion/global_social_followup.py'
@@ -12,6 +13,7 @@ on:
       - 'ingestion/global_rss_pilot.py'
       - 'config/source-registry.global-pilot.json'
       - 'tests/test_global_discovery.py'
+      - 'tests/test_blind_relation_hypotheses.py'
       - 'tests/test_global_event_pairs.py'
       - 'tests/test_global_cards.py'
       - 'tests/test_hybrid_discovery.py'
@@ -30,11 +32,13 @@ jobs:
         with:
           python-version: '3.12'
       - name: Run global discovery unit tests
-        run: python -m unittest discover -s tests -p 'test_global*.py' && python -m unittest discover -s tests -p 'test_hybrid*.py'
+        run: python -m unittest discover -s tests -p 'test_global*.py' && python -m unittest discover -s tests -p 'test_hybrid*.py' && python -m unittest discover -s tests -p 'test_blind*.py'
       - name: Collect diverse publisher feeds without topic seed
         run: python -m ingestion.global_rss_pilot --output data/discovery/global-rss-pilot.json
       - name: Discover candidate terms globally
         run: python -m ingestion.global_discovery data/discovery/global-rss-pilot.json --output data/discovery/global-candidates-pilot.json
+      - name: Discover unseeded document co-mention hypotheses
+        run: python -m ingestion.blind_relation_hypotheses data/discovery/global-rss-pilot.json --output data/discovery/blind-relations-review.json
       - name: Generate conservative cross-publisher same-event review pairs
         run: python -m ingestion.global_event_pairs data/discovery/global-rss-pilot.json --output data/discovery/global-event-pairs-review.json
       - name: Sample public social links from globally discovered terms
@@ -72,6 +76,7 @@ jobs:
           path: |
             data/discovery/global-rss-pilot.json
             data/discovery/global-candidates-pilot.json
+            data/discovery/blind-relations-review.json
             data/discovery/global-event-pairs-review.json
             data/discovery/global-cards-preview.json
             data/discovery/global-cards-preview.md
