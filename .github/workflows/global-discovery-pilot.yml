@@ -9,6 +9,7 @@ on:
       - 'ingestion/epistemic_review_queue.py'
       - 'ingestion/epistemic_evidence_gate.py'
       - 'ingestion/authorized_source_text.py'
+      - 'ingestion/semantic_discovery_cards.py'
       - 'ingestion/global_event_pairs.py'
       - 'ingestion/global_cards.py'
       - 'ingestion/global_social_followup.py'
@@ -22,6 +23,7 @@ on:
       - 'tests/test_semantic_pair_review_queue.py'
       - 'tests/test_epistemic_evidence_gate.py'
       - 'tests/test_authorized_source_text.py'
+      - 'tests/test_semantic_discovery_cards.py'
       - 'tests/test_global_event_pairs.py'
       - 'tests/test_global_cards.py'
       - 'tests/test_hybrid_discovery.py'
@@ -114,6 +116,8 @@ jobs:
         run: python -m ingestion.blind_semantic_neighbors data/discovery/global-rss-pilot.json --output data/discovery/blind-semantic-neighbors.json --live-model
       - name: Build balanced manual review queue from frozen semantic pairs
         run: python -m ingestion.epistemic_review_queue data/discovery/blind-semantic-neighbors.json --output data/discovery/semantic-pair-review-queue.json
+      - name: Generate source-linked semantic card previews for editorial review
+        run: python -m ingestion.semantic_discovery_cards data/discovery/semantic-pair-review-queue.json --output data/discovery/semantic-card-previews.json --markdown data/discovery/semantic-card-previews.md
       - name: Evaluate closed-catalog multilingual semantic routing
         run: |
           python -m unittest discover -s tests -p 'test_semantic_topic_router.py'
@@ -127,5 +131,7 @@ jobs:
             data/discovery/semantic-topic-review.json
             data/discovery/blind-semantic-neighbors.json
             data/discovery/semantic-pair-review-queue.json
+            data/discovery/semantic-card-previews.json
+            data/discovery/semantic-card-previews.md
           retention-days: 14
           if-no-files-found: warn
