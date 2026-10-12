@@ -89,7 +89,7 @@ def collect_bluesky(query,limit=30,fetch=get_json):
                 discovered_from=endpoint,published_raw=record.get("createdAt"),
                 metadata={"topic_query":query,"linked_documents":urls,
                           "like_count":post.get("likeCount"),"repost_count":post.get("repostCount"),
-                          "reply_count":post.get("replyCount"),"text_preview":text[:800],"hashtags":[tag for tag in re.findall(r"(?<!\\w)#([\\w]{3,48})",text)]}))
+                          "reply_count":post.get("replyCount"),"text_preview":text[:800],"hashtags":sorted(set(re.findall(r"(?<!\\w)#([\\w]{3,48})",text,re.UNICODE)) | {feature["tag"] for facet in record.get("facets",[]) if isinstance(facet,dict) for feature in facet.get("features",[]) if isinstance(feature,dict) and feature.get("$type")=="app.bsky.richtext.facet#tag" and isinstance(feature.get("tag"),str)})}))
         except (KeyError,TypeError,ValueError):
             continue
     return results
