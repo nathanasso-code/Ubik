@@ -75,3 +75,12 @@ Una condivisione Mastodon di un articolo è un'osservazione distinta dall'artico
 
 ## Prima prova sensata
 Su un campione reale già acquisito del topic IA, costruire offline 5–10 *candidate issues* con osservazioni e citazioni. Valutare manualmente: issue corrette vs accorpamenti errati, routing nel topic, qualità delle domande, presenza di fonti primarie, affermazioni senza evidenza, costo e tempi. Solo dopo introdurre sintesi LLM e ricerche integrative, confrontandole con la baseline senza ricerca. **Non introdurre una card automatica in produzione prima di questa verifica.**
+
+## Primo incremento di codice — 2026-10-12
+
+Implementati sul branch `develop/ubik-core`:
+- `ingestion/issue_candidates.py`: produce fino a 10 seed di questioni **per singolo documento** da `ingestion/topic_evidence.py`, conservando URL, estratti letterali, topic ereditato, identificativo deterministico e necessità di review.
+- `ingestion/issue_candidates_cli.py`: esportazione JSON offline con `python -m ingestion.issue_candidates_cli <evidence.json> <issues.json> --limit 10`.
+- `tests/test_issue_candidates.py`: casi di grounding, duplicati e input invalidi.
+
+**Limite cruciale:** questi sono seed di domande, **non** questioni/eventi raggruppati semanticamente, non riconoscimento di controversie, non classificazione verificata di fonti primarie e non sintesi IA. Il campo `card.summary` resta `null`, `publication=blocked`, `controversy=not_assessed`. Non è stato ancora eseguito il confronto su 5–10 questioni reali del pilot né verificato un esito CI: controllare GitHub Actions e acquisire il report reale prima di dichiarare il test riuscito. Nessun servizio esterno a pagamento è stato attivato.
