@@ -127,3 +127,14 @@ Annotare ogni cambiamento in questo dossier o appendice datata, con SHA, run, da
 **Prossimo step obbligatorio:** usare lo stesso corpus di 324 URL come baseline, annotare pertinenza e specificità dei candidati, confrontare con una raccolta topic-led nella stessa finestra; ampliare fonti linguistiche, correggere stopword e introdurre eventi semantici multilingue. Non presentare 333 osservazioni come 333 notizie indipendenti.
 
 Run: https://github.com/nathanasso-code/Ubik/actions/runs/38317573397
+
+
+## 10. Incremento successivo — coppie evento da corpus globale
+
+**Codice aggiunto:** `ingestion/global_event_pairs.py`, `tests/test_global_event_pairs.py`. Il workflow global-first ora esporta `global-event-pairs-review.json` accanto agli snapshot e ai termini candidati.
+
+Il motore crea **solo proposte di coppie da revisionare** tra URL distinti di host diversi: richiede almeno due termini significativi condivisi nei titoli, weighted Jaccard >=0,44 e date di pubblicazione distanti al massimo 72 ore. Esclude parole generiche, limita la combinatoria con un indice invertito e un tetto sui termini molto frequenti. Nessuna fusione automatica, nessuna assegnazione ai topic, nessuna validazione fattuale. Questa è una baseline conservativa **non multilingue semantica**; va valutata contro annotazioni reali prima di ampliarla.
+
+**Test regressione:** stessa storia tra editori diversi, argomenti genericamente correlati da tenere separati, finestra temporale, stesso host e data mancante. Un primo Core checks `38317793293` ha fallito sul caso di argomento generico; correzione dei termini `government`/`discusses` commit `e8a68c9d`. Nuovo run global-first `38317808123` e Core checks successivi da verificare.
+
+**Prossima priorità:** analizzare i candidati reali e annotare falsi positivi, poi costruire una baseline di confronto global-first vs topic-led su stesso corpus/finestra, senza introdurre manualmente termini del caso di controllo.
