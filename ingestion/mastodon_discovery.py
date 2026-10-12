@@ -112,11 +112,15 @@ def main():
     token = os.environ.get(args.token_env)
     if token:
         # Transport owns retry, byte limits and timeouts. Never log token.
-        from urllib.request import Request, urlopen
+        from urllib.request import build_opener, HTTPRedirectHandler
+        class NoRedirect(HTTPRedirectHandler):
+            def redirect_request(self, req, fp, code, msg, headers, newurl):
+                return None
+        client = build_opener(NoRedirect)
         def authorized_fetch(url):
             def opener(request, timeout):
                 request.add_header("Authorization", "Bearer " + token)
-                return urlopen(request, timeout=timeout)
+                return client.open(request, timeout=timeout)
             return get_json(url, opener=opener)
         fetcher = authorized_fetch
     else:
