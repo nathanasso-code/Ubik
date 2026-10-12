@@ -153,3 +153,18 @@ Il motore crea **solo proposte di coppie da revisionare** tra URL distinti di ho
 **Interpretazione:** sono output effettivi della pipeline globale senza seed tematico, NON fatti verificati, NON quattro eventi confermati. I titoli dei feed possono contenere affermazioni errate o divergenti. Le card sono anteprime offline, **non integrate nella UI Vercel**. La successiva fase deve leggere i documenti nel rispetto delle autorizzazioni e proporre sintesi citate, con revisione di corrispondenza evento e test di precisione.
 
 **Limitazione importante:** i 20 documenti singoli sono i primi documenti non già coperti dalle coppie secondo l'ordine di acquisizione, **non un ranking di rilevanza**.
+
+
+## 12. Ricerca ibrida social→documenti→topic, associazione contestuale degli hashtag (13 ottobre)
+
+**Chiarimento fondamentale:** le 24 card del run `38318112930` erano basate **solo su RSS**, non sui link condivisi su Bluesky/Mastodon. I precedenti pilot social raccoglievano link, ma la loro unione sistematica alla pipeline globale non era ancora implementata. Non dichiarare che le 24 card derivino dai social.
+
+**Nuovi moduli implementati:**
+- `ingestion/global_social_followup.py`: usa **termini scoperti dai titoli RSS globali**, non nomi dei topic, per query limitate di testo Bluesky e hashtag Mastodon; conserva post originali, hashtag, link condivisi ed errori. I termini sono osservati ma possono essere generici; copertura non esaustiva.
+- `ingestion/hybrid_document_links.py`: unisce documenti RSS e URL condivisi nei post social, preservando provenienza, post e piattaforme; documenti solo social restano hint non verificati.
+- `ingestion/hashtag_topic_routing.py`: propone relazioni hashtag→topic **esistenti** di `data/catalog.json` usando testo dei post e descrizioni/domande dei topic con TF-IDF a n-grammi di caratteri. Richiede almeno due post e due account osservati, supporta astensione, conserva URL dei post e dei documenti. **Non è ancora semantic embedding multilingue**: è similarità lessicale contestualizzata, non equivalenza concettuale verificata.
+- `tests/test_hybrid_discovery.py`: test unione RSS/social, astensione e provenance delle query. Workflow `.github/workflows/global-discovery-pilot.yml` ora produce `global-social-followup.json`, `global-hybrid-links.json`, `global-hashtag-topic-review.json` come artifact oltre ai precedenti.
+
+**Stato run:** `38318744476` era in corso alla scrittura di questo aggiornamento. Nuovo workflow con test hybrid esplicitamente inclusi commit `ddaa2cc2`; verificare run più recente prima di dichiarare successo.
+
+**Priorità:** verificare quali hashtag abbiano davvero evidenza contestuale sufficiente; correggere l'estrazione tag dai facet Bluesky e la qualità del testo Mastodon, calibrare falsi positivi su topic reali; solo dopo introdurre embeddings multilingue e routing probabilistico con soglia di astensione. Non trasformare candidati in tag confermati senza revisione.
