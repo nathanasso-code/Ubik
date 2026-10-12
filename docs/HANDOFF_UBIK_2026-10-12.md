@@ -60,6 +60,10 @@ Sono viste dello **stesso catalogo**, non tre copie dei dati. Essenziali è sott
 6. Calibrare attenzione e validazione su campioni annotati, con fallback per fonti di nicchia e tutela contro bot e segnali mancanti.
 7. Eseguire regression test e controlli di sicurezza prima di qualunque merge su `main` o deploy.
 
+## Ipotesi sperimentale successiva — NON approvata come sviluppo
+
+È emersa la possibilità che ricerche web iterative guidate da LLM recuperino controversie, prospettive e fonti primarie meglio della sola raccolta RSS/API, a costi sostenibili con budget e caching. **Non è un risultato dimostrato né una decisione di roadmap.** È stata formalizzata un'ipotesi A/B e ibrida, con criteri di valutazione e vincoli economici in [RESEARCH_HYPOTHESIS_AI_WEB_INVESTIGATION_2026-10-12.md](RESEARCH_HYPOTHESIS_AI_WEB_INVESTIGATION_2026-10-12.md). Una nuova chat deve leggerla come ricerca esplorativa, non attivare automaticamente servizi a pagamento o modificare la produzione.
+
 ## Regole per una nuova chat autonoma
 
 - Leggere questo file, `docs/START_HERE_UBIK.md`, `docs/CORE_ARCHITECTURE.md`, `docs/TOPIC_QUALITY_AND_SOURCE_REGISTRY.md`, `ingestion/README.md`, quindi il codice effettivo e le ultime Actions.
