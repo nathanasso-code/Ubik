@@ -47,3 +47,12 @@ Hashtags, documents, observations and candidate events are NOT sections. Only ex
 Git branches inspected: **only `main` and `develop/ubik-core`**, no stale branches to delete. No pull requests found. Avoid deleting the production branch or the active development branch.
 
 Current policy: **archive logically before physical deletion**. Preserve historical pilot notes and regression tests until references and usefulness are audited. First cleanup is a canonical architecture map and navigation update; destructive pruning must be backed by a manifest, import graph, CI and a reversible commit.
+
+
+## Semantic evaluation update — 13 October
+
+Live multilingual E5 runs succeeded technically: `38319834727` evaluated 80 eligible hashtags and abstained on all 80; `38319904689` evaluated 79 and abstained on all 79. These outcomes show conservative gating, **not** measured routing quality; threshold calibration and negative controls are pending.
+
+New `ingestion/blind_semantic_neighbors.py` with `tests/test_blind_semantic_neighbors.py` extends the global pilot: multilingual title embeddings find cross-publisher nearest neighbors **without topic names or datacenter terms**. The semantic job uses the exact frozen RSS artifact from the discovery job, alongside hashtag-topic routing, and retains candidate URL/title evidence. Similarity is not corroboration, causal linkage, contradiction, or same-event identity. Run `38320346965` must be inspected before reporting findings.
+
+Next refactor: move discovery and review logic behind separate packages with compatibility wrappers only after current pipeline and tests are stable; prioritize annotated semantic precision and blind held-out evaluation before deleting historical experiments.
