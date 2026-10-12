@@ -3,6 +3,7 @@ import argparse
 import json
 from pathlib import Path
 from .topic_social_discovery import discover
+from .topic_discovery_diagnostics import diagnose
 
 def main():
     p=argparse.ArgumentParser()
@@ -26,6 +27,7 @@ def main():
     result=discover(args.topic,args.alias,instances=tuple(args.instance or ["mastodon.social"]),
                     limit=args.limit,expand=args.expand,max_expansion_terms=args.max_expansion_terms,
                     document_expansion=args.document_expansion,max_document_terms=args.max_document_terms)
+    result["diagnostics"]=diagnose(result)
     if args.output:
         args.output.parent.mkdir(parents=True,exist_ok=True)
         args.output.write_text(json.dumps(result,ensure_ascii=False,indent=2)+"\n")
