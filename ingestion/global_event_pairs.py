@@ -18,7 +18,7 @@ STOP=set("""about above after again against along also among around before behin
 between could during every first following found from have into just latest
 more most news other over says said some than that their there these this those
 through today under update updates what when where which while with would
-world report reports video live watch breaking exclusive analysis opinion
+world report reports video live watch breaking exclusive analysis opinion government discusses
 the and for are was were has had its new
 della delle degli nella sulla sono anche come dopo alla negli delle
 alla agli allo degli della delle nelle dagli sulla questa questo
