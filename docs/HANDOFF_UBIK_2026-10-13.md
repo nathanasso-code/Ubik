@@ -1,0 +1,103 @@
+# UBIK — DOSSIER DI CONTINUITÀ E SVILUPPO
+**Aggiornamento: 13 ottobre 2026. Documento di passaggio a una nuova chat.**
+
+> LEGGERE PRIMA DI INTERVENIRE. Repository `nathanasso-code/Ubik`, branch `develop/ubik-core`. Non alterare `main`, Vercel, Supabase o il corpus di produzione senza verifiche e autorizzazione per azioni distruttive. Questo dossier integra, NON sostituisce, `docs/HANDOFF_UBIK_2026-10-12.md`, `docs/START_HERE_UBIK.md`, `docs/CORE_ARCHITECTURE.md` e `ingestion/README.md`.
+
+## 1. Principi di prodotto: decisioni da preservare
+
+Ubik è una piattaforma **topic-first** di informazione e discernimento assistito, con fonti originali, provenienza, sintesi verificabili e contributi umani documentati. Il precedente schema Pulse/Press/Insights è una tappa storica: **non ripristinarlo come navigazione obbligatoria**. I topic sono matrice tematica, tag cloud, fonti, card ed eventuali nuclei epistemici. Distinguere: documento, evento, questione persistente, affermazione, prova, segnalazione sociale e revisione.
+
+Tre viste dello stesso catalogo: **Esplora → Rilevanti → Essenziali**. La promozione in Essenziali richiede revisione esplicita, non punteggio automatico di popolarità. La provenienza delle fonti e l'indipendenza dei loro contenuti sono due proprietà diverse.
+
+Quattro segnali per priorità di revisione: (1) condivisioni di account realmente indipendenti, (2) segnalazione anche singola di account seguito, con peso normalizzato, (3) competenza/identità documentabili, (4) discussione sostanziale con evidenze. Nessuno dei quattro equivale a verità o validazione. L'utente ha **escluso la raccolta dei testi dei reply thread** dalla roadmap corrente: usare post pubblici originali e documenti, non basare il criterio 4 sui thread delle risposte.
+
+## 2. Ricostruzione cronologica retrospettiva
+
+Ricostruzione basata su commit e documenti presenti sul branch; non è una trascrizione integrale delle conversazioni perdute.
+
+### Fondazioni e architettura
+- Il sito ha una UI topic-first e un precedente corpus di attacchi/eventi. `assets/ubik-core.js` definisce contratti condivisi; `assets/temporal.js` e `assets/map-view.js` estraggono componenti riutilizzabili. `api/feed.js` legge ancora da Vercel Blob, non dalle nuove tabelle Supabase.
+- `supabase/migrations/001_event_corpus.sql` è lo schema precedente. `002_source_topic_catalog.sql` è una **proposta non applicata** per editori, documenti, scoperte, topic, associazioni e revisioni.
+- Ingestion indipendente dall'editoriale: `ingestion/contracts.py` produce osservazioni `not_assessed`, `canonical_url_hint` rimuove tracker noti ma NON dimostra identità canonica.
+- Sono stati realizzati prototipi per RSS, GDELT DOC (query limitate, non firehose), Hacker News, Bluesky, Mastodon, Crossref, OpenAlex; archiviazione SHA256 locale, trasporto con retry e limiti, batch manuali con checkpoint e budget. Non esiste ancora scheduler distribuito affidabile con persistenza cloud e riconciliazione delle cancellazioni.
+
+### 10–11 ottobre: raccolta e prototipi topic
+- Il pilot RSS su fonti IA si è allargato a BBC World, Guardian World, Al Jazeera English e NYT World. Run documentato `38120774636`: 2.797 osservazioni grezze, 23/28 feed riusciti, 21 con contenuti; non 2.797 notizie uniche. Le fonti con 403 o limiti dimensione non devono essere aggirate.
+- Il topic IA è stato integrato nella struttura esistente: 30 fonti/carte originali, contributi Bluesky associati, tag cloud; commit del 11 ottobre `70514f5a`, `5fc4ea56`, `8beabdc0`, `f4f8fdf3`. Il campione è **curato**, non prova di scoperta cieca.
+- Il pilot editoriale `topic_feed_pilot` ha individuato ~105–106 candidati IA e mostrato 30; `topic_event_review` ha trovato solo 1 coppia per sovrapposizione titoli nel campione verificato, senza unire eventi. `topic_evidence` ha raccolto frasi estrattive da descrizioni RSS (100 con descrizioni, 5–6 title-only a seconda del run). `topic_review_priority`, `topic_editorial_worksheet` e `topic_annotation_audit` sono strumenti di revisione, non una validazione già completata.
+- `ingestion/preview_html.py`, `topic_feed_preview.py` e `UBIK_ALL_SOURCES_REVIEW.html` hanno fornito anteprime offline; gli artifact GitHub scadono. La visualizzazione non implica deploy in produzione.
+
+### 12 ottobre: discovery Mastodon e qualità
+- `ingestion/mastodon_discovery.py` interroga modalità pubbliche local/federated/tag/account su istanze autorizzate; `mastodon_merge.py` deduplica URI ActivityPub. Pilot IA su Mastodon: 640 post, 602 URI unici, 38 ripetizioni; i 602 post non sono 602 articoli. La ricerca era condizionata da hashtag IA.
+- `social_source_catalog.py` prototipa scoperta di editori dai link social. `topic_quality_views.py` implementa offline tre viste progressive. Il registro editori/documenti resta proposta SQL, non database live.
+- Sono stati studiati i criteri di convergenza indipendente e discussione sostanziale; `topic_review_priority` non deve trasformarsi in ranking di popolarità. Esistono prototipi di lettura contesto reply nel repo (`public_thread_context.py`) ma **non sono da estendere**, in seguito a decisione utente.
+- Un precedente tentativo di cercare direttamente il caso di attacchi ai data center russi e bot via web è stato rifiutato come esperimento perché **condizionava la scoperta**. La regola da allora: il topic generale è il solo seed iniziale, il resto deve emergere dai dati della pipeline.
+
+### 12–13 ottobre: discovery cieca per topic e nuovi moduli
+- `ingestion/topic_social_discovery.py`: ricerca testuale Bluesky AppView e hashtag Mastodon; estrae post pubblici, link e provenienza. `topic_social_discovery_cli.py`: esecuzione manuale esplicita, dry-run di default. `tests/test_topic_social_discovery.py`: primi test.
+- Workflow `.github/workflows/topic-social-blind-pilot.yml` esegue il topic **Guerra russo-ucraina**, con alias generali Ucraina/Ukraine/Russia/Україна/Россия, senza parole chiave sull'evento data center. Il primo run `38314998550` ha prodotto **226 post e 155 URL** senza errori registrati; non è una misurazione della copertura dell'intera rete.
+- `topic_query_expansion.py` deriva hashtag co-occorrenti dai post seed, richiede almeno 2 account osservati, esclude alcuni hashtag generici, limita a 8 query di secondo passaggio, conserva post di supporto. La raccolta successiva `38315953912` ha prodotto **230 post e 164 URL**.
+- `topic_document_expansion.py` estrae token ripetuti dagli slug URL condivisi da almeno due account su documenti distinti, limitando le query; `topic_event_candidates.py` raggruppa in modo prudente URL con sovrapposizione di token, **senza dichiarare equivalenza semantica**. Sono presenti test `tests/test_topic_document_expansion.py`. `topic_discovery_diagnostics.py` produce metriche di copertura e limiti espliciti.
+- Run ampliato `38316394327` **success**: **1.214 post, 937 URL, zero errori di acquisizione registrati**. La forte crescita non prova qualità: fra gli hashtag di espansione emersi figurano **trump, zelensky, putin**. Questo segnala un rischio concreto di **deriva tematica** verso discussioni geopolitiche generiche. I 937 URL sono indizi di documenti, non 937 notizie o fonti indipendenti.
+- Il caso data center compare in un URL del campione iniziale di `5.ua`, ma la specifica controversia sulla presunta riduzione dei bot **non è stata confermata come cluster autonomo dalla pipeline**. Non attribuire a Ubik una scoperta che non è documentata.
+- Le verifiche GitHub Core checks e il workflow di raccolta sopra citati risultavano riusciti al momento della ricostruzione. Le modifiche successive richiedono un nuovo controllo CI.
+
+## 3. Diagnosi tecnica attuale — evitare falsi progressi
+
+1. **Campionamento**: ricerca Bluesky `sort=latest`, poche pagine o una pagina per query; hashtag Mastodon su istanze limitate. Non abbiamo una copertura temporale continua, né una baseline giornaliera; la ricerca per hashtag non equivale alla ricerca di tutto il testo.
+2. **Deriva**: espandere su `#trump` può recuperare molto materiale estraneo al conflitto. Imporre un test di pertinenza basato su documenti osservati e un limite di allontanamento dalla radice; conservare separatamente `seed` e `expanded`.
+3. **Provenienza**: l'espansione è auditable, ma due account non equivalgono a due origini editoriali indipendenti. Mastodon può riproporre contenuti via bridge; bot, syndication e crosspost vanno distinti.
+4. **Eventi**: il raggruppamento da slug URL è debole, non multilingue e può confondere temi generici. Serve estrazione di titoli/abstract verificabili e confronto semantico con controllo dei falsi positivi; non unire automaticamente documenti.
+5. **Misura della discussione**: numero reply/like non significa dibattito sostanziale. Il testo del post originale può essere analizzato con attribuzione, senza recuperare i reply.
+6. **Identità dei link**: gli URL canonici non sono ancora verificati via publisher; il filtro dei link HTML social può raccogliere link di profili/bridge non pertinenti. Necessaria normalizzazione conservativa e tracciamento dei redirect senza aggirare restrizioni.
+7. **Persistenza**: i risultati GitHub sono artifact temporanei (attualmente retention 7 giorni nel workflow); non sono database. Non abilitare trigger automatici alla creazione topic senza code, idempotenza, quote, protezioni e schema rivisto.
+
+## 4. Stato funzionale — cosa NON dichiarare completato
+
+| Funzione | Stato |
+| --- | --- |
+| Topic-first UI e topic IA dimostrativo | Codice esistente, verificare deploy effettivo |
+| RSS multi-fonte | Pilot live documentato; non scheduler universale |
+| Bluesky ricerca pubblica / Mastodon hashtag | Pilot live su GitHub Actions |
+| Espansione hashtag da dati | Implementata, bias/deriva non calibrati |
+| Espansione da termini di URL | Implementata come euristica, non NER |
+| Raggruppamento documenti stesso evento | Euristica candidata, non semantica |
+| Contenuti di articoli / sintesi verificate | Non integrati in questo pilot |
+| Accelerazione temporale | Non misurata |
+| Indipendenza reale account/fonti | Non verificata |
+| Tre viste di qualità | Prototipo offline, non UI live completa |
+| Supabase catalogo fonti/topic | Migrazione proposta, non applicata |
+| Trigger creazione topic e scheduler persistente | Non implementati |
+| Card epistemiche automatiche validate | Non implementate |
+| Recupero reply thread | Fuori roadmap per decisione utente |
+
+## 5. Priorità di sviluppo (ordine consigliato)
+
+1. **Correggere il drift prima di raccogliere di più**: fissare un corpus seed immutabile, distinguere query generate, misurare pertinenza e distanza dalla radice; limitare a due passaggi, evitare hashtag generalisti/personaggi non specifici come espansioni automatiche senza evidenza tematica aggiuntiva.
+2. **Finestra temporale e paginazione**: supportare cursor Bluesky e max_id Mastodon con budget per query, dedup per URI e snapshot append-only; misurare distribuzione per data e copertura per lingua/istanza.
+3. **Documenti ed eventi**: usare titoli e descrizioni raccolti da RSS/editori con provenance; introdurre retrieval semantico multilingue **come suggerimento di coppie** e validazione separata.
+4. **Card**: separare card-documento, card-evento e nucleo epistemico; ogni sintesi deve dichiarare quali fonti sono state realmente lette e quali claim non sono verificati.
+5. **Persistenza**: revisionare SQL 002, definire `topic_discovery_runs`, `query_expansions`, `post_observations`, `document_links`, `event_candidates` e politiche RLS; prima un pilota isolato.
+6. **Automazione**: dopo persistenza, evento topic-created → job idempotente → snapshot → review → esposizione in Esplora. Non bloccare creazione topic su API social.
+7. **Validazione**: A/B cieco su almeno due topic e finestre diverse, annotazioni umane di pertinenza, precision/recall eventi, falsi merge, origine indipendente, drift, costi e tempo.
+
+## 6. File chiave e comandi
+
+```sh
+python -m unittest discover -s tests
+node tests/ubik-core.test.cjs
+python -m ingestion.topic_social_discovery_cli 'Guerra russo-ucraina' --alias Ucraina --alias Ukraine --alias Russia --alias Україна --alias Россия --limit 40 --expand --max-expansion-terms 8 --document-expansion --max-document-terms 6 --live --output blind-topic-result.json
+```
+
+L'ultimo comando **effettua chiamate live** e va usato soltanto con limiti e autorizzazioni adeguate. Per il dry-run omettere `--live`.
+
+Run da confrontare:
+- https://github.com/nathanasso-code/Ubik/actions/runs/38314998550
+- https://github.com/nathanasso-code/Ubik/actions/runs/38315953912
+- https://github.com/nathanasso-code/Ubik/actions/runs/38316394327
+
+## 7. Istruzioni per la prossima chat
+
+Leggere integralmente questo dossier e gli altri quattro documenti di continuità; verificare HEAD e ultimi workflow; **non confondere il commit con il deploy**. Continuare autonomamente su `develop/ubik-core`, un incremento testabile alla volta. Conservare gli artifact prima della scadenza, o riprodurre l'esperimento. Non utilizzare Yandex/data center/bot come query seed nella prova cieca. Il tema noto può essere controllato **solo a posteriori** come test di richiamo, senza influenzare il ranking.
+
+Annotare ogni cambiamento in questo dossier o appendice datata, con SHA, run, dati, problemi, decisioni e passi successivi. Non promettere esecuzioni in background senza un workflow effettivo.
