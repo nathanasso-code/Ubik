@@ -57,3 +57,12 @@ Run di riferimento: https://github.com/nathanasso-code/Ubik/actions/runs/3831757
 Il catalogo non è ancora bilanciato geograficamente o linguisticamente. Il rapporto osservazioni/URL è diverso da quello dei post social; non comparare i conteggi come se misurassero la stessa cosa. Il ranking dei termini è lessicale: una frequenza alta non identifica automaticamente un evento.
 
 **Prossimo gate:** due snapshot temporali e valutazione della precisione di un campione di candidati; evitare qualsiasi pubblicazione automatica.
+
+
+## Secondo incremento live: coppie di eventi candidate
+
+Modulo `ingestion/global_event_pairs.py`, test `tests/test_global_event_pairs.py`, workflow `.github/workflows/global-discovery-pilot.yml` aggiornato. Metodo: titoli, weighted Jaccard, almeno due termini condivisi, editori con host differenti, pubblicazione entro 72 ore; nessun merge automatico. È un suggeritore di coppie, non un clustering multilingue o una prova di identità degli eventi.
+
+Run **completato con successo**: https://github.com/nathanasso-code/Ubik/actions/runs/38317808123 — **324 documenti, 4 coppie proposte, 0 fusioni automatiche**. 10 feed configurati, 9 riusciti, 333 osservazioni. I controlli Core checks sul codice correttivo sono riusciti nel run `38317808091`.
+
+La quantità di coppie non è una metrica di qualità: servono annotazioni umane delle 4 coppie, ricerca di coppie vere non rilevate e precision/recall. L'output `global-event-pairs-review.json` è conservato come artifact del run GitHub (scadenza 14 giorni).
