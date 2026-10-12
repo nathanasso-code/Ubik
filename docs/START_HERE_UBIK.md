@@ -1,3 +1,5 @@
+> **Historical note (11 October).** This file records earlier pilot progress; it is no longer the canonical operational entry point. For the current global-first hybrid discovery pipeline, semantic routing, editorial topic limits, and verified open risks, start at [ARCHITECTURE_CURRENT.md](ARCHITECTURE_CURRENT.md) and [HANDOFF_UBIK_2026-10-13.md](HANDOFF_UBIK_2026-10-13.md). Older “next actions” below are historical, not active priorities.
+
 # UBIK — START HERE (2026-10-11)
 
 Working branch: develop/ubik-core. This is the continuity note for future chats.
