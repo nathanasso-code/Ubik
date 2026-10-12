@@ -15,7 +15,6 @@ jobs:
         run: |
           python3 - <<'PY'
           import json, os, urllib.request, urllib.error
-          from urllib.parse import urlsplit
           token = os.environ.get("UBIK_MASTODON_TOKEN", "")
           if not token:
               raise SystemExit("Missing UBIK_MASTODON_TOKEN")
@@ -29,6 +28,8 @@ jobs:
               ("public_hashtag_science", "/api/v1/timelines/tag/science?limit=10"),
               ("public_local", "/api/v1/timelines/public?local=true&limit=10"),
               ("public_federated", "/api/v1/timelines/public?remote=true&limit=10"),
+              ("public_hashtag_ai", "/api/v1/timelines/tag/ai?limit=10"),
+              ("public_hashtag_climate", "/api/v1/timelines/tag/climate?limit=10"),
           ]:
               req = urllib.request.Request(root + path, headers={
                   "Accept": "application/json",
