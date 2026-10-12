@@ -19,6 +19,6 @@ jobs:
         with:
           python-version: '3.12'
       - name: Run Mastodon discovery tests
-        run: python -m unittest tests.test_mastodon_discovery
+        run: python -m unittest discover -s tests -p test_mastodon_discovery.py
       - name: Dry-run without network
         run: python -m ingestion.mastodon_discovery --instance mastodon.social --approved-instances config/mastodon-instances.pilot.json --mode tag --tag science
