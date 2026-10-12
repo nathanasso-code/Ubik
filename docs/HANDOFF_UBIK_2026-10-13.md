@@ -101,3 +101,16 @@ Run da confrontare:
 Leggere integralmente questo dossier e gli altri quattro documenti di continuità; verificare HEAD e ultimi workflow; **non confondere il commit con il deploy**. Continuare autonomamente su `develop/ubik-core`, un incremento testabile alla volta. Conservare gli artifact prima della scadenza, o riprodurre l'esperimento. Non utilizzare Yandex/data center/bot come query seed nella prova cieca. Il tema noto può essere controllato **solo a posteriori** come test di richiamo, senza influenzare il ranking.
 
 Annotare ogni cambiamento in questo dossier o appendice datata, con SHA, run, dati, problemi, decisioni e passi successivi. Non promettere esecuzioni in background senza un workflow effettivo.
+
+
+## 8. Aggiornamento 13 ottobre — svolta global-first (NUOVA DECISIONE)
+
+**Decisione dell'utente:** esplorare la raccolta il più diffusamente possibile senza imporre un topic come seed; riconoscere argomenti chiave e assegnarli ai topic *a posteriori*. Architettura scelta: **global-first ibrida**, con acquisizione indipendente dai topic e approfondimenti topic-led successivi soltanto per lacune documentate. Questo **non** cambia la UI topic-first: cambia l'ordine di acquisizione e associazione.
+
+**Nuovo codice:** `ingestion/global_discovery.py` legge snapshot compatibili con `ingestion/federate.py`, aggrega osservazioni per URL normalizzato e propone termini dai titoli senza filtro tematico. Un candidato richiede >=2 documenti e >=2 coppie connector/source; gli URL di supporto restano visibili; un repost ripetuto dello stesso documento non crea un falso segnale di convergenza. `tests/test_global_discovery.py` verifica queste proprietà. È **solo un prototipo offline lessicale**: non NER, non ricerca web globale, non eventi semanticamente verificati, non assegnazione automatica ai topic.
+
+**Nuovo documento decisionale:** `docs/GLOBAL_DISCOVERY_ARCHITECTURE_2026-10-13.md`. Leggerlo insieme a questo dossier.
+
+**Vincoli da preservare:** il topic-first resta la UX, non un filtro obbligatorio d'ingresso. Documenti unici possono appartenere a più topic. La raccolta globale non deve essere scambiata per un firehose universale. Non costruire card fattuali dai soli titoli o slug.
+
+**Prossimi interventi:** integrare la raccolta diretta RSS multi-argomento con questo output in un workflow offline/live bounded; misurare due finestre temporali; introdurre eventi semantici multilingue con test di precisione e una coda di assegnazione topic revisionabile. Prima di dichiarare questo incremento validato, controllare CI del commit che lo contiene.
