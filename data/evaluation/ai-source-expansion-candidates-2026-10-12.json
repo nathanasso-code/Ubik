@@ -142,7 +142,52 @@
       "status": "candidate_unverified"
     }
   ],
-  "publisher_domains": [],
+  "publisher_domains": [
+    {
+      "hostname": "deepmind.google",
+      "status": "candidate_unverified"
+    },
+    {
+      "hostname": "www.bbc.co.uk",
+      "status": "candidate_unverified"
+    },
+    {
+      "hostname": "www.nber.org",
+      "status": "candidate_unverified"
+    },
+    {
+      "hostname": "openai.com",
+      "status": "candidate_unverified"
+    },
+    {
+      "hostname": "arxiv.org",
+      "status": "candidate_unverified"
+    },
+    {
+      "hostname": "www.normaltech.ai",
+      "status": "candidate_unverified"
+    },
+    {
+      "hostname": "www.interconnects.ai",
+      "status": "candidate_unverified"
+    },
+    {
+      "hostname": "www.latent.space",
+      "status": "candidate_unverified"
+    },
+    {
+      "hostname": "sebastianraschka.com",
+      "status": "candidate_unverified"
+    },
+    {
+      "hostname": "magazine.sebastianraschka.com",
+      "status": "candidate_unverified"
+    },
+    {
+      "hostname": "simonwillison.net",
+      "status": "candidate_unverified"
+    }
+  ],
   "limitations": [
     "Existing dossier only, not broad public sampling.",
     "Authors are discovery candidates; no identity, expertise or independence verification.",
