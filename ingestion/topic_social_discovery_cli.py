@@ -11,6 +11,8 @@ def main():
     p.add_argument("--instance",action="append",default=[])
     p.add_argument("--limit",type=int,default=20)
     p.add_argument("--live",action="store_true")
+    p.add_argument("--expand",action="store_true")
+    p.add_argument("--max-expansion-terms",type=int,default=8)
     p.add_argument("--output",type=Path)
     args=p.parse_args()
     if not 1<=args.limit<=40:
@@ -20,7 +22,7 @@ def main():
                           "network_calls":0},ensure_ascii=False))
         return
     result=discover(args.topic,args.alias,instances=tuple(args.instance or ["mastodon.social"]),
-                    limit=args.limit)
+                    limit=args.limit,expand=args.expand,max_expansion_terms=args.max_expansion_terms)
     if args.output:
         args.output.parent.mkdir(parents=True,exist_ok=True)
         args.output.write_text(json.dumps(result,ensure_ascii=False,indent=2)+"\n")
