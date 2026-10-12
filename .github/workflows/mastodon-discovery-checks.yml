@@ -6,6 +6,8 @@ on:
     paths:
       - 'ingestion/mastodon_discovery.py'
       - 'tests/test_mastodon_discovery.py'
+      - 'ingestion/mastodon_merge.py'
+      - 'tests/test_mastodon_merge.py'
       - '.github/workflows/mastodon-discovery-checks.yml'
   workflow_dispatch:
 jobs:
@@ -19,7 +21,7 @@ jobs:
         with:
           python-version: '3.12'
       - name: Run Mastodon discovery tests
-        run: python -m unittest discover -s tests -p test_mastodon_discovery.py
+        run: python -m unittest discover -s tests -p 'test_mastodon*.py'
       - name: Dry-run without network
         run: python -m ingestion.mastodon_discovery --instance mastodon.social --approved-instances config/mastodon-instances.pilot.json --mode tag --tag science
   live-smoke:
