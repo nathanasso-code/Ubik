@@ -6,6 +6,7 @@ on:
       - 'ingestion/topic_social_discovery.py'
       - 'ingestion/topic_social_discovery_cli.py'
       - '.github/workflows/topic-social-blind-pilot.yml'
+      - 'ingestion/topic_query_expansion.py'
   workflow_dispatch:
 permissions:
   contents: read
@@ -20,7 +21,7 @@ jobs:
           python-version: '3.12'
       - name: Run topic-led bounded acquisition without issue-specific keywords
         run: |
-          python -m ingestion.topic_social_discovery_cli 'Guerra russo-ucraina' --alias Ucraina --alias Ukraine --alias Russia --alias Україна --alias Россия --instance mastodon.social --limit 20 --live --output blind-topic-result.json > blind-topic-run.log
+          python -m ingestion.topic_social_discovery_cli 'Guerra russo-ucraina' --alias Ucraina --alias Ukraine --alias Russia --alias Україна --alias Россия --instance mastodon.social --limit 40 --expand --max-expansion-terms 8 --live --output blind-topic-result.json > blind-topic-run.log
       - name: Summarize ranked source documents
         if: always()
         run: |
@@ -32,6 +33,7 @@ jobs:
               data=json.loads(p.read_text())
               print(json.dumps({'topic':data['topic'],'posts':data['posts'],
                 'documents':len(data['documents']),'errors':data['errors'],
+                'expansion':data.get('expansion',[]),
                 'top_documents':data['documents'][:25]},ensure_ascii=False))
           else:
               print('No result file generated')
