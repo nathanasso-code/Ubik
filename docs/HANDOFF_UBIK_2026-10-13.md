@@ -138,3 +138,18 @@ Il motore crea **solo proposte di coppie da revisionare** tra URL distinti di ho
 **Test regressione:** stessa storia tra editori diversi, argomenti genericamente correlati da tenere separati, finestra temporale, stesso host e data mancante. Un primo Core checks `38317793293` ha fallito sul caso di argomento generico; correzione dei termini `government`/`discusses` commit `e8a68c9d`. Nuovo run global-first `38317808123` e Core checks successivi da verificare.
 
 **Prossima priorità:** analizzare i candidati reali e annotare falsi positivi, poi costruire una baseline di confronto global-first vs topic-led su stesso corpus/finestra, senza introdurre manualmente termini del caso di controllo.
+
+
+## 11. Traguardo: prime card documentali REALI, non sintetizzate (13 ottobre 2026)
+
+**Codice:** `ingestion/global_cards.py`, `tests/test_global_cards.py`, workflow `.github/workflows/global-discovery-pilot.yml` aggiornato. Il generatore accetta solo titoli e URL dei feed realmente acquisiti. Emette card a fonte singola o coppie suggerite dal confronto dei titoli; ogni card espone provenance e `review_status=unverified`. Produce `global-cards-preview.json` e `global-cards-preview.md` negli artifact del workflow. Non genera affermazioni fattuali, sintesi AI, assegnazioni topic o fusioni automatiche.
+
+**Run:** https://github.com/nathanasso-code/Ubik/actions/runs/38318112930 — nei log risultano superati test, acquisizione, generazione card e upload. **24 card: 4 coppie candidate a doppia fonte e 20 card singole**. Le quattro coppie sono:
+1. BBC / Al Jazeera: titoli relativi alla perquisizione dell'abitazione della deputata Ilhan Omar.
+2. BBC / The Guardian: titoli relativi alla notizia sulla morte dell'attore RJ Mitte.
+3. BBC / NYT: titoli su un naufragio vicino a Gibuti; BBC indica 139 morti, NYT oltre 100: la differenza è preservata, non risolta arbitrariamente.
+4. BBC / Al Jazeera: titoli relativi alle dimissioni del vicecapo della polizia sudafricana.
+
+**Interpretazione:** sono output effettivi della pipeline globale senza seed tematico, NON fatti verificati, NON quattro eventi confermati. I titoli dei feed possono contenere affermazioni errate o divergenti. Le card sono anteprime offline, **non integrate nella UI Vercel**. La successiva fase deve leggere i documenti nel rispetto delle autorizzazioni e proporre sintesi citate, con revisione di corrispondenza evento e test di precisione.
+
+**Limitazione importante:** i 20 documenti singoli sono i primi documenti non già coperti dalle coppie secondo l'ordine di acquisizione, **non un ranking di rilevanza**.
