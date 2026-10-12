@@ -1,6 +1,10 @@
 name: Multilingual semantic topic routing pilot
 on:
   workflow_dispatch:
+  push:
+    branches: [develop/ubik-core]
+    paths:
+      - '.github/workflows/semantic-topic-routing-pilot.yml'
 permissions:
   contents: read
 jobs:
