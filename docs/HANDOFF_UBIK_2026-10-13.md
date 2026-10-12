@@ -197,3 +197,12 @@ Run https://github.com/nathanasso-code/Ubik/actions/runs/38318872281: fasi test,
 **Debito individuato:** il confine dichiarato in `ingestion/README.md` non corrisponde più alla collocazione dei moduli `global_cards`, `semantic_topic_router` e routing: l'area ingestion ospita anche selezione/review. Necessaria migrazione controllata verso package `discovery/` e `selection/` con wrapper compatibili, test e CI. La nuova architettura è in parte un piano, non ancora un refactor completo.
 
 **Pulizia successiva:** generare manifest di riferimenti per moduli/documenti/workflow, classificare `active / compatibility / experimental / archived / removable`, quindi rimuovere soltanto elementi con zero dipendenze e rollback semplice. Verificare il modello multilingue su dati reali e calibrare le soglie prima di promuoverlo.
+
+
+## 15. Esperimento cieco sulle relazioni e primo indizio datacenter
+
+Nuovo `ingestion/blind_relation_hypotheses.py` con test `tests/test_blind_relation_hypotheses.py`, integrato nel workflow global-first. Non usa seed di topic, datacenter, guerra o parole del caso di controllo. Su run riuscito https://github.com/nathanasso-code/Ubik/actions/runs/38319820495 : **324 documenti RSS e 35 coppie di termini con co-occorrenze cross-publisher**. È una baseline lessicale: `relation_type=undetermined`, non supporto, contraddizione o causalità.
+
+**Osservazione notevole:** il titolo RSS attribuito ad Ars Technica `Russia was not ready for the data center war it started with Ukraine` compare fra le evidenze della coppia `russia / ukraine`, insieme ad altri titoli di editori diversi. Il caso datacenter NON era un seed del motore. Questo dimostra l'acquisizione di un documento pertinente senza query mirata, **non** il riconoscimento della relazione epistemica, né la verifica dell'articolo, né corroborazione indipendente sul datacenter. L'accostamento è dovuto alle parole Russia/Ucraina. La valutazione retrospettiva deve essere svolta dopo aver congelato i candidati, senza cambiare le regole in funzione del caso.
+
+Protocollo scientifico: `docs/BLIND_EPISTEMIC_DISCOVERY_PROTOCOL.md` definisce separazione blind/held-out, annotazioni delle relazioni e criteri di precisione. La pipeline E5 multilingue è ora in prova live: workflow `38319834727` (stato da verificare); nuovo job `semantic-review` nel workflow globale consuma lo stesso artifact del run di discovery, evitando differenze di campionamento, commit `08437931`. Non dichiarare esito E5 finché il job non è completato.
