@@ -30,7 +30,7 @@ jobs:
         with:
           python-version: '3.12'
       - name: Run global discovery unit tests
-        run: python -m unittest discover -s tests -p 'test_global*.py'
+        run: python -m unittest discover -s tests -p 'test_global*.py' && python -m unittest discover -s tests -p 'test_hybrid*.py'
       - name: Collect diverse publisher feeds without topic seed
         run: python -m ingestion.global_rss_pilot --output data/discovery/global-rss-pilot.json
       - name: Discover candidate terms globally
