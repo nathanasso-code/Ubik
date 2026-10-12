@@ -7,6 +7,9 @@ import argparse,json
 from pathlib import Path
 from .topic_social_discovery import collect_bluesky,collect_mastodon
 from .transport import get_json
+from .global_discovery import STOP
+
+QUERY_STOP=STOP|{"found","first","their","south","police","energy","people","after","could","would","years","state","states","government","official","officials","leader","leaders","president","trump","today","death","killed","says","amid","about","still","latest"}
 
 def sample(candidate_report,*,instances=("mastodon.social",),max_terms=6,limit=20,fetch=get_json):
     if not 1<=max_terms<=12 or not 1<=limit<=40 or len(instances)>3:
@@ -14,7 +17,8 @@ def sample(candidate_report,*,instances=("mastodon.social",),max_terms=6,limit=2
     candidates=candidate_report.get("candidate_terms") or []
     terms=[c["term"] for c in candidates if c.get("publisher_hosts",0)>=2
            and isinstance(c.get("term"),str) and c["term"].isalpha()
-           and 5<=len(c["term"])<=40][:max_terms]
+           and 5<=len(c["term"])<=40 and c["term"].casefold() not in QUERY_STOP
+           and c.get("documents",0)>=2][:max_terms]
     records=[];errors=[]
     for term in terms:
         try:records.extend(collect_bluesky(term,limit,fetch))
