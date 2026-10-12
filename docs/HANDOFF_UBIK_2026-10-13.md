@@ -114,3 +114,16 @@ Annotare ogni cambiamento in questo dossier o appendice datata, con SHA, run, da
 **Vincoli da preservare:** il topic-first resta la UX, non un filtro obbligatorio d'ingresso. Documenti unici possono appartenere a più topic. La raccolta globale non deve essere scambiata per un firehose universale. Non costruire card fattuali dai soli titoli o slug.
 
 **Prossimi interventi:** integrare la raccolta diretta RSS multi-argomento con questo output in un workflow offline/live bounded; misurare due finestre temporali; introdurre eventi semantici multilingue con test di precisione e una coda di assegnazione topic revisionabile. Prima di dichiarare questo incremento validato, controllare CI del commit che lo contiene.
+
+
+## 9. Incremento global-first live — 13 ottobre 2026
+
+**Implementazione:** `ingestion/global_rss_pilot.py` riutilizza il parser RSS/Atom esistente e le protezioni HTTP, rimuove esplicitamente `topic_ids` e marca le osservazioni `global_unassigned`. `config/source-registry.global-pilot.json` definisce 10 feed in ambiti mondo/scienza/tecnologia/ambiente/economia. `.github/workflows/global-discovery-pilot.yml` esegue test, acquisizione live e `ingestion.global_discovery`, conserva due JSON come artifact GitHub a scadenza 14 giorni. Test `tests/test_global_rss_pilot.py` per topic non assegnato e budget.
+
+**Incident e correzione:** primo run `38317565952` fallito per invocazione unittest con modulo `tests.test_global_rss_pilot` non importabile (cartella tests non package); workflow corretto a `unittest discover -s tests -p 'test_global*.py'`, commit `635a92a9`. Secondo run `38317573397`: test, acquisizione e analisi superati; al controllo dei log **10 feed configurati, 9 riusciti, 333 osservazioni e 324 URL distinti**. Il job potrebbe ancora finalizzare l'upload dell'artifact: verificare conclusione prima di dichiararlo totalmente completato.
+
+**Interpretazione:** questa è la prima raccolta generalista effettiva **senza seed di topic**, non ancora confronto quantitativo corretto con un run topic-led sulla stessa finestra temporale. I termini emergenti dai titoli sono candidati lessicali e possono essere parole generiche; nessuna card fattuale, validazione o topic assignment automatica.
+
+**Prossimo step obbligatorio:** usare lo stesso corpus di 324 URL come baseline, annotare pertinenza e specificità dei candidati, confrontare con una raccolta topic-led nella stessa finestra; ampliare fonti linguistiche, correggere stopword e introdurre eventi semantici multilingue. Non presentare 333 osservazioni come 333 notizie indipendenti.
+
+Run: https://github.com/nathanasso-code/Ubik/actions/runs/38317573397
