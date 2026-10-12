@@ -1,0 +1,126 @@
+{
+  "schema_version": 1,
+  "source": "data/ai-topic.json",
+  "topic_id": "ai-information",
+  "source_count": 30,
+  "external_perspectives_total": 18,
+  "selection": "Top ten by number of linked social perspectives, tie broken by ID; not controversy detection or ranking",
+  "candidates": [
+    {
+      "id": "anthropic",
+      "title": "Agente Anthropic: falsa segnalazione alla polizia",
+      "url": "https://www.bbc.co.uk/news/articles/cqkg50j1yd5lo",
+      "category": "Sicurezza",
+      "external_perspectives": 3,
+      "primary_status": "not_assessed",
+      "controversy_status": "not_assessed",
+      "summary_status": "not_generated",
+      "review_required": true
+    },
+    {
+      "id": "finance",
+      "title": "Financing the AI Buildout",
+      "url": "https://www.nber.org/papers/w35865",
+      "category": "Economia",
+      "external_perspectives": 2,
+      "primary_status": "not_assessed",
+      "controversy_status": "not_assessed",
+      "summary_status": "not_generated",
+      "review_required": true
+    },
+    {
+      "id": "gemini",
+      "title": "Gemini 4 Argon: il lancio e i limiti da verificare",
+      "url": "https://deepmind.google/blog/gemini-4-argon-our-next-era-of-frontier-intelligence/",
+      "category": "Modelli",
+      "external_perspectives": 2,
+      "primary_status": "not_assessed",
+      "controversy_status": "not_assessed",
+      "summary_status": "not_generated",
+      "review_required": true
+    },
+    {
+      "id": "horizons",
+      "title": "Stime e validità degli AI time horizons",
+      "url": "https://arxiv.org/abs/2610.12466",
+      "category": "Ricerca",
+      "external_perspectives": 2,
+      "primary_status": "not_assessed",
+      "controversy_status": "not_assessed",
+      "summary_status": "not_generated",
+      "review_required": true
+    },
+    {
+      "id": "alphafold",
+      "title": "Perché AlphaFold non ha risolto il ripiegamento delle proteine",
+      "url": "https://www.latent.space/p/biohub-deepmind",
+      "category": "Scienza",
+      "external_perspectives": 1,
+      "primary_status": "not_assessed",
+      "controversy_status": "not_assessed",
+      "summary_status": "not_generated",
+      "review_required": true
+    },
+    {
+      "id": "asana",
+      "title": "Asana: test di agenti browser con costi 76× inferiori",
+      "url": "https://openai.com/index/asana-browser-agent/",
+      "category": "Agenti",
+      "external_perspectives": 1,
+      "primary_status": "not_assessed",
+      "controversy_status": "not_assessed",
+      "summary_status": "not_generated",
+      "review_required": true
+    },
+    {
+      "id": "assurance",
+      "title": "From Reactive Containment to Proactive Assurance",
+      "url": "https://arxiv.org/abs/2610.12463",
+      "category": "Ricerca",
+      "external_perspectives": 1,
+      "primary_status": "not_assessed",
+      "controversy_status": "not_assessed",
+      "summary_status": "not_generated",
+      "review_required": true
+    },
+    {
+      "id": "classification",
+      "title": "Language Models for Text Classification",
+      "url": "https://magazine.sebastianraschka.com/p/classifier-history-and-jev",
+      "category": "Analisi",
+      "external_perspectives": 1,
+      "primary_status": "not_assessed",
+      "controversy_status": "not_assessed",
+      "summary_status": "not_generated",
+      "review_required": true
+    },
+    {
+      "id": "doom",
+      "title": "Le probabilità di rischio esistenziale AI sono troppo incerte per guidare la politica?",
+      "url": "https://www.normaltech.ai/p/p-doom",
+      "category": "Governance",
+      "external_perspectives": 1,
+      "primary_status": "not_assessed",
+      "controversy_status": "not_assessed",
+      "summary_status": "not_generated",
+      "review_required": true
+    },
+    {
+      "id": "lambert",
+      "title": "Progresso rapido dell'AI, ma non necessariamente superintelligenza",
+      "url": "https://www.interconnects.ai/p/i-expect-rapid-progress-but-not-towards",
+      "category": "Opinioni",
+      "external_perspectives": 1,
+      "primary_status": "not_assessed",
+      "controversy_status": "not_assessed",
+      "summary_status": "not_generated",
+      "review_required": true
+    }
+  ],
+  "notes": [
+    "Input dossier is editorially curated, not an automatically generated corpus.",
+    "Posts are not corroboration; sources and claims remain unverified.",
+    "No AI-generated summary, topic reassignment or automatic event merging.",
+    "This is a real-data review queue, not a completed human assessment."
+  ]
+}
