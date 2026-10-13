@@ -29,7 +29,8 @@ def assemble_case(observations):
                                   "source_urls":[x["url"] for x in rows]})
     return {"schema_version":1,"event_key":ordered[0]["event_key"],
             "source_count":len({x["url"] for x in ordered}),
-            "independent_origin_groups":len({x["origin_group"] for x in ordered}),
+            "declared_origin_groups":len({x["origin_group"] for x in ordered}),
+            "independent_origin_count_verified":None,
             "observations":ordered,"potential_updates":changes,
             "unresolved_differences":conflicts,
             "same_event_verified":False,"truth_verified":False,
