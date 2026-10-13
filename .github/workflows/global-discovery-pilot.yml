@@ -192,17 +192,12 @@ jobs:
         with:
           name: global-discovery-pilot
           path: data/discovery
-      - name: Retrieve qualified corpus from discovery artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: global-discovery-pilot
-          path: data/discovery
       - name: Route qualified documents to curated and emergent topic candidates
-        run: python -m ingestion.dual_topic_router --quality data/discovery/topic-evidence-quality.json --catalog data/catalog.json --output data/discovery/dual-topic-proposals.json --live-model
+        run: python -m ingestion.dual_topic_router --quality data/discovery/discovery/topic-evidence-quality.json --catalog data/catalog.json --output data/discovery/dual-topic-proposals.json --live-model
       - name: Discover blind multilingual document neighbors on frozen RSS
-        run: python -m ingestion.blind_semantic_neighbors data/discovery/global-rss-pilot.json --output data/discovery/blind-semantic-neighbors.json --live-model
+        run: python -m ingestion.blind_semantic_neighbors data/discovery/discovery/global-rss-pilot.json --output data/discovery/blind-semantic-neighbors.json --live-model
       - name: Join semantic neighbor candidates to RSS evidence coverage
-        run: python -m ingestion.rss_evidence_audit data/discovery/global-rss-pilot.json --pairs data/discovery/blind-semantic-neighbors.json --output data/discovery/rss-semantic-evidence-audit.json
+        run: python -m ingestion.rss_evidence_audit data/discovery/discovery/global-rss-pilot.json --pairs data/discovery/blind-semantic-neighbors.json --output data/discovery/rss-semantic-evidence-audit.json
       - name: Generate reproducible random semantic error audit sample
         run: python -m ingestion.semantic_empirical_audit data/discovery/blind-semantic-neighbors.json --output data/discovery/random-semantic-audit.json --seed 20261013 --sample-size 30
       - name: Build balanced manual review queue from frozen semantic pairs
@@ -210,15 +205,15 @@ jobs:
       - name: Test and generate transparent editorial catalog from frozen corpus
         run: |
           python -m unittest discover -s tests -p 'test_transparent_corpus_catalog.py'
-          python -m ingestion.transparent_corpus_catalog data/discovery/global-rss-pilot.json --neighbors data/discovery/blind-semantic-neighbors.json --output data/discovery/transparent-corpus-catalog.json
+          python -m ingestion.transparent_corpus_catalog data/discovery/discovery/global-rss-pilot.json --neighbors data/discovery/blind-semantic-neighbors.json --output data/discovery/transparent-corpus-catalog.json
       - name: Render complete browsable HTML feed with access transparency
-        run: python -m ingestion.render_corpus_feed data/discovery/transparent-corpus-catalog.json --probe data/discovery/http-access-probe.json --output data/discovery/ubik-feed-completo.html
+        run: python -m ingestion.render_corpus_feed data/discovery/transparent-corpus-catalog.json --probe data/discovery/discovery/http-access-probe.json --output data/discovery/ubik-feed-completo.html
       - name: Generate source-linked semantic card previews for editorial review
         run: python -m ingestion.semantic_discovery_cards data/discovery/semantic-pair-review-queue.json --output data/discovery/semantic-card-previews.json --markdown data/discovery/semantic-card-previews.md
       - name: Evaluate closed-catalog multilingual semantic routing
         run: |
           python -m unittest discover -s tests -p 'test_semantic_topic_router.py'
-          python -m ingestion.semantic_topic_router --social data/discovery/global-social-followup.json --catalog data/catalog.json --output data/discovery/semantic-topic-review.json --live-model
+          python -m ingestion.semantic_topic_router --social data/discovery/discovery/global-social-followup.json --catalog data/catalog.json --output data/discovery/semantic-topic-review.json --live-model
       - name: Preserve semantic proposals and abstentions
         if: always()
         uses: actions/upload-artifact@v4
