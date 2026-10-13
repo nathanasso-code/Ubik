@@ -25,6 +25,8 @@ on:
       - 'ingestion/hybrid_document_links.py'
       - 'ingestion/hashtag_topic_routing.py'
       - 'ingestion/global_rss_pilot.py'
+      - 'ingestion/global_api_discovery.py'
+      - 'ingestion/merge_global_discovery.py'
       - 'ingestion/global_coverage_contract.py'
       - 'ingestion/wikinews_text_pilot.py'
       - 'ingestion/rss_evidence_audit.py'
@@ -94,6 +96,10 @@ jobs:
         run: python -m ingestion.evidence_card_fixture --output data/discovery/synthetic-evidence-review-card.json
       - name: Collect diverse publisher feeds without topic seed
         run: python -m ingestion.global_rss_pilot --output data/discovery/global-rss-pilot.json
+      - name: Discover documents via arXiv Europe PMC and Wikinews public APIs
+        run: python -m ingestion.global_api_discovery --output data/discovery/global-api-discovery.json
+      - name: Merge RSS and API discoveries into shared global input
+        run: python -m ingestion.merge_global_discovery --rss data/discovery/global-rss-pilot.json --api data/discovery/global-api-discovery.json --output data/discovery/global-rss-pilot.json
       - name: Audit mandatory global discovery channels
         run: python -m ingestion.global_coverage_contract --registry config/source-registry.global-pilot.json --rss data/discovery/global-rss-pilot.json --output data/discovery/global-coverage-contract.json
       - name: Attempt live Wikinews article text extraction via MediaWiki API
@@ -165,6 +171,7 @@ jobs:
             data/discovery/empirical-mexico-storms-case.json
             data/discovery/synthetic-evidence-review-card.json
             data/discovery/global-rss-pilot.json
+            data/discovery/global-api-discovery.json
             data/discovery/global-coverage-contract.json
             data/discovery/wikinews-text-pilot.json
             data/discovery/rss-evidence-audit.json
