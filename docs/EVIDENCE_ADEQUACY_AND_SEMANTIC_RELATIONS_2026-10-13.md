@@ -35,3 +35,9 @@ Distinguere sempre **configurato**, **interrogato**, **documenti restituiti**, *
 
 ## Rappresentazione delle affermazioni v1 (implementata successivamente)
 Il modulo `ingestion/claim_representation.py` costruisce candidati strutturati dai passaggi A degli abstract: ID stabile, URL, fonte, tipo di evidenza, posizione della frase, hash, breve estratto, predicato lessicale candidato, quantità non ancora associate a una misura, indicatori di negazione e incertezza. I campi `subject`, `object`, `population`, `timeframe`, `location` e `study_id` restano esplicitamente `null` finché non sono inferiti e verificati con strumenti più adatti. Il modulo si astiene su frasi senza relazione riconoscibile. La CI salva `structured-claim-candidates.json` e registra separatamente candidati e affermazioni verificate (inizialmente zero). Questo **non** costituisce ancora estrazione fattuale completa né verifica di contraddizioni.
+
+## Audit sperimentale aggiunto
+- `ingestion/claim_pair_benchmark.py`: tre casi sintetici di regressione; la corrispondenza con etichette attese **non** è una misura di precisione su notizie reali.
+- `ingestion/claim_relation_audit.py`: conteggia le proposte di relazione tra documenti reali, URL distinti e tipologie; registra esplicitamente zero supporti/contraddizioni verificati.
+- Artefatti CI: `synthetic-claim-relation-benchmark.json` e `real-claim-relation-audit.json`.
+- Riferimento esterno per la successiva valutazione supervisionata: SciFact (Allen Institute for AI), con etichette SUPPORT/CONTRADICT e frasi-evidenza negli abstract: https://github.com/allenai/scifact/blob/master/doc/data.md . L'integrazione con SciFact e la valutazione su etichette indipendenti **non sono ancora implementate**.
