@@ -8,6 +8,8 @@ Piattaforma di informazione topic-first, scoperta multicanale delle fonti e disc
 
 **Aggiornamento verificato del corpus e dei diritti (13 ottobre 2026):** [stato implementato, testato, empirico e progettato](docs/STATUS_CORPUS_RIGHTS_SEMANTICS_2026-10-13.md).
 
+**Contratto di ricerca globale:** [copertura obbligatoria, fonti arXiv/Wikinews, acquisizione testi e limiti empirici](docs/GLOBAL_REFRESH_CONTRACT_2026-10-13.md).
+
 Poi consultare:
 - [Storico e stato precedente](docs/START_HERE_UBIK.md)
 - [Architettura core](docs/CORE_ARCHITECTURE.md)
