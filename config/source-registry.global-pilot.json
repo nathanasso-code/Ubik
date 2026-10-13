@@ -212,6 +212,54 @@
       "url": "https://www.theverge.com/rss/index.xml",
       "kind": "rss",
       "enabled": true
+    },
+    {
+      "id": "arxiv-cs-ai",
+      "name": "arXiv Artificial Intelligence",
+      "url": "https://rss.arxiv.org/rss/cs.AI",
+      "kind": "rss",
+      "enabled": true,
+      "rights_status": "per_document_review_required"
+    },
+    {
+      "id": "arxiv-cs-lg",
+      "name": "arXiv Machine Learning",
+      "url": "https://rss.arxiv.org/rss/cs.LG",
+      "kind": "rss",
+      "enabled": true,
+      "rights_status": "per_document_review_required"
+    },
+    {
+      "id": "arxiv-econ",
+      "name": "arXiv Economics",
+      "url": "https://rss.arxiv.org/rss/econ",
+      "kind": "rss",
+      "enabled": true,
+      "rights_status": "per_document_review_required"
+    },
+    {
+      "id": "wikinews-en",
+      "name": "Wikinews English recent articles",
+      "url": "https://en.wikinews.org/w/api.php?action=feedrecentchanges&feedformat=rss&namespace=0",
+      "kind": "rss",
+      "enabled": true,
+      "rights_status": "per_document_review_required"
+    },
+    {
+      "id": "wikinews-it",
+      "name": "Wikinotizie Italian recent articles",
+      "url": "https://it.wikinews.org/w/api.php?action=feedrecentchanges&feedformat=rss&namespace=0",
+      "kind": "rss",
+      "enabled": true,
+      "rights_status": "per_document_review_required"
+    },
+    {
+      "id": "eea-news",
+      "name": "European Environment Agency",
+      "url": "https://www.eea.europa.eu/en/newsroom/rss",
+      "kind": "rss",
+      "enabled": true,
+      "rights_status": "per_document_review_required"
     }
   ]
 }
