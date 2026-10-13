@@ -37,6 +37,8 @@ on:
       - 'ingestion/public_text_transient_analysis.py'
       - 'ingestion/abstract_evidence_adequacy.py'
       - 'ingestion/cross_source_evidence_review.py'
+      - 'ingestion/claim_representation.py'
+      - 'tests/test_claim_representation.py'
       - 'tests/test_cross_source_evidence_review.py'
       - 'tests/test_abstract_evidence_adequacy.py'
       - 'ingestion/persistent_discovery_ledger.py'
@@ -104,6 +106,8 @@ jobs:
         run: python -m unittest discover -s tests -p 'test_abstract_evidence_adequacy.py'
       - name: Test cross-source evidence relation candidates
         run: python -m unittest discover -s tests -p 'test_cross_source_evidence_review.py'
+      - name: Test provenance-grounded claim representation
+        run: python -m unittest discover -s tests -p 'test_claim_representation.py'
       - name: Collect diverse publisher feeds without topic seed
         run: python -m ingestion.global_rss_pilot --output data/discovery/global-rss-pilot.json
       - name: Discover documents via arXiv Europe PMC and Wikinews public APIs
@@ -116,6 +120,8 @@ jobs:
         run: python -m ingestion.abstract_evidence_adequacy --snapshot data/discovery/global-rss-pilot.json --output data/discovery/abstract-evidence-adequacy.json
       - name: Compare grounded abstract claim sentences across publishers
         run: python -m ingestion.cross_source_evidence_review --adequacy data/discovery/abstract-evidence-adequacy.json --output data/discovery/cross-source-evidence-review.json
+      - name: Build structured source-grounded claim candidates
+        run: python -m ingestion.claim_representation --adequacy data/discovery/abstract-evidence-adequacy.json --output data/discovery/structured-claim-candidates.json
       - name: Audit mandatory global discovery channels
         run: python -m ingestion.global_coverage_contract --registry config/source-registry.global-pilot.json --rss data/discovery/global-rss-pilot.json --output data/discovery/global-coverage-contract.json
       - name: Attempt live Wikinews article text extraction via MediaWiki API
@@ -200,6 +206,7 @@ jobs:
             data/discovery/public-text-analysis.json
             data/discovery/abstract-evidence-adequacy.json
             data/discovery/cross-source-evidence-review.json
+            data/discovery/structured-claim-candidates.json
             data/discovery/global-candidates-pilot.json
             data/discovery/blind-relations-review.json
             data/discovery/global-event-pairs-review.json
