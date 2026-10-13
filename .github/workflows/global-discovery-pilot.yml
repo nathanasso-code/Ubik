@@ -15,6 +15,7 @@ on:
       - 'ingestion/source_claim_candidates.py'
       - 'ingestion/source_claim_comparisons.py'
       - 'ingestion/evidence_review_cards.py'
+      - 'ingestion/evidence_card_fixture.py'
       - 'ingestion/global_event_pairs.py'
       - 'ingestion/global_cards.py'
       - 'ingestion/global_social_followup.py'
@@ -54,6 +55,8 @@ jobs:
         run: python -m unittest discover -s tests -p 'test_global*.py' && python -m unittest discover -s tests -p 'test_hybrid*.py' && python -m unittest discover -s tests -p 'test_blind*.py'
       - name: Run source acquisition and claim pipeline safety tests (mocked, no live article fetch)
         run: python -m unittest discover -s tests -p 'test_approved*.py' && python -m unittest discover -s tests -p 'test_source_claim_pipeline.py' && python -m unittest discover -s tests -p 'test_epistemic_evidence_gate.py' && python -m unittest discover -s tests -p 'test_evidence_review_cards.py'
+      - name: Generate synthetic evidence-review card fixture (never real news)
+        run: python -m ingestion.evidence_card_fixture --output data/discovery/synthetic-evidence-review-card.json
       - name: Collect diverse publisher feeds without topic seed
         run: python -m ingestion.global_rss_pilot --output data/discovery/global-rss-pilot.json
       - name: Discover candidate terms globally
@@ -95,6 +98,7 @@ jobs:
         with:
           name: global-discovery-pilot
           path: |
+            data/discovery/synthetic-evidence-review-card.json
             data/discovery/global-rss-pilot.json
             data/discovery/global-candidates-pilot.json
             data/discovery/blind-relations-review.json
