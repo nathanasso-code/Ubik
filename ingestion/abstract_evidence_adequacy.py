@@ -18,9 +18,9 @@ def qualify(text,*,kind='description'):
  has_number=bool(NUMBER.search(clean));has_uncertainty=bool(UNCERTAIN.search(clean))
  anchors=sum((has_method,has_result,has_number,has_uncertainty))
  # Specific claims need context: avoid upgrading an abstract just for length.
- if words>=55 and len(sentences)>=2 and (has_result and (has_method or has_number)):
+ if words>=35 and len(sentences)>=2 and (has_result and (has_method or has_number)):
   level='A'
- elif words>=35 and len(sentences)>=2 and anchors>=1:
+ elif words>=25 and len(sentences)>=2 and anchors>=1:
   level='B'
  else:level='C'
  # Only source sentences, not invented paraphrases; conservative review candidates.
