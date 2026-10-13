@@ -21,8 +21,8 @@ jobs:
           python-version: '3.12'
       - name: Validate corpus parser and end-to-end baseline
         run: python -m unittest discover -s tests -p 'test_open_corpus_experiment.py'
-      - name: Acquire up to 60 full-text Wikinews articles through public API
-        run: python -m ingestion.open_text_corpus --limit 60 --output data/discovery/open-text-corpus-private.json
+      - name: Acquire up to 120 full-text Wikinews articles through public API
+        run: python -m ingestion.open_text_corpus --limit 120 --output data/discovery/open-text-corpus-private.json
       - name: Run claim extraction, comparison candidates, synthesis and categorization
         run: python -m ingestion.open_corpus_analysis data/discovery/open-text-corpus-private.json --output data/discovery/open-text-analysis-private.json
       - name: Export privacy- and rights-conscious metrics and card summaries
@@ -37,7 +37,8 @@ jobs:
               card.pop("claim_candidates",None)
           out=Path("data/discovery/open-text-experiment-report.json")
           out.write_text(json.dumps(report,ensure_ascii=False,indent=2)+"\n")
-          print(json.dumps({"documents":d["documents_acquired"],"claim_candidates":d["claim_candidate_count"],"candidate_clusters":d["multi_source_candidate_clusters"],"cards":len(d["cards"])}))
+          from collections import Counter
+          print(json.dumps({"documents":d["documents_acquired"],"claim_candidates":d["claim_candidate_count"],"candidate_clusters":d["multi_source_candidate_clusters"],"cards":len(d["cards"]),"categories":dict(Counter(x["category"] for x in d["cards"])),"candidate_multi_document_cards":[{"title":x["title"],"sources":x["source_urls"]} for x in d["cards"] if x["source_count"]>1][:10],"example_titles":[x["title"] for x in d["cards"][:12]]},ensure_ascii=False))
           PY
       - name: Preserve metrics and source-linked review cards, not full article bodies
         if: always()
