@@ -47,3 +47,12 @@ Il modulo `ingestion/claim_representation.py` costruisce candidati strutturati d
 
 ## Confronto semantico controllato
 `ingestion/scifact_semantic_comparison.py` valuta sul medesimo SciFact dev e sulle medesime frasi-evidenza due ranking: Jaccard lessicale e cosine similarity su embedding normalizzati del modello `sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2`. Registra hit/recall@1 e @3. L'esperimento conosce a priori il documento corretto, non classifica SUPPORT/CONTRADICT, e non prova affidabilità su notizie reali. Il job è non bloccante in caso di indisponibilità della rete/modello; verificare l'artefatto `scifact-semantic-comparison.json` prima di dichiarare risultati.
+
+## Decisione di prodotto: priorità informativa (14 ottobre 2026)
+
+**PRIORITÀ ATTIVA — Organizzazione informativa.** Acquisire documenti con provenienza, attribuire categorie gerarchiche (generali e specifiche), identificare concetti e conclusioni rilevanti, proporre relazioni tra documenti, distinguendo stesso tema, stesso evento/studio e contributi complementari. Costruire sintesi fedeli e collegate alle fonti. Non accorpare automaticamente in base alla sola cosine similarity; richiedere un controllo di identità dell'evento/studio e una valutazione editoriale.
+
+**IN STANDBY — Grafo e confronto delle evidenze.** La rappresentazione di singole affermazioni, supporti, contraddizioni e livelli di consenso rimane una possibile fase successiva, non un prerequisito del motore informativo. Mantenere gli esperimenti esistenti riproducibili, senza dedicarvi nuove priorità di sviluppo finché categorizzazione, accorpamento e sintesi non saranno valutati empiricamente. Nessuna pretesa di verificare autonomamente la verità.
+
+### Primo pilota gerarchico/embedding
+Il run GitHub Actions 38473835541 ha elaborato 400 documenti, valutato 17 percorsi tassonomici e restituito 100 coppie candidate (limite configurato, non numero di accorpamenti corretti). La revisione dei risultati evidenzia errori macroscopici di tassonomia: diversi articoli sulla sentenza nel caso Tupac Shakur sono classificati «technology > computing > cybersecurity». I collegamenti fra titoli relativi allo stesso fatto appaiono promettenti, ma non sono ancora stati misurati precision, recall o accuratezza delle categorie. Perciò non pubblicare categorie o merge come verificati. Prima di qualsiasi sintesi, verificare anche la provenienza e la disponibilità del testo originale.
