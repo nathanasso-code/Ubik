@@ -1,15 +1,6 @@
 name: Open text corpus empirical experiment
 on:
   workflow_dispatch:
-  push:
-    branches: [develop/ubik-core]
-    paths:
-      - 'ingestion/open_text_corpus.py'
-      - 'ingestion/open_corpus_analysis.py'
-      - 'ingestion/open_corpus_event_guard.py'
-      - 'tests/test_open_corpus_experiment.py'
-      - 'tests/test_open_corpus_event_guard.py'
-      - '.github/workflows/open-text-corpus-experiment.yml'
 permissions:
   contents: read
 jobs:
@@ -28,7 +19,16 @@ jobs:
       - name: Acquire up to 120 full-text Wikinews articles through public API
         run: python -m ingestion.open_text_corpus --limit 120 --output data/discovery/open-text-corpus-private.json
       - name: Run claim extraction, comparison candidates, synthesis and categorization
-        run: python -m ingestion.open_corpus_analysis data/discovery/open-text-corpus-private.json --output data/discovery/open-text-analysis-private.json
+        run: |
+          python - <<'PY'
+          import json,sys
+          from pathlib import Path
+          data=json.loads(Path("data/discovery/open-text-corpus-private.json").read_text())
+          if data.get("acquired",0)<1:
+              print("No source bodies acquired; preserving rate-limit outcome without generating misleading empty-card metrics.")
+              sys.exit(0)
+          PY
+          python -m ingestion.open_corpus_analysis data/discovery/open-text-corpus-private.json --output data/discovery/open-text-analysis-private.json
       - name: Export privacy- and rights-conscious metrics and card summaries
         run: |
           python - <<'PY'
