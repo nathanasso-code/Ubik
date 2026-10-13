@@ -14,7 +14,7 @@ def acquire(snapshot,output_dir,*,max_items=12):
    if len(raw)>2000000:raise ValueError('oversize')
    root=ET.fromstring(raw)
    licenses=[' '.join(x.itertext()).strip() for x in root.findall('.//license')]
-   accepted=any(any(label.lower() in lic.lower() for label in ALLOW) for lic in licenses)
+   accepted=any(('creativecommons.org/licenses/by/4.0/' in lic.lower() or 'creativecommons.org/publicdomain/zero/1.0/' in lic.lower() or 'creativecommons.org/licenses/by-sa/4.0/' in lic.lower()) and not re.search(r'non.?commercial|no.?derivatives|by-nc|by-nd',lic,re.I) for lic in licenses)
    body=root.find('.//body')
    text=' '.join(' '.join(body.itertext()).split()) if body is not None else ''
    status='text_read_not_stored'
