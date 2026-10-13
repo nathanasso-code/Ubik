@@ -8,7 +8,9 @@ from ingestion.semantic_topic_router import MODEL,_cos
 TAXONOMY={
  "science":{"medicine":["clinical research","public health","neuroscience"],"space":["astronomy","space missions"],"environment":["climate research","biodiversity"]},
  "technology":{"computing":["artificial intelligence","cybersecurity"],"engineering":["energy technology","transport technology"]},
- "society":{"politics":["elections","public policy"],"economy":["financial markets","employment"],"culture":["arts","education"]},
+ "society":{"politics":["elections","public policy","international relations"],"economy":["financial markets","employment"],"culture":["arts","education"]},
+ "news":{"justice":["criminal trials","courts and sentencing","crime investigations"],"public safety":["accidents","emergencies"],"world affairs":["armed conflict","diplomacy"]},
+ "sports":{"competition":["football","tennis","motorsport"],"business":["sports governance"]},
 }
 def taxonomy_entries():
  return [(a,b,c) for a,bs in TAXONOMY.items() for b,cs in bs.items() for c in cs]
@@ -25,7 +27,7 @@ def extract(snapshot,limit=500):
   out.append({"url":url,"source_id":x.get("source_id"),"title":title[:250],"description":desc[:900]})
   if len(out)>=limit:break
  return out
-def analyze(snapshot,embed,limit=500):
+def analyze(snapshot,embed,limit=500,*,min_score=0.70,min_margin=0.015):
  docs=extract(snapshot,limit)
  cats=taxonomy_entries()
  cat_texts=["passage: "+ " > ".join(c) for c in cats]
@@ -36,8 +38,12 @@ def analyze(snapshot,embed,limit=500):
  for i,d in enumerate(docs):
   ranked=sorted(((round(_cos(vectors[n+i],vectors[j]),4),cats[j]) for j in range(n)),reverse=True)
   top=ranked[0] if ranked else None
+  runner=ranked[1][0] if len(ranked)>1 else 0.0
+  confident=bool(top and top[0]>=min_score and top[0]-runner>=min_margin)
   out.append({**d,"taxonomy_candidates":[{"path":list(path),"similarity":score} for score,path in ranked[:3]],
-   "category_status":"unverified_proposal"})
+   "proposed_category":list(top[1]) if confident else None,
+   "category_status":"review_candidate" if confident else "abstain_low_similarity_or_margin",
+   "category_margin":round(top[0]-runner,4) if top else None})
  pairs=[]
  for i,d in enumerate(docs):
   ranked=sorted(((round(_cos(vectors[n+i],vectors[n+j]),4),j) for j in range(len(docs))
@@ -48,10 +54,12 @@ def analyze(snapshot,embed,limit=500):
       "status":"semantic_neighbor_not_same_event"})
  pairs.sort(key=lambda x:-x["similarity"])
  return {"schema_version":1,"model":MODEL,"documents":out,"cross_source_neighbors":pairs[:100],
-  "coverage":{"documents":len(out),"taxonomy_paths":len(cats),"neighbor_proposals":len(pairs[:100])},
+  "coverage":{"documents":len(out),"taxonomy_paths":len(cats),"neighbor_proposals":len(pairs[:100]),
+   "category_abstentions":sum(x["proposed_category"] is None for x in out)},
   "limitations":["Taxonomy is an experimental fixed hierarchy, not a validated ontology.",
    "Similarity scores are uncalibrated and labels require manual review.",
    "Semantic neighbors may discuss different events or repeat syndicated content.",
+   "Thresholds are provisional and require a manually labeled benchmark.",
    "No automatic article merge, factual verification, or summary generation."]}
 def main():
  p=argparse.ArgumentParser();p.add_argument("--snapshot",type=Path,required=True)
