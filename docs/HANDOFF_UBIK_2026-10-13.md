@@ -271,3 +271,18 @@ Empirical example: Hurricane Simon/Tropical Storm Rachel titles from Guardian (f
 Added `ingestion/semantic_empirical_audit.py` and `tests/test_semantic_empirical_audit.py`: seeded **uniform random sample of 30 frozen retrieved pairs** for blind human labeling, distinct from biased high/low queue. Next workflow writes `data/discovery/random-semantic-audit.json` in `semantic-topic-review` artifact. **No precision/recall estimate** before manual labels; retrieval-only random sample cannot estimate recall over all document pairs. Evaluate false-positive mechanisms and editorial utility. This is an empirical methodology milestone, not a claim-level validation result.
 
 **Next:** inspect workflow after commit `ec574d5`, retrieve new random sample, annotate independently and compare time/agent/action/target/scope; obtain explicitly authorized article bodies and test source quote pipeline on at least two real publishers before promoting evidence cards. Keep `main` unchanged.
+
+
+## 23. First REAL-source empirical relation case (2026-10-13): Mexico Simon/Rachel
+
+Added `ingestion/curated_evidence_merge.py`, `ingestion/empirical_mx_storms_case.py`, `tests/test_curated_evidence_merge.py`. This is a manually curated empirical packet grounded in **short public excerpts**, NOT licensed complete article texts and NOT an unattended run of `approved_https_fetch.py`. Four public source references: EFE Oct 12 (two deaths), Al Jazeera Oct 12 (at least two; byline Al Jazeera Staff and AP), Associated Press Oct 12 (five), Guardian Oct 13 (five, with agency credits). The apparently conflicting 2-vs-5 counts may reflect reporting updates and/or differences in scope; source excerpts alone do not prove the precise sequence. The module refuses to merge differing curator-supplied event keys, retains URL/publisher/date/origin-group and observations, flags `potential_temporal_update`, emits a **provisional Italian synthesis** and a **curated rule** semantic category `Pulse / Ambiente e clima` with tags for extreme weather, Mexico, civil protection. `publication_approved=false`, `truth_verified=false`, `same_event_verified=false`, `independent_origin_count_verified=null`. **No automatic epistemic relation, no automatic new topic, no production publication.**
+
+Sources:
+- https://efe.com/mundo/2026-10-12/mexico-huracanes-simon-rachel-muertos-danos/
+- https://www.aljazeera.com/news/2026/10/12/two-deaths-reported-as-hurricane-simon-storm-rachel-batter-mexicos-coast
+- https://apnews.com/article/cc01ec735f4ff7c11798bc9066dc1879
+- https://www.theguardian.com/world/2026/oct/13/mexico-hurricane-simon-tropical-storm-rachel-kill-five-pacific-coast
+
+The global pilot now writes `data/discovery/empirical-mexico-storms-case.json` to the `global-discovery-pilot` artifact. Verify latest run after commit `50d80b8` and test correction `0d4e470` before asserting it succeeded.
+
+**Critical architecture caveat:** this packet is a curated research proof-of-concept and does not mean the autonomous acquisition→claim extraction→semantic relation→synthesis→classification chain is empirically validated. Actual authorized full texts, source authenticity checks, time-normalized claims, independent human labeling, error measurements and publisher-rights approval remain necessary. Do not silently count syndications as independent sources or transform time-different counts into factual contradictions.
