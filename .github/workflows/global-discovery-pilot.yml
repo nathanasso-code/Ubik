@@ -133,8 +133,9 @@ jobs:
       - name: Evaluate lexical evidence ranking on SciFact annotated dev set
         continue-on-error: true
         run: python -m ingestion.scifact_gold_baseline --output data/discovery/scifact-dev-baseline.json
+      - name: Install semantic benchmark dependency
+        run: python -m pip install 'sentence-transformers>=3,<6'
       - name: Compare multilingual semantic vs lexical evidence retrieval on SciFact
-        continue-on-error: true
         run: python -m ingestion.scifact_semantic_comparison --output data/discovery/scifact-semantic-comparison.json
       - name: Audit mandatory global discovery channels
         run: python -m ingestion.global_coverage_contract --registry config/source-registry.global-pilot.json --rss data/discovery/global-rss-pilot.json --output data/discovery/global-coverage-contract.json
