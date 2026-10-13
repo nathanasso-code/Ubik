@@ -8,13 +8,14 @@ def rights(url,*,license_id=None,license_evidence_url=None,verified=False,
     restrictions=restrictions or []
     license_ok=bool(verified and license_id in OPEN and license_evidence_url)
     # Domain is merely a discovery hint, never permission.
-    candidates=('wikinews.org' in host or host.endswith('arxiv.org'))
+    candidates=(host.endswith('wikinews.org') or host.endswith('arxiv.org') or host.endswith('eea.europa.eu'))
     return {'url':url,'license_id':license_id or 'UNKNOWN',
       'license_evidence_url':license_evidence_url,
       'license_verified':bool(verified),'analysis_permission_confirmed':bool(analysis_permission),
       'store_full_text':license_ok and not restrictions,
       'display_full_text':license_ok and not restrictions,
       'candidate_for_license_review':candidates and not license_ok,
+      'license_policy_hint_url': ('https://www.eea.europa.eu/en/legal-notice' if host.endswith('eea.europa.eu') else ('https://en.wikinews.org/wiki/Wikinews:Copyright' if host.endswith('wikinews.org') else ('https://info.arxiv.org/help/license/index.html' if host.endswith('arxiv.org') else None))),
       'restrictions':restrictions,'attribution_required':license_id in {'CC-BY-4.0','CC-BY-2.5','CC-BY-SA-4.0'},
       'rights_status':'verified_reuse' if license_ok and not restrictions else 'review_required',
       'note':'Per-item verification required; public accessibility does not grant republication rights.'}
