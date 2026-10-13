@@ -29,7 +29,7 @@ OBSERVATIONS=[
   "evidence_excerpt":"Around 150 to 200 Intermarché stores were hit"},
  {"event_key":"france-refrigeration-cyberattack-2026-10-12",
   "url":"https://www.reuters.com/business/retail-consumer/french-supermarket-chain-intermarche-hit-by-cyberattack-150-stories-targeted-2026-10-12/",
-  "publisher":"Reuters","origin_group":"Reuters","observed_at":"2026-10-12T20:00:00Z",
+  "publisher":"Reuters","origin_group":"Reuters","observed_at":"2026-10-12",
   "claim_key":"carrefour_affected_stores","value":80,
   "claim":"Reuters attributed a figure of 80 affected supermarkets to Carrefour.",
   "evidence_excerpt":"Carrefour said 80 of its supermarkets had been hit"}
