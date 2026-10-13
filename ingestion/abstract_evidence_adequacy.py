@@ -28,7 +28,7 @@ def qualify(text,*,kind='description'):
  if level=='A':
   for i,s in enumerate(sentences):
    if RESULT.search(s) and (NUMBER.search(s) or METHOD.search(s) or len(s.split())>=12):
-    candidates.append({'sentence_index':i,'evidence_excerpt':s[:420],
+    candidates.append({'sentence_index':i,'evidence_excerpt':s[:160],
      'status':'source_sentence_candidate_not_verified'})
  return {'level':level,'kind':kind,'word_count':words,'sentence_count':len(sentences),
   'signals':{'method':has_method,'result':has_result,'numeric':has_number,'uncertainty':has_uncertainty},
@@ -48,7 +48,7 @@ def analyze(snapshot):
    'claim_sentence_candidates':sum(len(r['adequacy']['claim_candidates']) for r in results)},
   'documents':results,'limitations':['Heuristic English/Italian cues only; requires labeled evaluation.',
    'RSS description is not assumed to be a scientific abstract.',
-   'Evidence excerpts are short source sentences, not verified factual claims.',
+   'Evidence excerpts are bounded to 160 characters and are not verified factual claims.',
    'Levels express text suitability, not source truthfulness.']}
 def main():
  p=argparse.ArgumentParser();p.add_argument('--snapshot',type=Path,required=True)
