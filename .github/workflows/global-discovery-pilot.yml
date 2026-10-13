@@ -36,6 +36,8 @@ on:
       - 'ingestion/live_get_text_probe.py'
       - 'ingestion/public_text_transient_analysis.py'
       - 'ingestion/abstract_evidence_adequacy.py'
+      - 'ingestion/cross_source_evidence_review.py'
+      - 'tests/test_cross_source_evidence_review.py'
       - 'tests/test_abstract_evidence_adequacy.py'
       - 'ingestion/persistent_discovery_ledger.py'
       - 'ingestion/topic_evidence_qualification.py'
@@ -100,6 +102,8 @@ jobs:
         run: python -m ingestion.evidence_card_fixture --output data/discovery/synthetic-evidence-review-card.json
       - name: Test informative abstract adequacy gate
         run: python -m unittest discover -s tests -p 'test_abstract_evidence_adequacy.py'
+      - name: Test cross-source evidence relation candidates
+        run: python -m unittest discover -s tests -p 'test_cross_source_evidence_review.py'
       - name: Collect diverse publisher feeds without topic seed
         run: python -m ingestion.global_rss_pilot --output data/discovery/global-rss-pilot.json
       - name: Discover documents via arXiv Europe PMC and Wikinews public APIs
@@ -110,6 +114,8 @@ jobs:
         run: python -m ingestion.europe_pmc_licensed_texts --api data/discovery/global-api-discovery.json --output data/discovery/europe-pmc-text-results.json --texts data/discovery/licensed-papers
       - name: Qualify abstracts and descriptions for claim-level evidence
         run: python -m ingestion.abstract_evidence_adequacy --snapshot data/discovery/global-rss-pilot.json --output data/discovery/abstract-evidence-adequacy.json
+      - name: Compare grounded abstract claim sentences across publishers
+        run: python -m ingestion.cross_source_evidence_review --adequacy data/discovery/abstract-evidence-adequacy.json --output data/discovery/cross-source-evidence-review.json
       - name: Audit mandatory global discovery channels
         run: python -m ingestion.global_coverage_contract --registry config/source-registry.global-pilot.json --rss data/discovery/global-rss-pilot.json --output data/discovery/global-coverage-contract.json
       - name: Attempt live Wikinews article text extraction via MediaWiki API
@@ -193,6 +199,7 @@ jobs:
             data/discovery/live-get-text-access.json
             data/discovery/public-text-analysis.json
             data/discovery/abstract-evidence-adequacy.json
+            data/discovery/cross-source-evidence-review.json
             data/discovery/global-candidates-pilot.json
             data/discovery/blind-relations-review.json
             data/discovery/global-event-pairs-review.json
