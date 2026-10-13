@@ -34,6 +34,7 @@ on:
       - 'ingestion/transparent_corpus_catalog.py'
       - 'ingestion/http_access_probe.py'
       - 'ingestion/live_get_text_probe.py'
+      - 'ingestion/public_text_transient_analysis.py'
       - 'ingestion/persistent_discovery_ledger.py'
       - 'ingestion/topic_evidence_qualification.py'
       - 'ingestion/dual_topic_router.py'
@@ -113,6 +114,8 @@ jobs:
         run: python -m ingestion.http_access_probe data/discovery/global-rss-pilot.json --output data/discovery/http-access-probe.json --max-urls 90
       - name: Test live article GET text access with robots checks
         run: python -m ingestion.live_get_text_probe data/discovery/global-rss-pilot.json --output data/discovery/live-get-text-access.json --max-urls 100
+      - name: Analyze publicly readable article bodies transiently
+        run: python -m ingestion.public_text_transient_analysis --snapshot data/discovery/global-rss-pilot.json --output data/discovery/public-text-analysis.json --limit 150
       - name: Discover candidate terms globally
         run: python -m ingestion.global_discovery data/discovery/global-rss-pilot.json --output data/discovery/global-candidates-pilot.json
       - name: Discover unseeded document co-mention hypotheses
@@ -182,6 +185,7 @@ jobs:
             data/discovery/rss-evidence-audit.json
             data/discovery/http-access-probe.json
             data/discovery/live-get-text-access.json
+            data/discovery/public-text-analysis.json
             data/discovery/global-candidates-pilot.json
             data/discovery/blind-relations-review.json
             data/discovery/global-event-pairs-review.json
