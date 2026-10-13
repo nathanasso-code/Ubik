@@ -29,6 +29,8 @@ on:
       - 'ingestion/transparent_corpus_catalog.py'
       - 'ingestion/http_access_probe.py'
       - 'ingestion/live_get_text_probe.py'
+      - 'ingestion/persistent_discovery_ledger.py'
+      - 'tests/test_persistent_discovery_ledger.py'
       - 'ingestion/render_corpus_feed.py'
       - 'tests/test_transparent_corpus_catalog.py'
       - 'config/source-registry.global-pilot.json'
@@ -62,6 +64,15 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Restore prior persistent corpus
+        uses: actions/cache/restore@v4
+        with:
+          path: data/persistent
+          key: ubik-corpus-ledger-${{ github.run_id }}
+          restore-keys: |
+            ubik-corpus-ledger-
+      - name: Run persistent ledger tests
+        run: python -m unittest discover -s tests -p 'test_persistent_discovery_ledger.py'
       - name: Run global discovery unit tests
         run: python -m unittest discover -s tests -p 'test_global*.py' && python -m unittest discover -s tests -p 'test_hybrid*.py' && python -m unittest discover -s tests -p 'test_blind*.py'
       - name: Run source acquisition and claim pipeline safety tests (mocked, no live article fetch)
@@ -90,6 +101,13 @@ jobs:
         run: python -m ingestion.global_social_followup --candidates data/discovery/global-candidates-pilot.json --output data/discovery/global-social-followup.json --max-terms 6 --limit 20 --live
       - name: Join publisher and social-discovered document links
         run: python -m ingestion.hybrid_document_links --rss data/discovery/global-rss-pilot.json --social data/discovery/global-social-followup.json --output data/discovery/global-hybrid-links.json
+      - name: Merge current RSS, social and GET evidence into persistent corpus
+        run: python -m ingestion.persistent_discovery_ledger --previous data/persistent/corpus.json --rss data/discovery/global-rss-pilot.json --hybrid data/discovery/global-hybrid-links.json --access data/discovery/live-get-text-access.json --output data/persistent/corpus.json
+      - name: Save updated persistent corpus for subsequent runs
+        uses: actions/cache/save@v4
+        with:
+          path: data/persistent
+          key: ubik-corpus-ledger-${{ github.run_id }}
       - name: Propose contextual hashtag links to existing topics
         run: python -m ingestion.hashtag_topic_routing --social data/discovery/global-social-followup.json --catalog data/catalog.json --output data/discovery/global-hashtag-topic-review.json
       - name: Show hashtag-topic review candidates with evidence
@@ -132,6 +150,7 @@ jobs:
             data/discovery/global-cards-preview.md
             data/discovery/global-social-followup.json
             data/discovery/global-hybrid-links.json
+            data/persistent/corpus.json
             data/discovery/global-hashtag-topic-review.json
           if-no-files-found: warn
           retention-days: 14
