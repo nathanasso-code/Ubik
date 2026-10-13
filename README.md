@@ -6,6 +6,8 @@ Piattaforma di informazione topic-first, scoperta multicanale delle fonti e disc
 
 **Leggere prima:** [Dossier di continuità e sviluppo — 13 ottobre 2026](docs/HANDOFF_UBIK_2026-10-13.md).\n\nStorico precedente: [Dossier del 12 ottobre](docs/HANDOFF_UBIK_2026-10-12.md).
 
+**Aggiornamento verificato del corpus e dei diritti (13 ottobre 2026):** [stato implementato, testato, empirico e progettato](docs/STATUS_CORPUS_RIGHTS_SEMANTICS_2026-10-13.md).
+
 Poi consultare:
 - [Storico e stato precedente](docs/START_HERE_UBIK.md)
 - [Architettura core](docs/CORE_ARCHITECTURE.md)
