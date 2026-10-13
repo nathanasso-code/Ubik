@@ -28,13 +28,24 @@ jobs:
               print("No source bodies acquired; preserving rate-limit outcome without generating misleading empty-card metrics.")
               sys.exit(0)
           PY
-          python -m ingestion.open_corpus_analysis data/discovery/open-text-corpus-private.json --output data/discovery/open-text-analysis-private.json
+          if python - <<'PY'
+          import json,sys
+          from pathlib import Path
+          data=json.loads(Path('data/discovery/open-text-corpus-private.json').read_text())
+          sys.exit(0 if data.get('acquired',0)>0 else 1)
+          PY
+          then
+            python -m ingestion.open_corpus_analysis data/discovery/open-text-corpus-private.json --output data/discovery/open-text-analysis-private.json
+          fi
       - name: Export privacy- and rights-conscious metrics and card summaries
         run: |
           python - <<'PY'
           import json
           from pathlib import Path
           source=Path("data/discovery/open-text-analysis-private.json")
+          if not source.exists():
+              print('No corpus analysis generated: source API unavailable or rate-limited; see acquisition status')
+              raise SystemExit(0)
           d=json.loads(source.read_text())
           report={k:v for k,v in d.items() if k not in ("claim_candidates",)}
           for card in report["cards"]:
