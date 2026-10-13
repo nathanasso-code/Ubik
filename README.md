@@ -17,3 +17,8 @@ Poi consultare:
 - [Contratti di acquisizione](ingestion/README.md)
 
 Branch di sviluppo: `develop/ubik-core`. La documentazione descrive anche funzioni non ancora distribuite: verificare codice, test e GitHub Actions prima di dichiararle operative. Non modificare `main` o il database di produzione senza controlli di compatibilità.
+
+
+### Evidenze testuali e relazioni semantiche (ottobre 2026)
+
+La politica di adeguatezza A/B/C per abstract e descrizioni, il confronto prudente di passaggi tra fonti, i risultati empirici e i limiti di verifica sono documentati in [Evidence Adequacy and Semantic Relations](docs/EVIDENCE_ADEQUACY_AND_SEMANTIC_RELATIONS_2026-10-13.md). La disponibilità di testo e la pubblicabilità rimangono distinte.
