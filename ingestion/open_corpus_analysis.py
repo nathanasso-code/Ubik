@@ -6,6 +6,7 @@ claim candidates; no truth verification, source independence or publication.
 import argparse,collections,json,math,re
 from pathlib import Path
 from ingestion.source_claim_candidates import claim_candidates
+from ingestion.open_corpus_event_guard import event_guard, annotate_cards
 
 STOP={"the","and","with","from","after","that","this","into","over","under","for","have","has","was","were","are","its","their","said","says","will","about","more","than","new","news","world","wikinews"}
 def terms(text):
@@ -35,7 +36,7 @@ def analyze(corpus,*,max_pairs=400):
     for i in range(len(docs)):
         for j in range(i+1,len(docs)):
             score=similarity(indexed[i],indexed[j])
-            if score>=0.34 and len(indexed[i]&indexed[j])>=2:
+            if score>=0.34 and len(indexed[i]&indexed[j])>=2 and event_guard(docs[i]["title"],docs[j]["title"])["same_event_candidate"] is not False:
                 pairs.append((score,i,j))
     pairs.sort(reverse=True)
     # Strict complete-link-like selection: each added item must match all cluster members.
@@ -45,7 +46,7 @@ def analyze(corpus,*,max_pairs=400):
         group=[i,j];assigned.update(group)
         for k in range(len(docs)):
             if k in assigned:continue
-            if all(similarity(indexed[k],indexed[m])>=0.34 and len(indexed[k]&indexed[m])>=2 for m in group):
+            if all(similarity(indexed[k],indexed[m])>=0.34 and len(indexed[k]&indexed[m])>=2 and event_guard(docs[k]["title"],docs[m]["title"])["same_event_candidate"] is not False for m in group):
                 group.append(k);assigned.add(k)
         groups.append(group)
     for i in range(len(docs)):
@@ -62,6 +63,7 @@ def analyze(corpus,*,max_pairs=400):
             summary="Documento acquisito per l'analisi delle affermazioni. Non sono stati trovati altri titoli sufficientemente simili nel campione."
         cards.append({"id":f"corpus-card-{n+1}","title":members[0]["title"],
                       "source_urls":[d["url"] for d in members],
+                      "source_titles":[d["title"] for d in members],
                       "source_count":len(members),
                       "category":category,"category_method":"closed_lexical_baseline",
                       "synthesis_it":summary,
@@ -74,9 +76,10 @@ def analyze(corpus,*,max_pairs=400):
             "documents_acquired":len(docs),"documents_with_claim_candidates":sum(bool(claims_by_url.get(d["url"])) for d in docs),
             "claim_candidate_count":sum(len(v) for v in claims_by_url.values()),
             "title_similarity_pairs":len(pairs),"multi_source_candidate_clusters":sum(len(g)>1 for g in groups),
-            "cards":cards,"claim_candidates":claims,
+            "cards":annotate_cards(cards),"claim_candidates":claims,
             "automatic_publication":False,
             "limitations":["Clustering and taxonomy use lexical baselines, not validated semantic inference.",
+                           "Known adjacent sporting rounds and primary/general elections are prevented from being mistaken as one event.",
                            "Synthesis is a cautious template, not an event-specific generated account.",
                            "Sentence candidates are not verified claims or independent corroboration."]}
 def main():
