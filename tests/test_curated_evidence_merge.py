@@ -17,5 +17,6 @@ class CuratedMergeTests(unittest.TestCase):
         with self.assertRaises(ValueError):assemble_case(modified)
     def test_source_agency_reuse_not_independent(self):
         case=build()
-        self.assertLessEqual(case["declared_origin_groups"],case["source_count"])\n        self.assertIsNone(case["independent_origin_count_verified"])
+        self.assertLessEqual(case["declared_origin_groups"],case["source_count"])
+        self.assertIsNone(case["independent_origin_count_verified"])
 if __name__=="__main__":unittest.main()
