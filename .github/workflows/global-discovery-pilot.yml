@@ -30,6 +30,8 @@ on:
       - 'ingestion/http_access_probe.py'
       - 'ingestion/live_get_text_probe.py'
       - 'ingestion/persistent_discovery_ledger.py'
+      - 'ingestion/topic_evidence_qualification.py'
+      - 'ingestion/dual_topic_router.py'
       - 'tests/test_persistent_discovery_ledger.py'
       - 'ingestion/render_corpus_feed.py'
       - 'tests/test_transparent_corpus_catalog.py'
@@ -103,6 +105,8 @@ jobs:
         run: python -m ingestion.hybrid_document_links --rss data/discovery/global-rss-pilot.json --social data/discovery/global-social-followup.json --output data/discovery/global-hybrid-links.json
       - name: Merge current RSS, social and GET evidence into persistent corpus
         run: python -m ingestion.persistent_discovery_ledger --previous data/persistent/corpus.json --rss data/discovery/global-rss-pilot.json --hybrid data/discovery/global-hybrid-links.json --access data/discovery/live-get-text-access.json --output data/persistent/corpus.json
+      - name: Qualify retained text for semantic topic routing
+        run: python -m ingestion.topic_evidence_qualification data/persistent/corpus.json --output data/discovery/topic-evidence-quality.json
       - name: Save updated persistent corpus for subsequent runs
         uses: actions/cache/save@v4
         with:
@@ -151,6 +155,7 @@ jobs:
             data/discovery/global-social-followup.json
             data/discovery/global-hybrid-links.json
             data/persistent/corpus.json
+            data/discovery/topic-evidence-quality.json
             data/discovery/global-hashtag-topic-review.json
           if-no-files-found: warn
           retention-days: 14
@@ -171,6 +176,8 @@ jobs:
         with:
           name: global-discovery-pilot
           path: data/discovery
+      - name: Route qualified documents to curated and emergent topic candidates
+        run: python -m ingestion.dual_topic_router --quality data/discovery/topic-evidence-quality.json --catalog data/catalog.json --output data/discovery/dual-topic-proposals.json --live-model
       - name: Discover blind multilingual document neighbors on frozen RSS
         run: python -m ingestion.blind_semantic_neighbors data/discovery/global-rss-pilot.json --output data/discovery/blind-semantic-neighbors.json --live-model
       - name: Join semantic neighbor candidates to RSS evidence coverage
@@ -198,6 +205,7 @@ jobs:
           name: semantic-topic-review
           path: |
             data/discovery/semantic-topic-review.json
+            data/discovery/dual-topic-proposals.json
             data/discovery/blind-semantic-neighbors.json
             data/discovery/rss-semantic-evidence-audit.json
             data/discovery/transparent-corpus-catalog.json
