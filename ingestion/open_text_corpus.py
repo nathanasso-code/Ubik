@@ -4,7 +4,7 @@ Wikinews articles are generally CC BY 2.5; verify page-specific attribution,
 copyright exceptions and media before any republication. Text is processed for
 research, never published verbatim. API-only, no login, no paywall bypass.
 """
-import argparse,hashlib,html,json,re,time,urllib.parse,urllib.request
+import argparse,hashlib,html,json,re,time,urllib.error,urllib.parse,urllib.request
 from html.parser import HTMLParser
 from pathlib import Path
 
@@ -26,20 +26,30 @@ def api(params,*,transport=None):
     url=API+"?"+urllib.parse.urlencode(params)
     if transport:return transport(params)
     req=urllib.request.Request(url,headers={"User-Agent":USER_AGENT,"Accept":"application/json"})
-    with urllib.request.urlopen(req,timeout=12) as response:
+    try:
+        response_ctx=urllib.request.urlopen(req,timeout=12)
+    except urllib.error.HTTPError as error:
+        if error.code in (429,503):
+            raise RuntimeError(f"Public API rate-limited or temporarily unavailable (HTTP {error.code}); respect Retry-After; do not retry aggressively") from error
+        raise
+    with response_ctx as response:
         if response.status!=200:raise RuntimeError("API error")
         data=response.read(2_000_001)
         if len(data)>2_000_000:raise RuntimeError("Oversized API response")
         return json.loads(data)
 def collect(*,limit=60,transport=None):
     if not 1<=limit<=120:raise ValueError("Invalid article budget")
-    results=[];seen=set();continuation={}
+    results=[];seen=set();continuation={};stop_reason=None
     while len(results)<limit:
         query={"action":"query","list":"categorymembers","cmtitle":"Category:Published",
                "cmtype":"page","cmlimit":min(50,limit-len(results)+15),
                "cmsort":"timestamp","cmdir":"desc"}
         query.update(continuation)
-        listing=api(query,transport=transport)
+        try:
+            listing=api(query,transport=transport)
+        except (RuntimeError,urllib.error.HTTPError,urllib.error.URLError,TimeoutError) as error:
+            stop_reason=str(error)
+            break
         members=listing.get("query",{}).get("categorymembers",[])
         for entry in members:
             if len(results)>=limit:break
@@ -66,6 +76,8 @@ def collect(*,limit=60,transport=None):
         if not continuation or not members:break
         if not transport:time.sleep(0.4)
     return {"schema_version":1,"requested":limit,"acquired":len(results),
+            "collection_status":"complete" if len(results)>=limit else "partial",
+            "stop_reason":stop_reason,
             "source":"Wikinews MediaWiki public API","documents":results,
             "publication_approved":False,
             "limitations":["Category membership and date coverage are not guaranteed.",
@@ -77,5 +89,5 @@ def main():
     a=p.parse_args();r=collect(limit=a.limit)
     a.output.parent.mkdir(parents=True,exist_ok=True)
     a.output.write_text(json.dumps(r,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
-    print(json.dumps({"requested":r["requested"],"acquired":r["acquired"]}))
+    print(json.dumps({"requested":r["requested"],"acquired":r["acquired"],"collection_status":r["collection_status"],"stop_reason":r["stop_reason"]}))
 if __name__=="__main__":main()
