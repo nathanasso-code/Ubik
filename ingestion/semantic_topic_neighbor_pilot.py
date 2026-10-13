@@ -24,7 +24,7 @@ def extract(snapshot,limit=500):
   if not isinstance(url,str) or not url.startswith("http") or not isinstance(title,str) or not isinstance(desc,str):continue
   if url in seen or len(title)<12:continue
   seen.add(url)
-  out.append({"url":url,"source_id":x.get("source_id"),"title":title[:250],"description":desc[:900]})
+  out.append({"url":url,"source_id":x.get("source_id"),"published_at":x.get("published_at") or x.get("published") or x.get("date"),"title":title[:250],"description":desc[:900]})
   if len(out)>=limit:break
  return out
 def analyze(snapshot,embed,limit=500,*,min_score=0.70,min_margin=0.015):
