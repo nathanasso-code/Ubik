@@ -1,4 +1,6 @@
 import hashlib,unittest
+from unittest.mock import patch
+from urllib.error import HTTPError
 from ingestion.open_text_corpus import collect
 from ingestion.open_corpus_analysis import analyze
 def fake_api(params):
@@ -25,6 +27,12 @@ class CorpusTests(unittest.TestCase):
         r=analyze({"documents":d})
         self.assertTrue(all(c["source_count"]==1 for c in r["cards"]))
         self.assertFalse(r["automatic_publication"])
+    def test_rate_limit_returns_partial_status_without_fabricating_docs(self):
+        with patch("ingestion.open_text_corpus.api",side_effect=RuntimeError("Public API rate-limited (HTTP 429)")):
+            c=collect(limit=3)
+        self.assertEqual(c["acquired"],0)
+        self.assertEqual(c["collection_status"],"partial")
+        self.assertIn("429",c["stop_reason"])
     def test_invalid_budget(self):
         with self.assertRaises(ValueError):collect(limit=121,transport=fake_api)
 if __name__=="__main__":unittest.main()
