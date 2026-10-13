@@ -18,6 +18,13 @@ class CorpusTests(unittest.TestCase):
         self.assertGreater(r["claim_candidate_count"],0)
         self.assertFalse(r["automatic_publication"])
         self.assertTrue(all(not x["claims_verified"] for x in r["cards"]))
+    def test_distinct_real_world_events_never_merge_from_title_overlap(self):
+        titles=["Caloundra win round 3 game in Australian soccer league", "Caloundra lose round 2 game in Australian soccer league", "Mamdani wins New York City mayoral election", "Cuomo concedes to Mamdani in Democratic primary election for New York City mayor"]
+        d=[{"url":f"https://example.org/{i}", "title":t, "text":(t+". The report records an event and quotes several witnesses. ")*15} for i,t in enumerate(titles)]
+        for item in d:item["sha256"]=hashlib.sha256(item["text"].encode()).hexdigest()
+        r=analyze({"documents":d})
+        self.assertTrue(all(c["source_count"]==1 for c in r["cards"]))
+        self.assertFalse(r["automatic_publication"])
     def test_invalid_budget(self):
         with self.assertRaises(ValueError):collect(limit=121,transport=fake_api)
 if __name__=="__main__":unittest.main()
