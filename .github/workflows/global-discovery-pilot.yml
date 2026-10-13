@@ -17,6 +17,8 @@ on:
       - 'ingestion/evidence_review_cards.py'
       - 'ingestion/evidence_card_fixture.py'
       - 'ingestion/semantic_empirical_audit.py'
+      - 'ingestion/curated_evidence_merge.py'
+      - 'ingestion/empirical_mx_storms_case.py'
       - 'ingestion/global_event_pairs.py'
       - 'ingestion/global_cards.py'
       - 'ingestion/global_social_followup.py'
@@ -36,6 +38,7 @@ on:
       - 'tests/test_source_claim_pipeline.py'
       - 'tests/test_evidence_review_cards.py'
       - 'tests/test_semantic_empirical_audit.py'
+      - 'tests/test_curated_evidence_merge.py'
       - 'tests/test_global_event_pairs.py'
       - 'tests/test_global_cards.py'
       - 'tests/test_hybrid_discovery.py'
@@ -57,6 +60,10 @@ jobs:
         run: python -m unittest discover -s tests -p 'test_global*.py' && python -m unittest discover -s tests -p 'test_hybrid*.py' && python -m unittest discover -s tests -p 'test_blind*.py'
       - name: Run source acquisition and claim pipeline safety tests (mocked, no live article fetch)
         run: python -m unittest discover -s tests -p 'test_approved*.py' && python -m unittest discover -s tests -p 'test_source_claim_pipeline.py' && python -m unittest discover -s tests -p 'test_epistemic_evidence_gate.py' && python -m unittest discover -s tests -p 'test_evidence_review_cards.py'
+      - name: Run curated empirical evidence merge tests
+        run: python -m unittest discover -s tests -p 'test_curated_evidence_merge.py'
+      - name: Generate source-grounded empirical case from short public excerpts
+        run: python -m ingestion.empirical_mx_storms_case --output data/discovery/empirical-mexico-storms-case.json
       - name: Generate synthetic evidence-review card fixture (never real news)
         run: python -m ingestion.evidence_card_fixture --output data/discovery/synthetic-evidence-review-card.json
       - name: Collect diverse publisher feeds without topic seed
@@ -100,6 +107,7 @@ jobs:
         with:
           name: global-discovery-pilot
           path: |
+            data/discovery/empirical-mexico-storms-case.json
             data/discovery/synthetic-evidence-review-card.json
             data/discovery/global-rss-pilot.json
             data/discovery/global-candidates-pilot.json
