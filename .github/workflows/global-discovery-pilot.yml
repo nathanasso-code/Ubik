@@ -26,6 +26,8 @@ on:
       - 'ingestion/hashtag_topic_routing.py'
       - 'ingestion/global_rss_pilot.py'
       - 'ingestion/rss_evidence_audit.py'
+      - 'ingestion/transparent_corpus_catalog.py'
+      - 'tests/test_transparent_corpus_catalog.py'
       - 'config/source-registry.global-pilot.json'
       - 'tests/test_global_discovery.py'
       - 'tests/test_blind_relation_hypotheses.py'
@@ -149,6 +151,10 @@ jobs:
         run: python -m ingestion.semantic_empirical_audit data/discovery/blind-semantic-neighbors.json --output data/discovery/random-semantic-audit.json --seed 20261013 --sample-size 30
       - name: Build balanced manual review queue from frozen semantic pairs
         run: python -m ingestion.epistemic_review_queue data/discovery/blind-semantic-neighbors.json --output data/discovery/semantic-pair-review-queue.json
+      - name: Test and generate transparent editorial catalog from frozen corpus
+        run: |
+          python -m unittest discover -s tests -p 'test_transparent_corpus_catalog.py'
+          python -m ingestion.transparent_corpus_catalog data/discovery/global-rss-pilot.json --neighbors data/discovery/blind-semantic-neighbors.json --output data/discovery/transparent-corpus-catalog.json
       - name: Generate source-linked semantic card previews for editorial review
         run: python -m ingestion.semantic_discovery_cards data/discovery/semantic-pair-review-queue.json --output data/discovery/semantic-card-previews.json --markdown data/discovery/semantic-card-previews.md
       - name: Evaluate closed-catalog multilingual semantic routing
@@ -164,6 +170,7 @@ jobs:
             data/discovery/semantic-topic-review.json
             data/discovery/blind-semantic-neighbors.json
             data/discovery/rss-semantic-evidence-audit.json
+            data/discovery/transparent-corpus-catalog.json
             data/discovery/random-semantic-audit.json
             data/discovery/semantic-pair-review-queue.json
             data/discovery/semantic-card-previews.json
