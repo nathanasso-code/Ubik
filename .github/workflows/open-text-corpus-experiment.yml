@@ -1,0 +1,49 @@
+name: Open text corpus empirical experiment
+on:
+  workflow_dispatch:
+  push:
+    branches: [develop/ubik-core]
+    paths:
+      - 'ingestion/open_text_corpus.py'
+      - 'ingestion/open_corpus_analysis.py'
+      - 'tests/test_open_corpus_experiment.py'
+      - '.github/workflows/open-text-corpus-experiment.yml'
+permissions:
+  contents: read
+jobs:
+  open-text-experiment:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate corpus parser and end-to-end baseline
+        run: python -m unittest discover -s tests -p 'test_open_corpus_experiment.py'
+      - name: Acquire up to 60 full-text Wikinews articles through public API
+        run: python -m ingestion.open_text_corpus --limit 60 --output data/discovery/open-text-corpus-private.json
+      - name: Run claim extraction, comparison candidates, synthesis and categorization
+        run: python -m ingestion.open_corpus_analysis data/discovery/open-text-corpus-private.json --output data/discovery/open-text-analysis-private.json
+      - name: Export privacy- and rights-conscious metrics and card summaries
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          source=Path("data/discovery/open-text-analysis-private.json")
+          d=json.loads(source.read_text())
+          report={k:v for k,v in d.items() if k not in ("claim_candidates",)}
+          for card in report["cards"]:
+              card.pop("claim_candidates",None)
+          out=Path("data/discovery/open-text-experiment-report.json")
+          out.write_text(json.dumps(report,ensure_ascii=False,indent=2)+"\n")
+          print(json.dumps({"documents":d["documents_acquired"],"claim_candidates":d["claim_candidate_count"],"candidate_clusters":d["multi_source_candidate_clusters"],"cards":len(d["cards"])}))
+          PY
+      - name: Preserve metrics and source-linked review cards, not full article bodies
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: open-text-experiment-report
+          path: data/discovery/open-text-experiment-report.json
+          if-no-files-found: warn
+          retention-days: 14
