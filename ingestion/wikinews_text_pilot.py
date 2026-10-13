@@ -34,8 +34,20 @@ def fetch_page(url,*,timeout=10):
  if 'error' in obj or 'parse' not in obj:raise ValueError('MediaWiki parse error')
  parser=Text();parser.feed(obj['parse']['text'])
  return ' '.join(''.join(parser.parts).split())
+def recent_wiki_links(host,*,timeout=10):
+ api='https://'+host+'/w/api.php?'+urllib.parse.urlencode({'action':'query','list':'recentchanges','rcnamespace':'0','rctype':'new','rclimit':'10','format':'json'})
+ with urllib.request.urlopen(urllib.request.Request(api,headers={'User-Agent':'UbikResearchBot/0.1 (ubik.research@gmail.com)'}),timeout=timeout) as response:
+  raw=response.read(100001)
+  if len(raw)>100000:raise ValueError('Recent changes too large')
+  result=json.loads(raw)
+ return [{'url':'https://'+host+'/wiki/'+urllib.parse.quote(x['title'].replace(' ','_')),'title':x['title']} for x in result.get('query',{}).get('recentchanges',[]) if x.get('title')]
 def acquire(snapshot,*,limit=12,fetch=fetch_page):
  items=[x for x in snapshot.get('items',[]) if urllib.parse.urlsplit(x.get('url','')).hostname in HOSTS]
+ # Independent MediaWiki discovery prevents an empty/unsupported RSS feed from silently eliminating this channel.
+ for host in sorted(HOSTS):
+  if not any(urllib.parse.urlsplit(x['url']).hostname==host for x in items):
+   try:items.extend(recent_wiki_links(host))
+   except (OSError,ValueError,TimeoutError,KeyError):pass
  seen=set();outcomes=[]
  for item in items:
   url=item['url']
@@ -50,7 +62,7 @@ def acquire(snapshot,*,limit=12,fetch=fetch_page):
   except (OSError,ValueError,TimeoutError,KeyError) as exc:
    outcomes.append({'url':url,'status':'fetch_failed','error_type':type(exc).__name__})
  return {'schema_version':1,'purpose':'wikinews_full_text_access_pilot',
-  'coverage':{'wiki_links_in_snapshot':len(items),'attempted':len(outcomes),
+  'coverage':{'wiki_links_or_api_discovered':len(items),'attempted':len(outcomes),
    'substantial_text_in_memory':sum(x.get('characters',0)>=500 for x in outcomes)},
   'outcomes':outcomes,'full_text_persisted':False,
   'limitations':['Text extraction alone does not verify republication rights.',
