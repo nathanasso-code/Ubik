@@ -229,6 +229,7 @@ jobs:
             data/discovery/real-claim-relation-audit.json
             data/discovery/scifact-dev-baseline.json
             data/discovery/scifact-semantic-comparison.json
+            data/discovery/semantic-topic-neighbor-pilot.json
             data/discovery/global-candidates-pilot.json
             data/discovery/blind-relations-review.json
             data/discovery/global-event-pairs-review.json
