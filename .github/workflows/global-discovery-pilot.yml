@@ -38,6 +38,8 @@ on:
       - 'ingestion/abstract_evidence_adequacy.py'
       - 'ingestion/cross_source_evidence_review.py'
       - 'ingestion/claim_representation.py'
+      - 'ingestion/claim_pair_benchmark.py'
+      - 'ingestion/claim_relation_audit.py'
       - 'tests/test_claim_representation.py'
       - 'tests/test_cross_source_evidence_review.py'
       - 'tests/test_abstract_evidence_adequacy.py'
@@ -122,6 +124,10 @@ jobs:
         run: python -m ingestion.cross_source_evidence_review --adequacy data/discovery/abstract-evidence-adequacy.json --output data/discovery/cross-source-evidence-review.json
       - name: Build structured source-grounded claim candidates
         run: python -m ingestion.claim_representation --adequacy data/discovery/abstract-evidence-adequacy.json --output data/discovery/structured-claim-candidates.json
+      - name: Run synthetic claim-relation regression examples
+        run: python -m ingestion.claim_pair_benchmark --output data/discovery/synthetic-claim-relation-benchmark.json
+      - name: Audit real cross-source relation candidate coverage
+        run: python -m ingestion.claim_relation_audit --relations data/discovery/cross-source-evidence-review.json --output data/discovery/real-claim-relation-audit.json
       - name: Audit mandatory global discovery channels
         run: python -m ingestion.global_coverage_contract --registry config/source-registry.global-pilot.json --rss data/discovery/global-rss-pilot.json --output data/discovery/global-coverage-contract.json
       - name: Attempt live Wikinews article text extraction via MediaWiki API
@@ -207,6 +213,8 @@ jobs:
             data/discovery/abstract-evidence-adequacy.json
             data/discovery/cross-source-evidence-review.json
             data/discovery/structured-claim-candidates.json
+            data/discovery/synthetic-claim-relation-benchmark.json
+            data/discovery/real-claim-relation-audit.json
             data/discovery/global-candidates-pilot.json
             data/discovery/blind-relations-review.json
             data/discovery/global-event-pairs-review.json
