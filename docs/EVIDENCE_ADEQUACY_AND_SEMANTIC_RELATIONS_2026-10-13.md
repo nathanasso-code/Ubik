@@ -32,3 +32,6 @@ Ubik valuta la **densità e la specificità dell'informazione**, non la lunghezz
 
 ## Contratto di trasparenza
 Distinguere sempre **configurato**, **interrogato**, **documenti restituiti**, **testo letto**, **testo sostanziale**, **affermazioni candidate**, **affermazioni verificate**, **relazioni candidate**, **relazioni validate**. Mai sommare metriche di fasi diverse.
+
+## Rappresentazione delle affermazioni v1 (implementata successivamente)
+Il modulo `ingestion/claim_representation.py` costruisce candidati strutturati dai passaggi A degli abstract: ID stabile, URL, fonte, tipo di evidenza, posizione della frase, hash, breve estratto, predicato lessicale candidato, quantità non ancora associate a una misura, indicatori di negazione e incertezza. I campi `subject`, `object`, `population`, `timeframe`, `location` e `study_id` restano esplicitamente `null` finché non sono inferiti e verificati con strumenti più adatti. Il modulo si astiene su frasi senza relazione riconoscibile. La CI salva `structured-claim-candidates.json` e registra separatamente candidati e affermazioni verificate (inizialmente zero). Questo **non** costituisce ancora estrazione fattuale completa né verifica di contraddizioni.
