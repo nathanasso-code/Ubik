@@ -32,6 +32,9 @@ on:
       - 'ingestion/persistent_discovery_ledger.py'
       - 'ingestion/topic_evidence_qualification.py'
       - 'ingestion/dual_topic_router.py'
+      - 'ingestion/document_rights_registry.py'
+      - 'ingestion/licensed_text_store.py'
+      - 'tests/test_document_rights_registry.py'
       - 'tests/test_persistent_discovery_ledger.py'
       - 'ingestion/render_corpus_feed.py'
       - 'tests/test_transparent_corpus_catalog.py'
@@ -73,6 +76,8 @@ jobs:
           key: ubik-corpus-ledger-${{ github.run_id }}
           restore-keys: |
             ubik-corpus-ledger-
+      - name: Test per-document reuse permissions
+        run: python -m unittest discover -s tests -p 'test_document_rights_registry.py'
       - name: Run persistent ledger tests
         run: python -m unittest discover -s tests -p 'test_persistent_discovery_ledger.py'
       - name: Run global discovery unit tests
@@ -107,6 +112,16 @@ jobs:
         run: python -m ingestion.persistent_discovery_ledger --previous data/persistent/corpus.json --rss data/discovery/global-rss-pilot.json --hybrid data/discovery/global-hybrid-links.json --access data/discovery/live-get-text-access.json --output data/persistent/corpus.json
       - name: Qualify retained text for semantic topic routing
         run: python -m ingestion.topic_evidence_qualification data/persistent/corpus.json --output data/discovery/topic-evidence-quality.json
+      - name: Produce rights-review queue for corpus
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          from ingestion.document_rights_registry import review_corpus
+          result=review_corpus(json.loads(Path('data/persistent/corpus.json').read_text()))
+          Path('data/discovery/document-rights-review.json').write_text(json.dumps(result,ensure_ascii=False,indent=2))
+          print(json.dumps(result['coverage']))
+          PY
       - name: Save updated persistent corpus for subsequent runs
         uses: actions/cache/save@v4
         with:
@@ -156,6 +171,7 @@ jobs:
             data/discovery/global-hybrid-links.json
             data/persistent/corpus.json
             data/discovery/topic-evidence-quality.json
+            data/discovery/document-rights-review.json
             data/discovery/global-hashtag-topic-review.json
           if-no-files-found: warn
           retention-days: 14
@@ -172,6 +188,11 @@ jobs:
       - name: Install multilingual semantic model
         run: python -m pip install 'sentence-transformers>=3,<6'
       - name: Retrieve immutable discovery inputs from this run
+        uses: actions/download-artifact@v4
+        with:
+          name: global-discovery-pilot
+          path: data/discovery
+      - name: Retrieve qualified corpus from discovery artifact
         uses: actions/download-artifact@v4
         with:
           name: global-discovery-pilot
