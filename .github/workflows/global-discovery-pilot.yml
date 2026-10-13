@@ -40,6 +40,7 @@ on:
       - 'ingestion/claim_representation.py'
       - 'ingestion/claim_pair_benchmark.py'
       - 'ingestion/claim_relation_audit.py'
+      - 'ingestion/scifact_gold_baseline.py'
       - 'tests/test_claim_representation.py'
       - 'tests/test_cross_source_evidence_review.py'
       - 'tests/test_abstract_evidence_adequacy.py'
@@ -128,6 +129,9 @@ jobs:
         run: python -m ingestion.claim_pair_benchmark --output data/discovery/synthetic-claim-relation-benchmark.json
       - name: Audit real cross-source relation candidate coverage
         run: python -m ingestion.claim_relation_audit --relations data/discovery/cross-source-evidence-review.json --output data/discovery/real-claim-relation-audit.json
+      - name: Evaluate lexical evidence ranking on SciFact annotated dev set
+        continue-on-error: true
+        run: python -m ingestion.scifact_gold_baseline --output data/discovery/scifact-dev-baseline.json
       - name: Audit mandatory global discovery channels
         run: python -m ingestion.global_coverage_contract --registry config/source-registry.global-pilot.json --rss data/discovery/global-rss-pilot.json --output data/discovery/global-coverage-contract.json
       - name: Attempt live Wikinews article text extraction via MediaWiki API
@@ -215,6 +219,7 @@ jobs:
             data/discovery/structured-claim-candidates.json
             data/discovery/synthetic-claim-relation-benchmark.json
             data/discovery/real-claim-relation-audit.json
+            data/discovery/scifact-dev-baseline.json
             data/discovery/global-candidates-pilot.json
             data/discovery/blind-relations-review.json
             data/discovery/global-event-pairs-review.json
