@@ -16,6 +16,7 @@ on:
       - 'ingestion/source_claim_comparisons.py'
       - 'ingestion/evidence_review_cards.py'
       - 'ingestion/evidence_card_fixture.py'
+      - 'ingestion/semantic_empirical_audit.py'
       - 'ingestion/global_event_pairs.py'
       - 'ingestion/global_cards.py'
       - 'ingestion/global_social_followup.py'
@@ -34,6 +35,7 @@ on:
       - 'tests/test_approved_claim_pipeline.py'
       - 'tests/test_source_claim_pipeline.py'
       - 'tests/test_evidence_review_cards.py'
+      - 'tests/test_semantic_empirical_audit.py'
       - 'tests/test_global_event_pairs.py'
       - 'tests/test_global_cards.py'
       - 'tests/test_hybrid_discovery.py'
@@ -129,6 +131,8 @@ jobs:
           path: data/discovery
       - name: Discover blind multilingual document neighbors on frozen RSS
         run: python -m ingestion.blind_semantic_neighbors data/discovery/global-rss-pilot.json --output data/discovery/blind-semantic-neighbors.json --live-model
+      - name: Generate reproducible random semantic error audit sample
+        run: python -m ingestion.semantic_empirical_audit data/discovery/blind-semantic-neighbors.json --output data/discovery/random-semantic-audit.json --seed 20261013 --sample-size 30
       - name: Build balanced manual review queue from frozen semantic pairs
         run: python -m ingestion.epistemic_review_queue data/discovery/blind-semantic-neighbors.json --output data/discovery/semantic-pair-review-queue.json
       - name: Generate source-linked semantic card previews for editorial review
@@ -145,6 +149,7 @@ jobs:
           path: |
             data/discovery/semantic-topic-review.json
             data/discovery/blind-semantic-neighbors.json
+            data/discovery/random-semantic-audit.json
             data/discovery/semantic-pair-review-queue.json
             data/discovery/semantic-card-previews.json
             data/discovery/semantic-card-previews.md
