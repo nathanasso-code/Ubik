@@ -10,6 +10,10 @@ on:
       - 'ingestion/epistemic_evidence_gate.py'
       - 'ingestion/authorized_source_text.py'
       - 'ingestion/semantic_discovery_cards.py'
+      - 'ingestion/approved_https_fetch.py'
+      - 'ingestion/approved_claim_pipeline.py'
+      - 'ingestion/source_claim_candidates.py'
+      - 'ingestion/source_claim_comparisons.py'
       - 'ingestion/global_event_pairs.py'
       - 'ingestion/global_cards.py'
       - 'ingestion/global_social_followup.py'
@@ -24,6 +28,9 @@ on:
       - 'tests/test_epistemic_evidence_gate.py'
       - 'tests/test_authorized_source_text.py'
       - 'tests/test_semantic_discovery_cards.py'
+      - 'tests/test_approved_https_fetch.py'
+      - 'tests/test_approved_claim_pipeline.py'
+      - 'tests/test_source_claim_pipeline.py'
       - 'tests/test_global_event_pairs.py'
       - 'tests/test_global_cards.py'
       - 'tests/test_hybrid_discovery.py'
@@ -43,6 +50,8 @@ jobs:
           python-version: '3.12'
       - name: Run global discovery unit tests
         run: python -m unittest discover -s tests -p 'test_global*.py' && python -m unittest discover -s tests -p 'test_hybrid*.py' && python -m unittest discover -s tests -p 'test_blind*.py'
+      - name: Run source acquisition and claim pipeline safety tests (mocked, no live article fetch)
+        run: python -m unittest discover -s tests -p 'test_approved*.py' && python -m unittest discover -s tests -p 'test_source_claim_pipeline.py' && python -m unittest discover -s tests -p 'test_epistemic_evidence_gate.py'
       - name: Collect diverse publisher feeds without topic seed
         run: python -m ingestion.global_rss_pilot --output data/discovery/global-rss-pilot.json
       - name: Discover candidate terms globally
