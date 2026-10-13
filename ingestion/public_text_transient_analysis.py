@@ -5,6 +5,7 @@ from urllib.parse import urlsplit
 from ingestion.live_get_text_probe import Extractor
 from ingestion.approved_https_fetch import fetch_one,USER_AGENT
 from urllib.robotparser import RobotFileParser
+from ingestion.abstract_evidence_adequacy import qualify
 STOP={'the','and','for','with','from','this','that','have','been','were','are','was','una','della','delle','degli','per','con','che','del','alla'}
 def analyze(snapshot,*,limit=150,per_host=12,fetch=fetch_one):
  results=[];counts=collections.Counter();seen=set()
@@ -27,7 +28,12 @@ def analyze(snapshot,*,limit=150,per_host=12,fetch=fetch_one):
    text=article if len(article)>=400 else visible
    words=re.findall(r'\b[^\W\d_][\w-]{3,}\b',text.lower())
    frequent=[{'term':term,'count':n} for term,n in collections.Counter(w for w in words if w not in STOP).most_common(15)]
-   row.update({'status':'analyzed_in_memory','text_chars':len(text),'word_count':len(words),
+   adequacy=qualify(text,kind='transient_public_body')
+   # Do not retain source excerpts from non-licensed article bodies.
+   claim_signals={'adequacy_level':adequacy['level'],'source_sentence_candidates':len(adequacy['claim_candidates']),
+    'method_signal':adequacy['signals']['method'],'result_signal':adequacy['signals']['result'],
+    'numeric_signal':adequacy['signals']['numeric'],'uncertainty_signal':adequacy['signals']['uncertainty']}
+   row.update({'claim_evidence_signals':claim_signals,'status':'analyzed_in_memory','text_chars':len(text),'word_count':len(words),
     'article_element_chars':len(article),'sha256':hashlib.sha256(text.encode()).hexdigest(),
     'semantic_term_candidates':frequent,'full_text_persisted':False,
     'complete_article_verified':False,'republication_rights_verified':False})
@@ -36,9 +42,12 @@ def analyze(snapshot,*,limit=150,per_host=12,fetch=fetch_one):
   results.append(row)
  return {'schema_version':1,'purpose':'public_article_transient_text_analysis',
   'coverage':{'attempted':len(results),'analyzed':sum(x['status']=='analyzed_in_memory' for x in results),
-   'substantial_text':sum(x.get('text_chars',0)>=1200 for x in results)},
+   'substantial_text':sum(x.get('text_chars',0)>=1200 for x in results),
+   'body_level_A':sum(x.get('claim_evidence_signals',{}).get('adequacy_level')=='A' for x in results),
+   'body_level_B':sum(x.get('claim_evidence_signals',{}).get('adequacy_level')=='B' for x in results),
+   'body_claim_sentence_candidates':sum(x.get('claim_evidence_signals',{}).get('source_sentence_candidates',0) for x in results)},
   'documents':results,'limitations':['No paywall bypass or login.','No article text retained.',
-   'Term frequencies are only preliminary semantic signals; not claims or validated topic assignments.']}
+   'Term frequencies and transient sentence indicators are preliminary signals, not verified claims or validated topic assignments.']}
 def main():
  p=argparse.ArgumentParser();p.add_argument('--snapshot',type=Path,required=True)
  p.add_argument('--output',type=Path,required=True);p.add_argument('--limit',type=int,default=150)
