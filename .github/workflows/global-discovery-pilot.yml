@@ -57,6 +57,8 @@ on:
       - 'ingestion/hierarchical_category_contract.py'
       - 'ingestion/llm_candidate_router.py'
       - 'ingestion/llm_semantic_adapter.py'
+      - 'ingestion/rich_text_corpus.py'
+      - 'tests/test_rich_text_corpus.py'
       - 'tests/test_llm_semantic_adapter.py'
       - 'tests/test_llm_candidate_router.py'
       - 'tests/test_hierarchical_category_contract.py'
@@ -143,6 +145,8 @@ jobs:
         run: python -m unittest discover -s tests -p 'test_statement_event_graph.py'
       - name: Test independent NLI gold evaluation
         run: python -m unittest discover -s tests -p 'test_evaluate_nli_gold.py'
+      - name: Test substantial-text corpus builder
+        run: python -m unittest discover -s tests -p 'test_rich_text_corpus.py'
       - name: Test LLM semantic adapter (offline)
         run: python -m unittest discover -s tests -p 'test_llm_semantic_adapter.py'
       - name: Test LLM candidate router
@@ -186,6 +190,8 @@ jobs:
         run: python -m pip install 'sentence-transformers>=3,<6'
       - name: Compare multilingual semantic vs lexical evidence retrieval on SciFact
         run: python -m ingestion.scifact_semantic_comparison --output data/discovery/scifact-semantic-comparison.json
+      - name: Preserve licensed substantial-text corpus for semantic experiments
+        run: python -m ingestion.rich_text_corpus --texts data/discovery/licensed-papers --output data/discovery/rich-text-corpus.json
       - name: Propose hierarchical categories and cross-source semantic neighbors
         run: python -m ingestion.semantic_topic_neighbor_pilot --snapshot data/discovery/global-rss-pilot.json --output data/discovery/semantic-topic-neighbor-pilot.json --limit 400
       - name: Compare hybrid event review against semantic-only candidates
@@ -314,6 +320,7 @@ jobs:
             data/discovery/nli-human-review-template.csv
             data/discovery/llm-candidate-queue.json
             data/discovery/llm-semantic-readiness.json
+            data/discovery/rich-text-corpus.json
             data/discovery/global-candidates-pilot.json
             data/discovery/blind-relations-review.json
             data/discovery/global-event-pairs-review.json
