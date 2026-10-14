@@ -47,6 +47,7 @@ on:
       - 'ingestion/grounded_extractive_briefs.py'
       - 'ingestion/information_review_sample.py'
       - 'ingestion/evaluate_information_review.py'
+      - 'ingestion/statement_event_graph.py'
       - 'tests/test_claim_representation.py'
       - 'tests/test_cross_source_evidence_review.py'
       - 'tests/test_abstract_evidence_adequacy.py'
@@ -248,6 +249,7 @@ jobs:
             data/discovery/grounded-extractive-briefs.json
             data/discovery/information-review-sample.json
             data/discovery/information-review-evaluation.json
+            data/discovery/statement-event-graph.json
             data/discovery/global-candidates-pilot.json
             data/discovery/blind-relations-review.json
             data/discovery/global-event-pairs-review.json
