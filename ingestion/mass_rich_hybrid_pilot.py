@@ -7,20 +7,20 @@ from ingestion.rich_text_corpus import build
 from ingestion.llm_semantic_adapter import run as llm_run
 
 BASE="https://www.ebi.ac.uk/europepmc/webservices/rest/"
-TOPICS=["OPEN_ACCESS:y AND (climate OR environment)","OPEN_ACCESS:y AND (artificial intelligence OR machine learning)","OPEN_ACCESS:y AND (public health OR epidemiology)"]
+TOPICS=["OPEN_ACCESS:Y AND climate","OPEN_ACCESS:Y AND artificial intelligence","OPEN_ACCESS:Y AND public health"]
 def get_json(url):
     req=urllib.request.Request(url,headers={"User-Agent":"UbikResearchBot/0.1 (ubik.research@gmail.com)"})
     with urllib.request.urlopen(req,timeout=25) as response:return json.load(response)
 def discover(per_topic=70,get=get_json):
     docs=[];seen=set();errors=[]
     for topic in TOPICS:
-        url=BASE+"search?"+urllib.parse.urlencode({"query":topic,"format":"json","resultType":"core","pageSize":min(per_topic,100),"sort":"RELEVANCE"})
+        url=BASE+"search?"+urllib.parse.urlencode({"query":topic,"format":"json","pageSize":min(per_topic,100)})
         try: results=get(url).get("resultList",{}).get("result",[])
         except (OSError,ValueError,TimeoutError) as exc:
-            errors.append({"topic":topic,"error":type(exc).__name__});continue
+            errors.append({"topic":topic,"error":type(exc).__name__,"http_status":getattr(exc,"code",None)});continue
         for x in results:
             pmcid=x.get("pmcid")
-            if not pmcid or pmcid in seen or not x.get("isOpenAccess")=="Y":continue
+            if not pmcid or pmcid in seen:continue
             seen.add(pmcid)
             docs.append({"url":"https://europepmc.org/articles/"+pmcid,"source_id":"europepmc",
                          "title":x.get("title",""),"description":re.sub("<[^>]+>"," ",x.get("abstractText") or "")[:5000],
