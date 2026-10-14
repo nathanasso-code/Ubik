@@ -78,7 +78,12 @@ def main():
   from transformers import pipeline
   classifier=pipeline("text-classification",model=a.model,device=-1)
   def predict(x,y):
-   result=classifier({"text":x,"text_pair":y},truncation=True)[0]
+   result=classifier({"text":x,"text_pair":y},truncation=True)
+   if isinstance(result,list):
+    if not result:raise ValueError("Empty NLI prediction")
+    result=result[0]
+   if not isinstance(result,dict) or "label" not in result or "score" not in result:
+    raise ValueError("Unexpected NLI prediction shape")
    label=str(result["label"]).lower()
    # Unknown label mappings must never silently become entailment.
    if label not in ("entailment","neutral","contradiction"):label="unknown:"+label
