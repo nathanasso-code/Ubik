@@ -15,6 +15,7 @@ class ContractTests(unittest.TestCase):
   self.assertEqual(validate_relation(self.p,self.sources)["reason"],"ungrounded_quote")
  def test_missing_second_source_abstains(self):
   self.p["evidence"][1]["document_id"]="a"
+  self.p["evidence"][1]["quote"]="The company announced a new battery."
   self.assertEqual(validate_relation(self.p,self.sources)["reason"],"missing_document_evidence")
  def test_schema_has_no_truth_verdict(self):
   self.assertNotIn("truth_verdict",json_schema()["properties"])
