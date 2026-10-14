@@ -11,7 +11,7 @@ permissions:
 jobs:
   experiment:
     runs-on: ubuntu-latest
-    timeout-minutes: 35
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -19,12 +19,17 @@ jobs:
           python-version: '3.12'
       - name: Install retrieval dependencies
         run: python -m pip install --disable-pip-version-check scikit-learn
-      - name: Acquire licensed substantial bodies and run hybrid comparison
+      - name: Acquire licensed substantial bodies and run Groq hybrid comparison
+        env:
+          UBIK_LLM_ENDPOINT: https://api.groq.com/openai/v1/chat/completions
+          UBIK_LLM_MODEL: llama-3.3-70b-versatile
+          UBIK_LLM_API_KEY: \${{ secrets.UBIK_LLM_API_KEY }}
         run: |
+          if [ -z "$UBIK_LLM_API_KEY" ]; then echo 'Missing UBIK_LLM_API_KEY secret'; exit 1; fi
           python -m ingestion.mass_rich_hybrid_pilot \
             --texts data/discovery/hybrid-licensed-papers \
             --output data/discovery/mass-rich-hybrid-results.json \
-            --per-topic 65 --max-acquire 100 --budget 40 --llm-limit 20
+            --per-topic 65 --max-acquire 100 --budget 40 --llm-limit 8 --execute
       - name: Publish reproducible experiment outputs
         if: always()
         uses: actions/upload-artifact@v4
