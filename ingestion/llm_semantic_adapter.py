@@ -59,8 +59,21 @@ def run(queue,documents,limit=5,execute=False,endpoint=None,model=None,key=None)
         except (ValueError,KeyError,TypeError,TimeoutError,urllib.error.URLError) as exc:
             status=getattr(exc,"code",None)
             if status is None and isinstance(exc,urllib.error.HTTPError):status=exc.getcode()
+            provider_code=None
+            if isinstance(exc,urllib.error.HTTPError):
+                try:
+                    error_body=json.loads(exc.read(8192).decode("utf-8"))
+                    provider_error=error_body.get("error",{})
+                    if isinstance(provider_error,dict):
+                        candidate=provider_error.get("code")
+                        if isinstance(candidate,(str,int)) and len(str(candidate))<=80:
+                            import re
+                            if re.fullmatch(r"[A-Za-z0-9_.-]+",str(candidate)):
+                                provider_code=str(candidate)
+                except (ValueError,UnicodeError,OSError,TypeError):
+                    pass
             results.append({"pair_id":pair["pair_id"],"status":"analysis_error","error_type":type(exc).__name__,
-                            "http_status":status})
+                            "http_status":status,"provider_error_code":provider_code})
     return {"schema_version":1,"mode":"api" if execute else "dry_run","results":results,
       "coverage":{"selected":len(results),"ready":sum(x["status"]=="ready_for_llm" for x in results),
       "analyzed":sum(x["status"]=="analyzed" for x in results),
