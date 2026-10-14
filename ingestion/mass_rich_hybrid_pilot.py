@@ -69,7 +69,7 @@ def main():
     import os
     discovered=discover(a.per_topic)
     acquired=acquire(discovered,a.texts,max_items=a.max_acquire)
-    rich=build(a.texts)
+    rich=build(a.texts,minimum_chars=800)
     result=experiment(discovered,rich,a.budget,a.llm_limit,a.execute,os.getenv("UBIK_LLM_ENDPOINT",""),
                       os.getenv("UBIK_LLM_MODEL",""),os.getenv("UBIK_LLM_API_KEY",""))
     result["acquisition"]=acquired["coverage"]
