@@ -194,10 +194,6 @@ jobs:
         run: python -m ingestion.scifact_semantic_comparison --output data/discovery/scifact-semantic-comparison.json
       - name: Preserve licensed substantial-text corpus for semantic experiments
         run: python -m ingestion.rich_text_corpus --texts data/discovery/licensed-papers --output data/discovery/rich-text-corpus.json
-      - name: Audit rich-text coverage of all persistent corpus records
-        run: python -m ingestion.rich_access_audit --corpus data/persistent/corpus.json --public data/discovery/public-text-analysis.json --rich data/discovery/rich-text-corpus.json --output data/discovery/rich-access-audit.json
-      - name: Compare title and full-body lexical similarities on stored papers
-        run: python -m ingestion.rich_text_similarity_diagnostic --rich data/discovery/rich-text-corpus.json --output data/discovery/rich-text-similarity-diagnostic.json
       - name: Propose hierarchical categories and cross-source semantic neighbors
         run: python -m ingestion.semantic_topic_neighbor_pilot --snapshot data/discovery/global-rss-pilot.json --output data/discovery/semantic-topic-neighbor-pilot.json --limit 400
       - name: Compare hybrid event review against semantic-only candidates
@@ -248,6 +244,10 @@ jobs:
         run: python -m ingestion.hybrid_document_links --rss data/discovery/global-rss-pilot.json --social data/discovery/global-social-followup.json --output data/discovery/global-hybrid-links.json
       - name: Merge current RSS, social and GET evidence into persistent corpus
         run: python -m ingestion.persistent_discovery_ledger --previous data/persistent/corpus.json --rss data/discovery/global-rss-pilot.json --hybrid data/discovery/global-hybrid-links.json --access data/discovery/live-get-text-access.json --output data/persistent/corpus.json
+      - name: Audit rich-text coverage of all persistent corpus records
+        run: python -m ingestion.rich_access_audit --corpus data/persistent/corpus.json --public data/discovery/public-text-analysis.json --rich data/discovery/rich-text-corpus.json --output data/discovery/rich-access-audit.json
+      - name: Compare title and full-body lexical similarities on stored papers
+        run: python -m ingestion.rich_text_similarity_diagnostic --rich data/discovery/rich-text-corpus.json --output data/discovery/rich-text-similarity-diagnostic.json
       - name: Qualify retained text for semantic topic routing
         run: python -m ingestion.topic_evidence_qualification data/persistent/corpus.json --output data/discovery/topic-evidence-quality.json
       - name: Produce rights-review queue for corpus
