@@ -53,6 +53,8 @@ on:
       - 'ingestion/nli_publication_gate.py'
       - 'ingestion/blinded_nli_annotation_packet.py'
       - 'ingestion/nli_independent_review.py'
+      - 'ingestion/semantic_relation_contract.py'
+      - 'tests/test_semantic_relation_contract.py'
       - 'tests/test_nli_independent_review.py'
       - 'tests/test_blinded_nli_annotation_packet.py'
       - 'tests/test_nli_publication_gate.py'
@@ -135,6 +137,8 @@ jobs:
         run: python -m unittest discover -s tests -p 'test_statement_event_graph.py'
       - name: Test independent NLI gold evaluation
         run: python -m unittest discover -s tests -p 'test_evaluate_nli_gold.py'
+      - name: Test meaning-first semantic relation contract
+        run: python -m unittest discover -s tests -p 'test_semantic_relation_contract.py'
       - name: Test independent annotation agreement
         run: python -m unittest discover -s tests -p 'test_nli_independent_review.py'
       - name: Test blinded annotation packet
