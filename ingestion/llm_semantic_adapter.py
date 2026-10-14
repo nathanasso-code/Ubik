@@ -57,11 +57,15 @@ def run(queue,documents,limit=5,execute=False,endpoint=None,model=None,key=None)
             results.append({"pair_id":pair["pair_id"],"status":"analyzed",
                "validation":evaluate(proposal,sources),"usage":usage,"model":model})
         except (ValueError,KeyError,TypeError,TimeoutError,urllib.error.URLError) as exc:
-            results.append({"pair_id":pair["pair_id"],"status":"analysis_error","error_type":type(exc).__name__, "http_status":getattr(exc,"code",None)})
+            status=getattr(exc,"code",None)
+            if status is None and isinstance(exc,urllib.error.HTTPError):status=exc.getcode()
+            results.append({"pair_id":pair["pair_id"],"status":"analysis_error","error_type":type(exc).__name__,
+                            "http_status":status})
     return {"schema_version":1,"mode":"api" if execute else "dry_run","results":results,
       "coverage":{"selected":len(results),"ready":sum(x["status"]=="ready_for_llm" for x in results),
       "analyzed":sum(x["status"]=="analyzed" for x in results),
-      "accepted_for_review":sum(x.get("validation",{}).get("accepted_for_review",False) for x in results)},
+      "accepted_for_review":sum(x.get("validation",{}).get("accepted_for_review",False) for x in results),
+      "errors":sum(x["status"]=="analysis_error" for x in results)},
       "limitations":["Dry-run performs no LLM inference.","Evidence grounding is substring validation, not proof of semantic correctness.",
       "No automatic merges, taxonomy publishing or factual truth claims."]}
 def main():
