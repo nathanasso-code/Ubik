@@ -146,6 +146,8 @@ jobs:
         run: python -m ingestion.semantic_topic_neighbor_pilot --snapshot data/discovery/global-rss-pilot.json --output data/discovery/semantic-topic-neighbor-pilot.json --limit 400
       - name: Compare hybrid event review against semantic-only candidates
         run: python -m ingestion.hybrid_event_review --snapshot data/discovery/global-rss-pilot.json --output data/discovery/hybrid-event-review.json --limit 400
+      - name: Generate event statement review graph
+        run: python -m ingestion.statement_event_graph --snapshot data/discovery/global-rss-pilot.json --hybrid data/discovery/hybrid-event-review.json --output data/discovery/statement-event-graph.json
       - name: Generate provenance-linked extractive previews for candidate events
         run: python -m ingestion.grounded_extractive_briefs --snapshot data/discovery/global-rss-pilot.json --hybrid data/discovery/hybrid-event-review.json --output data/discovery/grounded-extractive-briefs.json
       - name: Prepare stratified manual category and event-identity review sample
