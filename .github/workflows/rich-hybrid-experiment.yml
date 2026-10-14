@@ -30,6 +30,18 @@ jobs:
             --texts data/discovery/hybrid-licensed-papers \
             --output data/discovery/mass-rich-hybrid-results.json \
             --per-topic 65 --max-acquire 100 --budget 40 --llm-limit 8 --execute
+          python - <<'PY'
+          import json,sys
+          from pathlib import Path
+          result=json.loads(Path("data/discovery/mass-rich-hybrid-results.json").read_text())
+          coverage=result["llm"]["coverage"]
+          print("LLM experiment coverage:",json.dumps(coverage))
+          for item in result["llm"]["results"]:
+              if item["status"]=="analysis_error":
+                  print("LLM request failed:",item.get("error_type"),"HTTP",item.get("http_status"))
+          if coverage["analyzed"]==0:
+              sys.exit("Experiment failed: no successful LLM inferences")
+          PY
       - name: Publish reproducible experiment outputs
         if: always()
         uses: actions/upload-artifact@v4
