@@ -6,7 +6,7 @@ Implementato nel ramo `develop/ubik-core` il workflow `rich-hybrid-experiment.ym
 ## Ingressi obbligatori
 - Ricerca su Europe PMC di tre domini (ambiente, AI, salute pubblica), fino a 65 risultati per dominio.
 - Fino a 100 tentativi di download di XML Open Access.
-- Il corpo è conservato solo se la licenza esplicita supera la whitelist conservativa (CC BY 4.0, CC BY-SA 4.0, CC0), poi il corpus finale richiede **almeno 2.000 caratteri effettivi** e provenienza/diritti tracciati.
+- Il corpo è conservato solo se la licenza esplicita supera la whitelist conservativa (CC BY 4.0, CC BY-SA 4.0, CC0), poi il corpus finale richiede **almeno 800 caratteri effettivi** e provenienza/diritti tracciati.
 - Non vengono inseriti nella valutazione titoli isolati, descrizioni brevi o meri segnali di accessibilità.
 
 ## Pipeline
@@ -19,6 +19,9 @@ Implementato nel ramo `develop/ubik-core` il workflow `rich-hybrid-experiment.ym
 
 ## Condizione per una prova LLM reale
 Per attivare l'inferenza serve un endpoint HTTPS compatibile OpenAI, un modello e una chiave, passati come `UBIK_LLM_ENDPOINT`, `UBIK_LLM_MODEL`, `UBIK_LLM_API_KEY` e l'opzione `--execute`. Non è configurata nel workflow pubblico, così da non esporre credenziali o avviare costi non autorizzati.
+
+## Soglia di ammissione
+La soglia operativa del corpus ibrido è stata ridotta da 2.000 a **800 caratteri** per includere articoli brevi ma potenzialmente integrali. Il superamento della soglia **non dimostra** da solo che il testo sia completo: conservare separatamente qualità di estrazione, provenienza e metadati di completezza. La soglia predefinita del modulo riutilizzabile `rich_text_corpus.py` resta 2.000 per altri esperimenti; il pilot massivo la sovrascrive esplicitamente a 800.
 
 ## Limiti
 Il corpus scientifico open access non è rappresentativo delle notizie generaliste. TF-IDF propone somiglianze, non stabilisce identità evento né verifica affermazioni. Le risposte LLM devono passare validazione di citazioni e revisione prima di ogni pubblicazione. Il run iniziale non deve essere presentato come validazione semantica finché l'inferenza non sia stata effettivamente eseguita.
