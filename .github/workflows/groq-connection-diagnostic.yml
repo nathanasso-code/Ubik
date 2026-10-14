@@ -27,6 +27,28 @@ jobs:
                   print("Groq models endpoint HTTP:",response.status)
                   print("Configured model available:", "llama-3.3-70b-versatile" in models)
                   print("Available model IDs:", ", ".join(sorted(models)))
+                  model="openai/gpt-oss-120b"
+                  if model not in models:
+                      sys.exit("Target model not available")
+                  inference=json.dumps({"model":model,"messages":[{"role":"user","content":"Reply with exactly OK."}],"max_completion_tokens":64}).encode()
+                  test=urllib.request.Request("https://api.groq.com/openai/v1/chat/completions",
+                      data=inference,headers={"Authorization":"Bearer "+key,"Content-Type":"application/json"},method="POST")
+                  try:
+                      with urllib.request.urlopen(test,timeout=30) as check:
+                          answer=json.load(check)
+                          print("Minimal inference HTTP:",check.status)
+                          print("Inference returned choices:",bool(answer.get("choices")))
+                  except urllib.error.HTTPError as exc:
+                      print("Minimal inference HTTP:",exc.code)
+                      try:
+                          err=json.loads(exc.read(4096).decode()).get("error",{})
+                          code=err.get("code") if isinstance(err,dict) else None
+                          if isinstance(code,(str,int)) and len(str(code))<80:
+                              import re
+                              if re.fullmatch(r"[A-Za-z0-9_.-]+",str(code)):print("Inference provider error code:",code)
+                      except (ValueError,UnicodeError,TypeError):
+                          pass
+                      sys.exit(1)
           except urllib.error.HTTPError as exc:
               print("Groq models endpoint HTTP:",exc.code)
               try:
