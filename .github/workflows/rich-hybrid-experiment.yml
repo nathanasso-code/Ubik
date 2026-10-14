@@ -1,0 +1,35 @@
+name: Rich-text hybrid corpus experiment
+on:
+  workflow_dispatch:
+  push:
+    branches: [develop/ubik-core]
+    paths:
+      - 'ingestion/mass_rich_hybrid_pilot.py'
+      - '.github/workflows/rich-hybrid-experiment.yml'
+permissions:
+  contents: read
+jobs:
+  experiment:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install retrieval dependencies
+        run: python -m pip install --disable-pip-version-check scikit-learn
+      - name: Acquire licensed substantial bodies and run hybrid comparison
+        run: |
+          python -m ingestion.mass_rich_hybrid_pilot \
+            --texts data/discovery/hybrid-licensed-papers \
+            --output data/discovery/mass-rich-hybrid-results.json \
+            --per-topic 65 --max-acquire 100 --budget 40 --llm-limit 20
+      - name: Publish reproducible experiment outputs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rich-hybrid-corpus-results
+          path: |
+            data/discovery/mass-rich-hybrid-results.json
+          if-no-files-found: warn
