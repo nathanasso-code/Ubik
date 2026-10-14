@@ -233,7 +233,7 @@ jobs:
       - name: Analyze publicly readable article bodies transiently
         run: python -m ingestion.public_text_transient_analysis --snapshot data/discovery/global-rss-pilot.json --output data/discovery/public-text-analysis.json --limit 150
       - name: Compare news text richness in candidate pairs
-        run: python -m ingestion.live_rich_pair_experiment --snapshot data/discovery/global-rss-pilot.json --hybrid data/discovery/hybrid-event-review.json --output data/discovery/live-rich-pair-experiment.json --limit 24
+        run: python -m ingestion.live_rich_pair_experiment --snapshot data/discovery/global-rss-pilot.json --hybrid data/discovery/hybrid-event-review.json --output data/discovery/live-rich-pair-experiment.json --limit 24 --semantic-e5
       - name: Discover candidate terms globally
         run: python -m ingestion.global_discovery data/discovery/global-rss-pilot.json --output data/discovery/global-candidates-pilot.json
       - name: Discover unseeded document co-mention hypotheses
