@@ -52,6 +52,8 @@ on:
       - 'ingestion/nli_relation_audit.py'
       - 'ingestion/nli_publication_gate.py'
       - 'ingestion/blinded_nli_annotation_packet.py'
+      - 'ingestion/nli_independent_review.py'
+      - 'tests/test_nli_independent_review.py'
       - 'tests/test_blinded_nli_annotation_packet.py'
       - 'tests/test_nli_publication_gate.py'
       - 'ingestion/evaluate_nli_gold.py'
@@ -133,6 +135,8 @@ jobs:
         run: python -m unittest discover -s tests -p 'test_statement_event_graph.py'
       - name: Test independent NLI gold evaluation
         run: python -m unittest discover -s tests -p 'test_evaluate_nli_gold.py'
+      - name: Test independent annotation agreement
+        run: python -m unittest discover -s tests -p 'test_nli_independent_review.py'
       - name: Test blinded annotation packet
         run: python -m unittest discover -s tests -p 'test_blinded_nli_annotation_packet.py'
       - name: Test conservative NLI publication gate
@@ -180,6 +184,8 @@ jobs:
         run: python -m ingestion.nli_publication_gate --audit data/discovery/nli-relation-audit.json --output data/discovery/nli-publication-gate.json
       - name: Prepare blinded real-corpus annotation packet
         run: python -m ingestion.blinded_nli_annotation_packet --audit data/discovery/nli-relation-audit.json --output data/discovery/blinded-nli-annotation-packet.json
+      - name: Export blinded human review CSV
+        run: python -m ingestion.nli_independent_review --packet data/discovery/blinded-nli-annotation-packet.json --output data/discovery/nli-human-review-template.csv
       - name: Generate provenance-linked extractive previews for candidate events
         run: python -m ingestion.grounded_extractive_briefs --snapshot data/discovery/global-rss-pilot.json --hybrid data/discovery/hybrid-event-review.json --output data/discovery/grounded-extractive-briefs.json
       - name: Prepare stratified manual category and event-identity review sample
@@ -285,6 +291,7 @@ jobs:
             data/discovery/nli-relation-audit.json
             data/discovery/nli-publication-gate.json
             data/discovery/blinded-nli-annotation-packet.json
+            data/discovery/nli-human-review-template.csv
             data/discovery/global-candidates-pilot.json
             data/discovery/blind-relations-review.json
             data/discovery/global-event-pairs-review.json
