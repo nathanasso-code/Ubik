@@ -58,6 +58,8 @@ on:
       - 'ingestion/llm_candidate_router.py'
       - 'ingestion/llm_semantic_adapter.py'
       - 'ingestion/rich_text_corpus.py'
+      - 'ingestion/rich_access_audit.py'
+      - 'ingestion/rich_text_similarity_diagnostic.py'
       - 'tests/test_rich_text_corpus.py'
       - 'tests/test_llm_semantic_adapter.py'
       - 'tests/test_llm_candidate_router.py'
@@ -192,6 +194,10 @@ jobs:
         run: python -m ingestion.scifact_semantic_comparison --output data/discovery/scifact-semantic-comparison.json
       - name: Preserve licensed substantial-text corpus for semantic experiments
         run: python -m ingestion.rich_text_corpus --texts data/discovery/licensed-papers --output data/discovery/rich-text-corpus.json
+      - name: Audit rich-text coverage of all persistent corpus records
+        run: python -m ingestion.rich_access_audit --corpus data/persistent/corpus.json --public data/discovery/public-text-analysis.json --rich data/discovery/rich-text-corpus.json --output data/discovery/rich-access-audit.json
+      - name: Compare title and full-body lexical similarities on stored papers
+        run: python -m ingestion.rich_text_similarity_diagnostic --rich data/discovery/rich-text-corpus.json --output data/discovery/rich-text-similarity-diagnostic.json
       - name: Propose hierarchical categories and cross-source semantic neighbors
         run: python -m ingestion.semantic_topic_neighbor_pilot --snapshot data/discovery/global-rss-pilot.json --output data/discovery/semantic-topic-neighbor-pilot.json --limit 400
       - name: Compare hybrid event review against semantic-only candidates
@@ -321,6 +327,8 @@ jobs:
             data/discovery/llm-candidate-queue.json
             data/discovery/llm-semantic-readiness.json
             data/discovery/rich-text-corpus.json
+            data/discovery/rich-access-audit.json
+            data/discovery/rich-text-similarity-diagnostic.json
             data/discovery/global-candidates-pilot.json
             data/discovery/blind-relations-review.json
             data/discovery/global-event-pairs-review.json
