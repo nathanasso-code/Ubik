@@ -3,7 +3,7 @@
 Optional OpenAI-compatible HTTP endpoint requires explicit --execute and credentials.
 Outputs remain review-only. No calls are made during CI or module import.
 """
-import argparse,json,os,urllib.request
+import argparse,json,os,urllib.request,urllib.error
 from pathlib import Path
 from ingestion.semantic_relation_contract import validate_relation
 from ingestion.hierarchical_category_contract import validate_hierarchy
@@ -52,12 +52,12 @@ def run(queue,documents,limit=5,execute=False,endpoint=None,model=None,key=None)
               "available_text_characters":{"a":len(sources["a"]),"b":len(sources["b"])}})
             continue
         try:
-            proposal,usage=request_analysis(build_messages({"id":"a","title":a.get("title"),"text":sources["a"]},
-                {"id":"b","title":b.get("title"),"text":sources["b"]}),endpoint,model,key)
+            proposal,usage=request_analysis(build_messages({"id":"a","title":a.get("title"),"text":sources["a"][:9000]},
+                {"id":"b","title":b.get("title"),"text":sources["b"][:9000]}),endpoint,model,key)
             results.append({"pair_id":pair["pair_id"],"status":"analyzed",
                "validation":evaluate(proposal,sources),"usage":usage,"model":model})
         except (ValueError,KeyError,TypeError,TimeoutError,urllib.error.URLError) as exc:
-            results.append({"pair_id":pair["pair_id"],"status":"analysis_error","error_type":type(exc).__name__})
+            results.append({"pair_id":pair["pair_id"],"status":"analysis_error","error_type":type(exc).__name__, "http_status":getattr(exc,"code",None)})
     return {"schema_version":1,"mode":"api" if execute else "dry_run","results":results,
       "coverage":{"selected":len(results),"ready":sum(x["status"]=="ready_for_llm" for x in results),
       "analyzed":sum(x["status"]=="analyzed" for x in results),
