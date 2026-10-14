@@ -40,8 +40,18 @@ jobs:
                           print("Inference returned choices:",bool(answer.get("choices")))
                   except urllib.error.HTTPError as exc:
                       print("Minimal inference HTTP:",exc.code)
+                      print("Inference error content type:",exc.headers.get("Content-Type","unknown"))
+                      print("Inference error server:",exc.headers.get("Server","unknown"))
                       try:
-                          err=json.loads(exc.read(4096).decode()).get("error",{})
+                          raw=exc.read(4096).decode("utf-8","replace")
+                          payload=json.loads(raw)
+                          err=payload.get("error",{})
+                          if isinstance(err,dict):
+                              print("Inference error type:",str(err.get("type","unknown"))[:80])
+                              msg=str(err.get("message",""))
+                              import re
+                              msg=re.sub(r"gsk_[A-Za-z0-9_-]+","[REDACTED]",msg)
+                              print("Inference error message:",msg[:350])
                           code=err.get("code") if isinstance(err,dict) else None
                           if isinstance(code,(str,int)) and len(str(code))<80:
                               import re
