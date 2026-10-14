@@ -19,7 +19,7 @@ def cosine(a,b):
 def chunks(text,size=130,step=85):
     w=text.split()
     return [" ".join(w[i:i+size]) for i in range(0,len(w),step) if len(w[i:i+size])>=40][:50]
-def analyze(snapshot,hybrid,limit=24,fetch=fetch_one):
+def analyze(snapshot,hybrid,limit=24,fetch=fetch_one,semantic_embed=None):
     byurl={d["url"]:d for d in snapshot.get("items",[]) if d.get("url")}
     pairs=hybrid.get("pairs",[])[:limit]
     urls=list(dict.fromkeys(u for p in pairs for u in (p["url_a"],p["url_b"])))
@@ -53,12 +53,16 @@ def analyze(snapshot,hybrid,limit=24,fetch=fetch_one):
         desc=cosine(a.get("title","")+" "+(a.get("description") or ""),b.get("title","")+" "+(b.get("description") or ""))
         ca,cb=chunks(ta),chunks(tb)
         ranked=sorted((cosine(x,y) for x in ca for y in cb),reverse=True)
+        semantic = None
+        if semantic_embed is not None:
+            from ingestion.rich_pair_semantic import semantic_scores
+            semantic = semantic_scores(ta,tb,(a.get('title') or '')+' '+(a.get('description') or ''),(b.get('title') or '')+' '+(b.get('description') or ''),semantic_embed)
         rows.append({"url_a":pair["url_a"],"url_b":pair["url_b"],
             "title_similarity":round(title,4),"title_description_similarity":round(desc,4),
             "best_chunk_similarity":round(ranked[0],4) if ranked else None,
             "mean_top_3_chunk_similarity":round(sum(ranked[:3])/min(3,len(ranked)),4) if ranked else None,
             "body_characters_a":len(ta),"body_characters_b":len(tb),
-            "relation_label":"unverified","source_text_retained":False})
+            "relation_label":"unverified","source_text_retained":False,"semantic":semantic})
     return {"schema_version":1,"coverage":{"candidate_pairs":len(pairs),
         "unique_urls_requested":len(urls),"substantial_bodies_read_in_memory":len(texts),
         "pairs_with_two_substantial_bodies":len(rows),"failures":dict(failures)},
@@ -69,8 +73,15 @@ def analyze(snapshot,hybrid,limit=24,fetch=fetch_one):
 def main():
     p=argparse.ArgumentParser();p.add_argument("--snapshot",type=Path,required=True)
     p.add_argument("--hybrid",type=Path,required=True);p.add_argument("--output",type=Path,required=True)
-    p.add_argument("--limit",type=int,default=24);a=p.parse_args()
-    out=analyze(json.loads(a.snapshot.read_text()),json.loads(a.hybrid.read_text()),a.limit)
+    p.add_argument("--limit",type=int,default=24)
+    p.add_argument("--semantic-e5",action="store_true");a=p.parse_args()
+    embed=None
+    if a.semantic_e5:
+        from sentence_transformers import SentenceTransformer
+        from ingestion.semantic_topic_router import MODEL
+        model=SentenceTransformer(MODEL)
+        embed=lambda texts:model.encode(texts,batch_size=32,normalize_embeddings=True).tolist()
+    out=analyze(json.loads(a.snapshot.read_text()),json.loads(a.hybrid.read_text()),a.limit,semantic_embed=embed)
     a.output.parent.mkdir(parents=True,exist_ok=True)
     a.output.write_text(json.dumps(out,ensure_ascii=False,indent=2)+"\n")
     print(json.dumps(out["coverage"]))
