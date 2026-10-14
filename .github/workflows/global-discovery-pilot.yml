@@ -56,6 +56,8 @@ on:
       - 'ingestion/semantic_relation_contract.py'
       - 'ingestion/hierarchical_category_contract.py'
       - 'ingestion/llm_candidate_router.py'
+      - 'ingestion/llm_semantic_adapter.py'
+      - 'tests/test_llm_semantic_adapter.py'
       - 'tests/test_llm_candidate_router.py'
       - 'tests/test_hierarchical_category_contract.py'
       - 'tests/test_semantic_relation_contract.py'
@@ -141,6 +143,8 @@ jobs:
         run: python -m unittest discover -s tests -p 'test_statement_event_graph.py'
       - name: Test independent NLI gold evaluation
         run: python -m unittest discover -s tests -p 'test_evaluate_nli_gold.py'
+      - name: Test LLM semantic adapter (offline)
+        run: python -m unittest discover -s tests -p 'test_llm_semantic_adapter.py'
       - name: Test LLM candidate router
         run: python -m unittest discover -s tests -p 'test_llm_candidate_router.py'
       - name: Test hierarchical topic categorization contract
@@ -200,6 +204,8 @@ jobs:
         run: python -m ingestion.nli_independent_review --packet data/discovery/blinded-nli-annotation-packet.json --output data/discovery/nli-human-review-template.csv
       - name: Prepare bounded LLM semantic review queue
         run: python -m ingestion.llm_candidate_router --hybrid data/discovery/hybrid-event-review.json --output data/discovery/llm-candidate-queue.json --budget 30
+      - name: Check LLM candidate readiness (no API calls)
+        run: python -m ingestion.llm_semantic_adapter --queue data/discovery/llm-candidate-queue.json --hybrid data/discovery/hybrid-event-review.json --output data/discovery/llm-semantic-readiness.json --limit 30
       - name: Generate provenance-linked extractive previews for candidate events
         run: python -m ingestion.grounded_extractive_briefs --snapshot data/discovery/global-rss-pilot.json --hybrid data/discovery/hybrid-event-review.json --output data/discovery/grounded-extractive-briefs.json
       - name: Prepare stratified manual category and event-identity review sample
@@ -307,6 +313,7 @@ jobs:
             data/discovery/blinded-nli-annotation-packet.json
             data/discovery/nli-human-review-template.csv
             data/discovery/llm-candidate-queue.json
+            data/discovery/llm-semantic-readiness.json
             data/discovery/global-candidates-pilot.json
             data/discovery/blind-relations-review.json
             data/discovery/global-event-pairs-review.json
