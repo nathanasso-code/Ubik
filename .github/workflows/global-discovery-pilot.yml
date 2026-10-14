@@ -48,6 +48,8 @@ on:
       - 'ingestion/information_review_sample.py'
       - 'ingestion/evaluate_information_review.py'
       - 'ingestion/statement_event_graph.py'
+      - 'ingestion/statement_relation_pilot.py'
+      - 'tests/test_statement_relation_pilot.py'
       - 'tests/test_statement_event_graph.py'
       - 'tests/test_claim_representation.py'
       - 'tests/test_cross_source_evidence_review.py'
@@ -121,6 +123,8 @@ jobs:
         run: python -m unittest discover -s tests -p 'test_claim_representation.py'
       - name: Test statement-event grouping and provenance
         run: python -m unittest discover -s tests -p 'test_statement_event_graph.py'
+      - name: Test directional statement relation safeguards
+        run: python -m unittest discover -s tests -p 'test_statement_relation_pilot.py'
       - name: Collect diverse publisher feeds without topic seed
         run: python -m ingestion.global_rss_pilot --output data/discovery/global-rss-pilot.json
       - name: Discover documents via arXiv Europe PMC and Wikinews public APIs
@@ -152,6 +156,8 @@ jobs:
         run: python -m ingestion.hybrid_event_review --snapshot data/discovery/global-rss-pilot.json --output data/discovery/hybrid-event-review.json --limit 400
       - name: Generate event statement review graph
         run: python -m ingestion.statement_event_graph --snapshot data/discovery/global-rss-pilot.json --hybrid data/discovery/hybrid-event-review.json --output data/discovery/statement-event-graph.json
+      - name: Compare source-grounded statement candidates across publishers
+        run: python -m ingestion.statement_relation_pilot --snapshot data/discovery/global-rss-pilot.json --hybrid data/discovery/hybrid-event-review.json --output data/discovery/statement-relation-pilot.json --max-pairs 50
       - name: Generate provenance-linked extractive previews for candidate events
         run: python -m ingestion.grounded_extractive_briefs --snapshot data/discovery/global-rss-pilot.json --hybrid data/discovery/hybrid-event-review.json --output data/discovery/grounded-extractive-briefs.json
       - name: Prepare stratified manual category and event-identity review sample
@@ -253,6 +259,7 @@ jobs:
             data/discovery/information-review-sample.json
             data/discovery/information-review-evaluation.json
             data/discovery/statement-event-graph.json
+            data/discovery/statement-relation-pilot.json
             data/discovery/global-candidates-pilot.json
             data/discovery/blind-relations-review.json
             data/discovery/global-event-pairs-review.json
