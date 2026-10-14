@@ -26,6 +26,7 @@ jobs:
                   models={x.get("id") for x in payload.get("data",[]) if isinstance(x,dict)}
                   print("Groq models endpoint HTTP:",response.status)
                   print("Configured model available:", "llama-3.3-70b-versatile" in models)
+                  print("Available model IDs:", ", ".join(sorted(models)))
           except urllib.error.HTTPError as exc:
               print("Groq models endpoint HTTP:",exc.code)
               try:
