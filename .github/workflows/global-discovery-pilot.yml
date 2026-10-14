@@ -50,6 +50,8 @@ on:
       - 'ingestion/statement_event_graph.py'
       - 'ingestion/statement_relation_pilot.py'
       - 'ingestion/nli_relation_audit.py'
+      - 'ingestion/evaluate_nli_gold.py'
+      - 'tests/test_evaluate_nli_gold.py'
       - 'tests/test_nli_relation_audit.py'
       - 'tests/test_statement_relation_pilot.py'
       - 'tests/test_statement_event_graph.py'
@@ -125,6 +127,8 @@ jobs:
         run: python -m unittest discover -s tests -p 'test_claim_representation.py'
       - name: Test statement-event grouping and provenance
         run: python -m unittest discover -s tests -p 'test_statement_event_graph.py'
+      - name: Test independent NLI gold evaluation
+        run: python -m unittest discover -s tests -p 'test_evaluate_nli_gold.py'
       - name: Test NLI relation audit
         run: python -m unittest discover -s tests -p 'test_nli_relation_audit.py'
       - name: Test directional statement relation safeguards
