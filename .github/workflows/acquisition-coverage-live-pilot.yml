@@ -7,6 +7,7 @@ on:
       - '.github/workflows/acquisition-coverage-live-pilot.yml'
       - 'ingestion/discovery_acquisition_gap_audit.py'
       - 'ingestion/live_get_text_probe.py'
+      - 'ingestion/offline_extractor_comparison.py'
       - 'ingestion/acquisition_quality_report.py'
       - 'ingestion/global_rss_pilot.py'
       - 'config/source-registry.global-pilot.json'
@@ -21,6 +22,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Install offline article extraction libraries
+        run: python -m pip install 'trafilatura==2.3.1' 'readability-lxml==0.9.0'
       - name: Test coverage accounting
         run: python -m unittest discover -s tests -p 'test_discovery_acquisition_gap_audit.py' && python -m unittest discover -s tests -p 'test_live_probe_sampling.py' && python -m unittest discover -s tests -p 'test_structured_article_probe.py'
       - name: Discover cross-disciplinary RSS articles
@@ -64,6 +67,20 @@ jobs:
                                      'Signals compared on the same URL sample within this run.']}
           (base/'live-coverage-parser-comparison.json').write_text(json.dumps(comparison,indent=2)+'\n')
           print('Parser comparison:',json.dumps(comparison))
+          engines=('trafilatura','readability')
+          extraction={'sampled':len(rows),'html_substantial':len(html),'engines':{}}
+          for engine in engines:
+              positives={r['url'] for r in rows if r.get('alternative_extractors',{}).get(engine,{}).get('substantial_800')}
+              errors=sum(bool(r.get('alternative_extractors',{}).get(engine,{}).get('error_type')) for r in rows)
+              extraction['engines'][engine]={'positive':len(positives),
+                  'html_overlap':len(positives & html),'additional_to_html':len(positives-html),
+                  'union_with_html':len(positives|html),'errors':errors,
+                  'by_host':{host:sum(r['url'] in positives for r in rows if urlsplit(r['url']).hostname==host)
+                             for host in by_host}}
+          extraction['limitations']=['800 characters and 100 words is a screening threshold, not validated article text.',
+                                      'No article text stored; manual quality evaluation still required.']
+          (base/'live-coverage-offline-extractors.json').write_text(json.dumps(extraction,indent=2)+'\n')
+          print('Offline extractor comparison:',json.dumps(extraction))
           (base/'live-coverage-by-domain.json').write_text(json.dumps(domains,indent=2)+'\n')
           print('Domain-level diagnostics:',json.dumps(domains))
           out={"schema_version":1,"discovery":discovery["discovery"],"probe":probe["coverage"],
@@ -86,4 +103,5 @@ jobs:
             data/discovery/live-coverage-summary.json
             data/discovery/live-coverage-by-domain.json
             data/discovery/live-coverage-parser-comparison.json
+            data/discovery/live-coverage-offline-extractors.json
           if-no-files-found: warn
