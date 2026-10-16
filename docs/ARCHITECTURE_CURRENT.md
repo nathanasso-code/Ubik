@@ -63,3 +63,8 @@ Next refactor: move discovery and review logic behind separate packages with com
 Read `docs/EPISTEMIC_REVIEW_CONTRACT.md` before editing or displaying epistemic relations. A semantic neighbor is **not** a verified claim. `ingestion/epistemic_evidence_gate.py` is a source-text/quote/hash consistency and editorial-review eligibility gate; it does not fetch documents, validate facts, establish publisher independence or authorize public publication. Tests: `tests/test_epistemic_evidence_gate.py`. Never silently promote its output to `verified` or `published`. Full-article collection and actual claim-level annotations are the next implementation boundary.
 
 Recent run `38320735744` completed successfully: 324 RSS hints, 1,256 semantic pairs, 60 diverse manual review items, 80 eligible hashtag groups and zero topic proposals. The older **frozen** datacenter benchmark is documented against `38320346965`; do not conflate the two run snapshots.
+
+
+## Nota di continuità — 16 ottobre 2026
+
+La descrizione tecnica precedente resta storicamente utile, ma le **decisioni di prodotto e i test OpenRouter più recenti** sono in [UBIK_DECISION_RECORD_2026-10-16.md](UBIK_DECISION_RECORD_2026-10-16.md). In particolare: feed generale per fonti fuori topic; tag distinti dai topic; card per singole notizie multi-fonte; nuclei più rari e orientati a questioni persistenti e concentrazione della comunità. Workflow OpenRouter sperimentale presente su `main`, mentre il ramo di sviluppo resta `develop/ubik-core`; nessuna inferenza di deploy pubblico.
