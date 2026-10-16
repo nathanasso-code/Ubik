@@ -59,7 +59,7 @@ def provider_error_code(exc):
             return str(code)
     except (ValueError,UnicodeError,OSError,TypeError):pass
     return None
-def run(data,limit=4,execute=False,endpoint="",model="",key="",acquirer=acquire,requester=request_analysis):
+def run(data,limit=11,execute=False,endpoint="",model="",key="",acquirer=acquire,requester=request_analysis):
     pairs=[p for p in data["pairs"] if p.get("both_800_100")][:limit]
     results=[];cache={}
     for pair in pairs:
@@ -94,13 +94,13 @@ def run(data,limit=4,execute=False,endpoint="",model="",key="",acquirer=acquire,
                "No original texts or verbatim passages are persisted."]}
 def main():
     p=argparse.ArgumentParser();p.add_argument("input",type=Path);p.add_argument("--output",type=Path,required=True)
-    p.add_argument("--limit",type=int,default=4);p.add_argument("--execute",action="store_true")
+    p.add_argument("--limit",type=int,default=11);p.add_argument("--execute",action="store_true")
     a=p.parse_args()
     endpoint=os.getenv("UBIK_LLM_ENDPOINT","")
     model=os.getenv("UBIK_LLM_MODEL","")
     key=os.getenv("UBIK_LLM_API_KEY","")
     if a.execute and not (endpoint and model and key):p.error("Missing LLM endpoint/model/key")
-    result=run(json.loads(a.input.read_text()),limit=min(4,max(1,a.limit)),
+    result=run(json.loads(a.input.read_text()),limit=min(11,max(1,a.limit)),
                execute=a.execute,endpoint=endpoint,model=model,key=key)
     a.output.parent.mkdir(parents=True,exist_ok=True)
     a.output.write_text(json.dumps(result,ensure_ascii=False,indent=2)+"\n")
