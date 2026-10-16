@@ -26,6 +26,7 @@ def normalized(text):
 def metrics(text):
     text=normalized(text)
     return {'chars':len(text),'words':len(text.split()),
+            'substantial_1200_180':len(text)>=1200 and len(text.split())>=180,
             'sha256':hashlib.sha256(text.encode()).hexdigest() if text else None,
             'substantial_800':len(text)>=800 and len(text.split())>=100}
 
