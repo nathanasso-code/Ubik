@@ -6,6 +6,7 @@ on:
     paths:
       - '.github/workflows/cross-source-ambiguity-pilot.yml'
       - 'ingestion/cross_source_candidate_mining.py'
+      - 'tests/test_cross_source_candidate_mining.py'
       - 'ingestion/global_rss_pilot.py'
       - 'config/source-registry.global-pilot.json'
 permissions:
@@ -19,6 +20,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Test pair candidate mining
+        run: python -m unittest discover -s tests -p 'test_cross_source_candidate_mining.py'
       - name: Discover global RSS corpus
         run: python -m ingestion.global_rss_pilot --registry config/source-registry.global-pilot.json --output data/discovery/ambiguity-rss.json
       - name: Rank cross-publisher pairs including difficult distinctions
