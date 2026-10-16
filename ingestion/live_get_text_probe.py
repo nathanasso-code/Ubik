@@ -12,9 +12,12 @@ from ingestion.approved_https_fetch import fetch_one,USER_AGENT
 
 class Extractor(HTMLParser):
     def __init__(self):
-        super().__init__();self.depth=0;self.skip=0;self.text=[];self.in_article=0;self.article=[];self.meta=[]
+        super().__init__();self.depth=0;self.skip=0;self.text=[];self.in_article=0;self.article=[];self.meta=[];self.jsonld_blocks=[];self.in_jsonld=False
     def handle_starttag(self,tag,attrs):
         a=dict(attrs)
+        if tag=='script' and a.get('type','').lower()=='application/ld+json':
+            self.in_jsonld=True
+            self.jsonld_blocks.append('')
         if tag in ('script','style','nav','footer','header','aside','noscript','svg'):self.skip+=1
         if tag=='article':self.in_article+=1
         if tag=='meta' and (a.get('name','').lower() in ('description','twitter:description') or a.get('property','').lower() in ('og:description','article:description')):
@@ -23,11 +26,32 @@ class Extractor(HTMLParser):
     def handle_endtag(self,tag):
         if tag in ('script','style','nav','footer','header','aside','noscript','svg'):self.skip=max(0,self.skip-1)
         if tag=='article':self.in_article=max(0,self.in_article-1)
+        if tag=='script':self.in_jsonld=False
     def handle_data(self,data):
+        if self.in_jsonld and self.jsonld_blocks:self.jsonld_blocks[-1]+=data
         if self.skip:return
         t=data.strip()
         if t:self.text.append(t+' ')
         if t and self.in_article:self.article.append(t+' ')
+
+def jsonld_article_lengths(blocks):
+    lengths=[]
+    def visit(node,depth=0):
+        if depth>8:return
+        if isinstance(node,list):
+            for item in node[:40]:visit(item,depth+1)
+        elif isinstance(node,dict):
+            types=node.get('@type',[])
+            if isinstance(types,str):types=[types]
+            if isinstance(types,list) and any(t in ('Article','NewsArticle','ScholarlyArticle') for t in types):
+                body=node.get('articleBody')
+                if isinstance(body,str):lengths.append(len(' '.join(body.split())))
+            if '@graph' in node:visit(node['@graph'],depth+1)
+    for block in blocks[:20]:
+        if len(block)>200000:continue
+        try:visit(json.loads(block))
+        except (ValueError,TypeError,RecursionError):continue
+    return lengths
 
 def inspect(url,*,fetch=fetch_one):
     p=urlsplit(url);host=(p.hostname or '').lower()
@@ -44,6 +68,7 @@ def inspect(url,*,fetch=fetch_one):
         article=' '.join(''.join(ext.article).split())
         visible=' '.join(''.join(ext.text).split())
         meta=' '.join(' '.join(ext.meta).split())
+        structured=jsonld_article_lengths(ext.jsonld_blocks)
         # Only article-tag text is treated as strong evidence. Full text is never assumed.
         evidence=article if len(article)>=250 else visible
         words=len(evidence.split())
@@ -58,6 +83,8 @@ def inspect(url,*,fetch=fetch_one):
             'article_element_chars':len(article),'page_visible_chars':len(visible),
             'page_visible_words':len(visible.split()),'metadata_description_chars':len(meta),
             'article_text_sha256':hashlib.sha256(article.encode()).hexdigest() if article else None,
+            'structured_article_max_chars':max(structured,default=0),
+            'structured_article_candidates':len(structured),
             'body_fetched':True,'complete_article_verified':False,
             'robots_allowed':True,'republication_rights_verified':False}
     except (OSError,TimeoutError,ValueError,PermissionError) as e:
