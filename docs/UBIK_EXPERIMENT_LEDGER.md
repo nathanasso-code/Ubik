@@ -54,3 +54,10 @@ Questo documento è la fonte di continuità degli esperimenti: non confondere di
 - This rejects the hypothesis that JSON-LD alone improves the *count* of substantial accessible articles in this sample. It may still corroborate extracted HTML and cannot establish completeness.
 - 72 GET successes, 18 GET failures, 30 unverified page-text cases and 2 long abstract cases in this run. Per-run access variation should not be mistaken for parser changes.
 - Next priority: extract clean text from uncertain page-text publishers with a distinct bounded paragraph/content heuristic, and benchmark on the exact same URLs; assess contamination before any semantic clustering. Keep JSON-LD as low-cost secondary signal only.
+
+## Run F — independent open-source extractors, empirical coverage
+- Run https://github.com/nathanasso-code/Ubik/actions/runs/38967865468 — **success**, including new regression tests. Same 90 sampled URLs and single authorized HTML fetch per URL; no extracted text persisted.
+- Baseline HTML article element: **40/90** at >=1200 chars and >=180 words. Trafilatura 2.3.1: **68/90** at >=800 chars and >=100 words; 40 overlap with baseline, **28 additional signals**. Readability-lxml 0.9.0: **65/90**, 39 overlap, **26 additional signals**, union with HTML 66.
+- Trafilatura domain positives: Guardian 6, Ars Technica 6, Al Jazeera 5, The Verge 6, arXiv 6, ScienceDaily 6, France24 4, TechCrunch 6, DW 6, BBC 5, ABC 6, Euronews 6; zero phys.org, NPR, NYT (access failures).
+- Crucial: **different thresholds** baseline vs library, and library output is not yet manually validated. 68 is a substantial-text *screening signal*, NOT 68 confirmed complete clean articles. Do not report 28 as confirmed article recoveries. Need paired same-threshold quality/boilerplate audit and controlled reference sample before semantic benchmarking.
+- JSON-LD remains auxiliary: previous run showed zero incremental URL coverage.
