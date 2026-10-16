@@ -1,0 +1,56 @@
+name: Acquisition coverage live pilot
+on:
+  workflow_dispatch:
+  push:
+    branches: [develop/ubik-core]
+    paths:
+      - '.github/workflows/acquisition-coverage-live-pilot.yml'
+      - 'ingestion/discovery_acquisition_gap_audit.py'
+      - 'ingestion/live_get_text_probe.py'
+      - 'ingestion/global_rss_pilot.py'
+      - 'config/source-registry.global-pilot.json'
+permissions:
+  contents: read
+jobs:
+  measure:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Test coverage accounting
+        run: python -m unittest discover -s tests -p 'test_discovery_acquisition_gap_audit.py'
+      - name: Discover cross-disciplinary RSS articles
+        run: python -m ingestion.global_rss_pilot --registry config/source-registry.global-pilot.json --output data/discovery/live-coverage-rss.json
+      - name: Probe a bounded cross-domain sample with robots checks
+        run: python -m ingestion.live_get_text_probe data/discovery/live-coverage-rss.json --max-urls 24 --output data/discovery/live-coverage-probes.json
+      - name: Report discovery and acquisition coverage without mistaking unattempted URLs for extraction failures
+        run: |
+          python -m ingestion.discovery_acquisition_gap_audit --discovery data/discovery/live-coverage-rss.json --output data/discovery/live-coverage-discovery-audit.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          base=Path("data/discovery")
+          discovery=json.loads((base/"live-coverage-discovery-audit.json").read_text())
+          probe=json.loads((base/"live-coverage-probes.json").read_text())
+          out={"schema_version":1,"discovery":discovery["discovery"],"probe":probe["coverage"],
+               "sample_fraction":round(probe["coverage"]["tested_urls"]/discovery["discovery"]["unique_urls"],4) if discovery["discovery"]["unique_urls"] else None,
+               "limitations":["Unprobed discovered URLs are not extraction failures.",
+                              "Substantial article-tag text is not confirmed full text.",
+                              "Probe does not store copyrighted article bodies or verify republication rights."]}
+          (base/"live-coverage-summary.json").write_text(json.dumps(out,indent=2)+"\n")
+          print(json.dumps(out))
+          PY
+      - name: Upload reproducible reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: acquisition-coverage-live-pilot
+          path: |
+            data/discovery/live-coverage-rss.json
+            data/discovery/live-coverage-probes.json
+            data/discovery/live-coverage-discovery-audit.json
+            data/discovery/live-coverage-summary.json
+          if-no-files-found: warn
