@@ -123,7 +123,11 @@ def probe(snapshot,*,max_urls=100,per_host=5,checker=inspect,seed=42,method="str
 
 def main():
     p=argparse.ArgumentParser();p.add_argument('rss',type=Path);p.add_argument('--output',type=Path,required=True)
-    p.add_argument('--max-urls',type=int,default=100)\n    p.add_argument('--per-host',type=int,default=5)\n    p.add_argument('--seed',type=int,default=42)\n    p.add_argument('--method',choices=('stratified','ordered'),default='stratified')\n    a=p.parse_args()
+    p.add_argument('--max-urls',type=int,default=100)
+    p.add_argument('--per-host',type=int,default=5)
+    p.add_argument('--seed',type=int,default=42)
+    p.add_argument('--method',choices=('stratified','ordered'),default='stratified')
+    a=p.parse_args()
     result=probe(json.loads(a.rss.read_text()),max_urls=a.max_urls,per_host=a.per_host,seed=a.seed,method=a.method)
     a.output.parent.mkdir(parents=True,exist_ok=True)
     a.output.write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n')
