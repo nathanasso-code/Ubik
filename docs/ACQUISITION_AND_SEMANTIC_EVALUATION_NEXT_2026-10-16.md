@@ -52,3 +52,7 @@ A. Audit real RSS snapshot against real attempted extraction records; quantify u
 B. Run 100–200 diverse current-news URLs across multiple domains and topics, measure substantial-text coverage and cost, preserving provenance.  
 C. Run blind, annotated semantic-pair benchmark on real substantial texts.  
 D. Only then decide whether paid search/extraction providers materially improve coverage.
+
+## Live workflow added (16 October)
+
+`.github/workflows/acquisition-coverage-live-pilot.yml` is a bounded, manually dispatchable and push-triggered experiment on `develop/ubik-core`. It runs RSS discovery, tests the offline audit, probes up to 24 HTTPS article URLs with the existing robots-aware `live_get_text_probe`, and uploads JSON snapshots and a coverage summary. First run: https://github.com/nathanasso-code/Ubik/actions/runs/38962196813 (queued at creation; verify conclusion and artifacts before citing numerical results). **This does not measure discovery recall against all daily news**, only coverage of configured feeds and accessibility in the sample. No semantic LLM benchmark has been run by this workflow.
