@@ -77,6 +77,13 @@ jobs:
                   'union_with_html':len(positives|html),'errors':errors,
                   'by_host':{host:sum(r['url'] in positives for r in rows if urlsplit(r['url']).hostname==host)
                              for host in by_host}}
+          strict={'threshold':'1200_chars_180_words','baseline_html':len(html),'engines':{}}
+          for engine in engines:
+              positive={r['url'] for r in rows if r.get('alternative_extractors',{}).get(engine,{}).get('substantial_1200_180')}
+              strict['engines'][engine]={'positive':len(positive),'overlap_html':len(positive & html),
+                  'additional_html':len(positive-html),'union_html':len(positive|html),
+                  'by_host':{host:sum(r['url'] in positive for r in rows if urlsplit(r['url']).hostname==host) for host in by_host}}
+          extraction['equal_threshold_comparison']=strict
           extraction['limitations']=['800 characters and 100 words is a screening threshold, not validated article text.',
                                       'No article text stored; manual quality evaluation still required.']
           (base/'live-coverage-offline-extractors.json').write_text(json.dumps(extraction,indent=2)+'\n')
