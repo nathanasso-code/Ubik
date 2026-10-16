@@ -41,3 +41,9 @@ Questo documento è la fonte di continuità degli esperimenti: non confondere di
 3. Distinguere testo article, testo pagina incerto, abstract esteso e testo integrale **verificato**; misurare rumore con campione annotato.
 4. Su testi sostanziali legalmente analizzabili, costruire coppie positive e negative annotate; confrontare preselezione locale vs baseline, con recall@k, falsi negativi, chiamate LLM e costo.
 5. Riportare solo risultati di workflow completati e verificati. Aggiungere run e risultati qui, non sovrascrivere lo storico.
+
+## Run D — HTML versus JSON-LD structured signal
+- Run https://github.com/nathanasso-code/Ubik/actions/runs/38965510012 — **success** (including three new unit tests).
+- Same sampling configuration (90, seed 42, stratified across 15 hosts); 40 substantial HTML article elements; 12 URLs with JSON-LD articleBody >=800 characters. **Overlap not measured yet**: 12 is not a verified increment in acquired documents.
+- 66 successful GETs, 18 GET failures, 6 robots_unavailable (arXiv), 23 substantial unverified page text, 3 long abstract metadata. Prior run had 72 GET successes, 29 unverified page texts, no robots_unavailable. Do not interpret these transient access differences as parser regression.
+- Next: compute JSON-LD/HTML overlap and incremental yield on matched URLs, including host-level breakdown; then manually assess content relevance and completeness before any semantic claims.
