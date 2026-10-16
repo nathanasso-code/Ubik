@@ -40,6 +40,30 @@ jobs:
           domains=summarize(probe['probes'])
           structured=[x for x in probe['probes'] if x.get('structured_article_max_chars',0)>=800]
           print('Structured articleBody >=800 chars:',len(structured),'of',len(probe['probes']))
+          rows=probe['probes']
+          html={r['url'] for r in rows if r.get('content_tier')=='substantial_article_text_accessible'}
+          ld={r['url'] for r in rows if r.get('structured_article_max_chars',0)>=800}
+          added=ld-html
+          by_host={}
+          from urllib.parse import urlsplit
+          for r in rows:
+              host=urlsplit(r['url']).hostname
+              cell=by_host.setdefault(host,{'sampled':0,'html':0,'jsonld':0,'both':0,'jsonld_only':0})
+              h=r['url'] in html
+              s=r['url'] in ld
+              cell['sampled']+=1
+              cell['html']+=int(h)
+              cell['jsonld']+=int(s)
+              cell['both']+=int(h and s)
+              cell['jsonld_only']+=int(s and not h)
+          comparison={'sampled':len(rows),'html_article_signal':len(html),'jsonld_800plus':len(ld),
+                      'overlap':len(html & ld),'jsonld_only':len(added),'union':len(html | ld),
+                      'by_host':by_host,
+                      'limitations':['JSON-LD body length is not verified article completeness.',
+                                     'JSON-LD-only does not prove the article is clean or licensed.',
+                                     'Signals compared on the same URL sample within this run.']}
+          (base/'live-coverage-parser-comparison.json').write_text(json.dumps(comparison,indent=2)+'\n')
+          print('Parser comparison:',json.dumps(comparison))
           (base/'live-coverage-by-domain.json').write_text(json.dumps(domains,indent=2)+'\n')
           print('Domain-level diagnostics:',json.dumps(domains))
           out={"schema_version":1,"discovery":discovery["discovery"],"probe":probe["coverage"],
@@ -61,4 +85,5 @@ jobs:
             data/discovery/live-coverage-discovery-audit.json
             data/discovery/live-coverage-summary.json
             data/discovery/live-coverage-by-domain.json
+            data/discovery/live-coverage-parser-comparison.json
           if-no-files-found: warn
