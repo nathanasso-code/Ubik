@@ -10,11 +10,18 @@ from urllib.robotparser import RobotFileParser
 from ingestion.approved_https_fetch import fetch_one,USER_AGENT
 from ingestion.llm_semantic_adapter import request_analysis
 
-SYSTEM=("Compare two news articles by choosing passage IDs from the supplied lists. "
-        "Output JSON keys: relation (same_event, related_distinct_event, different_event, uncertain), "
-        "reason (short), evidence_a_id and evidence_b_id (IDs exactly as supplied), "
-        "distinct_details (list of up to three differences). "
-        "Do not invent events, dates, facts, or passage IDs. If uncertain, say uncertain.")
+SYSTEM=("The two news articles have already been selected as plausible candidates for describing the same real-world event. "
+        "Determine whether they actually describe the SAME specific incident, regardless of lexical choices, editorial framing, protagonists emphasized, or amount of information. "
+        "First compare event identity: what happened, where, when, and which actors or victims were involved. "
+        "Treat omitted details and complementary facts as COMPATIBLE, not evidence of distinct events. "
+        "Different wording, additional context, perspectives, or different subsets of participants do not by themselves imply different incidents. "
+        "Only classify related_distinct_event or different_event when concrete identifying details establish separate incidents; "
+        "distinguish a single incident from its later consequences or investigations. "
+        "If evidence is insufficient, choose uncertain rather than forcing a classification. "
+        "Select actual passage IDs from BOTH supplied articles as evidence, without inventing IDs, dates, or facts. "
+        "Return JSON with relation (same_event, related_distinct_event, different_event, uncertain), "
+        "reason (briefly explain compatible or incompatible event identifiers), "
+        "evidence_a_id, evidence_b_id, and distinct_details (up to three genuine event-identity differences, not merely wording or omissions).")
 def passages(text,prefix,max_passages=28):
     # Paragraphs are truncated for bounded prompts; original text stays transient.
     raw=[x.strip() for x in re.split(r"\n\s*\n",text) if len(x.strip())>=45]
