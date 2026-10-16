@@ -3,7 +3,7 @@
 Full texts stay in process memory. Output stores only verdicts and grounded
 quote validation flags, never copyrighted article bodies or model quotations.
 """
-import argparse,json,os,urllib.error
+import argparse,json,os,re,urllib.error
 from pathlib import Path
 from urllib.parse import urlsplit
 from urllib.robotparser import RobotFileParser
@@ -40,6 +40,16 @@ def evaluate(proposal,a,b):
             "accepted_for_review":valid_relation and valid_quotes,
             "reason":str(proposal.get("reason",""))[:400],
             "distinct_details":[str(x)[:160] for x in details[:3]]}
+def provider_error_code(exc):
+    if not isinstance(exc,urllib.error.HTTPError):return None
+    try:
+        body=json.loads(exc.read(8192).decode("utf-8"))
+        error=body.get("error",{})
+        code=error.get("code") if isinstance(error,dict) else None
+        if isinstance(code,(str,int)) and re.fullmatch(r"[A-Za-z0-9_.-]{1,80}",str(code)):
+            return str(code)
+    except (ValueError,UnicodeError,OSError,TypeError):pass
+    return None
 def run(data,limit=4,execute=False,endpoint="",model="",key="",acquirer=acquire,requester=request_analysis):
     pairs=[p for p in data["pairs"] if p.get("both_800_100")][:limit]
     results=[];cache={}
@@ -63,7 +73,8 @@ def run(data,limit=4,execute=False,endpoint="",model="",key="",acquirer=acquire,
         except (OSError,ValueError,PermissionError,TimeoutError,KeyError,TypeError,urllib.error.URLError) as exc:
             results.append({"left_url":a["url"],"right_url":b["url"],"status":"error",
                             "error_type":type(exc).__name__,
-                            "http_status":getattr(exc,"code",None)})
+                            "http_status":getattr(exc,"code",None),
+                            "provider_error_code":provider_error_code(exc)})
     return {"schema_version":1,"model":model if execute else None,"mode":"llm" if execute else "dry_run",
             "summary":{"selected":len(results),"analyzed":sum(x["status"]=="analyzed" for x in results),
                        "grounded_for_review":sum(x.get("validation",{}).get("accepted_for_review",False) for x in results),
