@@ -24,13 +24,13 @@ jobs:
           python -m ingestion.global_rss_pilot --registry config/source-registry.global-pilot.json --output data/discovery/llm-ambiguity-rss.json
           python -m ingestion.cross_source_candidate_mining data/discovery/llm-ambiguity-rss.json --output data/discovery/llm-ambiguity-candidates.json
           python -m ingestion.cross_source_pair_text_probe data/discovery/llm-ambiguity-candidates.json --output data/discovery/llm-ambiguity-coverage.json
-      - name: Analyze up to four pairs with Groq
+      - name: Analyze up to four pairs with OpenRouter
         env:
-          UBIK_LLM_ENDPOINT: https://api.groq.com/openai/v1/chat/completions
-          UBIK_LLM_MODEL: llama-3.3-70b-versatile
-          UBIK_LLM_API_KEY: ${{ secrets.UBIK_LLM_API_KEY }}
+          UBIK_LLM_ENDPOINT: https://openrouter.ai/api/v1/chat/completions
+          UBIK_LLM_MODEL: openai/gpt-4.1-mini
+          UBIK_LLM_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
         run: |
-          if [ -z "$UBIK_LLM_API_KEY" ]; then echo 'Missing UBIK_LLM_API_KEY'; exit 1; fi
+          if [ -z "$UBIK_LLM_API_KEY" ]; then echo 'Missing OPENROUTER_API_KEY'; exit 1; fi
           python -m ingestion.cross_source_llm_adjudication data/discovery/llm-ambiguity-coverage.json --output data/discovery/llm-cross-source-results.json --limit 4 --execute
           python - <<'PY'
           import json,sys
