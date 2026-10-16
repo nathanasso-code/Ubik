@@ -84,6 +84,24 @@ jobs:
                   'additional_html':len(positive-html),'union_html':len(positive|html),
                   'by_host':{host:sum(r['url'] in positive for r in rows if urlsplit(r['url']).hostname==host) for host in by_host}}
           extraction['equal_threshold_comparison']=strict
+          quality={'scope':'Trafilatura-only additional candidates relative to HTML at 1200 chars / 180 words',
+                   'candidates':[],'summary':{}}
+          for r in rows:
+              t=r.get('alternative_extractors',{}).get('trafilatura',{})
+              if r['url'] in html or not t.get('substantial_1200_180'):continue
+              quality['candidates'].append({'url':r['url'],'host':urlsplit(r['url']).hostname,
+                  'chars':t.get('chars'),'words':t.get('words'),
+                  'long_sentences':t.get('long_sentences'),
+                  'repeated_long_sentences':t.get('repeated_long_sentences'),
+                  'boilerplate_phrase_hits':t.get('boilerplate_phrase_hits')})
+          quality['summary']={'candidate_count':len(quality['candidates']),
+              'with_boilerplate_phrases':sum(bool(x['boilerplate_phrase_hits']) for x in quality['candidates']),
+              'with_repeated_long_sentences':sum(bool(x['repeated_long_sentences']) for x in quality['candidates']),
+              'with_zero_long_sentences':sum(x['long_sentences']==0 for x in quality['candidates'])}
+          quality['limitations']=['These automated signals are weak contamination checks, not human validation.',
+                                  'No extracted text is stored; URL-level review requires authorized transient access.']
+          (base/'live-coverage-extraction-quality.json').write_text(json.dumps(quality,indent=2)+'\\n')
+          print('Extraction quality screening:',json.dumps(quality['summary']))
           extraction['limitations']=['800 characters and 100 words is a screening threshold, not validated article text.',
                                       'No article text stored; manual quality evaluation still required.']
           (base/'live-coverage-offline-extractors.json').write_text(json.dumps(extraction,indent=2)+'\n')
@@ -111,4 +129,5 @@ jobs:
             data/discovery/live-coverage-by-domain.json
             data/discovery/live-coverage-parser-comparison.json
             data/discovery/live-coverage-offline-extractors.json
+            data/discovery/live-coverage-extraction-quality.json
           if-no-files-found: warn
