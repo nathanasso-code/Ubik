@@ -1,0 +1,80 @@
+name: OpenRouter hierarchical classification pilot
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  classify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: develop/ubik-core
+      - name: Install dependencies
+        run: python -m pip install --disable-pip-version-check scikit-learn
+      - name: Acquire licensed rich texts and classify with bounded API usage
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+        run: |
+          python - <<'PY'
+          import json,os,urllib.request,urllib.error,sys,pathlib,time
+          from ingestion.mass_rich_hybrid_pilot import discover
+          from ingestion.europe_pmc_licensed_texts import acquire
+          from ingestion.rich_text_corpus import build
+          key=os.environ.get("OPENROUTER_API_KEY","")
+          if not key:sys.exit("Missing OPENROUTER_API_KEY")
+          discovered=discover(per_topic=5)
+          folder=pathlib.Path("data/discovery/openrouter-hierarchy-pilot")
+          acquired=acquire(discovered,folder,max_items=12)
+          rich=build(folder,minimum_chars=800)
+          docs=rich.get("documents",[])[:4]
+          print("Substantial documents:",len(docs))
+          if not docs:sys.exit("No substantial documents acquired")
+          headers={"Authorization":"Bearer "+key,"Content-Type":"application/json"}
+          base="https://openrouter.ai/api/v1"
+          catalog_req=urllib.request.Request(base+"/models",headers=headers)
+          with urllib.request.urlopen(catalog_req,timeout=25) as response:
+            catalog=json.load(response).get("data",[])
+          preferred=["qwen/qwen3-32b","openai/gpt-oss-20b","qwen/qwen3-235b-a22b"]
+          available={m.get("id") for m in catalog}
+          model=next((m for m in preferred if m in available),None)
+          if not model:sys.exit("No preferred model available; refusing unpriced fallback")
+          print("Selected model:",model)
+          outputs=[];total_cost=0.0
+          for doc in docs:
+            if total_cost>=0.02:break
+            text=str(doc.get("text") or doc.get("full_text") or "")[:5000]
+            prompt=("Classify this research document by topic, using 2 to 4 hierarchical levels from broad to specific. "
+                    "Return ONLY a JSON object with keys levels (array of strings), evidence_quotes (array of short verbatim excerpts), "
+                    "confidence (low/medium/high), and rationale (one sentence). No invented quotes. "
+                    "Document title: "+str(doc.get("title",""))+"\nText: "+text)
+            body=json.dumps({"model":model,"messages":[{"role":"user","content":prompt}],"max_tokens":350,"temperature":0}).encode()
+            req=urllib.request.Request(base+"/chat/completions",data=body,headers=headers,method="POST")
+            try:
+              with urllib.request.urlopen(req,timeout=60) as response:payload=json.load(response)
+              choice=payload.get("choices",[{}])[0].get("message",{})
+              answer=choice.get("content") or ""
+              usage=payload.get("usage",{})
+              cost=float(usage.get("cost") or 0)
+              total_cost+=cost
+              print("Document:",str(doc.get("title",""))[:90],"| output chars:",len(answer),"| cost USD:",cost)
+              if not answer.strip():raise ValueError("Empty answer")
+              parsed=json.loads(answer)
+              levels=parsed.get("levels",[])
+              quotes=parsed.get("evidence_quotes",[])
+              grounded=bool(levels) and bool(quotes) and all(isinstance(q,str) and q in text for q in quotes)
+              outputs.append({"title":doc.get("title"),"url":doc.get("url"),"model":model,"classification":parsed,"quotes_grounded":grounded,"usage":usage})
+            except (urllib.error.URLError,ValueError,KeyError,IndexError) as exc:
+              print("Classification error:",type(exc).__name__,"HTTP:",getattr(exc,"code",None))
+              outputs.append({"title":doc.get("title"),"error":type(exc).__name__})
+          pathlib.Path("openrouter-hierarchy-results.json").write_text(json.dumps({"model":model,"acquisition":acquired.get("coverage"),"rich_coverage":rich.get("coverage"),"cost_usd":total_cost,"results":outputs},ensure_ascii=False,indent=2))
+          print("Total reported USD cost:",total_cost,"| valid classifications:",sum(bool(x.get("classification")) for x in outputs))
+          if not any(x.get("classification") for x in outputs):sys.exit("No valid classification returned")
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: openrouter-hierarchy-results
+          path: openrouter-hierarchy-results.json
+          if-no-files-found: warn
