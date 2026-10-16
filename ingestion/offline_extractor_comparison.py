@@ -25,7 +25,15 @@ def normalized(text):
 
 def metrics(text):
     text=normalized(text)
-    return {'chars':len(text),'words':len(text.split()),
+    import re
+    words=text.split()
+    sentences=[x.strip() for x in re.split(r'[.!?]+',text) if len(x.strip())>=30]
+    repeated=sum(count-1 for count in __import__('collections').Counter(s.lower() for s in sentences).values() if count>1)
+    boilerplate_terms=('cookie policy','privacy policy','all rights reserved','subscribe to our newsletter','accept cookies')
+    boilerplate_hits=sum(term in text.lower() for term in boilerplate_terms)
+    return {'chars':len(text),'words':len(words),
+            'long_sentences':len(sentences),'repeated_long_sentences':repeated,
+            'boilerplate_phrase_hits':boilerplate_hits,
             'substantial_1200_180':len(text)>=1200 and len(text.split())>=180,
             'sha256':hashlib.sha256(text.encode()).hexdigest() if text else None,
             'substantial_800':len(text)>=800 and len(text.split())>=100}
