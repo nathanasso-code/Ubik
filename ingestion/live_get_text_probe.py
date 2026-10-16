@@ -69,6 +69,8 @@ def inspect(url,*,fetch=fetch_one):
         visible=' '.join(''.join(ext.text).split())
         meta=' '.join(' '.join(ext.meta).split())
         structured=jsonld_article_lengths(ext.jsonld_blocks)
+        from ingestion.offline_extractor_comparison import extract_comparison
+        alternatives=extract_comparison(raw)
         # Only article-tag text is treated as strong evidence. Full text is never assumed.
         evidence=article if len(article)>=250 else visible
         words=len(evidence.split())
@@ -85,6 +87,7 @@ def inspect(url,*,fetch=fetch_one):
             'article_text_sha256':hashlib.sha256(article.encode()).hexdigest() if article else None,
             'structured_article_max_chars':max(structured,default=0),
             'structured_article_candidates':len(structured),
+            'alternative_extractors':alternatives,
             'body_fetched':True,'complete_article_verified':False,
             'robots_allowed':True,'republication_rights_verified':False}
     except (OSError,TimeoutError,ValueError,PermissionError) as e:
