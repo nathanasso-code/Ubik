@@ -13,6 +13,7 @@ on:
       - 'ingestion/preview_cross_source_cards.py'
       - 'ingestion/cross_source_claim_probe.py'
       - 'ingestion/cross_source_claim_alignment.py'
+      - 'tests/test_cross_source_claim_alignment.py'
       - 'ingestion/global_rss_pilot.py'
       - 'config/source-registry.global-pilot.json'
 permissions:
@@ -29,7 +30,7 @@ jobs:
       - name: Install extraction libraries
         run: python -m pip install 'trafilatura==2.3.1' 'readability-lxml==0.9.0'
       - name: Test pair candidate mining
-        run: python -m unittest discover -s tests -p 'test_cross_source_candidate_mining.py' && python -m unittest discover -s tests -p 'test_cross_source_pair_text_probe.py'
+        run: python -m unittest discover -s tests -p 'test_cross_source_candidate_mining.py' && python -m unittest discover -s tests -p 'test_cross_source_pair_text_probe.py' && python -m unittest discover -s tests -p 'test_cross_source_claim_alignment.py'
       - name: Discover global RSS corpus
         run: python -m ingestion.global_rss_pilot --registry config/source-registry.global-pilot.json --output data/discovery/ambiguity-rss.json
       - name: Rank cross-publisher pairs including difficult distinctions
