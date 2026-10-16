@@ -30,3 +30,8 @@ Independently annotate event identity, semantic relation and category path. Trac
 
 ## Safety and deployment
 No automatic merge, truth verdict or publication until held-out performance is measured. Record model/version, prompt, provenance, reviewer agreement and costs. Integrate with existing Supabase/Vercel architecture; do not modify main.
+
+
+## Correzione strategica — 16 ottobre 2026
+
+Le gerarchie libere generate per ogni singolo documento sono ora un **baseline sperimentale, non la strategia desiderata**. Preferire assegnazione a topic curati, tag normalizzati, nuclei rari e card multi-fonte su una singola notizia. Documenti fuori topic rimangono nel feed generale. Le esecuzioni OpenRouter su Europe PMC, inclusi 20 documenti con 6/20 classificazioni accettate e 14 errori di citazione letterale, sono registrate in [UBIK_DECISION_RECORD_2026-10-16.md](UBIK_DECISION_RECORD_2026-10-16.md). Distinguere qualità della gerarchia, controllo verbatim e coerenza del vocabolario condiviso.
