@@ -54,16 +54,19 @@ jobs:
             try:
               with urllib.request.urlopen(req,timeout=60) as response:payload=json.load(response)
               choice=payload.get("choices",[{}])[0].get("message",{})
-              answer=choice.get("content") or ""\n              print("Finish reason:",payload.get("choices",[{}])[0].get("finish_reason"),"| reasoning chars:",len(choice.get("reasoning") or ""))
+              answer=choice.get("content") or ""
+              print("Finish reason:",payload.get("choices",[{}])[0].get("finish_reason"),"| reasoning chars:",len(choice.get("reasoning") or ""))
               usage=payload.get("usage",{})
               cost=float(usage.get("cost") or 0)
               total_cost+=cost
               print("Document:",str(doc.get("title",""))[:90],"| output chars:",len(answer),"| cost USD:",cost)
               if not answer.strip():raise ValueError("Empty answer")
-              parsed=json.loads(answer)\n              if not isinstance(parsed,dict) or not isinstance(parsed.get("levels"),list) or not (2<=len(parsed["levels"])<=4):raise ValueError("Invalid hierarchical levels")
+              parsed=json.loads(answer)
+              if not isinstance(parsed,dict) or not isinstance(parsed.get("levels"),list) or not (2<=len(parsed["levels"])<=4):raise ValueError("Invalid hierarchical levels")
               levels=parsed.get("levels",[])
               quotes=parsed.get("evidence_quotes",[])
-              grounded=bool(levels) and bool(quotes) and all(isinstance(q,str) and q in text for q in quotes)\n              if not grounded:raise ValueError("Evidence quote missing from supplied text")
+              grounded=bool(levels) and bool(quotes) and all(isinstance(q,str) and q in text for q in quotes)
+              if not grounded:raise ValueError("Evidence quote missing from supplied text")
               outputs.append({"title":doc.get("title"),"url":doc.get("url"),"model":model,"classification":parsed,"quotes_grounded":grounded,"usage":usage})
             except (urllib.error.URLError,ValueError,KeyError,IndexError) as exc:
               print("Classification error:",type(exc).__name__,"HTTP:",getattr(exc,"code",None))
