@@ -35,3 +35,11 @@ Workflow `.github/workflows/cross-source-ambiguity-pilot.yml`; `ingestion/cross_
 Implementato `ingestion/cross_source_pair_text_probe.py`, con selezione di **24 coppie** in tre fasce della classifica (prime 8, posizioni 26–33 e 66–73). Le richieste URL sono deduplicate e passano per il controllo robots.txt e il fetch HTTPS già esistenti; Trafilatura misura testo >=800 caratteri / 100 parole e >=1200 / 180. Report `ambiguity-pair-text-coverage.json` nel workflow `cross-source-ambiguity-pilot.yml`. Nessun corpo articolo viene persistito. Aggiunti test di URL condivisi e fetch non riuscito.
 
 **Stato alla stesura:** run https://github.com/nathanasso-code/Ubik/actions/runs/38971480859 in corso durante il probe; non sono ancora disponibili misure finali sulle coppie con testo sufficiente. Il report misura solo accessibilità e lunghezza, non la capacità di distinguere semanticamente eventi o contraddizioni.
+
+## Run J — paired extraction evidence (verified)
+
+[Run 38971520106](https://github.com/nathanasso-code/Ubik/actions/runs/38971520106) **success**. Of 24 selected pairs across three similarity bands, 35 unique URLs were fetched with robots checks: 25 GET successes, 10 GET failures; 22 individual Trafilatura outputs exceeded 800 chars / 100 words; **11 of 24 pairs (45.8%)** passed the threshold on *both* sides. This is access coverage, **not verified full text** or semantic accuracy.
+
+Examples among the 11: Al Jazeera/ABC on Katie Zacharia; BBC/France24 and BBC/DW on West Bank settler attack; Euronews/France24 on Pope Leo; BBC/Guardian on Cyprus hotel death; Guardian/BBC on UK pornography regulation. **Important hard negative candidate:** Ars Technica on Black Sea drone attacks versus DW on two ships burning in Romania's Black Sea waters: geographic/topic overlap is insufficient to merge them without claim-level verification. Titles are not evidence of a common event.
+
+**Next gate:** preserve original URL, date, article type, and extracted claim evidence; compare same-event vs related-event vs distinct-event using the actual texts. Avoid calling the 11 pairs semantic matches or counting their article bodies as complete. The experiment stores no article bodies.
