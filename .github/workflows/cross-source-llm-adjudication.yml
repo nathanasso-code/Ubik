@@ -1,6 +1,11 @@
 name: Cross-source LLM adjudication
 on:
   workflow_dispatch:
+  push:
+    branches: [develop/ubik-core]
+    paths:
+      - '.github/workflows/cross-source-llm-adjudication.yml'
+      - 'ingestion/cross_source_llm_adjudication.py'
 permissions:
   contents: read
 jobs:
