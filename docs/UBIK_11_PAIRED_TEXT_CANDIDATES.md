@@ -1,0 +1,22 @@
+# Ubik — 11 coppie con testo accessibile da entrambe le fonti
+
+**Esperimento eseguito:** [GitHub Actions #38971520106](https://github.com/nathanasso-code/Ubik/actions/runs/38971520106). Su 24 coppie candidate, 11 hanno entrambe le estrazioni Trafilatura sopra 800 caratteri e 100 parole. Non sono etichette di equivalenza semantica; non è confermata la completezza dei testi.
+
+| # | Fonte A | Fonte B | Somiglianza RSS | Ipotesi da verificare |
+|---:|---|---|---:|---|
+| 1 | [Al Jazeera: Katie Zacharia](https://www.aljazeera.com/news/2026/10/16/white-house-press-secretary-katie-zacharia-fired-after-five-days-on-the-job?traffic_source=rss) | [ABC: Katie Zacharia](https://www.abc.net.au/news/2026-10-17/katie-zacharia-let-go-white-house/107278730) | 0,671 | Stessa uscita dall'incarico |
+| 2 | [BBC: aggressione Cisgiordania (video)](https://www.bbc.co.uk/news/videos/cqn06zx2r15jo?at_medium=RSS&at_campaign=rss) | [France 24: giornalista ferito](https://www.france24.com/en/middle-east/20261016-us-journalist-injured-during-israeli-settler-attack-on-west-bank-olive-harvest) | 0,635 | Stesso episodio, dettaglio complementare |
+| 3 | [Euronews: Papa Leone](https://www.euronews.com/2026/10/16/pope-leo-xiv-celebrates-mass-as-recovery-from-cancer-surgery-progresses) | [France 24: Papa Leone](https://www.france24.com/en/europe/20261016-pope-leo-xiv-celebrates-mass-in-hospital-while-recovering-from-lung-cancer-operation) | 0,574 | Stesso aggiornamento |
+| 4 | [BBC: Cisgiordania](https://www.bbc.co.uk/news/articles/c65ynk7212vqo?at_medium=RSS&at_campaign=rss) | [DW: giornalista ferito](https://www.dw.com/en/west-bank-us-journalist-injured-by-israeli-settlers/a-79684181?maca=en-rss-en-all-1573-xml-mrss) | 0,486 | Stesso episodio |
+| 5 | [BBC: Cisgiordania](https://www.bbc.co.uk/news/articles/c65ynk7212vqo?at_medium=RSS&at_campaign=rss) | [Guardian: aggressione](https://www.theguardian.com/world/2026/oct/16/israeli-settlers-attack-olive-farmers-west-bank-washington-post-journalist-heidi-levine) | 0,479 | Stesso episodio, possibili dettagli aggiuntivi |
+| 6 | [DW: Cisgiordania](https://www.dw.com/en/west-bank-us-journalist-injured-by-israeli-settlers/a-79684181?maca=en-rss-en-all-1573-xml-mrss) | [France 24: Cisgiordania](https://www.france24.com/en/middle-east/20261016-us-journalist-injured-during-israeli-settler-attack-on-west-bank-olive-harvest) | 0,476 | Stesso episodio |
+| 7 | [BBC: decesso bambino a Cipro](https://www.bbc.co.uk/news/articles/cvj6j1klez88o?at_medium=RSS&at_campaign=rss) | [Guardian: multa al padre](https://www.theguardian.com/world/2026/oct/16/british-man-joshua-foster-fined-son-death-cyprus) | 0,474 | Stesso procedimento |
+| 8 | [France 24: Katie Zacharia](https://www.france24.com/en/americas/20261016-embattled-new-white-house-press-secretary-zacharia-let-go-from-her-role) | [ABC: Katie Zacharia](https://www.abc.net.au/news/2026-10-17/katie-zacharia-let-go-white-house/107278730) | 0,473 | Stessa uscita dall'incarico |
+| 9 | [DW: Katie Zacharia](https://www.dw.com/en/white-house-press-secretary-zacharia-exiting-role-after-short-tenure/a-79684341?maca=en-rss-en-all-1573-xml-mrss) | [France 24: Katie Zacharia](https://www.france24.com/en/americas/20261016-embattled-new-white-house-press-secretary-zacharia-let-go-from-her-role) | 0,362 | Stessa uscita dall'incarico |
+| 10 | [Ars Technica: droni nel Mar Nero](https://arstechnica.com/gadgets/2026/10/black-sea-drone-attacks-enter-nato-countrys-territorial-waters-for-first-time/) | [DW: navi in fiamme nel Mar Nero](https://www.dw.com/en/romania-2-ships-on-fire-in-black-sea-7-crew-missing/a-79667003?maca=en-rss-en-all-1573-xml-mrss) | 0,359 | **Possibile falso accorpamento:** non presumere stesso evento |
+| 11 | [Guardian: normativa pornografia](https://www.theguardian.com/society/2026/oct/16/pornography-strangulation-incest-ban-uk-november) | [BBC: normativa pornografia](https://www.bbc.co.uk/news/articles/cmpqgepejr2ro?at_medium=RSS&at_campaign=rss) | 0,359 | Stesso provvedimento |
+
+## Lettura sperimentale
+Le 11 coppie **non corrispondono a 11 eventi indipendenti**: molte condividono le stesse fonti e riguardano il medesimo nucleo tematico. Questa ridondanza è utile per costruire card multi-fonte, ma rende ingannevole contare le coppie come osservazioni indipendenti.
+
+Tutte le ipotesi sono **da verificare sui contenuti**. Lo score TF-IDF non è una probabilità, la soglia di lunghezza non certifica testo integrale, e l'esperimento non ha prodotto giudizi semantici. I testi protetti non sono archiviati in questo report.
