@@ -7,6 +7,7 @@ on:
       - '.github/workflows/acquisition-coverage-live-pilot.yml'
       - 'ingestion/discovery_acquisition_gap_audit.py'
       - 'ingestion/live_get_text_probe.py'
+      - 'ingestion/acquisition_quality_report.py'
       - 'ingestion/global_rss_pilot.py'
       - 'config/source-registry.global-pilot.json'
 permissions:
@@ -35,6 +36,10 @@ jobs:
           base=Path("data/discovery")
           discovery=json.loads((base/"live-coverage-discovery-audit.json").read_text())
           probe=json.loads((base/"live-coverage-probes.json").read_text())
+          from ingestion.acquisition_quality_report import summarize
+          domains=summarize(probe['probes'])
+          (base/'live-coverage-by-domain.json').write_text(json.dumps(domains,indent=2)+'\n')
+          print('Domain-level diagnostics:',json.dumps(domains))
           out={"schema_version":1,"discovery":discovery["discovery"],"probe":probe["coverage"],
                "sample_fraction":round(probe["coverage"]["tested_urls"]/discovery["discovery"]["unique_urls"],4) if discovery["discovery"]["unique_urls"] else None,
                "limitations":["Unprobed discovered URLs are not extraction failures.",
@@ -53,4 +58,5 @@ jobs:
             data/discovery/live-coverage-probes.json
             data/discovery/live-coverage-discovery-audit.json
             data/discovery/live-coverage-summary.json
+            data/discovery/live-coverage-by-domain.json
           if-no-files-found: warn
