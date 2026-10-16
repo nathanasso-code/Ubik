@@ -10,6 +10,7 @@ on:
       - 'tests/test_cross_source_pair_text_probe.py'
       - 'ingestion/render_cross_source_review.py'
       - 'ingestion/cross_source_pair_text_probe.py'
+      - 'ingestion/preview_cross_source_cards.py'
       - 'ingestion/global_rss_pilot.py'
       - 'config/source-registry.global-pilot.json'
 permissions:
@@ -35,6 +36,8 @@ jobs:
         run: python -m ingestion.render_cross_source_review data/discovery/ambiguity-candidate-pairs.json --output data/discovery/ambiguity-review.md
       - name: Probe accessible text in high, medium and borderline pairs
         run: python -m ingestion.cross_source_pair_text_probe data/discovery/ambiguity-candidate-pairs.json --output data/discovery/ambiguity-pair-text-coverage.json
+      - name: Preview connected source candidate cards
+        run: python -m ingestion.preview_cross_source_cards data/discovery/ambiguity-pair-text-coverage.json --output data/discovery/ambiguity-card-preview.json
       - name: Upload inspectable evidence
         if: always()
         uses: actions/upload-artifact@v4
@@ -45,4 +48,5 @@ jobs:
             data/discovery/ambiguity-candidate-pairs.json
             data/discovery/ambiguity-review.md
             data/discovery/ambiguity-pair-text-coverage.json
+            data/discovery/ambiguity-card-preview.json
           if-no-files-found: warn
