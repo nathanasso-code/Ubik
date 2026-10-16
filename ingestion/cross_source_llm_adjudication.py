@@ -17,9 +17,9 @@ SYSTEM=("Compare two news articles by choosing passage IDs from the supplied lis
         "Do not invent events, dates, facts, or passage IDs. If uncertain, say uncertain.")
 def passages(text,prefix,max_passages=28):
     # Paragraphs are truncated for bounded prompts; original text stays transient.
-    raw=[x.strip() for x in re.split(r"\\n\\s*\\n",text) if len(x.strip())>=45]
+    raw=[x.strip() for x in re.split(r"\n\s*\n",text) if len(x.strip())>=45]
     if len(raw)<2:
-        raw=[x.strip() for x in re.split(r"(?<=[.!?])\\s+(?=[A-Z0-9])",text) if len(x.strip())>=45]
+        raw=[x.strip() for x in re.split(r"(?<=[.!?])\s+(?=[A-Z0-9])",text) if len(x.strip())>=45]
     return [{"id":f"{prefix}{i+1}","text":p[:360]} for i,p in enumerate(raw[:max_passages])]
 
 def acquire(url,fetch=fetch_one):
