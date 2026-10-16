@@ -23,3 +23,11 @@ This demonstrates broad feed-based discovery and some direct article-text access
 5. Only after measuring baseline, compare external search/extraction providers and their marginal cost and novel independent sources.
 
 No public feed publication, automatic merge, nucleus creation or validated synthesis follows from this run.
+
+## Follow-up sampling correction
+
+The first 24-URL sample was **not random**: it used feed order with a per-host cap. The `live_get_text_probe.py` module now defaults to a reproducible, seeded (`42`), domain-stratified pseudo-random sample, and retains `--method ordered` only as a comparison baseline. Tests are in `tests/test_live_probe_sampling.py`. The follow-up workflow uses **90 URLs, maximum 7 per host**. Run: https://github.com/nathanasso-code/Ubik/actions/runs/38963122346 (in progress when recorded; results not yet verified). This is balanced sampling, not a population-weighted estimator.
+
+## Local-first LLM policy confirmed
+
+`ingestion/mass_rich_hybrid_pilot.py` performs inexpensive TF-IDF cosine shortlist before the optional LLM adapter. `ingestion/llm_candidate_router.py` also supports embedding-derived bounded review queues, but its hard 0.70 cutoff is **not validated for recall**; low-similarity paraphrases can be missed entirely. These are separate pilot paths, not one verified end-to-end production pipeline. Future benchmark must measure candidate recall and LLM-call savings jointly; preserve a small exploration lane for apparently dissimilar pairs and avoid treating a high embedding score as evidence of event identity.
