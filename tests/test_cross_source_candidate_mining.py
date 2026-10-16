@@ -14,8 +14,7 @@ class CandidateMiningTests(unittest.TestCase):
         for p in result["top_pairs"]:
             from urllib.parse import urlsplit
             self.assertNotEqual(urlsplit(p["left"]["url"]).hostname,urlsplit(p["right"]["url"]).hostname)
-        self.assertEqual(result["top_pairs"][0]["left"]["publisher"],"A")
-        self.assertEqual(result["top_pairs"][0]["right"]["publisher"],"B")
+        self.assertEqual({result["top_pairs"][0]["left"]["publisher"],result["top_pairs"][0]["right"]["publisher"]},{"A","B"})
     def test_duplicate_url_collapses(self):
         row={"url":"https://a.example/1","title":"Ukraine peace talks in Brussels","publisher":"A"}
         self.assertEqual(build([row,row])["documents"],1)
