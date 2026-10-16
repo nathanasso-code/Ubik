@@ -89,12 +89,16 @@ jobs:
           for r in rows:
               t=r.get('alternative_extractors',{}).get('trafilatura',{})
               if r['url'] in html or not t.get('substantial_1200_180'):continue
-              quality['candidates'].append({'url':r['url'],'host':urlsplit(r['url']).hostname,
+              host=urlsplit(r['url']).hostname
+              route='scientific_abstract_page' if host=='arxiv.org' and urlsplit(r['url']).path.startswith('/abs/') else ('gallery' if '/gallery/' in urlsplit(r['url']).path else 'article_review_required')
+              quality['candidates'].append({'url':r['url'],'host':host,'content_route':route,
                   'chars':t.get('chars'),'words':t.get('words'),
                   'long_sentences':t.get('long_sentences'),
                   'repeated_long_sentences':t.get('repeated_long_sentences'),
                   'boilerplate_phrase_hits':t.get('boilerplate_phrase_hits')})
           quality['summary']={'candidate_count':len(quality['candidates']),
+              'routes':{route:sum(x['content_route']==route for x in quality['candidates'])
+                        for route in ('scientific_abstract_page','gallery','article_review_required')},
               'with_boilerplate_phrases':sum(bool(x['boilerplate_phrase_hits']) for x in quality['candidates']),
               'with_repeated_long_sentences':sum(bool(x['repeated_long_sentences']) for x in quality['candidates']),
               'with_zero_long_sentences':sum(x['long_sentences']==0 for x in quality['candidates'])}
