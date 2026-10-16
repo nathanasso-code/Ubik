@@ -53,3 +53,8 @@ Build an **offline, reversible fixture-driven evaluation** before wiring public 
 - How to represent the relationship between a card, a nucleus and a primary document in the interface.
 
 This record corrects stale references to Pulse/Press/Insights as mandatory sections. It does not claim those historical concepts are permanently abandoned.
+
+
+## Aggiornamento decisionale — 16 ottobre 2026
+
+**Fare riferimento al [decision record del 16 ottobre](UBIK_DECISION_RECORD_2026-10-16.md) per l'orientamento più recente.** Le card epistemiche multi-fonte sintetizzano una *singola notizia*; i nuclei sono **più rari**, persistenti e dedicati a sotto-questioni che giustificano molteplici card, contributi anche contraddittori e possibile socialità nativa. Non creare nuclei se il topic già concentra sufficientemente la comunità. Fonti fuori dai topic iniziali restano nel feed generale, con tag separati dai topic e possibili card di notizia. Sono decisioni progettuali ancora reversibili, non feature live.
