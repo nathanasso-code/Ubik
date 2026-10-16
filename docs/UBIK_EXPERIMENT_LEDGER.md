@@ -47,3 +47,10 @@ Questo documento è la fonte di continuità degli esperimenti: non confondere di
 - Same sampling configuration (90, seed 42, stratified across 15 hosts); 40 substantial HTML article elements; 12 URLs with JSON-LD articleBody >=800 characters. **Overlap not measured yet**: 12 is not a verified increment in acquired documents.
 - 66 successful GETs, 18 GET failures, 6 robots_unavailable (arXiv), 23 substantial unverified page text, 3 long abstract metadata. Prior run had 72 GET successes, 29 unverified page texts, no robots_unavailable. Do not interpret these transient access differences as parser regression.
 - Next: compute JSON-LD/HTML overlap and incremental yield on matched URLs, including host-level breakdown; then manually assess content relevance and completeness before any semantic claims.
+
+## Run E — measured incremental yield, same URL sample
+- Run https://github.com/nathanasso-code/Ubik/actions/runs/38965964363 — **success**.
+- 90 URL, HTML substantial article signals 40; JSON-LD articleBody >=800 characters 12; **overlap 12; JSON-LD-only 0; union 40**. JSON-LD was observed only for The Verge (6) and Euronews (6), both already HTML-positive.
+- This rejects the hypothesis that JSON-LD alone improves the *count* of substantial accessible articles in this sample. It may still corroborate extracted HTML and cannot establish completeness.
+- 72 GET successes, 18 GET failures, 30 unverified page-text cases and 2 long abstract cases in this run. Per-run access variation should not be mistaken for parser changes.
+- Next priority: extract clean text from uncertain page-text publishers with a distinct bounded paragraph/content heuristic, and benchmark on the exact same URLs; assess contamination before any semantic clustering. Keep JSON-LD as low-cost secondary signal only.
