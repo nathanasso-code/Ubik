@@ -29,3 +29,9 @@ Il confronto dimostra che una selezione multi-fonte con casi di potenziale ridon
 
 ## Artefatti
 Workflow `.github/workflows/cross-source-ambiguity-pilot.yml`; `ingestion/cross_source_candidate_mining.py`; `ingestion/render_cross_source_review.py`. I run più recenti producono anche `ambiguity-review.md` con 40 coppie navigabili.
+
+## Estensione: accessibilità dei testi per coppie candidate
+
+Implementato `ingestion/cross_source_pair_text_probe.py`, con selezione di **24 coppie** in tre fasce della classifica (prime 8, posizioni 26–33 e 66–73). Le richieste URL sono deduplicate e passano per il controllo robots.txt e il fetch HTTPS già esistenti; Trafilatura misura testo >=800 caratteri / 100 parole e >=1200 / 180. Report `ambiguity-pair-text-coverage.json` nel workflow `cross-source-ambiguity-pilot.yml`. Nessun corpo articolo viene persistito. Aggiunti test di URL condivisi e fetch non riuscito.
+
+**Stato alla stesura:** run https://github.com/nathanasso-code/Ubik/actions/runs/38971480859 in corso durante il probe; non sono ancora disponibili misure finali sulle coppie con testo sufficiente. Il report misura solo accessibilità e lunghezza, non la capacità di distinguere semanticamente eventi o contraddizioni.
