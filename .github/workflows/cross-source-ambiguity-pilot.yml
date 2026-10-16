@@ -1,0 +1,34 @@
+name: Cross-source ambiguity empirical pilot
+on:
+  workflow_dispatch:
+  push:
+    branches: [develop/ubik-core]
+    paths:
+      - '.github/workflows/cross-source-ambiguity-pilot.yml'
+      - 'ingestion/cross_source_candidate_mining.py'
+      - 'ingestion/global_rss_pilot.py'
+      - 'config/source-registry.global-pilot.json'
+permissions:
+  contents: read
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Discover global RSS corpus
+        run: python -m ingestion.global_rss_pilot --registry config/source-registry.global-pilot.json --output data/discovery/ambiguity-rss.json
+      - name: Rank cross-publisher pairs including difficult distinctions
+        run: python -m ingestion.cross_source_candidate_mining data/discovery/ambiguity-rss.json --output data/discovery/ambiguity-candidate-pairs.json
+      - name: Upload inspectable evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cross-source-ambiguity-pilot
+          path: |
+            data/discovery/ambiguity-rss.json
+            data/discovery/ambiguity-candidate-pairs.json
+          if-no-files-found: warn
