@@ -61,3 +61,8 @@ Questo documento è la fonte di continuità degli esperimenti: non confondere di
 - Trafilatura domain positives: Guardian 6, Ars Technica 6, Al Jazeera 5, The Verge 6, arXiv 6, ScienceDaily 6, France24 4, TechCrunch 6, DW 6, BBC 5, ABC 6, Euronews 6; zero phys.org, NPR, NYT (access failures).
 - Crucial: **different thresholds** baseline vs library, and library output is not yet manually validated. 68 is a substantial-text *screening signal*, NOT 68 confirmed complete clean articles. Do not report 28 as confirmed article recoveries. Need paired same-threshold quality/boilerplate audit and controlled reference sample before semantic benchmarking.
 - JSON-LD remains auxiliary: previous run showed zero incremental URL coverage.
+
+## Run G — equal-threshold comparison (verified)
+- https://github.com/nathanasso-code/Ubik/actions/runs/38968334318 **success**. 90 sampled URLs, **same threshold for all methods**: >=1200 characters and >=180 words.
+- HTML baseline 40; Trafilatura 64 (39 overlap HTML, 25 additional, union 65); Readability 60 (37 overlap HTML, 23 additional, union 63). HTML + Trafilatura screening coverage +62.5% relative to baseline (65 versus 40).
+- Caveat: screening coverage is NOT verified clean article completeness, and 90 publisher-stratified URLs are not representative of the overall source population. Follow up with extraction-quality audit before using this material as ground truth for semantic analysis.
