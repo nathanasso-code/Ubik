@@ -43,3 +43,9 @@ Implementato `ingestion/cross_source_pair_text_probe.py`, con selezione di **24 
 Examples among the 11: Al Jazeera/ABC on Katie Zacharia; BBC/France24 and BBC/DW on West Bank settler attack; Euronews/France24 on Pope Leo; BBC/Guardian on Cyprus hotel death; Guardian/BBC on UK pornography regulation. **Important hard negative candidate:** Ars Technica on Black Sea drone attacks versus DW on two ships burning in Romania's Black Sea waters: geographic/topic overlap is insufficient to merge them without claim-level verification. Titles are not evidence of a common event.
 
 **Next gate:** preserve original URL, date, article type, and extracted claim evidence; compare same-event vs related-event vs distinct-event using the actual texts. Avoid calling the 11 pairs semantic matches or counting their article bodies as complete. The experiment stores no article bodies.
+
+## Run K — anteprima delle card collegate (non validate)
+
+Dai dati dell'artefatto del Run J, le 11 coppie con testo accessibile da entrambe le parti formano **6 componenti connesse** di URL, con dimensioni **5, 4, 2, 2, 2, 2**. Le componenti suggeriscono i nuclei Cisgiordania, Katie Zacharia, Papa Leone XIV, decesso a Cipro, Mar Nero e normativa britannica. Il componente Mar Nero va trattato come potenziale falso accorpamento: la connessione grafica non implica identità di evento.
+
+Aggiunto `ingestion/preview_cross_source_cards.py` e output `ambiguity-card-preview.json` nel workflow, con link, archi e avvertenza per ogni componente. **Nessuna comparazione dei corpi articolo o validazione delle affermazioni è stata eseguita**: si tratta di card provvisorie costruite da coppie RSS con disponibilità di testo. Nuova esecuzione workflow: https://github.com/nathanasso-code/Ubik/actions/runs/38971964145 (in corso alla stesura).
