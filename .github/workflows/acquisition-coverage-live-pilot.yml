@@ -100,7 +100,7 @@ jobs:
               'with_zero_long_sentences':sum(x['long_sentences']==0 for x in quality['candidates'])}
           quality['limitations']=['These automated signals are weak contamination checks, not human validation.',
                                   'No extracted text is stored; URL-level review requires authorized transient access.']
-          (base/'live-coverage-extraction-quality.json').write_text(json.dumps(quality,indent=2)+'\\n')
+          (base/'live-coverage-extraction-quality.json').write_text(json.dumps(quality,indent=2)+'\n')
           print('Extraction quality screening:',json.dumps(quality['summary']))
           extraction['limitations']=['800 characters and 100 words is a screening threshold, not validated article text.',
                                       'No article text stored; manual quality evaluation still required.']
