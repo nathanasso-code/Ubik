@@ -27,7 +27,7 @@ jobs:
       - name: Analyze up to four pairs with OpenRouter
         env:
           UBIK_LLM_ENDPOINT: https://openrouter.ai/api/v1/chat/completions
-          UBIK_LLM_MODEL: openai/gpt-4.1-mini
+          UBIK_LLM_MODEL: qwen/qwen3-32b
           UBIK_LLM_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
         run: |
           if [ -z "$UBIK_LLM_API_KEY" ]; then echo 'Missing OPENROUTER_API_KEY'; exit 1; fi
