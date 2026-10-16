@@ -22,3 +22,8 @@ Branch di sviluppo: `develop/ubik-core`. La documentazione descrive anche funzio
 ### Evidenze testuali e relazioni semantiche (ottobre 2026)
 
 La politica di adeguatezza A/B/C per abstract e descrizioni, il confronto prudente di passaggi tra fonti, i risultati empirici e i limiti di verifica sono documentati in [Evidence Adequacy and Semantic Relations](docs/EVIDENCE_ADEQUACY_AND_SEMANTIC_RELATIONS_2026-10-13.md). La disponibilità di testo e la pubblicabilità rimangono distinte.
+
+
+## Decisioni e test aggiornati — 16 ottobre 2026
+
+**Leggere subito:** [Decisioni di prodotto, feed generale, topic/tag, card/nuclei e risultati OpenRouter del 16 ottobre](docs/UBIK_DECISION_RECORD_2026-10-16.md). Questo documento aggiorna l'orientamento di prodotto e i risultati empirici successivi all'handoff del 13 ottobre; non implica implementazione o deploy delle funzionalità progettate.
