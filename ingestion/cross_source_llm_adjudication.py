@@ -10,13 +10,18 @@ from urllib.robotparser import RobotFileParser
 from ingestion.approved_https_fetch import fetch_one,USER_AGENT
 from ingestion.llm_semantic_adapter import request_analysis
 
-SYSTEM=("Compare two source articles. Output JSON with relation one of "
-        "same_event, related_distinct_event, different_event, uncertain; "
-        "reason a short explanation, quote_a and quote_b each an exact short "
-        "verbatim substring from the corresponding article text (maximum 100 characters), "
-        "and distinct_details as a list of up to three concise differences. "
-        "Never infer that differing numbers contradict without aligning their meaning and date. "
-        "If insufficient evidence choose uncertain.")
+SYSTEM=("Compare two news articles by choosing passage IDs from the supplied lists. "
+        "Output JSON keys: relation (same_event, related_distinct_event, different_event, uncertain), "
+        "reason (short), evidence_a_id and evidence_b_id (IDs exactly as supplied), "
+        "distinct_details (list of up to three differences). "
+        "Do not invent events, dates, facts, or passage IDs. If uncertain, say uncertain.")
+def passages(text,prefix,max_passages=28):
+    # Paragraphs are truncated for bounded prompts; original text stays transient.
+    raw=[x.strip() for x in re.split(r"\\n\\s*\\n",text) if len(x.strip())>=45]
+    if len(raw)<2:
+        raw=[x.strip() for x in re.split(r"(?<=[.!?])\\s+(?=[A-Z0-9])",text) if len(x.strip())>=45]
+    return [{"id":f"{prefix}{i+1}","text":p[:360]} for i,p in enumerate(raw[:max_passages])]
+
 def acquire(url,fetch=fetch_one):
     host=urlsplit(url).hostname
     robots=fetch("https://"+host+"/robots.txt",{host},timeout=5)
@@ -30,20 +35,20 @@ def acquire(url,fetch=fetch_one):
 def evaluate(proposal,a,b):
     relation=proposal.get("relation")
     valid_relation=relation in {"same_event","related_distinct_event","different_event","uncertain"}
-    qa,qb=proposal.get("quote_a"),proposal.get("quote_b")
-    valid_quotes=all(isinstance(q,str) and 12<=len(q)<=100 and q in body
-                     for q,body in ((qa,a),(qb,b)))
+    ia,ib=proposal.get("evidence_a_id"),proposal.get("evidence_b_id")
+    valid_a=ia in {x["id"] for x in a} if isinstance(ia,str) else False
+    valid_b=ib in {x["id"] for x in b} if isinstance(ib,str) else False
     details=proposal.get("distinct_details",[])
     if not isinstance(details,list):details=[]
     return {"relation":relation if valid_relation else "invalid",
-            "grounded_quotes":valid_quotes,
-            "quote_a_valid":isinstance(qa,str) and 12<=len(qa)<=100 and qa in a,
-            "quote_b_valid":isinstance(qb,str) and 12<=len(qb)<=100 and qb in b,
-            "quote_a_length":len(qa) if isinstance(qa,str) else None,
-            "quote_b_length":len(qb) if isinstance(qb,str) else None,
-            "accepted_for_review":valid_relation and valid_quotes,
+            "evidence_a_id":ia if valid_a else None,
+            "evidence_b_id":ib if valid_b else None,
+            "evidence_a_valid":valid_a,"evidence_b_valid":valid_b,
+            "grounded_passage_ids":valid_a and valid_b,
+            "accepted_for_review":valid_relation and valid_a and valid_b,
             "reason":str(proposal.get("reason",""))[:400],
             "distinct_details":[str(x)[:160] for x in details[:3]]}
+
 def provider_error_code(exc):
     if not isinstance(exc,urllib.error.HTTPError):return None
     try:
@@ -67,11 +72,12 @@ def run(data,limit=4,execute=False,endpoint="",model="",key="",acquirer=acquire,
                 results.append({"left_url":a["url"],"right_url":b["url"],"status":"ready",
                                 "chars_a":len(ta),"chars_b":len(tb)})
                 continue
+            pa,pb=passages(ta[:7000],"A"),passages(tb[:7000],"B")
             messages=[{"role":"system","content":SYSTEM},{"role":"user","content":json.dumps({
-                "a":{"title":a["title"],"text":ta[:7000]},
-                "b":{"title":b["title"],"text":tb[:7000]}},ensure_ascii=False)}]
+                "a":{"title":a["title"],"passages":pa},
+                "b":{"title":b["title"],"passages":pb}},ensure_ascii=False)}]
             proposal,usage=requester(messages,endpoint,model,key)
-            result=evaluate(proposal,ta[:7000],tb[:7000])
+            result=evaluate(proposal,pa,pb)
             results.append({"left_url":a["url"],"right_url":b["url"],"status":"analyzed",
                             "validation":result,"usage":usage})
         except (OSError,ValueError,PermissionError,TimeoutError,KeyError,TypeError,urllib.error.URLError) as exc:
@@ -84,8 +90,8 @@ def run(data,limit=4,execute=False,endpoint="",model="",key="",acquirer=acquire,
                        "grounded_for_review":sum(x.get("validation",{}).get("accepted_for_review",False) for x in results),
                        "errors":sum(x["status"]=="error" for x in results)},
             "results":results,"limitations":["LLM relations are proposals, not independently validated gold labels.",
-               "Substring-grounded quotations are a weak but necessary condition, not semantic proof.",
-               "No original texts or verbatim quotations are persisted."]}
+               "Valid passage IDs prove only selection from supplied text, not semantic correctness.",
+               "No original texts or verbatim passages are persisted."]}
 def main():
     p=argparse.ArgumentParser();p.add_argument("input",type=Path);p.add_argument("--output",type=Path,required=True)
     p.add_argument("--limit",type=int,default=4);p.add_argument("--execute",action="store_true")
