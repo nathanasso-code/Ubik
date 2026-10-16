@@ -27,3 +27,5 @@ La politica di adeguatezza A/B/C per abstract e descrizioni, il confronto pruden
 ## Decisioni e test aggiornati — 16 ottobre 2026
 
 **Leggere subito:** [Decisioni di prodotto, feed generale, topic/tag, card/nuclei e risultati OpenRouter del 16 ottobre](docs/UBIK_DECISION_RECORD_2026-10-16.md). Questo documento aggiorna l'orientamento di prodotto e i risultati empirici successivi all'handoff del 13 ottobre; non implica implementazione o deploy delle funzionalità progettate.
+
+**Prossima fase tecnica:** [Audit acquisizione e benchmark semantico](docs/ACQUISITION_AND_SEMANTIC_EVALUATION_NEXT_2026-10-16.md) — stato e limiti espliciti.
