@@ -22,7 +22,7 @@ jobs:
         with:
           python-version: '3.12'
       - name: Test coverage accounting
-        run: python -m unittest discover -s tests -p 'test_discovery_acquisition_gap_audit.py' && python -m unittest discover -s tests -p 'test_live_probe_sampling.py'
+        run: python -m unittest discover -s tests -p 'test_discovery_acquisition_gap_audit.py' && python -m unittest discover -s tests -p 'test_live_probe_sampling.py' && python -m unittest discover -s tests -p 'test_structured_article_probe.py'
       - name: Discover cross-disciplinary RSS articles
         run: python -m ingestion.global_rss_pilot --registry config/source-registry.global-pilot.json --output data/discovery/live-coverage-rss.json
       - name: Probe a bounded cross-domain sample with robots checks
@@ -38,6 +38,8 @@ jobs:
           probe=json.loads((base/"live-coverage-probes.json").read_text())
           from ingestion.acquisition_quality_report import summarize
           domains=summarize(probe['probes'])
+          structured=[x for x in probe['probes'] if x.get('structured_article_max_chars',0)>=800]
+          print('Structured articleBody >=800 chars:',len(structured),'of',len(probe['probes']))
           (base/'live-coverage-by-domain.json').write_text(json.dumps(domains,indent=2)+'\n')
           print('Domain-level diagnostics:',json.dumps(domains))
           out={"schema_version":1,"discovery":discovery["discovery"],"probe":probe["coverage"],
