@@ -6,7 +6,7 @@ permissions:
 jobs:
   classify:
     runs-on: ubuntu-latest
-    timeout-minutes: 8
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
         with:
@@ -24,11 +24,11 @@ jobs:
           from ingestion.rich_text_corpus import build
           key=os.environ.get("OPENROUTER_API_KEY","")
           if not key:sys.exit("Missing OPENROUTER_API_KEY")
-          discovered=discover(per_topic=5)
+          discovered=discover(per_topic=18)
           folder=pathlib.Path("data/discovery/openrouter-hierarchy-pilot")
-          acquired=acquire(discovered,folder,max_items=12)
+          acquired=acquire(discovered,folder,max_items=36)
           rich=build(folder,minimum_chars=800)
-          docs=rich.get("documents",[])[:4]
+          docs=rich.get("documents",[])[:20]
           print("Substantial documents:",len(docs))
           if not docs:sys.exit("No substantial documents acquired")
           headers={"Authorization":"Bearer "+key,"Content-Type":"application/json"}
@@ -43,6 +43,7 @@ jobs:
           print("Selected model:",model)
           outputs=[];total_cost=0.0
           for doc in docs:
+            answer="";parsed=None
             if total_cost>=0.02:break
             text=str(doc.get("text") or doc.get("full_text") or "")[:5000]
             prompt=("Classify this research document by topic, using 2 to 4 hierarchical levels from broad to specific. "
@@ -62,15 +63,16 @@ jobs:
               print("Document:",str(doc.get("title",""))[:90],"| output chars:",len(answer),"| cost USD:",cost)
               if not answer.strip():raise ValueError("Empty answer")
               parsed=json.loads(answer)
-              if not isinstance(parsed,dict) or not isinstance(parsed.get("levels"),list) or not (2<=len(parsed["levels"])<=4):raise ValueError("Invalid hierarchical levels")
+              if not isinstance(parsed,dict):raise ValueError("Response is not an object")
+              if not isinstance(parsed.get("levels"),list) or not (2<=len(parsed["levels"])<=4):raise ValueError("Invalid hierarchical levels")
               levels=parsed.get("levels",[])
               quotes=parsed.get("evidence_quotes",[])
               grounded=bool(levels) and bool(quotes) and all(isinstance(q,str) and q in text for q in quotes)
               if not grounded:raise ValueError("Evidence quote missing from supplied text")
-              outputs.append({"title":doc.get("title"),"url":doc.get("url"),"model":model,"classification":parsed,"quotes_grounded":grounded,"usage":usage})
+              outputs.append({"title":doc.get("title"),"url":doc.get("url"),"model":model,"classification":parsed,"quotes_grounded":grounded,"usage":usage,"status":"valid"})
             except (urllib.error.URLError,ValueError,KeyError,IndexError) as exc:
-              print("Classification error:",type(exc).__name__,"HTTP:",getattr(exc,"code",None))
-              outputs.append({"title":doc.get("title"),"error":type(exc).__name__})
+              print("Classification error:",type(exc).__name__,str(exc)[:240],"HTTP:",getattr(exc,"code",None))
+              outputs.append({"title":doc.get("title"),"url":doc.get("url"),"error":type(exc).__name__,"error_detail":str(exc)[:500],"raw_response":answer[:3500] if "answer" in locals() else None,"parsed_response":parsed if "parsed" in locals() else None,"status":"rejected"})
           pathlib.Path("openrouter-hierarchy-results.json").write_text(json.dumps({"model":model,"acquisition":acquired.get("coverage"),"rich_coverage":rich.get("coverage"),"cost_usd":total_cost,"results":outputs},ensure_ascii=False,indent=2))
           print("Total reported USD cost:",total_cost,"| valid classifications:",sum(bool(x.get("classification")) for x in outputs))
           if not any(x.get("classification") for x in outputs):sys.exit("No valid classification returned")
