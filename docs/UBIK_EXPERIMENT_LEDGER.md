@@ -66,3 +66,10 @@ Questo documento è la fonte di continuità degli esperimenti: non confondere di
 - https://github.com/nathanasso-code/Ubik/actions/runs/38968334318 **success**. 90 sampled URLs, **same threshold for all methods**: >=1200 characters and >=180 words.
 - HTML baseline 40; Trafilatura 64 (39 overlap HTML, 25 additional, union 65); Readability 60 (37 overlap HTML, 23 additional, union 63). HTML + Trafilatura screening coverage +62.5% relative to baseline (65 versus 40).
 - Caveat: screening coverage is NOT verified clean article completeness, and 90 publisher-stratified URLs are not representative of the overall source population. Follow up with extraction-quality audit before using this material as ground truth for semantic analysis.
+
+## Run H — automated contamination screening of extractions
+- Run https://github.com/nathanasso-code/Ubik/actions/runs/38968901524 — **success**.
+- Same 90-URL stratified pilot, HTML baseline 40 at >=1200 characters and >=180 words; Trafilatura 64 (39 baseline overlap, **25 additional**, 65 union). Readability 61 at the same threshold (37 baseline overlap, 24 additional, 64 union). Access outcomes: 72 GET successes, 18 failures.
+- For **25 Trafilatura-only candidates**, heuristic checks found **0 with configured boilerplate phrases**, **0 with repeated long sentences**, and **0 without long sentences**. This is only a *weak automated contamination screen*; it is NOT manual validation, semantic correctness, or completeness evidence. The phrase list is narrow and English-only.
+- Artifact: `live-coverage-extraction-quality.json` includes URLs and per-URL metrics but no article bodies. Source: acquisition-coverage-live-pilot workflow artifact.
+- Decision: Trafilatura primary candidate, Readability fallback candidate, HTML control. Next gate: quality labels against a small human-reviewed reference sample; then local-first semantic benchmark using source-attributed texts.
