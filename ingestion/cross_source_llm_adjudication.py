@@ -37,6 +37,10 @@ def evaluate(proposal,a,b):
     if not isinstance(details,list):details=[]
     return {"relation":relation if valid_relation else "invalid",
             "grounded_quotes":valid_quotes,
+            "quote_a_valid":isinstance(qa,str) and 12<=len(qa)<=100 and qa in a,
+            "quote_b_valid":isinstance(qb,str) and 12<=len(qb)<=100 and qb in b,
+            "quote_a_length":len(qa) if isinstance(qa,str) else None,
+            "quote_b_length":len(qb) if isinstance(qb,str) else None,
             "accepted_for_review":valid_relation and valid_quotes,
             "reason":str(proposal.get("reason",""))[:400],
             "distinct_details":[str(x)[:160] for x in details[:3]]}
