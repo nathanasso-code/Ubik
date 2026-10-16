@@ -37,6 +37,7 @@ jobs:
           from pathlib import Path
           result=json.loads(Path("data/discovery/llm-cross-source-results.json").read_text())
           print("LLM coverage:",result["summary"])
+          print("Sanitized provider errors:",[{"http_status":r.get("http_status"),"provider_error_code":r.get("provider_error_code"),"error_type":r.get("error_type")} for r in result["results"] if r["status"]=="error"])
           if not result["summary"]["analyzed"]:sys.exit("No LLM inferences succeeded")
           PY
       - name: Upload inspectable LLM report
