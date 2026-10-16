@@ -21,11 +21,11 @@ jobs:
         with:
           python-version: '3.12'
       - name: Test coverage accounting
-        run: python -m unittest discover -s tests -p 'test_discovery_acquisition_gap_audit.py'
+        run: python -m unittest discover -s tests -p 'test_discovery_acquisition_gap_audit.py' && python -m unittest discover -s tests -p 'test_live_probe_sampling.py'
       - name: Discover cross-disciplinary RSS articles
         run: python -m ingestion.global_rss_pilot --registry config/source-registry.global-pilot.json --output data/discovery/live-coverage-rss.json
       - name: Probe a bounded cross-domain sample with robots checks
-        run: python -m ingestion.live_get_text_probe data/discovery/live-coverage-rss.json --max-urls 24 --output data/discovery/live-coverage-probes.json
+        run: python -m ingestion.live_get_text_probe data/discovery/live-coverage-rss.json --max-urls 90 --per-host 7 --seed 42 --method stratified --output data/discovery/live-coverage-probes.json
       - name: Report discovery and acquisition coverage without mistaking unattempted URLs for extraction failures
         run: |
           python -m ingestion.discovery_acquisition_gap_audit --discovery data/discovery/live-coverage-rss.json --output data/discovery/live-coverage-discovery-audit.json
