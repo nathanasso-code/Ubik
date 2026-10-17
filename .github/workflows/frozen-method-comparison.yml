@@ -1,0 +1,35 @@
+name: Frozen Ubik method comparison audit
+on:
+  workflow_dispatch:
+  push:
+    branches: [develop/ubik-core]
+    paths:
+      - 'ingestion/frozen_comparison_benchmark.py'
+      - '.github/workflows/frozen-method-comparison.yml'
+permissions:
+  contents: read
+  actions: read
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Download frozen corpus and model outputs
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p data/benchmark
+          gh run download 39052746507 --repo "${{ github.repository }}" --name metadata-first-corpus-candidates --dir data/benchmark
+          gh run download 39063389188 --repo "${{ github.repository }}" --name critical-metadata-case-review --dir data/benchmark
+      - name: Score labeled pair subset
+        run: |
+          python -m ingestion.frozen_comparison_benchmark --candidates data/benchmark/metadata-first-candidates.json --critical data/benchmark/critical-metadata-review.json --output data/benchmark/frozen-method-comparison.json
+      - name: Publish audit artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: frozen-ubik-method-comparison
+          path: data/benchmark/frozen-method-comparison.json
