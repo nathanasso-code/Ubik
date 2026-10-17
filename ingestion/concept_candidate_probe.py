@@ -22,7 +22,7 @@ CONCEPTS={
  "election":"vote","voting":"vote","ballot":"vote",
 }
 def concepts(s):
-    return set(CONCEPTS.get(t,t) for t in tokens(s))
+    # Restrict the probe to explicit curated equivalences; shared generic words\n    # alone cannot create candidate edges.\n    return set(CONCEPTS[t] for t in tokens(s) if t in CONCEPTS)
 def candidate_pairs(rows,baseline,top_k=5000):
     docs={r["url"]:r for r in rows if r.get("url") and r.get("title")}
     baseline_keys={tuple(sorted((p["left"]["url"],p["right"]["url"]))) for p in baseline["top_pairs"]}
@@ -37,7 +37,7 @@ def candidate_pairs(rows,baseline,top_k=5000):
             for b in urls[i+1:]:
                 if urlsplit(a).hostname==urlsplit(b).hostname:continue
                 overlap[tuple(sorted((a,b)))]+=1
-    ranked=sorted(overlap.items(),key=lambda x:(-x[1],x[0]))
+    ranked=sorted(((pair,n) for pair,n in overlap.items() if n>=2),key=lambda x:(-x[1],x[0]))
     novel=[]
     for (a,b),shared in ranked:
         if (a,b) in baseline_keys:continue
@@ -48,7 +48,7 @@ def candidate_pairs(rows,baseline,top_k=5000):
     return {"schema_version":1,"method":"auditable_concept_normalization_proxy_not_embeddings",
             "corpus_documents":len(docs),"baseline_pairs":len(baseline_keys),
             "novel_candidate_pairs":len(novel),"candidates":novel,
-            "limitations":["Concept normalization is a heuristic, not semantic embeddings.",
+            "limitations":["Curated equivalences require at least two independent matching concepts; this is not semantic embeddings.",
                            "Novel means absent from bounded baseline top-k, not semantically novel.",
                            "Candidates require article-text event identity review."]}
 def main():
