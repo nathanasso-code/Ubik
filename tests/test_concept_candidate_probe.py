@@ -4,6 +4,10 @@ class ConceptProbeTests(unittest.TestCase):
     def test_synonyms(self):
         self.assertIn("injury",concepts("journalist wounded"))
         self.assertIn("injury",concepts("photographer injured"))
+    def test_generic_overlap_not_sufficient(self):
+        rows=[{"url":"https://a.test/1","title":"Artificial intelligence research"},
+              {"url":"https://b.test/2","title":"Artificial intelligence politics"}]
+        self.assertEqual(candidate_pairs(rows,{"top_pairs":[]})["novel_candidate_pairs"],0)
     def test_novel_pair(self):
         rows=[{"url":"https://a.test/1","title":"Journalist wounded"},
               {"url":"https://b.test/2","title":"Photographer injured"}]
