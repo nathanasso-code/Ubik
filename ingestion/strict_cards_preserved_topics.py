@@ -57,7 +57,11 @@ def run(relationships,grouping,acquirer=acquire,requester=request_analysis,endpo
             same=verdict.get("same_near_identical_news") is True and valid
             if same:edges.add(tuple(sorted((aid,bid))))
             reviews.append({**base,"status":"reviewed","same_near_identical_news":same,
-                "passage_ids_valid":valid,"reason":str(verdict.get("reason",""))[:700],
+                "passage_ids_valid":valid,"raw_model_same":verdict.get("same_near_identical_news"),
+                "raw_evidence_a_id":verdict.get("evidence_a_id"),"raw_evidence_b_id":verdict.get("evidence_b_id"),
+                "expected_evidence_a_ids":[x["id"] for x in pa],
+                "expected_evidence_b_ids":[x["id"] for x in pb],
+                "reason":str(verdict.get("reason",""))[:700],
                 "shared_primary_facts":verdict.get("shared_primary_facts",[]),
                 "materially_different_primary_facts":verdict.get("materially_different_primary_facts",[]),
                 "tags":verdict.get("tags",[]),"usage":usage})
