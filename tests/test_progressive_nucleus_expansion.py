@@ -18,6 +18,9 @@ class ProgressiveNucleusTests(unittest.TestCase):
     def test_no_transitive_chaining(self):
         a,b,c,d="https://a.test/1","https://b.test/1","https://c.test/1","https://d.test/1"
         self.assertEqual(expand([pair(a,c),pair(b,c),pair(c,d)], [a,b])["candidate_count"],1)
+    def test_same_domain_candidate_excluded(self):
+        a,b,c="https://a.test/1","https://b.test/1","https://a.test/2"
+        self.assertEqual(expand([pair(a,c),pair(b,c)], [a,b])["candidate_count"],0)
     def test_two_seeds_required(self):
         with self.assertRaises(ValueError):expand([],["https://a.test/1"])
 if __name__=="__main__":unittest.main()
