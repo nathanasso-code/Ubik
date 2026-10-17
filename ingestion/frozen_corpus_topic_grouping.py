@@ -53,6 +53,30 @@ def validate(proposal,sources):
         if not isinstance(n,dict) or not set(n.get("source_ids",[])).issubset(ids):return False,"invalid_nucleus"
     return True,None
 
+def normalize_assignment(proposal,sources):
+    """Repair only bookkeeping: first topic wins; absent IDs remain unassigned.
+
+    No semantic membership is invented, and repairs are explicitly reported.
+    """
+    ids={s["id"] for s in sources};seen=set();repairs=[]
+    for topic in proposal.get("topics",[]):
+        unique=[]
+        for sid in topic.get("source_ids",[]):
+            if sid not in ids or sid in seen:
+                repairs.append({"id":sid,"action":"remove_duplicate_or_unknown_topic_assignment"})
+            else:seen.add(sid);unique.append(sid)
+        topic["source_ids"]=unique
+    unassigned=[]
+    for sid in proposal.get("unassigned_source_ids",[]):
+        if sid not in ids or sid in seen:
+            repairs.append({"id":sid,"action":"remove_duplicate_or_unknown_unassigned"})
+        else:seen.add(sid);unassigned.append(sid)
+    for sid in sorted(ids-seen):
+        unassigned.append(sid)
+        repairs.append({"id":sid,"action":"missing_from_llm_output_left_unassigned"})
+    proposal["unassigned_source_ids"]=unassigned
+    return repairs
+
 def run(report,requester=request_analysis,endpoint="",model="",key=""):
     sources,pairs=prepare(report)
     # Two-stage batching avoids truncated JSON for 50+ documents and allows coherent global consolidation.
@@ -65,9 +89,10 @@ def run(report,requester=request_analysis,endpoint="",model="",key=""):
             proposal,usage=requester([{"role":"system","content":SYSTEM},
                 {"role":"user","content":json.dumps({"sources":batch,"relationships":local_pairs,
                   "instruction":"Draft topics and tags for this batch. Keep nuclei rare."},ensure_ascii=False)}],endpoint,model,key)
+            repairs=normalize_assignment(proposal,batch)
             valid,error=validate(proposal,batch)
             drafts.append({"batch":i+1,"source_count":len(batch),"valid":valid,"validation_error":error,
-                           "proposal":proposal,"usage":usage})
+                           "proposal":proposal,"usage":usage,"assignment_repairs":repairs})
         except (ValueError,KeyError,TypeError,OSError,TimeoutError,urllib.error.URLError) as e:
             errors.append({"batch":i+1,"error_type":type(e).__name__,"http_status":getattr(e,"code",None)})
     if errors or not all(x["valid"] for x in drafts):
@@ -84,6 +109,7 @@ def run(report,requester=request_analysis,endpoint="",model="",key=""):
             {"role":"user","content":json.dumps({"sources":sources,"relationships":pairs,
               "batch_drafts":compact,
               "instruction":"GLOBAL consolidation: reconcile synonyms and merge overfragmented topic groups; all sources exactly once. Preserve useful topic-only and related-development relationships. Be conservative with nuclei."},ensure_ascii=False)}],endpoint,model,key)
+        final_repairs=normalize_assignment(final,sources)
         valid,error=validate(final,sources)
         return {"schema_version":1,"model":model,"summary":{"sources":len(sources),"pairs":len(pairs),
             "draft_batches":len(drafts),"errors":0,"validated":valid,
@@ -91,7 +117,7 @@ def run(report,requester=request_analysis,endpoint="",model="",key=""):
             "nuclei_proposed":len(final.get("nucleus_proposals",[])) if valid else None,
             "unassigned":len(final.get("unassigned_source_ids",[])) if valid else None},
             "sources":sources,"relationships":pairs,"consolidated":final,"validation_error":error,
-            "usage":usage,"drafts":drafts,
+            "usage":usage,"drafts":drafts,"global_assignment_repairs":final_repairs,
             "limitations":["Same frozen 54 reviewed pairs, with every distinct source included.",
              "No original texts in this stage; grouping relies on titles and earlier text-grounded pair reasons.",
              "Cross-batch pairs enter global consolidation; missing pair edges are not proof of unrelatedness.",
