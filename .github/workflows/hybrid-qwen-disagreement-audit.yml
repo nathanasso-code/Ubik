@@ -1,0 +1,35 @@
+name: Hybrid Qwen disagreement audit
+on:
+  workflow_dispatch:
+  push:
+    branches: [develop/ubik-core]
+    paths:
+      - 'ingestion/hybrid_qwen_disagreement_audit.py'
+      - '.github/workflows/hybrid-qwen-disagreement-audit.yml'
+permissions:
+  contents: read
+  actions: read
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download frozen hybrid retrieval
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p data/audit
+          gh run download 39075100154 --repo "${{ github.repository }}" --name frozen-neural-expanded-candidates --dir data/audit
+      - name: Download Qwen reviewed cases
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh run download 39076957811 --repo "${{ github.repository }}" --name hybrid-qwen-adjudication-pilot --dir data/audit
+      - name: Compare retrieval methods against Qwen decisions
+        run: |
+          python -u -m ingestion.hybrid_qwen_disagreement_audit data/audit/neural-expanded-candidates.json data/audit/hybrid-qwen-review.json --output data/audit/hybrid-qwen-disagreement.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: hybrid-qwen-disagreement
+          path: data/audit/hybrid-qwen-disagreement.json
