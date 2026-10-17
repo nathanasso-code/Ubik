@@ -1,0 +1,42 @@
+name: Hybrid candidate Qwen adjudication pilot
+on:
+  workflow_dispatch:
+  push:
+    branches: [develop/ubik-core]
+    paths:
+      - '.github/workflows/hybrid-qwen-adjudication.yml'
+permissions:
+  contents: read
+  actions: read
+jobs:
+  adjudicate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Download fixed neural candidate graph
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p data/hybrid
+          gh run download 39075100154 --repo "${{ github.repository }}" --name frozen-neural-expanded-candidates --dir data/hybrid
+      - name: Review hybrid candidate groups with Qwen
+        env:
+          UBIK_LLM_ENDPOINT: https://openrouter.ai/api/v1/chat/completions
+          UBIK_LLM_MODEL: qwen/qwen3-32b
+          UBIK_LLM_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+        run: |
+          test -n "$UBIK_LLM_API_KEY"
+          python -u -m ingestion.single_pass_metadata_review data/hybrid/neural-expanded-candidates.json --max-calls 20 --max-sources 24 --output data/hybrid/hybrid-qwen-review.json
+      - name: Preserve results and checkpoints
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: hybrid-qwen-adjudication-pilot
+          path: |
+            data/hybrid/hybrid-qwen-review.json
+            data/hybrid/hybrid-qwen-review.checkpoint.json
+          if-no-files-found: warn
