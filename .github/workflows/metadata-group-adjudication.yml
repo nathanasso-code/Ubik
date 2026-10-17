@@ -12,7 +12,7 @@ permissions:
 jobs:
   adjudicate:
     runs-on: ubuntu-latest
-    timeout-minutes: 35
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -31,11 +31,11 @@ jobs:
           UBIK_LLM_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
         run: |
           test -n "$UBIK_LLM_API_KEY"
-          python -m ingestion.metadata_group_adjudication data/discovery/metadata/metadata-first-candidates.json --max-calls 45 --output data/discovery/metadata-group-review.json
+          python -m ingestion.metadata_group_adjudication data/discovery/metadata/metadata-first-candidates.json --max-calls 12 --output data/discovery/metadata-group-review.json
       - name: Archive result
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: metadata-first-qwen-groups
-          path: data/discovery/metadata-group-review.json
+          path: |\n            data/discovery/metadata-group-review.json\n            data/discovery/metadata-group-review.checkpoint.json
           if-no-files-found: warn
