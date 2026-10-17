@@ -9,7 +9,7 @@ from urllib.parse import urlsplit
 STOP=set("the a an of to in for on at from with by and or as is are was were be this that its it after over into about amid says said new how why what who will can may has have had their his her more than".split())
 def tokens(s):
     return [x for x in re.findall(r"[a-z0-9]+",str(s).lower()) if len(x)>2 and x not in STOP]
-def build(rows):
+def build(rows,top_k=100):
     unique={}
     for row in rows:
         url=row.get("url","")
@@ -47,7 +47,7 @@ def build(rows):
                 scores[(i,j)]+=vi*vj
     ranked=sorted(scores.items(),key=lambda z:-z[1])
     pairs=[]
-    for (i,j),score in ranked[:100]:
+    for (i,j),score in ranked[:top_k]:
         left,right=docs[i],docs[j]
         lt=set(tokens(left["title"]));rt=set(tokens(right["title"]))
         overlap=sorted(lt&rt)
@@ -59,12 +59,12 @@ def build(rows):
             "top_pairs":pairs,
             "limitations":["RSS metadata only; not extracted full text or semantic embeddings.",
                            "Similarity is not evidence of same event, redundancy, or contradiction.",
-                           "Human adjudication required; top-100 selection is biased toward lexical overlap."]}
+                           "Human adjudication required; lexical candidate selection is biased toward shared wording."]}
 def main():
-    p=argparse.ArgumentParser();p.add_argument("input",type=Path);p.add_argument("--output",type=Path,required=True)
+    p=argparse.ArgumentParser();p.add_argument("input",type=Path);p.add_argument("--output",type=Path,required=True);p.add_argument("--top-k",type=int,default=100)
     a=p.parse_args()
     source=json.loads(a.input.read_text())
-    result=build(source["items"])
+    result=build(source["items"],top_k=min(5000,max(1,a.top_k)))
     a.output.parent.mkdir(parents=True,exist_ok=True)
     a.output.write_text(json.dumps(result,ensure_ascii=False,indent=2)+"\n")
     print("Cross-publisher candidate mining:",json.dumps({"documents":result["documents"],"pairs_scored":result["cross_publisher_pairs_scored"],"top_pairs":result["top_pairs"][:12]},ensure_ascii=False))
