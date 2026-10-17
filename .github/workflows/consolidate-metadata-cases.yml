@@ -1,0 +1,34 @@
+name: Consolidate metadata Qwen review cases
+on:
+  workflow_dispatch:
+  push:
+    branches: [develop/ubik-core]
+    paths:
+      - 'ingestion/consolidate_metadata_cases.py'
+      - '.github/workflows/consolidate-metadata-cases.yml'
+permissions:
+  contents: read
+  actions: read
+jobs:
+  consolidate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Download frozen Qwen metadata review
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p data/discovery/review
+          gh run download 39057949208 --repo "${{ github.repository }}" --name metadata-first-qwen-groups --dir data/discovery/review
+      - name: Consolidate review cases without merging cards
+        run: |
+          python -m ingestion.consolidate_metadata_cases data/discovery/review/metadata-group-review.json --output data/discovery/metadata-consolidated-cases.json
+      - name: Upload cases
+        uses: actions/upload-artifact@v4
+        with:
+          name: metadata-consolidated-review-cases
+          path: data/discovery/metadata-consolidated-cases.json
