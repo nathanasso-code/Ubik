@@ -1,0 +1,43 @@
+name: Single-pass Qwen metadata comparison
+on:
+  workflow_dispatch:
+  push:
+    branches: [develop/ubik-core]
+    paths:
+      - 'ingestion/single_pass_metadata_review.py'
+      - '.github/workflows/single-pass-metadata-review.yml'
+permissions:
+  contents: read
+  actions: read
+jobs:
+  compare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Download fixed candidate corpus
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p data/discovery/metadata
+          gh run download 39052746507 --repo "${{ github.repository }}" --name metadata-first-corpus-candidates --dir data/discovery/metadata
+      - name: Single-pass Qwen component review
+        env:
+          UBIK_LLM_ENDPOINT: https://openrouter.ai/api/v1/chat/completions
+          UBIK_LLM_MODEL: qwen/qwen3-32b
+          UBIK_LLM_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+        run: |
+          test -n "$UBIK_LLM_API_KEY"
+          python -u -m ingestion.single_pass_metadata_review data/discovery/metadata/metadata-first-candidates.json --max-calls 12 --max-sources 18 --output data/discovery/single-pass-review.json
+      - name: Archive review
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: single-pass-qwen-review
+          path: |
+            data/discovery/single-pass-review.json
+            data/discovery/single-pass-review.checkpoint.json
+          if-no-files-found: warn
