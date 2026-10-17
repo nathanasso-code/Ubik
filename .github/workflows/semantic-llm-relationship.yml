@@ -1,0 +1,46 @@
+name: Semantic LLM relationship adjudication
+on:
+  workflow_dispatch:
+  push:
+    branches: [develop/ubik-core]
+    paths:
+      - 'ingestion/semantic_llm_relationship_pilot.py'
+      - 'tests/test_semantic_llm_relationship_pilot.py'
+      - '.github/workflows/semantic-llm-relationship.yml'
+permissions:
+  contents: read
+jobs:
+  adjudicate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install extraction and semantic models
+        run: pip install 'sentence-transformers>=3,<6' 'numpy>=1.26,<3' 'trafilatura==2.3.1' 'readability-lxml==0.9.0'
+      - name: Test relationship classification
+        run: python -m unittest discover -s tests -p 'test_semantic_llm_relationship_pilot.py'
+      - name: Collect single corpus and discover semantic-only pairs
+        run: |
+          python -m ingestion.global_rss_pilot --registry config/source-registry.global-pilot.json --output data/discovery/semantic-llm-rss.json
+          python -m ingestion.cross_source_candidate_mining data/discovery/semantic-llm-rss.json --output data/discovery/semantic-llm-baseline.json --top-k 5000
+          python -m ingestion.neural_semantic_candidate_pilot data/discovery/semantic-llm-rss.json data/discovery/semantic-llm-baseline.json --output data/discovery/semantic-llm-candidates.json --top-k 100
+      - name: Qwen review of as many accessible substantial-text pairs as possible
+        env:
+          UBIK_LLM_ENDPOINT: https://openrouter.ai/api/v1/chat/completions
+          UBIK_LLM_MODEL: qwen/qwen3-32b
+          UBIK_LLM_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+        run: |
+          if [ -z "$UBIK_LLM_API_KEY" ]; then echo 'Missing OPENROUTER_API_KEY'; exit 1; fi
+          python -m ingestion.semantic_llm_relationship_pilot data/discovery/semantic-llm-candidates.json --output data/discovery/semantic-llm-relationships.json --limit 60
+      - name: Upload review-only reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: semantic-llm-relationships
+          path: |
+            data/discovery/semantic-llm-candidates.json
+            data/discovery/semantic-llm-relationships.json
+          if-no-files-found: warn
