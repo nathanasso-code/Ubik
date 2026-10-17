@@ -6,7 +6,7 @@ No transitive-only chaining; no LLM calls or article bodies persisted.
 """
 import argparse
 import json
-from collections import defaultdict
+from collections import defaultdict, Counter
 from pathlib import Path
 
 def expand(pairs, seeds, min_support=2, limit=20):
@@ -28,9 +28,10 @@ def expand(pairs, seeds, min_support=2, limit=20):
     for url,neighbors in edges.items():
         if url in nucleus:continue
         matched=[s for s in nucleus if s in neighbors]
-        hosts={meta[s].get("publisher") or s.split("/")[2] for s in matched}
+        hosts={s.split("/")[2] for s in matched}
         if len(matched)<min_support or len(hosts)<min_support:continue
         scores=[neighbors[s] for s in matched]
+        if url.split("/")[2] in hosts:continue
         results.append({"url":url,"title":meta[url].get("title",""),
                         "supporting_seed_urls":matched,
                         "support_count":len(matched),
@@ -43,7 +44,7 @@ def expand(pairs, seeds, min_support=2, limit=20):
             "limitations":["Seed pairs must be independently verified as the same event.",
                            "Only edges present in the supplied candidate graph are discoverable.",
                            "No automatic merge; review original texts and event identity first.",
-                           "A top-100 pair graph severely limits recall; full edge retrieval is needed."]}
+                           "Lexical-only edge retrieval limits recall; add semantic and entity-based discovery."]}
 
 def main():
     p=argparse.ArgumentParser()
