@@ -5,6 +5,7 @@ on:
     branches: [develop/ubik-core]
     paths:
       - 'ingestion/progressive_nucleus_expansion.py'
+      - 'ingestion/cross_source_candidate_mining.py'
       - 'tests/test_progressive_nucleus_expansion.py'
       - '.github/workflows/progressive-nucleus-discovery.yml'
 permissions:
@@ -23,7 +24,7 @@ jobs:
       - name: Mine current RSS candidates
         run: |
           python -m ingestion.global_rss_pilot --registry config/source-registry.global-pilot.json --output data/discovery/nucleus-rss.json
-          python -m ingestion.cross_source_candidate_mining data/discovery/nucleus-rss.json --output data/discovery/nucleus-candidates.json
+          python -m ingestion.cross_source_candidate_mining data/discovery/nucleus-rss.json --output data/discovery/nucleus-candidates.json --top-k 5000
       - name: Demonstrate expansion from provisional high-ranked seed pair
         run: |
           python - <<'PY'
