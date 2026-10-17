@@ -1,0 +1,42 @@
+name: Frozen full-corpus topic and tag grouping
+on:
+  workflow_dispatch:
+  push:
+    branches: [develop/ubik-core]
+    paths:
+      - 'ingestion/frozen_corpus_topic_grouping.py'
+      - '.github/workflows/frozen-corpus-topic-grouping.yml'
+permissions:
+  contents: read
+  actions: read
+jobs:
+  group:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Download frozen 54-pair full report
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p data/discovery/frozen
+          gh run download 39017110794 --repo "${{ github.repository }}" --name semantic-llm-relationships --dir data/discovery/frozen
+          test -s data/discovery/frozen/semantic-llm-relationships.json
+      - name: Organize ALL original sources into topics, tags and rare nucleus proposals
+        env:
+          UBIK_LLM_ENDPOINT: https://openrouter.ai/api/v1/chat/completions
+          UBIK_LLM_MODEL: qwen/qwen3-32b
+          UBIK_LLM_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+        run: |
+          if [ -z "$UBIK_LLM_API_KEY" ]; then echo 'Missing OPENROUTER_API_KEY'; exit 1; fi
+          python -m ingestion.frozen_corpus_topic_grouping data/discovery/frozen/semantic-llm-relationships.json --output data/discovery/frozen/full-corpus-topic-grouping.json
+      - name: Upload review-only report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: full-corpus-topic-grouping
+          path: data/discovery/frozen/full-corpus-topic-grouping.json
+          if-no-files-found: warn
