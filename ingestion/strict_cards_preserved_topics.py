@@ -53,7 +53,12 @@ def run(relationships,grouping,acquirer=acquire,requester=request_analysis,endpo
                     "b":{"title":byid[bid]["title"],"passages":pb},
                     "prior_relation_for_context_only":pair.get("relation")},ensure_ascii=False)}],
                     endpoint,model,key)
-            valid=verdict.get("evidence_a_id") in {x["id"] for x in pa} and verdict.get("evidence_b_id") in {x["id"] for x in pb}
+            def evidence_valid(value,available):
+                if isinstance(value,list):items=value
+                elif isinstance(value,str):items=[v.strip() for v in value.replace(";",",").split(",")]
+                else:return False
+                return bool(items) and all(isinstance(v,str) and v in available for v in items)
+            valid=evidence_valid(verdict.get("evidence_a_id"),{x["id"] for x in pa}) and evidence_valid(verdict.get("evidence_b_id"),{x["id"] for x in pb})
             same=verdict.get("same_near_identical_news") is True and valid
             if same:edges.add(tuple(sorted((aid,bid))))
             reviews.append({**base,"status":"reviewed","same_near_identical_news":same,
