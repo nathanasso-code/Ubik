@@ -37,5 +37,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: metadata-first-qwen-groups
-          path: |\n            data/discovery/metadata-group-review.json\n            data/discovery/metadata-group-review.checkpoint.json
+          path: |
+            data/discovery/metadata-group-review.json
+            data/discovery/metadata-group-review.checkpoint.json
           if-no-files-found: warn
