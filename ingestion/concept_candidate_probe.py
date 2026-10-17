@@ -22,7 +22,9 @@ CONCEPTS={
  "election":"vote","voting":"vote","ballot":"vote",
 }
 def concepts(s):
-    # Restrict the probe to explicit curated equivalences; shared generic words\n    # alone cannot create candidate edges.\n    return set(CONCEPTS[t] for t in tokens(s) if t in CONCEPTS)
+    # Restrict the probe to explicit curated equivalences; shared generic words
+    # alone cannot create candidate edges.
+    return set(CONCEPTS[t] for t in tokens(s) if t in CONCEPTS)
 def candidate_pairs(rows,baseline,top_k=5000):
     docs={r["url"]:r for r in rows if r.get("url") and r.get("title")}
     baseline_keys={tuple(sorted((p["left"]["url"],p["right"]["url"]))) for p in baseline["top_pairs"]}
