@@ -35,7 +35,7 @@ def windows(context,edges,max_size=8):
             seen.add(window);windows.append(window)
     return windows
 
-def run(data,requester=request_analysis,endpoint="",model="",key="",max_calls=45):
+def run(data,requester=request_analysis,endpoint="",model="",key="",max_calls=12,checkpoint=None):
     docs={s["id"]:s for s in data["sources"]}
     edges=data["candidate_pairs"];tasks=[];seen=set()
     for ctx in data["review_contexts"]:
@@ -50,7 +50,7 @@ def run(data,requester=request_analysis,endpoint="",model="",key="",max_calls=45
         payload={"sources":[docs[i] for i in ids],"candidate_edges":[e for e in edges if e["a"] in ids and e["b"] in ids]}
         try:
             response,usage=requester([{"role":"system","content":SYSTEM},
-                {"role":"user","content":json.dumps(payload,ensure_ascii=False)}],endpoint,model,key)
+                {"role":"user","content":json.dumps(payload,ensure_ascii=False)}],endpoint,model,key,timeout=25)
             cards=response.get("cards",[])
             if not isinstance(cards,list):cards=[]
             accepted=[]
@@ -62,8 +62,14 @@ def run(data,requester=request_analysis,endpoint="",model="",key="",max_calls=45
             reviewed.append({"source_ids":ids,"cards":accepted,"related_distinct":response.get("related_distinct",[]),
                 "uncertain_source_ids":response.get("uncertain_source_ids",[]),"usage":usage})
             proposals+=accepted
+            if checkpoint:
+                checkpoint.parent.mkdir(parents=True,exist_ok=True)
+                checkpoint.write_text(json.dumps({"reviewed_windows":reviewed,"proposals":proposals,"errors":errors},ensure_ascii=False,indent=2)+"\\n")
         except (ValueError,KeyError,TypeError,TimeoutError,urllib.error.URLError) as e:
             errors.append({"source_ids":ids,"error_type":type(e).__name__})
+            if checkpoint:
+                checkpoint.parent.mkdir(parents=True,exist_ok=True)
+                checkpoint.write_text(json.dumps({"reviewed_windows":reviewed,"proposals":proposals,"errors":errors},ensure_ascii=False,indent=2)+"\\n")
     # Do not merge overlapping proposals automatically. Conflict requires review.
     unique={tuple(x["source_ids"]):x for x in proposals}
     conflicts=[]
@@ -83,11 +89,11 @@ def run(data,requester=request_analysis,endpoint="",model="",key="",max_calls=45
 
 def main():
     p=argparse.ArgumentParser();p.add_argument("input",type=Path)
-    p.add_argument("--output",type=Path,required=True);p.add_argument("--max-calls",type=int,default=45)
+    p.add_argument("--output",type=Path,required=True);p.add_argument("--max-calls",type=int,default=12)
     a=p.parse_args()
     endpoint=os.getenv("UBIK_LLM_ENDPOINT","");model=os.getenv("UBIK_LLM_MODEL","");key=os.getenv("UBIK_LLM_API_KEY","")
     if not all((endpoint,model,key)):p.error("Missing LLM configuration")
-    out=run(json.loads(a.input.read_text()),endpoint=endpoint,model=model,key=key,max_calls=max(1,min(60,a.max_calls)))
+    out=run(json.loads(a.input.read_text()),endpoint=endpoint,model=model,key=key,max_calls=max(1,min(20,a.max_calls)),checkpoint=a.output.with_suffix(".checkpoint.json"))
     a.output.parent.mkdir(parents=True,exist_ok=True);a.output.write_text(json.dumps(out,ensure_ascii=False,indent=2)+"\n")
     print("Metadata group adjudication:",json.dumps(out["summary"]))
     for g in out["candidate_groups"][:20]:print("CANDIDATE",json.dumps(g,ensure_ascii=False))
