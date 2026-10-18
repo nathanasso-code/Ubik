@@ -1,0 +1,47 @@
+name: Frozen Qwen single-call title-anchored A-B
+on:
+  workflow_dispatch:
+  push:
+    branches: [develop/ubik-core]
+    paths:
+      - '.github/workflows/frozen-text-qwen-single-call.yml'
+permissions:
+  contents: read
+  actions: read
+jobs:
+  compare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate Python syntax
+        run: python -m py_compile ingestion/frozen_text_qwen_single_call_review.py ingestion/frozen_text_qwen_review.py
+      - name: Retrieve identical frozen inputs
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p data/three-way-single
+          gh run download 39075100154 --repo "${{ github.repository }}" --name frozen-neural-expanded-candidates --dir data/three-way-single
+          gh run download 39076957811 --repo "${{ github.repository }}" --name hybrid-qwen-adjudication-pilot --dir data/three-way-single
+          gh run download 39107689997 --repo "${{ github.repository }}" --name frozen-original-texts-pilot --dir data/three-way-single
+      - name: One-call title-anchored extraction and grouping
+        env:
+          UBIK_LLM_ENDPOINT: https://openrouter.ai/api/v1/chat/completions
+          UBIK_LLM_MODEL: qwen/qwen3-32b
+          UBIK_LLM_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+        run: |
+          test -n "$UBIK_LLM_API_KEY"
+          python -u -m ingestion.frozen_text_qwen_single_call_review data/three-way-single/neural-expanded-candidates.json data/three-way-single/hybrid-qwen-review.json data/three-way-single/original-texts.json --max-calls 20 --output data/three-way-single/text-qwen-review.json
+      - name: Build identical comparison report
+        run: |
+          python -u -m ingestion.three_way_comparison_page data/three-way-single/neural-expanded-candidates.json data/three-way-single/hybrid-qwen-review.json data/three-way-single/original-texts.json data/three-way-single/text-qwen-review.json --output data/three-way-single/index.html --json-output data/three-way-single/summary.json
+      - name: Publish artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ubik-single-call-ab-report
+          path: |
+            data/three-way-single/index.html
+            data/three-way-single/summary.json
+            data/three-way-single/text-qwen-review.json
+          if-no-files-found: warn
