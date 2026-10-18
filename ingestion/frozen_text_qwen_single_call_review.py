@@ -72,6 +72,6 @@ def main():
     result=run(*[json.loads(getattr(a,n).read_text()) for n in ("graph","metadata","texts")],
         endpoint=endpoint,model=model,key=key,max_calls=a.max_calls)
     a.output.parent.mkdir(parents=True,exist_ok=True)
-    a.output.write_text(json.dumps(result,ensure_ascii=False,indent=2)+"\\n")
+    a.output.write_text(json.dumps(result,ensure_ascii=False,indent=2)+"\n")
     print("TEXT_QWEN_SINGLE",json.dumps(result["summary"]))
 if __name__=="__main__":main()
