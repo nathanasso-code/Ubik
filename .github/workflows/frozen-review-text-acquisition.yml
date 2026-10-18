@@ -1,0 +1,38 @@
+name: Frozen original-text acquisition pilot
+on:
+  workflow_dispatch:
+  push:
+    branches: [develop/ubik-core]
+    paths:
+      - 'ingestion/frozen_review_text_acquisition.py'
+      - '.github/workflows/frozen-review-text-acquisition.yml'
+permissions:
+  contents: read
+  actions: read
+jobs:
+  acquire:
+    runs-on: ubuntu-latest
+    timeout-minutes: 28
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download frozen hybrid candidates
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p data/text-pilot
+          gh run download 39075100154 --repo "${{ github.repository }}" --name frozen-neural-expanded-candidates --dir data/text-pilot
+      - name: Download same Qwen reviewed cases
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh run download 39076957811 --repo "${{ github.repository }}" --name hybrid-qwen-adjudication-pilot --dir data/text-pilot
+      - name: Retrieve original article texts with explicit access statuses
+        run: |
+          python -u -m ingestion.frozen_review_text_acquisition data/text-pilot/neural-expanded-candidates.json data/text-pilot/hybrid-qwen-review.json --limit 50 --output data/text-pilot/original-texts.json
+      - name: Archive acquisition report and permitted text
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: frozen-original-texts-pilot
+          path: data/text-pilot/original-texts.json
+          if-no-files-found: warn
