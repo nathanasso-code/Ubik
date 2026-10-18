@@ -13,7 +13,7 @@ def audit(review,model_name="sentence-transformers/paraphrase-multilingual-MiniL
         texts=[" ".join(str(f.get(k) or "") for k in ("subject","action","object","central_development","result_or_consequence")) for f in facts]
         if len(ids)<2:continue
         if not any(t.strip() for t in texts):continue
-        lex=TfidfVectorizer(ngram_range=(1,2),sublinear_tf=True,token_pattern=r"(?u)\\b\\w+\\b").fit_transform(texts)
+        lex=TfidfVectorizer(ngram_range=(1,2),sublinear_tf=True,token_pattern=r"(?u)\b\w+\b").fit_transform(texts)
         tf=(lex@lex.T).toarray()
         vectors=model.encode(texts,normalize_embeddings=True,show_progress_bar=False)
         sem=np.asarray(vectors)@np.asarray(vectors).T
