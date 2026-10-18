@@ -3,14 +3,27 @@ import argparse,json,os,urllib.error
 from pathlib import Path
 from ingestion.llm_semantic_adapter import request_analysis
 
-SYSTEM=("You are an event identity editor. Compare the supplied ORIGINAL ARTICLE TEXTS. "
-"Only group sources if the texts substantiate the same specific news development, "
-"not merely the same topic, person, location or ongoing conflict. Separate follow-up "
-"reactions and distinct incidents. If texts are noisy, incomplete or ambiguous, leave "
-"sources standalone. Return JSON with cards:[{source_ids:[...],reason:string}], uncertainties:[string]. "
-
- "Never invent facts. "
-"Do not automatically publish.")
+SYSTEM=("You are a rigorous news event identity editor. Follow TWO ordered stages. "
+"STAGE 1: for EVERY source independently extract a structured event fingerprint: "
+"source_id, subject (who), action (what happened), object (to whom/what), "
+"event_date (not publication date; null if unknown), place (null if unknown), "
+"result_or_consequence (null if unknown), central_development, "
+"information_quality (substantive or insufficient), and ambiguity. "
+"Use only supplied text; do not infer missing fields. A long generic template or "
+"news bulletin without identifiable concrete stories is INSUFFICIENT. "
+"STAGE 2: compare these fingerprints, not mere topical similarity. "
+"Group sources only when they describe the SAME specific central development. "
+"Shared subjects, conflict, theme, background, causal relationship, or reactions "
+"to an event do NOT alone establish identity. Separate distinct announcements, "
+"responses, interviews, meetings, analyses, and follow-up events. "
+"Different publication dates or complementary details do not necessarily mean "
+"different events. Leave uncertain sources standalone and explain uncertainty. "
+"Return valid JSON with source_facts:[{source_id,subject,action,object,event_date,"
+"place,result_or_consequence,central_development,information_quality,ambiguity}], "
+"cards:[{source_ids:[...],reason:string}], "
+"related_events:[{source_ids:[...],relation:string}], uncertainties:[string]. "
+"Each source must appear in source_facts exactly once. "
+"No verbatim quotations required. Do not invent facts or automatically publish.")
 
 def run(graph,metadata,texts,requester=request_analysis,endpoint="",model="",key="",max_calls=20):
     byid={s["id"]:s for s in graph["sources"]}
@@ -35,7 +48,7 @@ def run(graph,metadata,texts,requester=request_analysis,endpoint="",model="",key
                 used.update(members)
                 cards.append({"source_ids":sorted(members),"reason":c.get("reason",""),
                               "status":"qwen_text_decision_unverified"})
-            results.append({"source_ids":ids,"original_case_ids":case["source_ids"],"cards":cards,
+            results.append({"source_ids":ids,"original_case_ids":case["source_ids"],"cards":cards,\n                 "source_facts":answer.get("source_facts",[]),\n                 "related_events":answer.get("related_events",[]),
                  "standalone_source_ids":sorted(set(ids)-used),"invalid_groups":invalid,
                  "uncertainties":answer.get("uncertainties",[]),"usage":usage})
         except (ValueError,KeyError,TypeError,TimeoutError,urllib.error.URLError) as exc:
