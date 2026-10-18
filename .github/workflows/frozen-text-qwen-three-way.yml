@@ -1,10 +1,11 @@
-name: Frozen text Qwen with event fingerprints (syntax repaired)
+name: Frozen Qwen two-stage title-anchored review
 on:
   workflow_dispatch:
   push:
     branches: [develop/ubik-core]
     paths:
       - '.github/workflows/frozen-text-qwen-three-way.yml'
+      - 'ingestion/frozen_text_qwen_review.py'
 permissions:
   contents: read
   actions: read
@@ -14,6 +15,8 @@ jobs:
     timeout-minutes: 40
     steps:
       - uses: actions/checkout@v4
+      - name: Check Python syntax before paid API calls
+        run: python -m py_compile ingestion/frozen_text_qwen_review.py
       - name: Retrieve frozen graph, metadata judgments, and original texts
         env:
           GH_TOKEN: ${{ github.token }}
@@ -29,7 +32,7 @@ jobs:
           UBIK_LLM_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
         run: |
           test -n "$UBIK_LLM_API_KEY"
-          python -u -m ingestion.frozen_text_qwen_review data/three-way/neural-expanded-candidates.json data/three-way/hybrid-qwen-review.json data/three-way/original-texts.json --max-calls 20 --output data/three-way/text-qwen-review.json
+          python -u -m ingestion.frozen_text_qwen_review data/three-way/neural-expanded-candidates.json data/three-way/hybrid-qwen-review.json data/three-way/original-texts.json --max-calls 100 --output data/three-way/text-qwen-review.json
       - name: Build complete three-way interactive HTML report
         run: |
           python -u -m ingestion.three_way_comparison_page data/three-way/neural-expanded-candidates.json data/three-way/hybrid-qwen-review.json data/three-way/original-texts.json data/three-way/text-qwen-review.json --output data/three-way/index.html --json-output data/three-way/summary.json
