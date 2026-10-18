@@ -1,0 +1,201 @@
+{
+  "method": "independent_source_grounded_editorial_extraction",
+  "caveat": "Statements grounded in acquired article text; no external fact-checking; editorial reconstructions",
+  "facts": [
+    {
+      "source_id": "S473",
+      "central_development": "Researchers attach solar/Bluetooth transmitters to monarch butterflies to study their migration",
+      "information_quality": "substantive"
+    },
+    {
+      "source_id": "S474",
+      "central_development": "Researchers attach solar/Bluetooth transmitters to monarch butterflies to study their migration",
+      "information_quality": "substantive"
+    },
+    {
+      "source_id": "S268",
+      "central_development": "Brazil reports a major decline in Amazon deforestation to a multi-decade low",
+      "information_quality": "substantive"
+    },
+    {
+      "source_id": "S327",
+      "central_development": "Brazil reports a major decline in Amazon deforestation to a multi-decade low",
+      "information_quality": "substantive"
+    },
+    {
+      "source_id": "S454",
+      "central_development": "Brazil reports a major decline in Amazon deforestation to a multi-decade low",
+      "information_quality": "substantive"
+    },
+    {
+      "source_id": "S786",
+      "central_development": "Brazil reports a major decline in Amazon deforestation to a multi-decade low",
+      "information_quality": "substantive"
+    },
+    {
+      "source_id": "S438",
+      "central_development": "Euronews October 16 evening bulletin: no transcript of constituent news",
+      "information_quality": "insufficient"
+    },
+    {
+      "source_id": "S443",
+      "central_development": "Euronews October 17 evening bulletin: no transcript",
+      "information_quality": "insufficient"
+    },
+    {
+      "source_id": "S444",
+      "central_development": "Euronews October 17 midday bulletin: no transcript",
+      "information_quality": "insufficient"
+    },
+    {
+      "source_id": "S445",
+      "central_development": "Euronews October 17 morning bulletin: no transcript",
+      "information_quality": "insufficient"
+    },
+    {
+      "source_id": "S188",
+      "central_development": "Trump eases Russia oil sanctions; Al Jazeera also examines European gas purchases",
+      "information_quality": "substantive"
+    },
+    {
+      "source_id": "S293",
+      "central_development": "Trump waives or suspends a new Russia sanctions package",
+      "information_quality": "substantive"
+    },
+    {
+      "source_id": "S383",
+      "central_development": "Trump waives or suspends a new Russia sanctions package",
+      "information_quality": "substantive"
+    },
+    {
+      "source_id": "S433",
+      "central_development": "Trump waives or suspends a new Russia sanctions package",
+      "information_quality": "substantive"
+    },
+    {
+      "source_id": "S305",
+      "central_development": "Zelensky thanks EU leaders for support; Trump criticizes strikes on Russian refineries",
+      "information_quality": "substantive"
+    },
+    {
+      "source_id": "S382",
+      "central_development": "Trump claims Russia and Ukraine agreed to an energy ceasefire; Zelensky says this is news to him",
+      "information_quality": "substantive"
+    },
+    {
+      "source_id": "S387",
+      "central_development": "Foreign ministers at Warsaw forum discuss and criticize Russia-diesel sanctions relief",
+      "information_quality": "substantive"
+    },
+    {
+      "source_id": "S389",
+      "central_development": "Zelensky addresses EU summit seeking support amid tensions with Trump",
+      "information_quality": "substantive"
+    },
+    {
+      "source_id": "S408",
+      "central_development": "Zelensky tells Euronews Trump is easier to deal with than Putin",
+      "information_quality": "substantive"
+    },
+    {
+      "source_id": "S465",
+      "central_development": "Russia calls Trump's sanctions waiver historic",
+      "information_quality": "substantive"
+    },
+    {
+      "source_id": "S488",
+      "central_development": "Zelensky criticizes pause and urges support for Russia sanctions",
+      "information_quality": "substantive"
+    },
+    {
+      "source_id": "S758",
+      "central_development": "Guardian editorial criticizes Trump-Putin dealings and urges European support for Ukraine",
+      "information_quality": "substantive"
+    },
+    {
+      "source_id": "S966",
+      "central_development": "Zelensky says Russia sanctions pause rewards Putin",
+      "information_quality": "substantive"
+    },
+    {
+      "source_id": "S287",
+      "central_development": "Selma Blair representatives say she did not intend harm in airplane altercation",
+      "information_quality": "substantive"
+    },
+    {
+      "source_id": "S813",
+      "central_development": "Selma Blair representatives say she did not intend harm in airplane altercation",
+      "information_quality": "substantive"
+    },
+    {
+      "source_id": "S158",
+      "central_development": "Mexican court sentences three men to 158 years each for murders of surfers",
+      "information_quality": "substantive"
+    },
+    {
+      "source_id": "S211",
+      "central_development": "Mexican court sentences three men to 158 years each for murders of surfers",
+      "information_quality": "substantive"
+    },
+    {
+      "source_id": "S364",
+      "central_development": "Mexican court sentences three men to 158 years each for murders of surfers",
+      "information_quality": "substantive"
+    },
+    {
+      "source_id": "S735",
+      "central_development": "Mexican court sentences three men to 158 years each for murders of surfers",
+      "information_quality": "substantive"
+    },
+    {
+      "source_id": "S895",
+      "central_development": "Guardian podcast episode description discusses AI workplace monitoring, Ian Sample and Robert Booth",
+      "information_quality": "substantive"
+    },
+    {
+      "source_id": "S899",
+      "central_development": "Guardian video version of the same Guardian episode about AI workplace monitoring",
+      "information_quality": "substantive"
+    },
+    {
+      "source_id": "S173",
+      "central_development": "Pope Leo XIV leaves Gemelli hospital after lung cancer surgery",
+      "information_quality": "substantive"
+    },
+    {
+      "source_id": "S213",
+      "central_development": "Pope Leo XIV leaves Gemelli hospital after lung cancer surgery",
+      "information_quality": "substantive"
+    },
+    {
+      "source_id": "S372",
+      "central_development": "Pope Leo XIV leaves Gemelli hospital after lung cancer surgery",
+      "information_quality": "substantive"
+    },
+    {
+      "source_id": "S427",
+      "central_development": "Pope Leo XIV leaves Gemelli hospital after lung cancer surgery",
+      "information_quality": "substantive"
+    },
+    {
+      "source_id": "S449",
+      "central_development": "Pope Leo XIV leaves Gemelli hospital after lung cancer surgery",
+      "information_quality": "substantive"
+    },
+    {
+      "source_id": "S489",
+      "central_development": "Pope Leo XIV leaves Gemelli hospital after lung cancer surgery",
+      "information_quality": "substantive"
+    },
+    {
+      "source_id": "S411",
+      "central_development": "Pope Leo XIV celebrates Mass at hospital during recovery",
+      "information_quality": "substantive"
+    },
+    {
+      "source_id": "S441",
+      "central_development": "Vatican releases first photos of Pope Leo XIV after surgery, showing Mass",
+      "information_quality": "substantive"
+    }
+  ]
+}
