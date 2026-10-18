@@ -1,0 +1,58 @@
+name: Frozen Qwen v2 prompt and posthoc similarity A-B
+on:
+  workflow_dispatch:
+  push:
+    branches: [develop/ubik-core]
+    paths:
+      - '.github/workflows/frozen-qwen-v2-posthoc-ab.yml'
+permissions:
+  contents: read
+  actions: read
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate code before API calls
+        run: |
+          python -m py_compile ingestion/frozen_text_qwen_prompt_v2.py ingestion/post_qwen_similarity_audit.py
+      - name: Retrieve frozen corpus and prior single-call baseline
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p data/qwen-ab
+          gh run download 39075100154 --repo "${{ github.repository }}" --name frozen-neural-expanded-candidates --dir data/qwen-ab
+          gh run download 39076957811 --repo "${{ github.repository }}" --name hybrid-qwen-adjudication-pilot --dir data/qwen-ab
+          gh run download 39107689997 --repo "${{ github.repository }}" --name frozen-original-texts-pilot --dir data/qwen-ab
+          mkdir -p data/qwen-ab/baseline
+          gh run download 39117837512 --repo "${{ github.repository }}" --name ubik-single-call-ab-report --dir data/qwen-ab/baseline
+          python -c 'import json,pathlib; json.loads(pathlib.Path("data/qwen-ab/baseline/text-qwen-review.json").read_text())'
+      - name: Improved single-call prompt on identical benchmark
+        env:
+          UBIK_LLM_ENDPOINT: https://openrouter.ai/api/v1/chat/completions
+          UBIK_LLM_MODEL: qwen/qwen3-32b
+          UBIK_LLM_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+        run: |
+          test -n "$UBIK_LLM_API_KEY"
+          python -u -m ingestion.frozen_text_qwen_prompt_v2 data/qwen-ab/neural-expanded-candidates.json data/qwen-ab/hybrid-qwen-review.json data/qwen-ab/original-texts.json --max-calls 20 --output data/qwen-ab/prompt-v2-review.json
+      - name: TF-IDF and embedding postprocessing of prior Qwen outputs
+        run: |
+          python -m pip install --quiet scikit-learn sentence-transformers
+          python -u -m ingestion.post_qwen_similarity_audit data/qwen-ab/baseline/text-qwen-review.json --output data/qwen-ab/posthoc-baseline.json
+          python -u -m ingestion.post_qwen_similarity_audit data/qwen-ab/prompt-v2-review.json --output data/qwen-ab/posthoc-v2.json
+      - name: Build v2 report
+        run: |
+          python -u -m ingestion.three_way_comparison_page data/qwen-ab/neural-expanded-candidates.json data/qwen-ab/hybrid-qwen-review.json data/qwen-ab/original-texts.json data/qwen-ab/prompt-v2-review.json --output data/qwen-ab/index.html --json-output data/qwen-ab/summary.json
+      - name: Publish full comparable results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ubik-qwen-v2-posthoc-ab
+          path: |
+            data/qwen-ab/prompt-v2-review.json
+            data/qwen-ab/posthoc-baseline.json
+            data/qwen-ab/posthoc-v2.json
+            data/qwen-ab/summary.json
+            data/qwen-ab/index.html
+          if-no-files-found: warn
