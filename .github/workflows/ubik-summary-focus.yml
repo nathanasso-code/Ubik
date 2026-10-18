@@ -38,6 +38,5 @@ jobs:
         with:
           name: ubik-summary-focus-results
           path: |
-            data/extraction-ab/result-a.json
-            data/extraction-ab/result-b.json
+            data/extraction-ab/result-focus.json
           if-no-files-found: warn
