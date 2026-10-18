@@ -1,0 +1,43 @@
+name: Ubik atoms and verified clusters
+on:
+  workflow_dispatch:
+  push:
+    branches: [develop/ubik-core]
+    paths:
+      - '.github/workflows/ubik-atoms-verified.yml'
+      - 'ingestion/frozen_qwen_atoms_verified.py'
+permissions:
+  contents: read
+  actions: read
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m py_compile ingestion/frozen_qwen_atoms_verified.py
+      - name: Retrieve frozen inputs
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p data/atoms
+          gh run download 39075100154 --repo "${{ github.repository }}" --name frozen-neural-expanded-candidates --dir data/atoms
+          gh run download 39076957811 --repo "${{ github.repository }}" --name hybrid-qwen-adjudication-pilot --dir data/atoms
+          gh run download 39107689997 --repo "${{ github.repository }}" --name frozen-original-texts-pilot --dir data/atoms
+      - name: Cached extraction and cluster verification
+        env:
+          UBIK_LLM_ENDPOINT: https://openrouter.ai/api/v1/chat/completions
+          UBIK_LLM_MODEL: qwen/qwen3-32b
+          UBIK_LLM_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+        run: |
+          test -n "$UBIK_LLM_API_KEY"
+          python -u -m ingestion.frozen_qwen_atoms_verified data/atoms/neural-expanded-candidates.json data/atoms/hybrid-qwen-review.json data/atoms/original-texts.json --cache data/atoms/source-cache.json --output data/atoms/result.json
+      - name: Upload results including partials
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ubik-atoms-verified-results
+          path: |
+            data/atoms/result.json
+            data/atoms/source-cache.json
+          if-no-files-found: warn
