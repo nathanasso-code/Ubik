@@ -1,0 +1,52 @@
+name: Ubik independently audited facts Qwen grouping
+on:
+  workflow_dispatch:
+  push:
+    branches: [develop/ubik-core]
+    paths:
+      - '.github/workflows/ubik-editorial-facts-qwen.yml'
+permissions:
+  contents: read
+  actions: read
+jobs:
+  audit-group:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate source facts and script before API calls
+        run: |
+          python -m py_compile ingestion/editorial_facts_qwen_grouping.py ingestion/post_qwen_similarity_audit.py
+          python -c 'import json; d=json.load(open("data/benchmarks/ubik_editorial_facts_39.json")); assert len(d["facts"])==39; assert len({x["source_id"] for x in d["facts"]})==39'
+      - name: Download baseline and improved prompt results
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p data/editorial-benchmark/baseline data/editorial-benchmark/v2
+          gh run download 39117837512 --repo "${{ github.repository }}" --name ubik-single-call-ab-report --dir data/editorial-benchmark/baseline
+          gh run download 39119315809 --repo "${{ github.repository }}" --name ubik-qwen-v2-posthoc-ab --dir data/editorial-benchmark/v2
+          python -c 'import json;json.load(open("data/editorial-benchmark/baseline/text-qwen-review.json"));json.load(open("data/editorial-benchmark/v2/prompt-v2-review.json"))'
+      - name: Qwen grouping of independently audited facts
+        env:
+          UBIK_LLM_ENDPOINT: https://openrouter.ai/api/v1/chat/completions
+          UBIK_LLM_MODEL: qwen/qwen3-32b
+          UBIK_LLM_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+        run: |
+          test -n "$UBIK_LLM_API_KEY"
+          python -u -m ingestion.editorial_facts_qwen_grouping data/editorial-benchmark/baseline/text-qwen-review.json data/benchmarks/ubik_editorial_facts_39.json --output data/editorial-benchmark/editorial-grouping.json
+      - name: Recompute post-Qwen similarity diagnostics from saved responses
+        run: |
+          python -m pip install --quiet scikit-learn sentence-transformers
+          python -u -m ingestion.post_qwen_similarity_audit data/editorial-benchmark/baseline/text-qwen-review.json --output data/editorial-benchmark/posthoc-baseline.json
+          python -u -m ingestion.post_qwen_similarity_audit data/editorial-benchmark/v2/prompt-v2-review.json --output data/editorial-benchmark/posthoc-v2.json
+      - name: Publish all results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ubik-independent-facts-grouping-and-posthoc
+          path: |
+            data/editorial-benchmark/editorial-grouping.json
+            data/editorial-benchmark/posthoc-baseline.json
+            data/editorial-benchmark/posthoc-v2.json
+            data/editorial-benchmark/v2/prompt-v2-review.json
+          if-no-files-found: warn
