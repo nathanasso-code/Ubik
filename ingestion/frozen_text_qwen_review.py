@@ -49,9 +49,10 @@ def run(graph,metadata,texts,requester=request_analysis,endpoint="",model="",key
                 cards.append({"source_ids":sorted(members),"reason":c.get("reason",""),
                               "status":"qwen_text_decision_unverified"})
             results.append({"source_ids":ids,"original_case_ids":case["source_ids"],"cards":cards,
-                 "source_facts":answer.get("source_facts",[]),\n                 "related_events":answer.get("related_events",[]),
-                 "standalone_source_ids":sorted(set(ids)-used),"invalid_groups":invalid,
-                 "uncertainties":answer.get("uncertainties",[]),"usage":usage})
+                "source_facts":answer.get("source_facts",[]),
+                "related_events":answer.get("related_events",[]),
+                "standalone_source_ids":sorted(set(ids)-used),"invalid_groups":invalid,
+                "uncertainties":answer.get("uncertainties",[]),"usage":usage})
         except (ValueError,KeyError,TypeError,TimeoutError,urllib.error.URLError) as exc:
             errors.append({"source_ids":ids,"error_type":type(exc).__name__})
     return {"summary":{"metadata_reviewed_cases":len(metadata["reviews"]),
