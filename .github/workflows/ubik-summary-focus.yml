@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
   push:
     branches: [develop/ubik-core]
-    paths: ['.github/workflows/ubik-summary-focus.yml']
+    paths: ['.github/workflows/ubik-summary-focus.yml', 'ingestion/frozen_qwen_summary_focus.py']
 permissions:
   contents: read
   actions: read
