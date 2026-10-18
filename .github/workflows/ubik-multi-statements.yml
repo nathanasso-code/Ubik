@@ -1,0 +1,40 @@
+name: Ubik multi-statement extraction and grouping
+on:
+  workflow_dispatch:
+  push:
+    branches: [develop/ubik-core]
+    paths: ['.github/workflows/ubik-multi-statements.yml']
+permissions:
+  contents: read
+  actions: read
+jobs:
+  experiment:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate
+        run: python -m py_compile ingestion/frozen_qwen_multi_statements.py
+      - name: Retrieve identical frozen benchmark
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p data/multi-statements
+          gh run download 39075100154 --repo "${{ github.repository }}" --name frozen-neural-expanded-candidates --dir data/multi-statements
+          gh run download 39076957811 --repo "${{ github.repository }}" --name hybrid-qwen-adjudication-pilot --dir data/multi-statements
+          gh run download 39107689997 --repo "${{ github.repository }}" --name frozen-original-texts-pilot --dir data/multi-statements
+      - name: Qwen multi-statement extraction then grouping
+        env:
+          UBIK_LLM_ENDPOINT: https://openrouter.ai/api/v1/chat/completions
+          UBIK_LLM_MODEL: qwen/qwen3-32b
+          UBIK_LLM_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+        run: |
+          test -n "$UBIK_LLM_API_KEY"
+          python -u -m ingestion.frozen_qwen_multi_statements data/multi-statements/neural-expanded-candidates.json data/multi-statements/hybrid-qwen-review.json data/multi-statements/original-texts.json --output data/multi-statements/result.json
+      - name: Upload result
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ubik-multi-statements-benchmark
+          path: data/multi-statements/result.json
+          if-no-files-found: warn
