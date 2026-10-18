@@ -1,5 +1,7 @@
 # Ubik — architecture and repository status (2026-10-13)
 
+> **Aggiornamento 18 ottobre 2026:** per il benchmark corrente, le criticità emerse e il nuovo esperimento Qwen con fingerprint per fonte, consultare [HANDOFF_UBIK_2026-10-18.md](HANDOFF_UBIK_2026-10-18.md). Le pipeline sperimentali non equivalgono a produzione.
+
 **Canonical entry point.** This file supersedes the *navigation instructions* of older dated pilot notes; historical results and evidence remain in Git history and docs. Branch: `develop/ubik-core`. `main` is production and is untouched.
 
 ## Product invariant: few curated topics, many discovery signals
