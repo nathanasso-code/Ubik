@@ -32,16 +32,9 @@ def run(graph,metadata,texts,requester=request_analysis,endpoint="",model="",key
                 members=c.get("source_ids",[])
                 if not isinstance(members,list) or len(members)<2 or len(set(members))!=len(members) or not set(members)<=set(ids) or used.intersection(members):
                     invalid.append({"members":members,"reason":"invalid_membership"});continue
-                ev=c.get("evidence",[])
-                valid=isinstance(ev,list) and all(isinstance(e,dict) and e.get("source_id") in members and
-                  isinstance(e.get("quote"),str) and e["quote"].strip() and
-                  e["quote"].strip() in extracted[e["source_id"]]["text"][:7000] for e in ev)
-                cited={e.get("source_id") for e in ev if isinstance(e,dict)}
-                if not valid or not set(members)<=cited:
-                    invalid.append({"members":members,"reason":"missing_or_nonverbatim_evidence"});continue
                 used.update(members)
                 cards.append({"source_ids":sorted(members),"reason":c.get("reason",""),
-                              "evidence":ev,"status":"text_supported_provisional"})
+                              "status":"qwen_text_decision_unverified"})
             results.append({"source_ids":ids,"original_case_ids":case["source_ids"],"cards":cards,
                  "standalone_source_ids":sorted(set(ids)-used),"invalid_groups":invalid,
                  "uncertainties":answer.get("uncertainties",[]),"usage":usage})
@@ -54,7 +47,7 @@ def run(graph,metadata,texts,requester=request_analysis,endpoint="",model="",key
              "llm_calls":len(results)+len(errors)},
             "reviews":results,"skipped":skipped,"errors":errors,
             "limitations":["Only available substantial texts are reviewed; no imputation for missing articles.",
-             "Verbatim excerpts confirm source grounding, not independent truth.",
+             "No quotation validator or semantic veto is applied; manual editorial review is required.",
              "No automatic publication or accuracy claim."]}
 
 def main():
