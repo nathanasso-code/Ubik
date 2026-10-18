@@ -1,4 +1,4 @@
-name: Frozen text Qwen and three-way HTML (no quote veto)
+name: Frozen text Qwen with event fingerprints
 on:
   workflow_dispatch:
   push:
