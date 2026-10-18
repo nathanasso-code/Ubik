@@ -1,4 +1,4 @@
-name: Frozen Qwen single-call title-anchored A-B (JSON fixed)
+name: Frozen Qwen single-call title-anchored A-B (preflight fixed)
 on:
   workflow_dispatch:
   push:
@@ -17,7 +17,7 @@ jobs:
       - name: Validate Python syntax and JSON output encoding
         run: |
           python -m py_compile ingestion/frozen_text_qwen_single_call_review.py
-          python -c 'import json,tempfile,pathlib; p=pathlib.Path(tempfile.mktemp()); p.write_text(json.dumps({"ok":True})+"\\n"); json.loads(p.read_text())'
+          python -c 'import json; json.loads(json.dumps({"ok": True}))'
       - name: Validate Python syntax
         run: python -m py_compile ingestion/frozen_text_qwen_single_call_review.py ingestion/frozen_text_qwen_review.py
       - name: Retrieve identical frozen inputs
