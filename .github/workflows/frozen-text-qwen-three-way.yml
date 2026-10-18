@@ -1,4 +1,4 @@
-name: Frozen text Qwen and three-way HTML
+name: Frozen text Qwen and three-way HTML (no quote veto)
 on:
   workflow_dispatch:
   push:
