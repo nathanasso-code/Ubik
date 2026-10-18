@@ -9,7 +9,7 @@ STAGE 3: Compare central_focus sentences rather than overall topical similarity.
 def run(graph,metadata,texts,requester=request_analysis,endpoint="",model="",key="",max_calls=20):
     byid={s["id"]:s for s in graph["sources"]}
     extracted={s["source_id"]:s for s in texts["sources"] if s.get("status")=="extracted_unverified" and len(s.get("text",""))>=800}
-    reviews=[];skipped=[];errors=[];calls=0
+    reviews=[];skipped=[];errors=[];diagnostics=[];calls=0
     for case in metadata["reviews"]:
         ids=[sid for sid in case["source_ids"] if sid in extracted]
         if len(ids)<2:
@@ -20,7 +20,30 @@ def run(graph,metadata,texts,requester=request_analysis,endpoint="",model="",key
         try:
             answer,usage=requester([{"role":"system","content":SYSTEM},{"role":"user","content":json.dumps(payload,ensure_ascii=False)}],endpoint,model,key,timeout=90)
             entries=answer.get("sources",[])
-            if not isinstance(entries,list) or len(entries)!=len(ids) or {e.get("source_id") for e in entries if isinstance(e,dict)}!=set(ids):raise ValueError("source_ids_mismatch")
+            if not isinstance(entries,list):raise ValueError("sources_not_list")
+            found=[e.get("source_id") for e in entries if isinstance(e,dict)]
+            missing=sorted(set(ids)-set(found))
+            unexpected=sorted(set(found)-set(ids),key=str)
+            duplicates=sorted({sid for sid in found if found.count(sid)>1},key=str)
+            if missing or unexpected or duplicates or len(entries)!=len(ids):
+                diagnostics.append({"source_ids":ids,"returned_ids":found,"missing_ids":missing,"unexpected_ids":unexpected,"duplicate_ids":duplicates,"response_keys":list(answer.keys()),"response_excerpt":json.dumps(answer,ensure_ascii=False)[:14000]})
+                # Retry only incomplete contexts; original reply remains in diagnostics.
+                repair_messages=[{"role":"system","content":SYSTEM+" IMPORTANT: Output exactly one sources entry per supplied source ID, without omissions. Keep the exact IDs."},{"role":"user","content":json.dumps(payload,ensure_ascii=False)},{"role":"assistant","content":json.dumps(answer,ensure_ascii=False)},{"role":"user","content":"Your preceding JSON did not include exactly the required source IDs. Required IDs: "+json.dumps(ids)+". Return a COMPLETE corrected JSON object, with exactly one source entry for every required ID. Do not invent source content."}]
+                try:
+                    fixed,repair_usage=requester(repair_messages,endpoint,model,key,timeout=90)
+                    candidate=fixed.get("sources",[])
+                    fixed_ids=[e.get("source_id") for e in candidate if isinstance(e,dict)] if isinstance(candidate,list) else []
+                    if len(candidate)==len(ids) and len(fixed_ids)==len(ids) and set(fixed_ids)==set(ids):
+                        answer=fixed;entries=candidate
+                        diagnostics[-1]["repair"]="accepted"
+                        diagnostics[-1]["repair_usage"]=repair_usage
+                    else:
+                        diagnostics[-1]["repair"]="invalid"
+                        diagnostics[-1]["repair_returned_ids"]=fixed_ids
+                except Exception as repair_exc:
+                    diagnostics[-1]["repair"]="failed"
+                    diagnostics[-1]["repair_error"]=str(repair_exc)[:250]
+            if len(entries)!=len(ids) or {e.get("source_id") for e in entries if isinstance(e,dict)}!=set(ids):raise ValueError("source_ids_mismatch")
             for entry in entries:
                 if entry.get("quality") not in ("substantive","insufficient"):raise ValueError("invalid_quality")
                 if entry["quality"]=="substantive" and (not isinstance(entry.get("summary"),str) or not isinstance(entry.get("central_focus"),str)):raise ValueError("missing_summary_or_focus")
@@ -33,7 +56,7 @@ def run(graph,metadata,texts,requester=request_analysis,endpoint="",model="",key
                 cards.append({"source_ids":sorted(members),"shared_development":card.get("shared_development",""),"reason":card.get("reason","")});used.update(members)
             reviews.append({"source_ids":ids,"sources":entries,"cards":cards,"invalid_groups":invalid,"standalone_source_ids":sorted(set(ids)-used),"related_events":answer.get("related_events",[]),"uncertainties":answer.get("uncertainties",[]),"usage":usage})
         except Exception as exc:errors.append({"source_ids":ids,"error":str(exc)[:250]})
-    return {"summary":{"contexts":len(reviews),"calls":calls,"errors":len(errors),"cards":sum(len(x["cards"]) for x in reviews),"sources":sum(len(x["sources"]) for x in reviews)},"reviews":reviews,"errors":errors,"skipped":skipped}
+    return {"summary":{"contexts":len(reviews),"calls":calls,"errors":len(errors),"cards":sum(len(x["cards"]) for x in reviews),"sources":sum(len(x["sources"]) for x in reviews),"repaired":sum(x.get("repair")=="accepted" for x in diagnostics)},"reviews":reviews,"errors":errors,"skipped":skipped,"diagnostics":diagnostics}
 def main():
     p=argparse.ArgumentParser()
     for n in ("graph","metadata","texts"):p.add_argument(n,type=Path)
