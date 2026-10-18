@@ -7,9 +7,9 @@ SYSTEM=("You are an event identity editor. Compare the supplied ORIGINAL ARTICLE
 "Only group sources if the texts substantiate the same specific news development, "
 "not merely the same topic, person, location or ongoing conflict. Separate follow-up "
 "reactions and distinct incidents. If texts are noisy, incomplete or ambiguous, leave "
-"sources standalone. Return JSON with cards:[{source_ids:[...],reason:string,"
-"evidence:[{source_id:string,quote:string}]}], uncertainties:[string]. "
-"Evidence must be short verbatim excerpts from supplied texts. Never invent facts. "
+"sources standalone. Return JSON with cards:[{source_ids:[...],reason:string}], uncertainties:[string]. "
+
+ "Never invent facts. "
 "Do not automatically publish.")
 
 def run(graph,metadata,texts,requester=request_analysis,endpoint="",model="",key="",max_calls=20):
