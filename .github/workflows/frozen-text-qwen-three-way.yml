@@ -1,4 +1,4 @@
-name: Frozen text Qwen with event fingerprints (fixed)
+name: Frozen text Qwen with event fingerprints (syntax repaired)
 on:
   workflow_dispatch:
   push:
