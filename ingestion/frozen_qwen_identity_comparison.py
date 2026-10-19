@@ -38,7 +38,7 @@ def main():
     tags[i]="general";out["errors"].append({"stage":"tag","case":i,"error":str(e)[:160]})
  # Independent source extraction with immediate durable checkpoint.
  for sid in ids:
-  context=next((tags[i] for i,c in enumerate(cases) if sid in c["source_ids"]),"general")
+  context=next((tags.get(i,"general") for i,c in enumerate(cases) if sid in c["source_ids"]),"general")
   prompt=IDENTITY if a.variant=="identity" else SOURCE_EXTRACT
   for attempt in range(2):
    try:
