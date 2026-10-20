@@ -1,0 +1,41 @@
+name: Ubik fast differential cards
+on:
+  workflow_dispatch:
+  push:
+    branches: [develop/ubik-core]
+    paths:
+      - 'ingestion/frozen_qwen_fast_differential.py'
+      - '.github/workflows/ubik-fast-differential.yml'
+permissions:
+  contents: read
+  actions: read
+jobs:
+  experiment:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m py_compile ingestion/frozen_qwen_fast_differential.py
+      - name: Download frozen corpus
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p data/fast
+          gh run download 39075100154 --repo "${{ github.repository }}" --name frozen-neural-expanded-candidates --dir data/fast
+          gh run download 39076957811 --repo "${{ github.repository }}" --name hybrid-qwen-adjudication-pilot --dir data/fast
+          gh run download 39107689997 --repo "${{ github.repository }}" --name frozen-original-texts-pilot --dir data/fast
+      - name: Run fast differential experiment
+        env:
+          UBIK_LLM_ENDPOINT: https://openrouter.ai/api/v1/chat/completions
+          UBIK_LLM_MODEL: qwen/qwen3-32b
+          UBIK_LLM_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+        run: |
+          test -n "$UBIK_LLM_API_KEY"
+          python -u -m ingestion.frozen_qwen_fast_differential data/fast/neural-expanded-candidates.json data/fast/hybrid-qwen-review.json data/fast/original-texts.json --workers 4 --output data/fast/result.json
+      - name: Preserve partial and complete results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: fast-differential-results
+          path: data/fast/result.json
+          if-no-files-found: warn
