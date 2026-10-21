@@ -1,4 +1,4 @@
-name: Ubik fine differential experiment
+name: Ubik fine differential experiment (autonomy audit)
 on:
   workflow_dispatch:
   push:
@@ -24,9 +24,9 @@ jobs:
           UBIK_LLM_ENDPOINT: https://openrouter.ai/api/v1/chat/completions
           UBIK_LLM_MODEL: qwen/qwen3-32b
           UBIK_LLM_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
-        run: python -m ingestion.frozen_qwen_fine_differential data/fine/result-identity.json --output data/fine/result-differential.json
+        run: python -u -m ingestion.frozen_qwen_autonomy_audit data/fine/result-identity.json --output data/fine/result-autonomy.json
       - if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: fine-differential-results
-          path: data/fine/result-differential.json
+          name: autonomy-audit-results
+          path: data/fine/result-autonomy.json
