@@ -20,10 +20,11 @@ def ask(prompt,payload,out):
  raise last
 def main():
  p=argparse.ArgumentParser();p.add_argument("graph",type=Path);p.add_argument("metadata",type=Path);p.add_argument("texts",type=Path);p.add_argument("--phase",choices=["extract","compose"],required=True);p.add_argument("--extraction",type=Path);p.add_argument("--variant",choices=["semantic","one_difference","shared_two"]);p.add_argument("--output",required=True,type=Path);a=p.parse_args()
- graph=json.loads(a.graph.read_text());meta=json.loads(a.metadata.read_text());texts=json.loads(a.texts.read_text())
- titles={s["id"]:s["title"] for s in graph["sources"]}
- bodies={s["source_id"]:s["text"] for s in texts["sources"] if s.get("status")=="extracted_unverified" and len(s.get("text",""))>=800}
- cases=[c for c in meta["reviews"] if sum(s in bodies for s in c["source_ids"])>=2]
+ if a.phase=="extract":
+  graph=json.loads(a.graph.read_text());meta=json.loads(a.metadata.read_text());texts=json.loads(a.texts.read_text())
+  titles={s["id"]:s["title"] for s in graph["sources"]}
+  bodies={s["source_id"]:s["text"] for s in texts["sources"] if s.get("status")=="extracted_unverified" and len(s.get("text",""))>=800}
+  cases=[c for c in meta["reviews"] if sum(s in bodies for s in c["source_ids"])>=2]
  if a.phase=="extract":
   out={"phase":"fresh_headline_brief_extraction","sources":{},"contexts":[{"source_ids":[s for s in c["source_ids"] if s in bodies]} for c in cases],"errors":[],"calls":0,"usage":{}}
   ids=list(dict.fromkeys(s for c in cases for s in c["source_ids"] if s in bodies))
