@@ -8,6 +8,7 @@ RELATE="""Compare extracted news developments across sources, NOT all microfacts
 COMPOSE="""Create the FEWEST coherent DISTINCT substantive news cards that preserve independent developments. Group complementary developments into one coherent news story; do not create cards for details. Keep original sources as support including corroborating sources. A source may appear on multiple cards. Return JSON {"cards":[{"title":"...","summary":"2-4 factual sentences","group_ids":["g0"]}],"excluded_group_ids":[{"id":"g1","reason":"peripheral|duplicate|insufficient"}]}. Account for every group. Do not invent IDs."""
 ONE_DIFF="""Compose news cards using this SOFT source-pair rule: sources differing by AT MOST ONE canonical fundamental development should preferentially be grouped; sources differing by MORE THAN ONE should preferentially be split. Difference is symmetric difference of group ID sets. Do not assume transitivity through a bridge source. Preserve genuinely separate stories and all material information. Return JSON {"cards":[{"title":"...","summary":"2-4 factual sentences","group_ids":["g0"]}],"excluded_group_ids":[{"id":"g1","reason":"peripheral|duplicate|insufficient"}]}. Account for every group. Do not invent IDs."""
 DIFFERENTIAL="""Build differential cards from the canonical development groups and their source overlap. Make the informative DIFFERENCE the distinctive focus of each card, but include contextual and corroborating sources even when they do not assert that distinctive development themselves. Example source sets: S1=A,C,D; S2=A,C; S3=B,C; S4=B,F. A card focused on D can include S1 and S2 as context; a card on A,C may include S1,S2,S3; a B card may include S1,S2,S3; an F card may include S3,S4. These memberships are illustrative, not factual evidence that each source asserts every claim. For EACH card distinguish direct_support_source_ids (sources actually containing its distinctive developments) and contextual_source_ids (sources supplying only relevant shared context). Do not misattribute a unique development to contextual sources. Keep cards distinct, but combine trivial complementary differences; no forced card per microdetail. Return JSON {"cards":[{"title":"...","summary":"2-4 factual sentences","group_ids":["g0"],"contextual_source_ids":["S1"]}],"excluded_group_ids":[{"id":"g1","reason":"duplicate|peripheral|insufficient"}]}. Account for every group. Do not invent IDs."""
+STRICT="""Write ONE coherent news card for this mathematically selected compatible source group. All members are pairwise different by at most one canonical development. Keep its shared story together and mention genuinely distinctive developments only if relevant. Do not invent facts or cite contextual sources as direct support for a development they lack. Return JSON {"title":"...","summary":"2-4 factual sentences"}."""
 SHARED="""Prefer grouping sources with at least TWO shared canonical fundamental developments, but use it as a soft signal only; one strongly shared development can suffice. Do not merge unrelated stories. Create the FEWEST coherent DISTINCT substantive news cards, and retain source support. Return JSON {"cards":[{"title":"...","summary":"2-4 factual sentences","group_ids":["g0"]}],"excluded_group_ids":[{"id":"g1","reason":"peripheral|duplicate|insufficient"}]}. Account for every group."""
 def ask(prompt,payload,out):
  last=None
@@ -20,7 +21,7 @@ def ask(prompt,payload,out):
   except Exception as exc:last=exc
  raise last
 def main():
- p=argparse.ArgumentParser();p.add_argument("graph",type=Path);p.add_argument("metadata",type=Path);p.add_argument("texts",type=Path);p.add_argument("--phase",choices=["extract","compose"],required=True);p.add_argument("--extraction",type=Path);p.add_argument("--variant",choices=["semantic","one_difference","shared_two","differential_original"]);p.add_argument("--output",required=True,type=Path);a=p.parse_args()
+ p=argparse.ArgumentParser();p.add_argument("graph",type=Path);p.add_argument("metadata",type=Path);p.add_argument("texts",type=Path);p.add_argument("--phase",choices=["extract","compose"],required=True);p.add_argument("--extraction",type=Path);p.add_argument("--variant",choices=["semantic","one_difference","shared_two","differential_original","one_difference_strict"]);p.add_argument("--output",required=True,type=Path);a=p.parse_args()
  if a.phase=="extract":
   graph=json.loads(a.graph.read_text());meta=json.loads(a.metadata.read_text());texts=json.loads(a.texts.read_text())
   titles={s["id"]:s["title"] for s in graph["sources"]}
@@ -59,6 +60,36 @@ def main():
    item["groups"]=groups;source_sets={sid:[g["id"] for g in groups if sid in g["source_ids"]] for sid in ids};item["source_groups"]=source_sets
    pairs=[{"source_a":a0,"source_b":b0,"shared":len(set(source_sets[a0])&set(source_sets[b0])),"different":len(set(source_sets[a0])^set(source_sets[b0]))} for i,a0 in enumerate(ids) for b0 in ids[i+1:]]
    item["pair_metrics"]=pairs;write(a.output,out)
+   if a.variant=="one_difference_strict":
+    # Enumerate maximal cliques in the <=1 symmetric-difference compatibility graph.
+    # Maximal cliques may overlap: bridge sources may support multiple cards.
+    eligible=[sid for sid in ids if source_sets[sid]]
+    adjacency={sid:{other for other in eligible if other!=sid and len(set(source_sets[sid])^set(source_sets[other]))<=1} for sid in eligible}
+    cliques=[]
+    def bronk(R,P,X):
+     if not P and not X:
+      cliques.append(sorted(R));return
+     pivot=max(P|X,key=lambda v:len(P&adjacency[v])) if P or X else None
+     for v in sorted(P-(adjacency[pivot] if pivot else set())):
+      bronk(R|{v},P&adjacency[v],X&adjacency[v]);P.remove(v);X.add(v)
+    bronk(set(),set(eligible),set())
+    # Disjoint incompatible pairs never share a card; retain overlapping maximal cliques.
+    for members in cliques:
+     relevant=[g for g in groups if set(g["source_ids"])&set(members)]
+     direct_groups=[g["id"] for g in relevant]
+     if not direct_groups:continue
+     try:
+      card=ask(STRICT,{"source_ids":members,"developments":relevant,"news":[n for n in news if n["source_id"] in members]},out)
+      if not isinstance(card.get("title"),str) or not isinstance(card.get("summary"),str):raise ValueError("invalid strict card")
+      item["cards"].append({"title":card["title"],"summary":card["summary"],"group_ids":direct_groups,"direct_support_source_ids":members,"contextual_source_ids":[],"source_ids":members})
+     except Exception as exc:
+      item["errors"].append("strict card "+",".join(members)+": "+str(exc)[:150])
+    used={g for c in item["cards"] for g in c["group_ids"]}
+    item["strict_cliques"]=cliques
+    item["uncovered_group_ids"]=[g["id"] for g in groups if g["id"] not in used]
+    item["uncovered_news_ids"]=[n for g in groups if g["id"] not in used for n in g["members"]]
+    item["sources_in_cards"]=list(dict.fromkeys(s for card in item["cards"] for s in card["source_ids"]))
+    out["contexts"].append(item);write(a.output,out);continue
    prompt={"semantic":COMPOSE,"one_difference":ONE_DIFF,"shared_two":SHARED,"differential_original":DIFFERENTIAL}[a.variant]
    result=ask(prompt,{"groups":groups,"news":news,"source_groups":source_sets,"pair_metrics":pairs},out)
    valid_groups={g["id"]:g for g in groups};covered=set()
