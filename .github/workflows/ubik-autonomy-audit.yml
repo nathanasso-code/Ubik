@@ -3,7 +3,6 @@ on:
   workflow_dispatch:
   push:
     branches: [develop/ubik-core]
-    paths: ['.github/workflows/ubik-autonomy-audit.yml', 'ingestion/frozen_qwen_autonomy_audit.py']
 permissions:
   contents: read
   actions: read
