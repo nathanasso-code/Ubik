@@ -7,6 +7,7 @@ READ="""Read ONE original article. Ignore navigation, sidebar, related-story lin
 RELATE="""Compare extracted news developments across sources, NOT all microfacts. Identify SAME specific development across sources, even when complementary details differ. Do not equate merely topical or chronological relatedness. Return JSON {"groups":[{"members":["n0","n2"],"shared_development":"..."}]}. Each news ID exactly once; singleton groups allowed."""
 COMPOSE="""Create the FEWEST coherent DISTINCT substantive news cards that preserve independent developments. Group complementary developments into one coherent news story; do not create cards for details. Keep original sources as support including corroborating sources. A source may appear on multiple cards. Return JSON {"cards":[{"title":"...","summary":"2-4 factual sentences","group_ids":["g0"]}],"excluded_group_ids":[{"id":"g1","reason":"peripheral|duplicate|insufficient"}]}. Account for every group. Do not invent IDs."""
 ONE_DIFF="""Compose news cards using this SOFT source-pair rule: sources differing by AT MOST ONE canonical fundamental development should preferentially be grouped; sources differing by MORE THAN ONE should preferentially be split. Difference is symmetric difference of group ID sets. Do not assume transitivity through a bridge source. Preserve genuinely separate stories and all material information. Return JSON {"cards":[{"title":"...","summary":"2-4 factual sentences","group_ids":["g0"]}],"excluded_group_ids":[{"id":"g1","reason":"peripheral|duplicate|insufficient"}]}. Account for every group. Do not invent IDs."""
+DIFFERENTIAL="""Build differential cards from the canonical development groups and their source overlap. Make the informative DIFFERENCE the distinctive focus of each card, but include contextual and corroborating sources even when they do not assert that distinctive development themselves. Example source sets: S1=A,C,D; S2=A,C; S3=B,C; S4=B,F. A card focused on D can include S1 and S2 as context; a card on A,C may include S1,S2,S3; a B card may include S1,S2,S3; an F card may include S3,S4. These memberships are illustrative, not factual evidence that each source asserts every claim. For EACH card distinguish direct_support_source_ids (sources actually containing its distinctive developments) and contextual_source_ids (sources supplying only relevant shared context). Do not misattribute a unique development to contextual sources. Keep cards distinct, but combine trivial complementary differences; no forced card per microdetail. Return JSON {"cards":[{"title":"...","summary":"2-4 factual sentences","group_ids":["g0"],"contextual_source_ids":["S1"]}],"excluded_group_ids":[{"id":"g1","reason":"duplicate|peripheral|insufficient"}]}. Account for every group. Do not invent IDs."""
 SHARED="""Prefer grouping sources with at least TWO shared canonical fundamental developments, but use it as a soft signal only; one strongly shared development can suffice. Do not merge unrelated stories. Create the FEWEST coherent DISTINCT substantive news cards, and retain source support. Return JSON {"cards":[{"title":"...","summary":"2-4 factual sentences","group_ids":["g0"]}],"excluded_group_ids":[{"id":"g1","reason":"peripheral|duplicate|insufficient"}]}. Account for every group."""
 def ask(prompt,payload,out):
  last=None
@@ -19,7 +20,7 @@ def ask(prompt,payload,out):
   except Exception as exc:last=exc
  raise last
 def main():
- p=argparse.ArgumentParser();p.add_argument("graph",type=Path);p.add_argument("metadata",type=Path);p.add_argument("texts",type=Path);p.add_argument("--phase",choices=["extract","compose"],required=True);p.add_argument("--extraction",type=Path);p.add_argument("--variant",choices=["semantic","one_difference","shared_two"]);p.add_argument("--output",required=True,type=Path);a=p.parse_args()
+ p=argparse.ArgumentParser();p.add_argument("graph",type=Path);p.add_argument("metadata",type=Path);p.add_argument("texts",type=Path);p.add_argument("--phase",choices=["extract","compose"],required=True);p.add_argument("--extraction",type=Path);p.add_argument("--variant",choices=["semantic","one_difference","shared_two","differential_original"]);p.add_argument("--output",required=True,type=Path);a=p.parse_args()
  if a.phase=="extract":
   graph=json.loads(a.graph.read_text());meta=json.loads(a.metadata.read_text());texts=json.loads(a.texts.read_text())
   titles={s["id"]:s["title"] for s in graph["sources"]}
@@ -58,7 +59,7 @@ def main():
    item["groups"]=groups;source_sets={sid:[g["id"] for g in groups if sid in g["source_ids"]] for sid in ids};item["source_groups"]=source_sets
    pairs=[{"source_a":a0,"source_b":b0,"shared":len(set(source_sets[a0])&set(source_sets[b0])),"different":len(set(source_sets[a0])^set(source_sets[b0]))} for i,a0 in enumerate(ids) for b0 in ids[i+1:]]
    item["pair_metrics"]=pairs;write(a.output,out)
-   prompt={"semantic":COMPOSE,"one_difference":ONE_DIFF,"shared_two":SHARED}[a.variant]
+   prompt={"semantic":COMPOSE,"one_difference":ONE_DIFF,"shared_two":SHARED,"differential_original":DIFFERENTIAL}[a.variant]
    result=ask(prompt,{"groups":groups,"news":news,"source_groups":source_sets,"pair_metrics":pairs},out)
    valid_groups={g["id"]:g for g in groups};covered=set()
    for card in result.get("cards",[]):
@@ -66,7 +67,11 @@ def main():
     refs=card.get("group_ids",[])
     if not isinstance(refs,list) or not refs or any(r not in valid_groups for r in refs):continue
     covered.update(refs)
-    item["cards"].append({"title":card.get("title",""),"summary":card.get("summary",""),"group_ids":refs,"source_ids":list(dict.fromkeys(s for r in refs for s in valid_groups[r]["source_ids"]))})
+    direct=list(dict.fromkeys(s for r in refs for s in valid_groups[r]["source_ids"]))
+    context_ids=card.get("contextual_source_ids",[]) if a.variant=="differential_original" else []
+    if not isinstance(context_ids,list):context_ids=[]
+    context_ids=[s for s in context_ids if s in ids and s not in direct]
+    item["cards"].append({"title":card.get("title",""),"summary":card.get("summary",""),"group_ids":refs,"direct_support_source_ids":direct,"contextual_source_ids":context_ids,"source_ids":direct+context_ids})
    excluded=[e for e in result.get("excluded_group_ids",[]) if isinstance(e,dict) and e.get("id") in valid_groups and e["id"] not in covered]
    item["excluded_groups"]=excluded;covered.update(e["id"] for e in excluded)
    item["uncovered_group_ids"]=[g["id"] for g in groups if g["id"] not in covered]
