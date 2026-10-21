@@ -1,3 +1,5 @@
+> **Direzione sperimentale aggiornata 21 ottobre 2026:** l'architettura a **identità informative fini + composizione differenziale** è attualmente la candidata qualitativamente più promettente per la pertinenza delle card; priorità a autonomia delle sintesi e copertura verificabile, non al numero massimo di card. Dettagli, risultati e limiti: [DIFFERENTIAL_INFORMATION_ARCHITECTURE_2026-10-21.md](DIFFERENTIAL_INFORMATION_ARCHITECTURE_2026-10-21.md). Non è ancora architettura di produzione.
+
 # Ubik — architecture and repository status (2026-10-13)
 
 > **Aggiornamento 18 ottobre 2026:** per il benchmark corrente, le criticità emerse e il nuovo esperimento Qwen con fingerprint per fonte, consultare [HANDOFF_UBIK_2026-10-18.md](HANDOFF_UBIK_2026-10-18.md). Le pipeline sperimentali non equivalgono a produzione.
