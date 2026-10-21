@@ -40,7 +40,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        variant: [semantic, one_difference, shared_two, differential_original]
+        variant: [semantic, one_difference, shared_two, differential_original, one_difference_strict]
     runs-on: ubuntu-latest
     timeout-minutes: 90
     steps:
