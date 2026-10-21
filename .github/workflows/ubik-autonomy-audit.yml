@@ -1,0 +1,32 @@
+name: Ubik autonomy and coverage audit
+on:
+  workflow_dispatch:
+  push:
+    branches: [develop/ubik-core]
+    paths: ['.github/workflows/ubik-autonomy-audit.yml', 'ingestion/frozen_qwen_autonomy_audit.py']
+permissions:
+  contents: read
+  actions: read
+jobs:
+  experiment:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download frozen identities
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p data/autonomy
+          gh run download 39315292356 --name identity-comparison-identity --dir data/autonomy
+      - name: Compose and audit all identities
+        env:
+          UBIK_LLM_ENDPOINT: https://openrouter.ai/api/v1/chat/completions
+          UBIK_LLM_MODEL: qwen/qwen3-32b
+          UBIK_LLM_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+        run: python -u -m ingestion.frozen_qwen_autonomy_audit data/autonomy/result-identity.json --output data/autonomy/result-autonomy.json
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: autonomy-audit-results
+          path: data/autonomy/result-autonomy.json
