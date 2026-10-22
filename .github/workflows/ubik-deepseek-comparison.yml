@@ -1,0 +1,79 @@
+name: Ubik DeepSeek five variants and simple baseline
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  extract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download frozen original articles
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p data/deepseek
+          gh run download 39075100154 --name frozen-neural-expanded-candidates --dir data/deepseek
+          gh run download 39076957811 --name hybrid-qwen-adjudication-pilot --dir data/deepseek
+          gh run download 39107689997 --name frozen-original-texts-pilot --dir data/deepseek
+      - name: Extract news with DeepSeek V3.2
+        env:
+          UBIK_LLM_ENDPOINT: https://openrouter.ai/api/v1/chat/completions
+          UBIK_LLM_MODEL: deepseek/deepseek-v3.2
+          UBIK_LLM_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+        run: python -u -m ingestion.frozen_qwen_headline_brief data/deepseek/neural-expanded-candidates.json data/deepseek/hybrid-qwen-review.json data/deepseek/original-texts.json --phase extract --output data/deepseek/extraction.json
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: deepseek-extraction
+          path: data/deepseek/extraction.json
+  compose:
+    needs: extract
+    if: needs.extract.result == 'success'
+    strategy:
+      fail-fast: false
+      matrix:
+        variant: [semantic, one_difference, shared_two, differential_original, one_difference_strict]
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: deepseek-extraction
+          path: data/deepseek
+      - name: Compose DeepSeek variant
+        env:
+          UBIK_LLM_ENDPOINT: https://openrouter.ai/api/v1/chat/completions
+          UBIK_LLM_MODEL: deepseek/deepseek-v3.2
+          UBIK_LLM_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+        run: python -u -m ingestion.frozen_qwen_headline_brief data/deepseek/extraction.json data/deepseek/extraction.json data/deepseek/extraction.json --phase compose --extraction data/deepseek/extraction.json --variant ${{ matrix.variant }} --output data/deepseek/result-${{ matrix.variant }}.json
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: deepseek-${{ matrix.variant }}
+          path: data/deepseek/result-${{ matrix.variant }}.json
+  simple:
+    needs: extract
+    if: needs.extract.result == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: deepseek-extraction
+          path: data/deepseek
+      - name: Incremental DeepSeek cards
+        env:
+          UBIK_LLM_ENDPOINT: https://openrouter.ai/api/v1/chat/completions
+          UBIK_LLM_MODEL: deepseek/deepseek-v3.2
+          UBIK_LLM_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+        run: python -u -m ingestion.frozen_qwen_simple_news_cards data/deepseek/extraction.json --output data/deepseek/simple-news-cards.json
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: deepseek-simple-news-cards
+          path: data/deepseek/simple-news-cards.json
