@@ -1,12 +1,22 @@
 name: Refresh UCDP corpus
 on:
   workflow_dispatch:
+    inputs:
+      experiment:
+        description: 'Run an Ubik experiment instead of refreshing UCDP'
+        required: false
+        type: choice
+        default: 'none'
+        options:
+          - 'none'
+          - 'neural-embedding-cards'
   schedule:
     - cron: "17 5 * * 2"
 permissions:
   contents: write
 jobs:
   refresh:
+    if: github.event_name == 'schedule' || inputs.experiment == 'none'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -22,3 +32,30 @@ jobs:
           git add data/ucdp data/ukraine-attacks-derived.json
           git diff --cached --quiet || git commit -m "data: refresh UCDP Ukraine corpus"
           git push
+  neural_embedding:
+    if: github.event_name == 'workflow_dispatch' && inputs.experiment == 'neural-embedding-cards'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: develop/ubik-core
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install embedding dependencies
+        run: python -m pip install sentence-transformers scikit-learn
+      - name: Download frozen DeepSeek result
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p data/neural-cards
+          gh run download 39822649930 --name grounded-global-news-cards --dir data/neural-cards
+      - name: Neural clustering on existing 105 news
+        run: python -m ingestion.frozen_neural_embedding_cards data/neural-cards/result.json --output data/neural-cards/embedding-cards.json
+      - name: Publish results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: neural-embedding-cards
+          path: data/neural-cards/embedding-cards.json
