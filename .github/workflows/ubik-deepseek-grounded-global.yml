@@ -5,6 +5,7 @@ on:
     branches: [develop/ubik-core]
     paths:
       - '.github/workflows/ubik-deepseek-grounded-global.yml'
+      - 'ingestion/frozen_deepseek_grounded_global.py'
 permissions:
   contents: read
   actions: read
