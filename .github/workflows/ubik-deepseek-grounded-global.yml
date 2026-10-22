@@ -1,0 +1,35 @@
+name: Ubik DeepSeek grounded global cards
+on:
+  workflow_dispatch:
+  push:
+    branches: [develop/ubik-core]
+    paths:
+      - '.github/workflows/ubik-deepseek-grounded-global.yml'
+permissions:
+  contents: read
+  actions: read
+jobs:
+  experiment:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download frozen original texts and metadata
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p data/grounded
+          gh run download 39075100154 --name frozen-neural-expanded-candidates --dir data/grounded
+          gh run download 39076957811 --name hybrid-qwen-adjudication-pilot --dir data/grounded
+          gh run download 39107689997 --name frozen-original-texts-pilot --dir data/grounded
+      - name: Extract grounded fundamental news and globally cluster cards
+        env:
+          UBIK_LLM_ENDPOINT: https://openrouter.ai/api/v1/chat/completions
+          UBIK_LLM_MODEL: deepseek/deepseek-v3.2
+          UBIK_LLM_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+        run: python -u -m ingestion.frozen_deepseek_grounded_global data/grounded/neural-expanded-candidates.json data/grounded/hybrid-qwen-review.json data/grounded/original-texts.json --output data/grounded/result.json
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: grounded-global-news-cards
+          path: data/grounded/result.json
