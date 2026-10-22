@@ -34,3 +34,5 @@ jobs:
         with:
           name: grounded-global-news-cards
           path: data/grounded/result.json
+
+          #avvia esperimento
