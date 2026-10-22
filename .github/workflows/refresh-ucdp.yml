@@ -10,6 +10,7 @@ on:
         options:
           - 'none'
           - 'neural-embedding-cards'
+          - 'two-track-deepseek'
   schedule:
     - cron: "17 5 * * 2"
 permissions:
@@ -59,3 +60,36 @@ jobs:
         with:
           name: neural-embedding-cards
           path: data/neural-cards/embedding-cards.json
+  two_track_deepseek:
+    if: github.event_name == 'workflow_dispatch' && inputs.experiment == 'two-track-deepseek'
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: develop/ubik-core
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install embeddings
+        run: python -m pip install sentence-transformers scikit-learn
+      - name: Download frozen texts and grounded news
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p data/two-track
+          gh run download 39822649930 --name grounded-global-news-cards --dir data/two-track
+          gh run download 39107689997 --name frozen-original-texts-pilot --dir data/two-track
+      - name: Compare summary and source-text embeddings with DeepSeek review
+        env:
+          UBIK_LLM_ENDPOINT: https://openrouter.ai/api/v1/chat/completions
+          UBIK_LLM_MODEL: deepseek/deepseek-v3.2
+          UBIK_LLM_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+        run: |
+          python -m ingestion.frozen_two_track_deepseek_cards data/two-track/result.json data/two-track/original-texts.json --output data/two-track/two-track-results.json --max-review 50
+      - name: Upload partial or completed results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: two-track-deepseek-results
+          path: data/two-track/two-track-results.json
