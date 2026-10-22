@@ -33,3 +33,5 @@ jobs:
         with:
           name: neural-embedding-cards
           path: data/neural-cards/embedding-cards.json
+
+# Retrigger after clearing legacy Actions queue.
