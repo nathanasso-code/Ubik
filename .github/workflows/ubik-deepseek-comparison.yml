@@ -1,6 +1,10 @@
 name: Ubik DeepSeek five variants and simple baseline
 on:
   workflow_dispatch:
+  push:
+    branches: [develop/ubik-core]
+    paths:
+      - '.github/workflows/ubik-deepseek-comparison.yml'
 permissions:
   contents: read
   actions: read
