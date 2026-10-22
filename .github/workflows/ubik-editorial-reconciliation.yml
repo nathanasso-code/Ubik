@@ -1,0 +1,35 @@
+name: Ubik editorial reconciliation benchmark
+on:
+  workflow_dispatch:
+  push:
+    branches: [develop/ubik-core]
+    paths:
+      - 'ingestion/frozen_qwen_reconcile_cards.py'
+      - '.github/workflows/ubik-editorial-reconciliation.yml'
+permissions:
+  contents: read
+  actions: read
+jobs:
+  reconcile:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download frozen strict source grouping
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p data/reconciliation
+          gh run download 39660157545 --name headline-brief-one_difference_strict --dir data/reconciliation
+          find data/reconciliation -type f
+      - name: Reconcile same-event cards preserving source-group provenance
+        env:
+          UBIK_LLM_ENDPOINT: https://openrouter.ai/api/v1/chat/completions
+          UBIK_LLM_MODEL: qwen/qwen3-32b
+          UBIK_LLM_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+        run: python -u -m ingestion.frozen_qwen_reconcile_cards data/reconciliation/result-one_difference_strict.json --output data/reconciliation/reconciled.json
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: editorial-reconciliation-result
+          path: data/reconciliation/reconciled.json
