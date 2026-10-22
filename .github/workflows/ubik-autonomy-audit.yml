@@ -1,8 +1,6 @@
 name: Ubik autonomy and coverage audit
 on:
   workflow_dispatch:
-  push:
-    branches: [develop/ubik-core]
 permissions:
   contents: read
   actions: read
