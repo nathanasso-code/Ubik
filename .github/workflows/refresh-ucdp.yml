@@ -11,7 +11,7 @@ on:
           - 'none'
           - 'neural-embedding-cards'
           - 'two-track-deepseek'
-          - 'qwen-evidence-two-track'
+          - 'qwen-passages-deepseek-cards'
   schedule:
     - cron: "17 5 * * 2"
 permissions:
@@ -94,8 +94,8 @@ jobs:
         with:
           name: two-track-deepseek-results
           path: data/two-track/two-track-results.json
-  qwen_evidence_two_track:
-    if: github.event_name == 'workflow_dispatch' && inputs.experiment == 'qwen-evidence-two-track'
+  qwen_passages_deepseek_cards:
+    if: github.event_name == 'workflow_dispatch' && inputs.experiment == 'qwen-passages-deepseek-cards'
     runs-on: ubuntu-latest
     timeout-minutes: 90
     steps:
@@ -113,7 +113,7 @@ jobs:
           mkdir -p data/qwen-evidence
           gh run download 39822649930 --name grounded-global-news-cards --dir data/qwen-evidence
           gh run download 39107689997 --name frozen-original-texts-pilot --dir data/qwen-evidence
-      - name: Compare summary versus Qwen verified passages with DeepSeek
+      - name: Compare Qwen passage evidence and DeepSeek card grouping
         env:
           UBIK_LLM_ENDPOINT: https://openrouter.ai/api/v1/chat/completions
           UBIK_LLM_MODEL: deepseek/deepseek-v3.2
@@ -124,5 +124,5 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: qwen-evidence-two-track-results
+          name: qwen-passages-deepseek-cards-results
           path: data/qwen-evidence/results.json
