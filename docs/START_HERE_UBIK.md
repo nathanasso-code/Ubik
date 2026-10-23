@@ -1,3 +1,7 @@
+## Ultimo handoff (23 ottobre 2026)
+
+**Leggere per primo:** [HANDOFF_UBIK_2026-10-23.md](HANDOFF_UBIK_2026-10-23.md). Contiene risultati dei test con embedding e DeepSeek, preferenza anti-duplicati, nuova variante sugli estratti specifici, costi e istruzioni per continuare senza alterare la produzione.
+
 > **Historical note (11 October).** This file records earlier pilot progress; it is no longer the canonical operational entry point. For the current global-first hybrid discovery pipeline, semantic routing, editorial topic limits, and verified open risks, start at [ARCHITECTURE_CURRENT.md](ARCHITECTURE_CURRENT.md) and [HANDOFF_UBIK_2026-10-13.md](HANDOFF_UBIK_2026-10-13.md). Older “next actions” below are historical, not active priorities.
 
 # UBIK — START HERE (2026-10-11)
