@@ -48,7 +48,7 @@ def main():
             body=bodies.get(sid,"")
             if not body:continue
             try:
-                response=call(PASSAGE_PROMPT,{"article_body":body,"news":[{"id":x["id"],"title":x["title"],"summary":x["summary"]} for x in news]},output["usage"],os.environ["UBIK_QWEN_MODEL"])
+                response=call(PASSAGE_PROMPT,{"article_body":body,"news":[{"id":x["id"],"title":x["title"],"summary":x["summary"]} for x in news]},output["usage"],os.environ["UBIK_LLM_MODEL"])
                 quotes={x["id"]:x.get("quotes",[]) for x in response.get("items",[]) if isinstance(x,dict)}
             except Exception as exc:
                 output["errors"].append({"phase":"deepseek","source_id":sid,"error":str(exc)[:200]});quotes={}
