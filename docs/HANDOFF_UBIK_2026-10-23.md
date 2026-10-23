@@ -41,3 +41,12 @@ GitHub repo `nathanasso-code/Ubik`. Il workflow esistente `.github/workflows/ref
 - Neural baseline: https://github.com/nathanasso-code/Ubik/actions/runs/39834686597
 - Two-track DeepSeek: https://github.com/nathanasso-code/Ubik/actions/runs/39838631095
 - Runner registrato: https://github.com/nathanasso-code/Ubik/actions/workflows/refresh-ucdp.yml
+
+## Aggiornamento successivo — esperimenti A/B con Qwen per evidenze (23 ottobre)
+Nuovo script `ingestion/frozen_qwen_passages_two_track.py` (commit `696a93a`) e opzione manuale `qwen-evidence-two-track` nel workflow già registrato `.github/workflows/refresh-ucdp.yml` su `main` (commit `9231404`). **Preparati ma NON ancora eseguiti**.
+- A: titolo addizionale specifico per ciascuna notizia fondamentale + titolo notizia + sintesi; embedding locale, DeepSeek per gruppi candidati.
+- B: stessi titoli + estratti letterali selezionati da Qwen per la singola notizia, verificati come sottostringhe del testo originale con offset start/end; embedding locale, DeepSeek per gruppi candidati. Fallback alla sintesi in assenza di estratti verificati, marcato `missing`.
+- Qwen seleziona i passaggi una volta per fonte con elenco delle notizie estratte; i passaggi validati sono salvati come documentazione associata alle notizie in **entrambi** i risultati, indipendentemente dalla performance del clustering.
+- Endpoint OpenRouter e segreto `OPENROUTER_API_KEY`, modello Qwen configurato `qwen/qwen3-32b`; verificare disponibilità e costi al run. Non attribuire a Qwen i raggruppamenti precedenti: erano di DeepSeek.
+- Nuova preferenza: falsi split più penalizzati dei falsi merge occasionali, se il titolo e la sintesi della card distinguono espressamente sviluppi correlati. **Problema implementativo ancora aperto**: lo script attuale riutilizza il titolo del primo membro e NON genera una sintesi globale nuova della card; non interpretare i risultati come card editoriali finite.
+- Esempi verificati nell'artefatto run 39838631095: `summary-1-0` quattro fonti su deforestazione brasiliana; `summary-5-0` quattro fonti sulla condanna in Messico; `summary-7-0` cinque fonti sulle dimissioni ospedaliere; `source_text-3-14` fonde tre dichiarazioni differenti di Zelensky da S408; `source_text-3-20` fonde la sospensione sanzioni USA con la reazione russa. Gli esempi sono contenuti nel corpus sperimentale, non fatti di cronaca indipendentemente verificati.
