@@ -11,6 +11,8 @@ TITLE_PROMPT="""Produce a SHORT, SPECIFIC additional event-identity headline for
 PASSAGE_PROMPT="""For EACH supplied news item identify 1-3 exact contiguous verbatim excerpts from article_body that directly document the specific claim. Return JSON {"items":[{"id":"...","quotes":["exact substring"]}]}. Do not invent excerpts."""
 REVIEW_PROMPT="""You are a conservative reviewer of embedding-generated candidate groups of source-grounded news. DEFAULT: keep potentially related developments together when a single truthful, inclusive card can represent all items. Splitting is an exception, not a goal. SAME_FACT means multiple reports of the same underlying event or decision. RELATED_DEVELOPMENTS means different but tightly connected events that can share a truthful card with explicitly differentiated details. DISTINCT means materially independent events that cannot be represented in one coherent card without misleading readers; merely different details, perspectives, reactions, or source wording do NOT establish distinctness. Before proposing a split, attempt a common inclusive title and summary, and split ONLY if this fails due to a concrete, source-supported incompatibility (different actor/action/object/decision/time or contradictory event identity). For every resulting group return all IDs, relation ('same_fact', 'related_developments', or 'distinct'), inclusive title, faithful concise summary, and reason. For every split group reason, state the specific documented distinction from the other groups, not merely topical differences. Avoid duplicate cards about the same underlying decision; when uncertain keep together while accurately distinguishing developments. Preserve every input ID exactly once, including singletons. Never invent evidence or facts. Return ONLY JSON {"groups":[{"ids":["..."],"relation":"same_fact","title":"...","summary":"...","reason":"..."}]}."""
 
+CORE_FIRST_PROMPT="""You are given an entire embedding-connected component of source-grounded news. First identify the most specific factual common nucleus (actor, action, object, decision or statement), not a broad topic. Then try to write one inclusive, accurate card representing every item while retaining differences as details. Only split off news that cannot be faithfully included without becoming vague, false or misleading. Different quotations, consequences, reactions or angles on the same identifiable event are NOT grounds for splitting. Do not manufacture a common nucleus when none exists. Return JSON {"common_nucleus":"specific grounded fact or none","groups":[{"ids":["..."],"relation":"same_fact|related_developments|distinct","title":"...","summary":"...","reason":"specific evidence-based reason for any split"}]}. Include each input ID exactly once. No new facts."""
+
 def call(prompt,payload,stats,model_override=None):
     result,usage=request_analysis([{"role":"system","content":prompt},{"role":"user","content":json.dumps(payload,ensure_ascii=False)}],os.environ["UBIK_LLM_ENDPOINT"],model_override or os.environ["UBIK_LLM_MODEL"],os.environ["UBIK_LLM_API_KEY"],timeout=180)
     stats["calls"]+=1
@@ -21,12 +23,13 @@ def main():
     p=argparse.ArgumentParser()
     p.add_argument("grounded",type=Path);p.add_argument("texts",type=Path);p.add_argument("--output",type=Path,required=True)
     p.add_argument("--threshold",type=float,default=.68);p.add_argument("--max-review",type=int,default=50)
+    p.add_argument("--review-mode",choices=["legacy","core-first","embedding-only"],default="legacy")
     a=p.parse_args()
     base=json.loads(a.grounded.read_text())
     corpus=json.loads(a.texts.read_text())
     bodies={x["source_id"]:x.get("text","")[:7000] for x in corpus["sources"] if x.get("text")}
     model=SentenceTransformer("sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",device="cpu")
-    output={"experiment":"title_augmented_summary_vs_original_text_embedding_deepseek","threshold":a.threshold,"max_review_per_variant":a.max_review,"variants":{},"titles":{},"usage":{"calls":0},"errors":[]}
+    output={"experiment":"title_augmented_summary_vs_original_text_embedding_deepseek","review_mode":a.review_mode,"threshold":a.threshold,"max_review_per_variant":a.max_review,"variants":{},"titles":{},"usage":{"calls":0},"errors":[]}
     all_items=[n for ctx in base["contexts"] for n in ctx["news"]]
     # Context-qualified IDs prevent collisions of n0 across contexts.
     for ctx in base["contexts"]:
@@ -88,19 +91,21 @@ def main():
             baseline_components=[{"ids":[items[i]["id"] for i in comp]} for comp in components.values()]
             groups=[];reviewed=[];decisions=[]
             for comp in components.values():
+                if a.review_mode=="embedding-only":
+                    groups.append(comp);continue
                 if len(comp)==1:
                     groups.append([comp[0]]);continue
                 # Keep review bounded; never automatically merge unreviewed components.
-                if review_count>=a.max_review:
+                if a.review_mode=="legacy" and review_count>=a.max_review:
                     groups.extend([[i] for i in comp]);continue
                 # Large connected components split into batches; do not merge across batches without review.
-                for start in range(0,len(comp),15):
-                    sub=comp[start:start+15]
+                for start in range(0,len(comp),15) if a.review_mode=="legacy" else (0,):
+                    sub=comp[start:start+15] if a.review_mode=="legacy" else comp
                     if len(sub)==1:groups.append(sub);continue
                     review_count+=1
                     payload=[{"id":items[i]["id"],"title":title(items[i]),"summary":items[i]["summary"],"source_id":items[i]["source_id"]} for i in sub]
                     try:
-                        response=call(REVIEW_PROMPT,{"news":payload},output["usage"])
+                        response=call(CORE_FIRST_PROMPT if a.review_mode=="core-first" else REVIEW_PROMPT,{"news":payload},output["usage"])
                         remaining={items[i]["id"]:i for i in sub}
                         for g in response.get("groups",[]):
                             ids=g.get("ids",[])
@@ -120,7 +125,7 @@ def main():
             for k,group in enumerate(groups):
                 members=[items[i] for i in group]
                 decision=next((d for d in decisions if set(d["ids"])==set(m["id"] for m in members)),None)
-                cards.append({"id":f"{variant}-{ctx['context']}-{k}","title":(decision or {}).get("title") or title(members[0]),"summary":(decision or {}).get("summary") or (members[0]["summary"] if len(members)==1 else ""),"relation":(decision or {}).get("relation"),"news_ids":[m["id"] for m in members],"source_ids":list(dict.fromkeys(m["source_id"] for m in members)),"source_summaries":[{"news_id":m["id"],"source_id":m["source_id"],"original_title":m["title"],"additional_title":title(m),"summary":m["summary"],"evidence":source_evidence.get(m["id"],[]),"qwen_evidence":output["qwen_passages"].get(str(ctx["context"])+":"+m["id"],{})} for m in members]})
+                cards.append({"id":f"{variant}-{ctx['context']}-{k}","title":(decision or {}).get("title") or title(members[0]),"summary":(decision or {}).get("summary") or (members[0]["summary"] if len(members)==1 else " ".join(m["summary"] for m in members)),"relation":(decision or {}).get("relation"),"news_ids":[m["id"] for m in members],"source_ids":list(dict.fromkeys(m["source_id"] for m in members)),"source_summaries":[{"news_id":m["id"],"source_id":m["source_id"],"original_title":m["title"],"additional_title":title(m),"summary":m["summary"],"evidence":source_evidence.get(m["id"],[]),"qwen_evidence":output["qwen_passages"].get(str(ctx["context"])+":"+m["id"],{})} for m in members]})
             assert sorted(k for c in cards for k in c["news_ids"])==sorted(x["id"] for x in items)
             contexts.append({"context":ctx["context"],"news":n,"cards":cards,"candidate_pairs":len(candidates),"reviewed_components":len(reviewed),"embedding_baseline":{"cards":len(baseline_components),"components":baseline_components},"deepseek_decisions":decisions,"reviewed_batches":reviewed,"comparison":{"embedding_cards":len(baseline_components),"deepseek_cards":len(cards),"delta":len(cards)-len(baseline_components),"split_components":sum(1 for component in baseline_components if sum(bool(set(component["ids"]) & set(card["news_ids"])) for card in cards)>1)}})
         output["variants"][variant]={"contexts":contexts,"totals":{"news":sum(c.get("news",0) for c in contexts),"cards":sum(len(c["cards"]) for c in contexts),"reviewed_components":review_count,"embedding_cards":sum(c.get("embedding_baseline",{}).get("cards",0) for c in contexts),"candidate_pairs":sum(c.get("candidate_pairs",0) for c in contexts)}}
