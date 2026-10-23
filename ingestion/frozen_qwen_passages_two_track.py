@@ -9,7 +9,7 @@ from ingestion.llm_semantic_adapter import request_analysis
 
 TITLE_PROMPT="""Produce a SHORT, SPECIFIC additional event-identity headline for EACH supplied news item. Keep the concrete actor, action, object and essential qualifier; do not introduce information. Return JSON {"titles":[{"id":"...","title":"..."}]}. Preserve every ID."""
 PASSAGE_PROMPT="""For EACH supplied news item identify 1-3 exact contiguous verbatim excerpts from article_body that directly document the specific claim. Return JSON {"items":[{"id":"...","quotes":["exact substring"]}]}. Do not invent excerpts."""
-REVIEW_PROMPT="""Determine whether the supplied news items refer to the SAME SPECIFIC event/development, rather than merely sharing a topic, person or broad story. Consider source-grounded news summaries and evidence. Group only strictly equivalent developments; preserve all input IDs exactly once, including singletons. Related reactions or distinct decisions must remain separate. Return JSON {"groups":[{"ids":["..."],"reason":"short factual reason"}]}. No new facts. Do not omit or duplicate IDs."""
+REVIEW_PROMPT="""Classify as SAME FACT, RELATED DEVELOPMENTS THAT CAN SHARE A CARD, or DISTINCT. Prefer avoiding duplicate cards for the same underlying development. Group same facts or closely related developments that can be accurately represented together. For each group supply relation, inclusive title, concise summary, and reason. Return JSON {"groups":[{"ids":["..."],"relation":"same_fact","title":"...","summary":"...","reason":"..."}]}. Preserve every input ID exactly once. Determine whether the supplied news items refer to the SAME SPECIFIC event/development, rather than merely sharing a topic, person or broad story. Consider source-grounded news summaries and evidence. Group only strictly equivalent developments; preserve all input IDs exactly once, including singletons. Related reactions or distinct decisions must remain separate. Return JSON {"groups":[{"ids":["..."],"reason":"short factual reason"}]}. No new facts. Do not omit or duplicate IDs."""
 
 def call(prompt,payload,stats,model_override=None):
     result,usage=request_analysis([{"role":"system","content":prompt},{"role":"user","content":json.dumps(payload,ensure_ascii=False)}],os.environ["UBIK_LLM_ENDPOINT"],model_override or os.environ["UBIK_LLM_MODEL"],os.environ["UBIK_LLM_API_KEY"],timeout=180)
@@ -85,7 +85,8 @@ def main():
             for _,i,j in candidates:union(i,j)
             components=defaultdict(list)
             for i in range(n):components[find(i)].append(i)
-            groups=[];reviewed=[]
+            baseline_components=[{"ids":[items[i]["id"] for i in comp]} for comp in components.values()]
+            groups=[];reviewed=[];decisions=[]
             for comp in components.values():
                 if len(comp)==1:
                     groups.append([comp[0]]);continue
@@ -105,6 +106,7 @@ def main():
                             ids=g.get("ids",[])
                             if not isinstance(ids,list) or not ids or len(ids)!=len(set(ids)) or any(k not in remaining for k in ids):continue
                             groups.append([remaining.pop(k) for k in ids])
+                            decisions.append({"ids":ids,"relation":g.get("relation"),"title":g.get("title"),"summary":g.get("summary"),"reason":g.get("reason")})
                         groups.extend([[i] for i in remaining.values()])
                         reviewed.append({"ids":[items[i]["id"] for i in sub],"status":"reviewed"})
                     except Exception as exc:
@@ -117,10 +119,11 @@ def main():
             cards=[]
             for k,group in enumerate(groups):
                 members=[items[i] for i in group]
-                cards.append({"id":f"{variant}-{ctx['context']}-{k}","title":title(members[0]),"news_ids":[m["id"] for m in members],"source_ids":list(dict.fromkeys(m["source_id"] for m in members)),"source_summaries":[{"news_id":m["id"],"source_id":m["source_id"],"original_title":m["title"],"additional_title":title(m),"summary":m["summary"],"evidence":source_evidence.get(m["id"],[]),"qwen_evidence":output["qwen_passages"].get(str(ctx["context"])+":"+m["id"],{})} for m in members]})
+                decision=next((d for d in decisions if set(d["ids"])==set(m["id"] for m in members)),None)
+                cards.append({"id":f"{variant}-{ctx['context']}-{k}","title":(decision or {}).get("title") or title(members[0]),"summary":(decision or {}).get("summary") or (members[0]["summary"] if len(members)==1 else ""),"relation":(decision or {}).get("relation"),"news_ids":[m["id"] for m in members],"source_ids":list(dict.fromkeys(m["source_id"] for m in members)),"source_summaries":[{"news_id":m["id"],"source_id":m["source_id"],"original_title":m["title"],"additional_title":title(m),"summary":m["summary"],"evidence":source_evidence.get(m["id"],[]),"qwen_evidence":output["qwen_passages"].get(str(ctx["context"])+":"+m["id"],{})} for m in members]})
             assert sorted(k for c in cards for k in c["news_ids"])==sorted(x["id"] for x in items)
-            contexts.append({"context":ctx["context"],"news":n,"cards":cards,"candidate_pairs":len(candidates),"reviewed_components":len(reviewed)})
-        output["variants"][variant]={"contexts":contexts,"totals":{"news":sum(c.get("news",0) for c in contexts),"cards":sum(len(c["cards"]) for c in contexts),"reviewed_components":review_count}}
+            contexts.append({"context":ctx["context"],"news":n,"cards":cards,"candidate_pairs":len(candidates),"reviewed_components":len(reviewed),"embedding_baseline":{"cards":len(baseline_components),"components":baseline_components},"deepseek_decisions":decisions,"reviewed_batches":reviewed,"comparison":{"embedding_cards":len(baseline_components),"deepseek_cards":len(cards),"delta":len(cards)-len(baseline_components),"split_components":sum(1 for component in baseline_components if sum(bool(set(component["ids"]) & set(card["news_ids"])) for card in cards)>1)}})
+        output["variants"][variant]={"contexts":contexts,"totals":{"news":sum(c.get("news",0) for c in contexts),"cards":sum(len(c["cards"]) for c in contexts),"reviewed_components":review_count,"embedding_cards":sum(c.get("embedding_baseline",{}).get("cards",0) for c in contexts),"candidate_pairs":sum(c.get("candidate_pairs",0) for c in contexts)}}
         a.output.parent.mkdir(parents=True,exist_ok=True);a.output.write_text(json.dumps(output,ensure_ascii=False,indent=2))
     print(json.dumps({"variants":{k:v["totals"] for k,v in output["variants"].items()},"usage":output["usage"],"errors":len(output["errors"])}))
 if __name__=="__main__":main()
