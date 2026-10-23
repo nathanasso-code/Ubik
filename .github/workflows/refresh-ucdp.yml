@@ -13,6 +13,7 @@ on:
           - 'two-track-deepseek'
           - 'qwen-passages-deepseek-cards'
           - 'deepseek-passages-deepseek-cards'
+          - 'conservative-vs-audit'
   schedule:
     - cron: "17 5 * * 2"
 permissions:
@@ -159,3 +160,36 @@ jobs:
         with:
           name: deepseek-evidence-two-track-results
           path: data/deepseek-evidence/results.json
+
+  conservative_vs_audit:
+    if: github.event_name == 'workflow_dispatch' && inputs.experiment == 'conservative-vs-audit'
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: develop/ubik-core
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install sentence-transformers scikit-learn
+      - name: Download frozen benchmark
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p data/conservative-audit
+          gh run download 39822649930 --name grounded-global-news-cards --dir data/conservative-audit
+          gh run download 39107689997 --name frozen-original-texts-pilot --dir data/conservative-audit
+      - name: Run paired arms on same extracted evidence
+        env:
+          UBIK_LLM_ENDPOINT: https://openrouter.ai/api/v1/chat/completions
+          UBIK_LLM_MODEL: deepseek/deepseek-v3.2
+          UBIK_QWEN_MODEL: qwen/qwen3-32b
+          UBIK_LLM_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+        run: python -m ingestion.frozen_conservative_vs_audit data/conservative-audit/result.json data/conservative-audit/original-texts.json --output data/conservative-audit/paired-results.json --max-review 50
+      - name: Publish both arms and audit decisions
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: conservative-vs-audit-results
+          path: data/conservative-audit/*.json
