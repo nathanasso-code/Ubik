@@ -11,6 +11,7 @@ on:
           - 'none'
           - 'neural-embedding-cards'
           - 'two-track-deepseek'
+          - 'qwen-evidence-two-track'
   schedule:
     - cron: "17 5 * * 2"
 permissions:
@@ -93,3 +94,35 @@ jobs:
         with:
           name: two-track-deepseek-results
           path: data/two-track/two-track-results.json
+  qwen_evidence_two_track:
+    if: github.event_name == 'workflow_dispatch' && inputs.experiment == 'qwen-evidence-two-track'
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: develop/ubik-core
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install sentence-transformers scikit-learn
+      - name: Download frozen benchmark
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p data/qwen-evidence
+          gh run download 39822649930 --name grounded-global-news-cards --dir data/qwen-evidence
+          gh run download 39107689997 --name frozen-original-texts-pilot --dir data/qwen-evidence
+      - name: Compare summary versus Qwen verified passages with DeepSeek
+        env:
+          UBIK_LLM_ENDPOINT: https://openrouter.ai/api/v1/chat/completions
+          UBIK_LLM_MODEL: deepseek/deepseek-v3.2
+          UBIK_QWEN_MODEL: qwen/qwen3-32b
+          UBIK_LLM_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+        run: python -m ingestion.frozen_qwen_passages_two_track data/qwen-evidence/result.json data/qwen-evidence/original-texts.json --output data/qwen-evidence/results.json --max-review 50
+      - name: Publish results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: qwen-evidence-two-track-results
+          path: data/qwen-evidence/results.json
