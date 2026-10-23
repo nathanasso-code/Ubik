@@ -12,6 +12,7 @@ on:
           - 'neural-embedding-cards'
           - 'two-track-deepseek'
           - 'qwen-passages-deepseek-cards'
+          - 'deepseek-passages-deepseek-cards'
   schedule:
     - cron: "17 5 * * 2"
 permissions:
@@ -126,3 +127,35 @@ jobs:
         with:
           name: qwen-passages-deepseek-cards-results
           path: data/qwen-evidence/results.json
+
+  deepseek_passages_deepseek_cards:
+    if: github.event_name == 'workflow_dispatch' && inputs.experiment == 'deepseek-passages-deepseek-cards'
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: develop/ubik-core
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install sentence-transformers scikit-learn
+      - name: Download same frozen benchmark
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p data/deepseek-evidence
+          gh run download 39822649930 --name grounded-global-news-cards --dir data/deepseek-evidence
+          gh run download 39107689997 --name frozen-original-texts-pilot --dir data/deepseek-evidence
+      - name: Compare summary and DeepSeek-selected verified passages
+        env:
+          UBIK_LLM_ENDPOINT: https://openrouter.ai/api/v1/chat/completions
+          UBIK_LLM_MODEL: deepseek/deepseek-v3.2
+          UBIK_LLM_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+        run: python -m ingestion.frozen_deepseek_passages_two_track data/deepseek-evidence/result.json data/deepseek-evidence/original-texts.json --output data/deepseek-evidence/results.json --max-review 50
+      - name: Upload result
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: deepseek-evidence-two-track-results
+          path: data/deepseek-evidence/results.json
