@@ -1,3 +1,5 @@
+> **Aggiornamento sperimentale 24 ottobre 2026:** revisione congiunta matrici+card e proposta di vocabolario informativo controllato; stato, run verificati, limiti e prossimi confronti in [MATRICES_CARDS_CONTROLLED_VOCABULARY_2026-10-24.md](MATRICES_CARDS_CONTROLLED_VOCABULARY_2026-10-24.md). Non ancora architettura di produzione.
+
 > **Direzione sperimentale aggiornata 21 ottobre 2026:** l'architettura a **identità informative fini + composizione differenziale** è attualmente la candidata qualitativamente più promettente per la pertinenza delle card; priorità a autonomia delle sintesi e copertura verificabile, non al numero massimo di card. Dettagli, risultati e limiti: [DIFFERENTIAL_INFORMATION_ARCHITECTURE_2026-10-21.md](DIFFERENTIAL_INFORMATION_ARCHITECTURE_2026-10-21.md). Non è ancora architettura di produzione.
 
 # Ubik — architecture and repository status (2026-10-13)
