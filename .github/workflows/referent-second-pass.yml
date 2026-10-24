@@ -28,6 +28,12 @@ jobs:
           mkdir -p base/data/taxonomy-pilot
           gh run download 40132040459 --repo nathanasso-code/Ubik --name taxonomy-fewshot-pilot-results --dir base/data/taxonomy-pilot
           gh run download 40135600536 --repo nathanasso-code/Ubik --name referent-pair-adjudication-results --dir base/data/taxonomy-pilot
+      - uses: actions/checkout@v4
+        with:
+          ref: experiment/taxonomy-fewshot-pilot
+          path: pilot
+      - name: Copy experiment script
+        run: cp pilot/ingestion/ubik_second_pass.py base/ingestion/ubik_second_pass.py
       - name: Review candidate pairs
         working-directory: base
         env:
