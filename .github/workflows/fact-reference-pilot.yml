@@ -1,0 +1,47 @@
+name: Ubik independent fact reference pilot
+on:
+  push:
+    branches:
+      - experiment/taxonomy-fewshot-pilot
+    paths:
+      - .github/workflows/fact-reference-pilot.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  extract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 65
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: develop/ubik-core
+          path: base
+      - uses: actions/checkout@v4
+        with:
+          ref: experiment/taxonomy-fewshot-pilot
+          path: pilot
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Download frozen corpus
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p base/data/taxonomy-pilot
+          gh run download 40132040459 --repo nathanasso-code/Ubik --name taxonomy-fewshot-pilot-results --dir base/data/taxonomy-pilot
+          cp pilot/ingestion/ubik_fact_reference_pilot.py base/ingestion/ubik_fact_reference_pilot.py
+      - name: Independent extraction
+        working-directory: base
+        env:
+          UBIK_LLM_ENDPOINT: https://openrouter.ai/api/v1/chat/completions
+          UBIK_LLM_MODEL: deepseek/deepseek-v3.2
+          UBIK_LLM_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+        run: python -m ingestion.ubik_fact_reference_pilot
+      - name: Upload extracted structures
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: fact-reference-pilot-results
+          path: base/data/taxonomy-pilot/fact-reference-pilot.json
