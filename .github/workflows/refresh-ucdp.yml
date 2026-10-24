@@ -17,6 +17,7 @@ on:
           - 'core-first-vs-embedding'
           - 'independent-qwen-vs-deepseek'
           - 'shared-deepseek-matrices'
+          - 'joint-matrices-cards'
   schedule:
     - cron: "17 5 * * 2"
 permissions:
@@ -294,3 +295,35 @@ jobs:
         with:
           name: shared-deepseek-matrices-results
           path: data/shared-deepseek/paired-matrices.json
+
+  joint_matrices_cards:
+    if: github.event_name == 'workflow_dispatch' && inputs.experiment == 'joint-matrices-cards'
+    runs-on: ubuntu-latest
+    timeout-minutes: 150
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: develop/ubik-core
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install sentence-transformers scikit-learn
+      - name: Download frozen DeepSeek extraction
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p data/joint-matrices
+          gh run download 40090764027 --name independent-qwen-vs-deepseek-results --dir data/joint-matrices
+      - name: Joint Qwen and DeepSeek matrix/card review
+        env:
+          UBIK_LLM_ENDPOINT: https://openrouter.ai/api/v1/chat/completions
+          UBIK_LLM_MODEL: deepseek/deepseek-v3.2
+          UBIK_QWEN_MODEL: qwen/qwen3-32b
+          UBIK_LLM_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+        run: python -m ingestion.frozen_joint_matrices_cards data/joint-matrices/results.json --output data/joint-matrices/joint-results.json
+      - name: Upload results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: joint-matrices-cards-results
+          path: data/joint-matrices/joint-results.json
