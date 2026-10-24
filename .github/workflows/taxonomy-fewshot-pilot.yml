@@ -1,0 +1,51 @@
+name: Ubik taxonomy few-shot pilot
+on:
+  push:
+    branches:
+      - experiment/taxonomy-fewshot-pilot
+    paths:
+      - ingestion/frozen_taxonomy_fewshot_pilot.py
+      - .github/workflows/taxonomy-fewshot-pilot.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  pilot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: develop/ubik-core
+          path: base
+      - uses: actions/checkout@v4
+        with:
+          ref: experiment/taxonomy-fewshot-pilot
+          path: pilot
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install embedding dependencies
+        run: python -m pip install sentence-transformers scikit-learn
+      - name: Download frozen 105-news extraction
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p base/data/taxonomy-pilot
+          gh run download 40090764027 --repo nathanasso-code/Ubik --name independent-qwen-vs-deepseek-results --dir base/data/taxonomy-pilot
+          cp pilot/ingestion/frozen_taxonomy_fewshot_pilot.py base/ingestion/frozen_taxonomy_fewshot_pilot.py
+      - name: Run three taxonomy variants on butterfly and Ukraine contexts
+        working-directory: base
+        env:
+          UBIK_LLM_ENDPOINT: https://openrouter.ai/api/v1/chat/completions
+          UBIK_LLM_MODEL: deepseek/deepseek-v3.2
+          UBIK_LLM_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+        run: |
+          python -m ingestion.frozen_taxonomy_fewshot_pilot data/taxonomy-pilot/results.json --output data/taxonomy-pilot/fewshot-results.json --contexts 0,3
+      - name: Upload results even if partial
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: taxonomy-fewshot-pilot-results
+          path: base/data/taxonomy-pilot/fewshot-results.json
