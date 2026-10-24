@@ -1,0 +1,99 @@
+name: Ubik referent pair adjudication
+on:
+  push:
+    branches:
+      - experiment/taxonomy-fewshot-pilot
+    paths:
+      - .github/workflows/referent-pair-adjudication.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  adjudicate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: develop/ubik-core
+          path: base
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Download frozen taxonomy result
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p base/data/taxonomy-pilot
+          gh run download 40132040459 --repo nathanasso-code/Ubik --name taxonomy-fewshot-pilot-results --dir base/data/taxonomy-pilot
+      - name: Adjudicate ambiguous Ukrainian referents only
+        working-directory: base
+        env:
+          UBIK_LLM_ENDPOINT: https://openrouter.ai/api/v1/chat/completions
+          UBIK_LLM_MODEL: deepseek/deepseek-v3.2
+          UBIK_LLM_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+        run: |
+          cat > /tmp/ubik_adjudicate.py <<'PY'
+          import json,os,re
+          from pathlib import Path
+          from ingestion.frozen_independent_qwen_deepseek import ask
+          
+          src=json.loads(Path("data/taxonomy-pilot/fewshot-results.json").read_text())
+          arm=src["arms"]["examples_4"]
+          context=next(c for c in arm["contexts"] if c["context"]==3)
+          records={r["news"]["key"]:r for r in arm["records"] if r["status"]=="ok" and r["news"]["context"]==3}
+          pairs=context["pair_decisions"]
+          baseline={frozenset(c["news_keys"]):c for m in context["matrices"] for c in m["cards"]}
+          baseline_m={k:m["id"] for m in context["matrices"] for k in m["news_keys"]}
+          candidates=[p for p in pairs if p["reference_similarity"]>=0.80 and not p["reference_link"] and p["a"] in records and p["b"] in records]
+          candidates.sort(key=lambda p:(-p["reference_similarity"],p["a"],p["b"]))
+          # Limit adjudications to one representative per previously separate matrix pair.
+          seen=set();selected=[]
+          for p in candidates:
+           key=tuple(sorted((baseline_m[p["a"]],baseline_m[p["b"]])))
+           if key in seen:continue
+           seen.add(key);selected.append(p)
+           if len(selected)>=35:break
+          PROMPT="""You adjudicate a pair of independently extracted, source-grounded news items. Decide the relationship between their SPECIFIC referents, not topic similarity. Return ONLY JSON with keys relation (IDENTITY, BELONGING, CORRELATION, or UNCERTAIN), shared_reference, evidence, reason, confidence (high, medium, low). IDENTITY: exactly the same identifiable act/study/event. BELONGING: a reaction, finding, consequence, aspect or component of the same identifiable act/study/event, even if the factual claims differ. CORRELATION: same broad subject but different specific acts, events or studies. UNCERTAIN: not enough evidence to distinguish. Do not infer identity from shared country, actors, broad theme, or embedding similarity. If different dates, legal instruments, jurisdictions or specific actions suggest distinct referents, favor CORRELATION or UNCERTAIN. Use only provided claims and source summaries. Keep evidence short. No invented facts."""
+          out={"experiment":"pairwise_referent_adjudication","source_run":40132040459,"arm":"examples_4","context":3,"max_calls":35,"candidate_count":len(candidates),"selected_pairs":len(selected),"results":[],"errors":[],"usage":{"calls":0}}
+          path=Path("data/taxonomy-pilot/adjudication-results.json")
+          for p in selected:
+           a,b=records[p["a"]],records[p["b"]]
+           payload={"similarity":p["reference_similarity"],"a":{"key":p["a"],"title":a["news"]["title"],"summary":a["news"]["summary"],"taxonomy":a["classification"]},"b":{"key":p["b"],"title":b["news"]["title"],"summary":b["news"]["summary"],"taxonomy":b["classification"]}}
+           try:
+            answer=ask(os.environ["UBIK_LLM_MODEL"],PROMPT,payload,out["usage"])
+            rel=str(answer.get("relation","")).upper().strip()
+            if rel not in ("IDENTITY","BELONGING","CORRELATION","UNCERTAIN"):raise ValueError("Invalid relation: "+rel)
+            out["results"].append({"pair":p,"judgment":answer,"relation":rel})
+           except Exception as e:out["errors"].append({"pair":p,"error":str(e)[:350]})
+           path.parent.mkdir(parents=True,exist_ok=True)
+           path.write_text(json.dumps(out,ensure_ascii=False,indent=2))
+          # Conservative matrix unions: identity/belonging alone are candidate links; keep correlation/uncertain separate.
+          parent={k:k for k in records}
+          def find(x):
+           while parent[x]!=x:parent[x]=parent[parent[x]];x=parent[x]
+           return x
+          for m in context["matrices"]:
+           for k in m["news_keys"]:parent[k]=m["news_keys"][0]
+          for item in out["results"]:
+           if item["relation"] not in ("IDENTITY","BELONGING"):continue
+           a,b=item["pair"]["a"],item["pair"]["b"]
+           ra,rb=find(a),find(b)
+           if ra!=rb:parent[rb]=ra
+          groups={}
+          for k in records:groups.setdefault(find(k),[]).append(k)
+          out["provisional_groups"]=[{"news_keys":sorted(keys),"source_ids":sorted({records[k]["news"]["source_id"] for k in keys}),"previous_matrices":sorted({baseline_m[k] for k in keys})} for keys in groups.values()]
+          out["summary"]={"judgments":{r:sum(x["relation"]==r for x in out["results"]) for r in ("IDENTITY","BELONGING","CORRELATION","UNCERTAIN")},"matrices_before":len(context["matrices"]),"matrices_after_provisional":len(groups),"calls":out["usage"]["calls"],"errors":len(out["errors"])}
+          path.write_text(json.dumps(out,ensure_ascii=False,indent=2))
+          print(json.dumps(out["summary"]))
+          
+          PY
+          cp /tmp/ubik_adjudicate.py ingestion/ubik_adjudicate.py
+          python -m ingestion.ubik_adjudicate
+      - name: Upload partial or complete results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: referent-pair-adjudication-results
+          path: base/data/taxonomy-pilot/adjudication-results.json
