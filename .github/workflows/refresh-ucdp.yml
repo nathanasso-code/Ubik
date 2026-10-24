@@ -16,6 +16,7 @@ on:
           - 'conservative-vs-audit'
           - 'core-first-vs-embedding'
           - 'independent-qwen-vs-deepseek'
+          - 'shared-deepseek-matrices'
   schedule:
     - cron: "17 5 * * 2"
 permissions:
@@ -261,3 +262,35 @@ jobs:
         with:
           name: independent-qwen-vs-deepseek-results
           path: data/independent-arms/results.json
+
+  shared_deepseek_matrices:
+    if: github.event_name == 'workflow_dispatch' && inputs.experiment == 'shared-deepseek-matrices'
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: develop/ubik-core
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install sentence-transformers scikit-learn
+      - name: Download prior DeepSeek extraction and embedding components
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p data/shared-deepseek
+          gh run download 40090764027 --name independent-qwen-vs-deepseek-results --dir data/shared-deepseek
+      - name: Compare Qwen and DeepSeek on identical DeepSeek summaries
+        env:
+          UBIK_LLM_ENDPOINT: https://openrouter.ai/api/v1/chat/completions
+          UBIK_LLM_MODEL: deepseek/deepseek-v3.2
+          UBIK_QWEN_MODEL: qwen/qwen3-32b
+          UBIK_LLM_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+        run: python -m ingestion.frozen_shared_deepseek_matrices data/shared-deepseek/results.json --output data/shared-deepseek/paired-matrices.json
+      - name: Publish comparison and matrix candidates
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: shared-deepseek-matrices-results
+          path: data/shared-deepseek/paired-matrices.json
