@@ -40,6 +40,22 @@ def main():
         start=body.find(quote);verified.append({"text":quote,"start":start,"end":start+len(quote)})
       extracted[item["id"]]={"summary":summary.strip(),"passages":verified,"evidence_status":"verified" if verified else "missing"}
     except Exception as e:result["errors"].append({"context":ctx["context"],"source_id":sid,"phase":"extract","error":str(e)[:300]})
+   # Retry omissions one news at a time, using the same model and original source text.
+   # This distinguishes incomplete batch responses from unavailable source material.
+   for n in items:
+    if n["id"] in extracted:continue
+    body=bodies.get(n["source_id"],"")
+    if not body:continue
+    try:
+     retry=ask(model,EXTRACT,{"article_body":body[:14000],"news":[{"id":n["id"],"title":n["title"]}]},result["usage"])
+     candidate=next((x for x in retry.get("items",[]) if isinstance(x,dict) and x.get("id")==n["id"] and isinstance(x.get("summary"),str) and x["summary"].strip()),None)
+     if candidate:
+      verified=[]
+      for quote in candidate.get("quotes",[]):
+       if isinstance(quote,str) and quote and quote in body:
+        start=body.find(quote);verified.append({"text":quote,"start":start,"end":start+len(quote)})
+      extracted[n["id"]]={"summary":candidate["summary"].strip(),"passages":verified,"evidence_status":"verified" if verified else "missing","extraction_mode":"individual_retry"}
+    except Exception as e:result["errors"].append({"context":ctx["context"],"source_id":n["source_id"],"news_id":n["id"],"phase":"individual_retry","error":str(e)[:300]})
    # No fallback to the other model or prior DeepSeek summaries: exclude missing extractions from model comparisons.
    valid=[n for n in items if n["id"] in extracted]
    omitted=[n["id"] for n in items if n["id"] not in extracted]
