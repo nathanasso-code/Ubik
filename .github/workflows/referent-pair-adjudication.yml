@@ -37,7 +37,12 @@ jobs:
           cat > /tmp/ubik_adjudicate.py <<'PY'
           import json,os,re
           from pathlib import Path
-          from ingestion.frozen_independent_qwen_deepseek import ask
+          from ingestion.llm_semantic_adapter import request_analysis
+          def ask(model,prompt,data,usage):
+           result,meta=request_analysis([{"role":"system","content":prompt},{"role":"user","content":json.dumps(data,ensure_ascii=False)}],os.environ["UBIK_LLM_ENDPOINT"],model,os.environ["UBIK_LLM_API_KEY"],timeout=180)
+           usage["calls"]+=1
+           if not isinstance(result,dict):raise ValueError("Invalid JSON response")
+           return result
           
           src=json.loads(Path("data/taxonomy-pilot/fewshot-results.json").read_text())
           arm=src["arms"]["examples_4"]
