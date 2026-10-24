@@ -55,7 +55,7 @@ def build(news, labels, encoder):
    type_match=norm(a["reference_type"])==norm(b["reference_type"])
    ref_match=(same_id or (not contradictory_ids and type_match and rs[i,j]>=.80))
    if ref_match:edges.append((i,j))
-   decisions.append({"a":news[i]["key"],"b":news[j]["key"],"reference_similarity":round(float(rs[i,j]),4),"fact_similarity":round(float(fs[i,j]),4),"same_identifier":same_id,"reference_link":ref_match})
+   decisions.append({"a":news[i]["key"],"b":news[j]["key"],"reference_similarity":round(float(rs[i,j]),4),"fact_similarity":round(float(fs[i,j]),4),"same_identifier":bool(same_id),"reference_link":bool(ref_match)})
  matrices=[];reverse=defaultdict(lambda:{"news":[],"cards":[],"matrices":[]})
  for mi,indices in enumerate(union_components(len(news),edges)):
   # Only claim-equivalent facts join a card; keep differing aspects separate.
@@ -111,6 +111,6 @@ def main():
     contexts_out.append({"context":context,**built})
   out["arms"][name]={"usage":usage,"errors":errors,"records":records,"contexts":contexts_out,"coverage":{"classified":len(valid),"expected":len(news),"omitted_keys":[r["news"]["key"] for r in records if r["status"]!="ok"]},"totals":{"matrices":sum(len(c["matrices"]) for c in contexts_out),"cards":sum(sum(len(m["cards"]) for m in c["matrices"]) for c in contexts_out)}}
   a.output.parent.mkdir(parents=True,exist_ok=True)
-  a.output.write_text(json.dumps(out,ensure_ascii=False,indent=2))
+  a.output.write_text(json.dumps(out,ensure_ascii=False,indent=2,default=lambda v: v.item() if hasattr(v,"item") else str(v)))
  print(json.dumps({k:{"coverage":v["coverage"],"totals":v["totals"],"calls":v["usage"]["calls"]} for k,v in out["arms"].items()},ensure_ascii=False))
 if __name__=="__main__":main()
