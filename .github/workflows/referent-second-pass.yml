@@ -1,0 +1,43 @@
+name: Ubik referent second pass
+on:
+  push:
+    branches:
+      - experiment/taxonomy-fewshot-pilot
+    paths:
+      - .github/workflows/referent-second-pass.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: develop/ubik-core
+          path: base
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Download previous artifacts
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p base/data/taxonomy-pilot
+          gh run download 40132040459 --repo nathanasso-code/Ubik --name taxonomy-fewshot-pilot-results --dir base/data/taxonomy-pilot
+          gh run download 40135600536 --repo nathanasso-code/Ubik --name referent-pair-adjudication-results --dir base/data/taxonomy-pilot
+      - name: Review candidate pairs
+        working-directory: base
+        env:
+          UBIK_LLM_ENDPOINT: https://openrouter.ai/api/v1/chat/completions
+          UBIK_LLM_MODEL: deepseek/deepseek-v3.2
+          UBIK_LLM_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+        run: python -m ingestion.ubik_second_pass
+      - name: Upload results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: referent-second-pass-results
+          path: base/data/taxonomy-pilot/second-pass-results.json
