@@ -1,0 +1,35 @@
+name: Ubik generic registry matching
+on:
+  push:
+    branches:
+      - experiment/taxonomy-fewshot-pilot
+    paths:
+      - .github/workflows/generic-registry-matching.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  match:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: experiment/taxonomy-fewshot-pilot
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Retrieve frozen independent classifications
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p data/taxonomy-pilot
+          gh run download 40140189703 --repo nathanasso-code/Ubik --name fact-reference-pilot-results --dir data/taxonomy-pilot
+      - name: Match without LLM or embeddings
+        run: python -m ingestion.ubik_generic_registry
+      - name: Publish auditable result
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: generic-registry-matching-results
+          path: data/taxonomy-pilot/registry-matching-results.json
