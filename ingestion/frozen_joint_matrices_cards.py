@@ -38,8 +38,12 @@ def main():
         news_by_id={s["news_id"]:s for card in ctx["cards"] for s in card["sources"]}
         news=[{"id":nid,"title":s["original_title"],"summary":s["summary"],
                "source_id":s["source_id"]} for nid,s in news_by_id.items()]
-        vectors=encoder.encode([n["title"]+". "+n["summary"] for n in news],normalize_embeddings=True)
-        groups=components(news,vectors,a.threshold)
+        if news:
+            vectors=encoder.encode([n["title"]+". "+n["summary"] for n in news],normalize_embeddings=True)
+            groups=components(news,vectors,a.threshold)
+        else:
+            vectors=[]
+            groups=[]
         # A hard size guard: oversize connected components must not be sent to LLM.
         # Split deterministically into non-overlapping, locally coherent complete-link
         # batches; these are review windows, not validated matrix boundaries.
