@@ -1,0 +1,57 @@
+name: Ubik v3 source-context extraction
+on:
+  push:
+    branches:
+      - experiment/taxonomy-fewshot-pilot
+    paths:
+      - .github/workflows/source-registry-v3.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  extract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 65
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - label: deepseek
+            model: deepseek/deepseek-v3.2
+          - label: sonnet
+            model: anthropic/claude-sonnet-4.5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: develop/ubik-core
+          path: base
+      - uses: actions/checkout@v4
+        with:
+          ref: experiment/taxonomy-fewshot-pilot
+          path: pilot
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Recover immutable inputs
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p base/data/taxonomy-pilot
+          gh run download 40140189703 --repo nathanasso-code/Ubik --name fact-reference-pilot-results --dir base/data/taxonomy-pilot
+          gh run download 40171334735 --repo nathanasso-code/Ubik --name reference-extraction-v2-results --dir base/data/taxonomy-pilot
+          cp pilot/ingestion/ubik_source_registry_v3.py base/ingestion/ubik_source_registry_v3.py
+      - name: Two-level per-source extraction
+        working-directory: base
+        env:
+          UBIK_LLM_ENDPOINT: https://openrouter.ai/api/v1/chat/completions
+          UBIK_LLM_MODEL: ${{ matrix.model }}
+          UBIK_MODEL_LABEL: ${{ matrix.label }}
+          UBIK_LLM_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+        run: python -m ingestion.ubik_source_registry_v3
+      - name: Publish structured v3
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: source-registry-v3-${{ matrix.label }}
+          path: base/data/taxonomy-pilot/v3-${{ matrix.label }}.json
