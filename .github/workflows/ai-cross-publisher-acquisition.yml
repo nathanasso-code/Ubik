@@ -13,7 +13,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: develop/ubik-core
+          ref: experiment/taxonomy-fewshot-pilot
           persist-credentials: false
       - uses: actions/setup-python@v5
         with:
@@ -66,6 +66,25 @@ jobs:
                   'window_utc':['2026-10-19','2026-10-25']}
           (root/'ai-cross-candidates.json').write_text(json.dumps({'report':report,'items':selected},ensure_ascii=False,indent=2))
           print(json.dumps(report,ensure_ascii=False))
+          PY
+      - name: Attach curated provenance metadata to every AI candidate
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          from ingestion.ubik_acquisition_provenance_v5 import enrich
+          path=Path('data/discovery/ai-cross-candidates.json')
+          doc=json.loads(path.read_text())
+          sources={}
+          for registry_path in ('config/source-registry.global-pilot.json','config/source-registry.ai-models.json'):
+              registry=json.loads(Path(registry_path).read_text())
+              sources.update({s['id']:s for s in registry['sources']})
+          doc['items']=[enrich(item,sources) for item in doc['items']]
+          doc['report']['provenance_schema']='ubik_acquisition_provenance_v5'
+          doc['report']['unknown_source_types']=sum(item['source_type']=='unknown' for item in doc['items'])
+          doc['report']['unrated_provenance']=sum(item['provenance']['reliability_level']=='unrated' for item in doc['items'])
+          path.write_text(json.dumps(doc,ensure_ascii=False,indent=2))
+          print(json.dumps({'candidates':len(doc['items']),'unknown_types':doc['report']['unknown_source_types'],'unrated':doc['report']['unrated_provenance']}))
           PY
       - name: Mine cross-publisher candidate pairs with existing sparse TF-IDF
         run: |
