@@ -1,0 +1,70 @@
+name: Ubik AI corpus acquisition preflight
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  acquire:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - name: Reuse existing acquisition implementation
+        uses: actions/checkout@v4
+        with:
+          ref: develop/ubik-core
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install existing optional article extractors
+        run: python -m pip install 'trafilatura==2.3.1' 'readability-lxml==0.9.0'
+      - name: Run established AI RSS discovery
+        run: python scripts/discover_ai_sources.py --output data/discovery/ai-models.json
+      - name: Audit date coverage and freeze eligible metadata
+        run: |
+          python - <<'PY'
+          import json,datetime as dt,collections,pathlib,email.utils
+          p=pathlib.Path('data/discovery')
+          d=json.loads((p/'ai-models.json').read_text())
+          start=dt.datetime(2026,10,19,tzinfo=dt.timezone.utc)
+          end=dt.datetime(2026,10,26,tzinfo=dt.timezone.utc)
+          eligible=[]; missing=[]; invalid=[]
+          for row in d.get('items',[]):
+              raw=row.get('published_raw')
+              if not raw:
+                  missing.append(row['url']);continue
+              try:
+                  try:date=dt.datetime.fromisoformat(raw.replace('Z','+00:00'))
+                  except ValueError:date=email.utils.parsedate_to_datetime(raw)
+                  if date.tzinfo is None:date=date.replace(tzinfo=dt.timezone.utc)
+                  date=date.astimezone(dt.timezone.utc)
+              except (ValueError,TypeError,OverflowError):
+                  invalid.append(row['url']);continue
+              if start<=date<end:
+                  eligible.append({**row,'publication_date_utc':date.isoformat(),
+                                   'event_date':None,'text_completeness':'not_assessed'})
+          eligible.sort(key=lambda x:(x['publication_date_utc'],x['source_id'],x['url']))
+          hosts=collections.Counter(x['publisher'] for x in eligible)
+          report={'window_utc':['2026-10-19','2026-10-25'],'discovered_total':len(d.get('items',[])),
+                  'eligible_articles':len(eligible),'publishers':dict(hosts),
+                  'missing_publication_date':len(missing),'invalid_publication_date':len(invalid),
+                  'successful_feeds':d.get('coverage',{}).get('successful_feeds',0),
+                  'failed_feeds':d.get('coverage',{}).get('failed_feeds',0),
+                  'limitations':['RSS discovery is not comprehensive.','Feed publication date is not event date.',
+                                 'No article body is verified complete.','No gold labels or LLM calls.']}
+          (p/'ai-week-2026-10-19-metadata.json').write_text(json.dumps({'report':report,'items':eligible},ensure_ascii=False,indent=2))
+          (p/'ai-week-2026-10-19-coverage.json').write_text(json.dumps(report,ensure_ascii=False,indent=2))
+          print(json.dumps(report,ensure_ascii=False,indent=2))
+          if not d.get('coverage',{}).get('successful_feeds'):raise SystemExit('No feeds succeeded')
+          PY
+      - name: Probe available text without persisting copyrighted bodies
+        run: |
+          python -m ingestion.live_get_text_probe data/discovery/ai-week-2026-10-19-metadata.json --max-urls 40 --per-host 7 --seed 42 --method stratified --output data/discovery/ai-week-2026-10-19-text-probes.json
+      - name: Upload frozen discovery and coverage artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ubik-ai-2026-10-19-acquisition-preflight
+          path: |
+            data/discovery/ai-week-2026-10-19-*.json
+          retention-days: 30
