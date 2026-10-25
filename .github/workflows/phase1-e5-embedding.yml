@@ -1,0 +1,44 @@
+name: Ubik phase 1 E5 embedding
+on:
+  push:
+    branches:
+      - experiment/taxonomy-fewshot-pilot
+    paths:
+      - .github/workflows/phase1-e5-embedding.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  embedding:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: experiment/taxonomy-fewshot-pilot
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install CPU embedding dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install "numpy<3" "sentence-transformers>=3,<6" scikit-learn
+      - name: Restore frozen Sonnet v4 events
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p data/taxonomy-pilot
+          gh run download 40174092045 --repo nathanasso-code/Ubik --name source-registry-v4-sonnet55 --dir data/taxonomy-pilot
+          test -s data/taxonomy-pilot/v4-sonnet55.json
+      - name: Compute E5-small embeddings and fixed metrics
+        env:
+          HF_HOME: ${{ runner.temp }}/hf-cache
+          HF_HUB_DISABLE_TELEMETRY: "1"
+        run: python -m ingestion.ubik_phase1_embedding
+      - name: Preserve evaluation result
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase1-embedding-e5-small
+          path: data/taxonomy-pilot/phase1-embedding-e5-small.json
