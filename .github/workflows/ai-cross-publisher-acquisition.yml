@@ -1,0 +1,85 @@
+name: Ubik AI cross-publisher acquisition
+on:
+  push:
+    branches: [experiment/taxonomy-fewshot-pilot]
+    paths: ['.github/workflows/ai-cross-publisher-acquisition.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  acquisition:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: develop/ubik-core
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install existing content extractors
+        run: python -m pip install 'trafilatura==2.3.1' 'readability-lxml==0.9.0'
+      - name: Acquire broad RSS and specialist AI feed observations
+        run: |
+          python -m ingestion.global_rss_pilot --output data/discovery/ai-cross-global.json
+          python scripts/discover_ai_sources.py --output data/discovery/ai-cross-specialist.json
+      - name: Build date-bounded news corpus with auditable AI triage
+        run: |
+          python - <<'PY'
+          import json,re,datetime as dt,email.utils,collections,pathlib
+          root=pathlib.Path('data/discovery')
+          a=json.loads((root/'ai-cross-global.json').read_text())
+          b=json.loads((root/'ai-cross-specialist.json').read_text())
+          start=dt.datetime(2026,10,19,tzinfo=dt.timezone.utc)
+          end=dt.datetime(2026,10,26,tzinfo=dt.timezone.utc)
+          ai=re.compile(r'(?i)\b(?:artificial intelligence|generative ai|machine learning|deep learning|large language models?|llms?|chatgpt|openai|anthropic|claude|gemini|deepmind|neural networks?|foundation models?|ai agents?|ai safety|ai regulation|ai-generated|chatbots?|intelligenza artificiale)\b')
+          records={};excluded=collections.Counter()
+          for row in a.get('items',[])+b.get('items',[]):
+              url=row.get('original_url') or row.get('url')
+              if not url or not row.get('title'):
+                  excluded['no_url_or_title']+=1;continue
+              raw=row.get('published_raw')
+              try:
+                  if not raw:raise ValueError('missing')
+                  try:d=dt.datetime.fromisoformat(raw.replace('Z','+00:00'))
+                  except ValueError:d=email.utils.parsedate_to_datetime(raw)
+                  if d.tzinfo is None:d=d.replace(tzinfo=dt.timezone.utc)
+                  d=d.astimezone(dt.timezone.utc)
+              except (ValueError,TypeError,OverflowError):
+                  excluded['missing_or_invalid_date']+=1;continue
+              if not start<=d<end:
+                  excluded['outside_week']+=1;continue
+              title=row.get('title') or ''
+              desc=row.get('description') or ''
+              if not ai.search(title+' '+desc):
+                  excluded['no_ai_keyword']+=1;continue
+              if row.get('source_id','').startswith('arxiv-'):
+                  excluded['scientific_preprints_separate']+=1;continue
+              existing=records.get(url)
+              record={**row,'url':url,'publication_date_utc':d.isoformat(),'relevance_verified':False}
+              if existing is None or len(desc)>len(existing.get('description') or ''):records[url]=record
+          selected=sorted(records.values(),key=lambda r:(r['publication_date_utc'],r['url']))
+          report={'global_observations':len(a.get('items',[])),'specialist_observations':len(b.get('items',[])),
+                  'candidate_news':len(selected),'candidate_publishers':dict(collections.Counter(r.get('publisher') for r in selected)),
+                  'excluded':dict(excluded),'selection':'inclusive metadata keyword triage, NOT manually verified relevance',
+                  'window_utc':['2026-10-19','2026-10-25']}
+          (root/'ai-cross-candidates.json').write_text(json.dumps({'report':report,'items':selected},ensure_ascii=False,indent=2))
+          print(json.dumps(report,ensure_ascii=False))
+          PY
+      - name: Mine cross-publisher candidate pairs with existing sparse TF-IDF
+        run: |
+          python -m ingestion.cross_source_candidate_mining data/discovery/ai-cross-candidates.json --output data/discovery/ai-cross-pairs.json --top-k 160
+      - name: Verify text availability for 24 score-stratified pairs with Trafilatura
+        run: |
+          python -m ingestion.cross_source_pair_text_probe data/discovery/ai-cross-pairs.json --output data/discovery/ai-cross-pair-text.json
+      - name: Upload provenance and pair evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ubik-ai-cross-publisher-evidence
+          path: |
+            data/discovery/ai-cross-candidates.json
+            data/discovery/ai-cross-pairs.json
+            data/discovery/ai-cross-pair-text.json
+          retention-days: 30
