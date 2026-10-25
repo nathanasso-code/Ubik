@@ -1,4 +1,4 @@
-name: Ubik phase 1 hybrid pair judging
+name: Ubik phase 1 hybrid pair judging (retry after auth probe)
 on:
   push:
     branches: [experiment/taxonomy-fewshot-pilot]
