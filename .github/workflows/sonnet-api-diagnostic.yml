@@ -31,6 +31,7 @@ jobs:
         run: |
           mkdir -p base/data/taxonomy-pilot
           gh run download 40140189703 --repo nathanasso-code/Ubik --name fact-reference-pilot-results --dir base/data/taxonomy-pilot
+          gh run download 40171334735 --repo nathanasso-code/Ubik --name reference-extraction-v2-results --dir base/data/taxonomy-pilot
           cp pilot/ingestion/ubik_source_registry_v3.py base/ingestion/ubik_source_registry_v3.py
           cp pilot/ingestion/ubik_sonnet_diagnostic.py base/ingestion/ubik_sonnet_diagnostic.py
       - name: Probe one source only (nonzero on error)
