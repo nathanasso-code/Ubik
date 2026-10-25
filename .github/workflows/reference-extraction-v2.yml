@@ -1,0 +1,47 @@
+name: Ubik reference extraction v2
+on:
+  push:
+    branches:
+      - experiment/taxonomy-fewshot-pilot
+    paths:
+      - .github/workflows/reference-extraction-v2.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  extract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 65
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: develop/ubik-core
+          path: base
+      - uses: actions/checkout@v4
+        with:
+          ref: experiment/taxonomy-fewshot-pilot
+          path: pilot
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Download immutable original extraction
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p base/data/taxonomy-pilot
+          gh run download 40140189703 --repo nathanasso-code/Ubik --name fact-reference-pilot-results --dir base/data/taxonomy-pilot
+          cp pilot/ingestion/ubik_reference_extraction_v2.py base/ingestion/ubik_reference_extraction_v2.py
+      - name: Run independent extraction with revised schema
+        working-directory: base
+        env:
+          UBIK_LLM_ENDPOINT: https://openrouter.ai/api/v1/chat/completions
+          UBIK_LLM_MODEL: deepseek/deepseek-v3.2
+          UBIK_LLM_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+        run: python -m ingestion.ubik_reference_extraction_v2
+      - name: Upload side-by-side results and evaluation reference
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: reference-extraction-v2-results
+          path: base/data/taxonomy-pilot/reference-extraction-v2.json
