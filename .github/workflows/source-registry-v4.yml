@@ -1,0 +1,51 @@
+name: Ubik v4 frozen source registry
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  extract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - label: deepseek
+            model: deepseek/deepseek-v3.2
+          - label: sonnet55
+            model: anthropic/claude-sonnet-5.5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: develop/ubik-core
+          path: base
+      - uses: actions/checkout@v4
+        with:
+          ref: experiment/taxonomy-fewshot-pilot
+          path: pilot
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Restore frozen inputs and pilot scripts
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p base/data/taxonomy-pilot
+          gh run download 40140189703 --repo nathanasso-code/Ubik --name fact-reference-pilot-results --dir base/data/taxonomy-pilot
+          cp pilot/ingestion/ubik_source_registry_v4.py base/ingestion/ubik_source_registry_v4.py
+          cp pilot/ingestion/ubik_json_response.py base/ingestion/ubik_json_response.py
+      - name: V4 extraction and strict coverage
+        working-directory: base
+        env:
+          UBIK_LLM_MODEL: ${{ matrix.model }}
+          UBIK_MODEL_LABEL: ${{ matrix.label }}
+          UBIK_LLM_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+        run: python -m ingestion.ubik_source_registry_v4
+      - name: Upload per-model outputs even on failure
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: source-registry-v4-${{ matrix.label }}
+          path: base/data/taxonomy-pilot/v4-${{ matrix.label }}.json
