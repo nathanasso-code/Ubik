@@ -18,6 +18,8 @@ def enrich(item, registry):
             "reliability_level": "unrated",
             "reliability_basis": None,
             "registry_status": "unmatched",
+            "editorial_group_id": None,
+            "content_origin": {"type":"unknown","name":None,"id":None},
         }
         return row
     category = source.get("category")
@@ -49,5 +51,7 @@ def enrich(item, registry):
         "reliability_level": reliability,
         "reliability_basis": source.get("reliability_basis"),
         "registry_status": "matched",
+        "editorial_group_id": source.get("editorial_group_id"),
+        "content_origin": source.get("content_origin", {"type":"unknown","name":None,"id":None}),
     }
     return row
