@@ -1,5 +1,8 @@
 name: Ubik AI corpus acquisition preflight
 on:
+  push:
+    branches: [experiment/taxonomy-fewshot-pilot]
+    paths: ['.github/workflows/ai-corpus-acquisition-preflight.yml']
   workflow_dispatch:
 permissions:
   contents: read
