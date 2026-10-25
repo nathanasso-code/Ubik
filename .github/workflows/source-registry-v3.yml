@@ -48,7 +48,9 @@ jobs:
           UBIK_LLM_MODEL: ${{ matrix.model }}
           UBIK_MODEL_LABEL: ${{ matrix.label }}
           UBIK_LLM_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
-        run: python -m ingestion.ubik_source_registry_v3
+        run: |
+          python -m ingestion.ubik_source_registry_v3
+          python -c 'import json,os,sys; p="data/taxonomy-pilot/v3-"+os.environ["UBIK_MODEL_LABEL"]+".json"; d=json.load(open(p)); n=len(d["errors"]); print("Source failures:",n); sys.exit(1 if n or len(d["sources"])!=9 else 0)'
       - name: Publish structured v3
         if: always()
         uses: actions/upload-artifact@v4
