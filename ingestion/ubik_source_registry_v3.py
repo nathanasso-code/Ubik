@@ -13,7 +13,7 @@ assert len(old["items"])==len(v2["items"])==24
 v2_by={i["key"]:i for i in v2["items"]}
 by_source=defaultdict(list)
 for item in old["items"]:by_source[item["source_id"]].append(item)
-assert len(by_source)==8,[(k,len(v)) for k,v in by_source.items()]
+assert len(by_source)==9,[(k,len(v)) for k,v in by_source.items()]
 GOLD={"3:n0":"B","3:n1":"A","3:n2":"A","3:n10":"D","3:n11":"C","3:n12":"C","3:n13":"A","3:n14":"C","3:n15":"B","3:n16":"B","3:n18":"A","3:n20":"C","3:n22":None,"3:n23":None,"3:n24":None,"3:n26":None,"3:n27":"D","3:n28":None,"3:n29":"A","3:n30":"AMBIGUOUS","3:n31":"B","3:n32":"B","3:n33":"A","3:n34":"B"}
 assert set(GOLD)=={i["key"] for i in old["items"]}
 SYSTEM="""You extract an article-local registry of concrete events, and attach news statements to those events.
