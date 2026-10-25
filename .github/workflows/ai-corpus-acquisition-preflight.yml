@@ -60,14 +60,33 @@ jobs:
           print(json.dumps(report,ensure_ascii=False,indent=2))
           if not d.get('coverage',{}).get('successful_feeds'):raise SystemExit('No feeds succeeded')
           PY
+      - name: Preselect AI-relevant metadata without selecting by desired outcome
+        run: |
+          python - <<'PY'
+          import json,re,pathlib,collections
+          p=pathlib.Path('data/discovery')
+          d=json.loads((p/'ai-week-2026-10-19-metadata.json').read_text())
+          terms=re.compile(r'(?i)\\b(?:artificial intelligence|generative ai|machine learning|deep learning|large language model|llm|chatgpt|openai|anthropic|claude|gemini|deepmind|neural network|foundation model|ai model|ai agent|ai safety|ai regulation|intelligenza artificiale|intelligence artificielle)\\b')
+          candidates=[];other=[]
+          for row in d['items']:
+              hay=(row.get('title') or '')+' '+(row.get('description') or '')
+              if terms.search(hay) or row.get('source_id','').startswith('arxiv-'):
+                  candidates.append({**row,'relevance_basis':'keyword_or_research_feed','relevance_verified':False})
+              else:other.append(row)
+          # Preserve all candidates, including redundant coverage, before editorial review.
+          result={'report':{'candidates':len(candidates),'other':len(other),'publisher_counts':dict(collections.Counter(x['publisher'] for x in candidates)),
+                  'warning':'Heuristic recall-oriented triage; not validated AI relevance or event identity.'},'items':candidates}
+          (p/'ai-week-2026-10-19-candidates.json').write_text(json.dumps(result,ensure_ascii=False,indent=2))
+          print(json.dumps(result['report'],ensure_ascii=False))
+          PY
       - name: Probe available text without persisting copyrighted bodies
         run: |
-          python -m ingestion.live_get_text_probe data/discovery/ai-week-2026-10-19-metadata.json --max-urls 40 --per-host 7 --seed 42 --method stratified --output data/discovery/ai-week-2026-10-19-text-probes.json
+          python -m ingestion.live_get_text_probe data/discovery/ai-week-2026-10-19-candidates.json --max-urls 160 --per-host 12 --seed 42 --method stratified --output data/discovery/ai-week-2026-10-19-text-probes.json
       - name: Upload frozen discovery and coverage artifacts
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: ubik-ai-2026-10-19-acquisition-preflight
+          name: ubik-ai-2026-10-19-expanded-acquisition
           path: |
             data/discovery/ai-week-2026-10-19-*.json
           retention-days: 30
