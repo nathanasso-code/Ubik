@@ -33,3 +33,12 @@ Valutare **entrambi** i metodi (prudente principale e componenti connesse second
 
 ## Sequenza e limite
 Attendere l'esito E5-small, applicare la scelta dei candidati già preregistrata, eseguire una sola fase di verifica ibrida; poi **stop al livello 2 su questo corpus** e passaggio a un nuovo gruppo di fonti. Nessuna modifica a `main`.
+
+## Integrazione preregistrata: ordine e seconda conferma
+**Ordine:** ordinare tutte le coppie per similarità decrescente del metodo scelto; in caso di parità, per coppia canonica di ID (min, max) crescente. Anche le proposte di ingresso/unione vengono riesaminate in questo ordine fino a stabilizzazione. Conflitti non risolvibili restano separati.
+
+**Verifica mirata:** dopo la prima passata e la costruzione provvisoria, per un evento con una sola conferma positiva verso un gruppo di almeno due membri, se non vi è già un secondo verdetto positivo, interrogare una coppia non ancora verificata con un secondo membro del gruppo. Scegliere quel membro per similarità decrescente, parità per ID crescente. Non eseguire la richiesta se esiste un verdetto negativo che blocca l'ingresso.
+
+**Limiti fissi:** massimo una verifica aggiuntiva per evento, massimo 33 complessive, ogni coppia una sola volta. Ordinare le richieste per similarità decrescente, parità per coppia canonica; deduplicare. `equivalente` autorizza una seconda conferma, `distinta` impone un blocco permanente, `incerta` non autorizza ingresso. Dopo questa singola tornata ricostruire gruppi prudenti e componenti connesse con gli stessi verdetti; nessun ulteriore ciclo di verifiche mirate. Registrare costi, esiti e recuperi marginali.
+
+Il gold non entra in selezione, prompt o raggruppamento. Nessuna modifica alla regola di scelta del recuperatore.
