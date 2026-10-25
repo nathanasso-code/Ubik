@@ -30,7 +30,7 @@ jobs:
           test -s data/taxonomy-pilot/v4-sonnet55.json
       - name: Judge fixed E5 top-5 candidates
         env:
-          UBIK_LLM_API_KEY: ${{ secrets.UBIK_LLM_API_KEY }}
+          UBIK_LLM_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           HF_HOME: ${{ runner.temp }}/hf-cache
         run: python -m ingestion.ubik_phase1_hybrid
       - name: Preserve decisions even on error
