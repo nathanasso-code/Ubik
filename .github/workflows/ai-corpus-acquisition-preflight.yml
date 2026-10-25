@@ -66,7 +66,7 @@ jobs:
           import json,re,pathlib,collections
           p=pathlib.Path('data/discovery')
           d=json.loads((p/'ai-week-2026-10-19-metadata.json').read_text())
-          terms=re.compile(r'(?i)\\b(?:artificial intelligence|generative ai|machine learning|deep learning|large language model|llm|chatgpt|openai|anthropic|claude|gemini|deepmind|neural network|foundation model|ai model|ai agent|ai safety|ai regulation|intelligenza artificiale|intelligence artificielle)\\b')
+          terms=re.compile(r'(?i)\b(?:artificial intelligence|generative ai|machine learning|deep learning|large language model|llm|chatgpt|openai|anthropic|claude|gemini|deepmind|neural network|foundation model|ai model|ai agent|ai safety|ai regulation|intelligenza artificiale|intelligence artificielle)\b')
           candidates=[];other=[]
           for row in d['items']:
               hay=(row.get('title') or '')+' '+(row.get('description') or '')
