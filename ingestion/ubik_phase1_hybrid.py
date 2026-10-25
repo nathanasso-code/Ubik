@@ -40,7 +40,10 @@ def main():
   except Exception as exc:
    record["decision"]="uncertain";record["error"]=str(exc)[:400]
   result["judgments" if kind=="candidate" else "supplemental"].append(record);save()
- for pair in pairs:\n  judge(pair,"candidate")\n  if result["judgments"][-1].get("error"):\n   raise RuntimeError("LLM request failed; aborting rather than counting API errors as uncertain.")
+ for pair in pairs:
+  judge(pair,"candidate")
+  if result["judgments"][-1].get("error"):
+   raise RuntimeError("LLM request failed; aborting rather than counting API errors as uncertain.")
  # Conservative preliminary groups, used only to generate targeted confirmations.
  decisions={tuple(r["pair"]):r["decision"] for r in result["judgments"]}
  positives={p for p,v in decisions.items() if v=="equivalent"}
