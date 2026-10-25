@@ -1,0 +1,41 @@
+name: Ubik phase 1 hybrid pair judging
+on:
+  push:
+    branches: [experiment/taxonomy-fewshot-pilot]
+    paths: [.github/workflows/phase1-hybrid.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  judge:
+    runs-on: ubuntu-latest
+    timeout-minutes: 110
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: experiment/taxonomy-fewshot-pilot
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: |
+          python -m pip install --upgrade pip
+          pip install "numpy<3" "sentence-transformers>=3,<6"
+      - name: Restore frozen Sonnet events
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p data/taxonomy-pilot
+          gh run download 40174092045 --repo nathanasso-code/Ubik --name source-registry-v4-sonnet55 --dir data/taxonomy-pilot
+          test -s data/taxonomy-pilot/v4-sonnet55.json
+      - name: Judge fixed E5 top-5 candidates
+        env:
+          UBIK_LLM_API_KEY: ${{ secrets.UBIK_LLM_API_KEY }}
+          HF_HOME: ${{ runner.temp }}/hf-cache
+        run: python -m ingestion.ubik_phase1_hybrid
+      - name: Preserve decisions even on error
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase1-hybrid-sonnet55
+          path: data/taxonomy-pilot/phase1-hybrid-sonnet55.json
