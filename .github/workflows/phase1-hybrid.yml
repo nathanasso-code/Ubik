@@ -28,6 +28,8 @@ jobs:
           mkdir -p data/taxonomy-pilot
           gh run download 40174092045 --repo nathanasso-code/Ubik --name source-registry-v4-sonnet55 --dir data/taxonomy-pilot
           test -s data/taxonomy-pilot/v4-sonnet55.json
+      - name: Validate Python syntax before API calls
+        run: python -m py_compile ingestion/ubik_phase1_hybrid.py
       - name: Judge fixed E5 top-5 candidates
         env:
           UBIK_LLM_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
