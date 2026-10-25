@@ -2,6 +2,7 @@
 import json,os,urllib.request,urllib.error,hashlib,sys
 from pathlib import Path
 from ingestion.ubik_source_registry_v3 import SYSTEM
+from ingestion.ubik_json_response import parse_json_response
 def main():
  p=Path("data/taxonomy-pilot/fact-reference-pilot.json")
  items=json.loads(p.read_text())["items"]
@@ -38,10 +39,8 @@ def main():
   out["content_length"]=len(content) if isinstance(content,str) else None
   out["content_sha256"]=hashlib.sha256(content.encode()).hexdigest() if isinstance(content,str) else None
   if not isinstance(content,str) or not content.strip():raise RuntimeError("empty_content")
-  if content.strip().startswith("```"):
-   out["markdown_fence_detected"]=True
-   raise RuntimeError("markdown_fenced_content")
-  parsed=json.loads(content)
+  out["markdown_fence_detected"]=content.strip().startswith("```")
+  parsed=parse_json_response(content)
   if not isinstance(parsed,dict) or "events" not in parsed or "assignments" not in parsed:raise RuntimeError("invalid_schema")
   out["status"]="success"
   out["events"]=len(parsed["events"])
