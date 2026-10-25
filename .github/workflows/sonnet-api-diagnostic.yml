@@ -1,0 +1,48 @@
+name: Ubik Sonnet API diagnostic
+on:
+  push:
+    branches:
+      - experiment/taxonomy-fewshot-pilot
+    paths:
+      - .github/workflows/sonnet-api-diagnostic.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: develop/ubik-core
+          path: base
+      - uses: actions/checkout@v4
+        with:
+          ref: experiment/taxonomy-fewshot-pilot
+          path: pilot
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Recover fixed sample
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p base/data/taxonomy-pilot
+          gh run download 40140189703 --repo nathanasso-code/Ubik --name fact-reference-pilot-results --dir base/data/taxonomy-pilot
+          cp pilot/ingestion/ubik_source_registry_v3.py base/ingestion/ubik_source_registry_v3.py
+          cp pilot/ingestion/ubik_sonnet_diagnostic.py base/ingestion/ubik_sonnet_diagnostic.py
+      - name: Probe one source only (nonzero on error)
+        working-directory: base
+        env:
+          UBIK_LLM_ENDPOINT: https://openrouter.ai/api/v1/chat/completions
+          UBIK_LLM_MODEL: anthropic/claude-sonnet-4.5
+          UBIK_LLM_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+        run: python -m ingestion.ubik_sonnet_diagnostic
+      - name: Upload sanitized diagnostic
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sonnet-api-diagnostic
+          path: base/data/taxonomy-pilot/sonnet-diagnostic.json
