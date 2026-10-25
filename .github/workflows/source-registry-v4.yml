@@ -1,5 +1,10 @@
 name: Ubik v4 frozen source registry
 on:
+  push:
+    branches:
+      - experiment/taxonomy-fewshot-pilot
+    paths:
+      - .github/workflows/source-registry-v4.yml
   workflow_dispatch:
 permissions:
   contents: read
