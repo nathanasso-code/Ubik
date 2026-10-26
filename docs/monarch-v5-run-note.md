@@ -1,0 +1,1 @@
+Monarch v5 pilot: extract S473 and S474 independently, compare referents, compose only confirmed equivalences. Preserve original excerpts and usage. No gold in prompts.
