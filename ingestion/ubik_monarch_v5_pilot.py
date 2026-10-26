@@ -3,6 +3,7 @@ import json,os,sys,urllib.request
 from pathlib import Path
 from ingestion.ubik_json_response import parse_json_response
 from ingestion.ubik_matrix_composer_v5 import compose_v5
+from ingestion.ubik_shared_origin_v5 import probable_shared_origin
 
 ROOT=Path("data/monarch-v5")
 ROOT.mkdir(parents=True,exist_ok=True)
@@ -38,6 +39,7 @@ def main():
     inp=json.loads((ROOT/"input.json").read_text())
     out={"model":MODEL,"input_kind":inp.get("input_kind"),"sources":[],
          "judgments":[],"errors":[],"usage":[]}
+    out["shared_origin"]=probable_shared_origin(*inp["sources"])
     save(out)
     for source in inp["sources"]:
         try:
@@ -98,6 +100,10 @@ def main():
                     rel={"type":"reacts_to","source":x,"target":y,
                          "position":reaction.get("position","unclear")}
                     if rel not in relations:relations.append(rel)
+    if out["shared_origin"]["probable_common_origin"]:
+        for card in cards:
+            if len(card["source_ids"])>1:
+                card["independent_origin_ids"]=["probable-shared-origin:S473:S474"]
     out["composition"]=compose_v5(cards,relations)
     save(out)
     print(json.dumps({"sources":len(out["sources"]),"pairs":len(out["judgments"]),
