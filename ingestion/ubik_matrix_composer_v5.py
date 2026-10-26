@@ -1,4 +1,4 @@
-"""Ubik v5: deterministic composition. A matrix requires >=2 distinct sources."""
+"""Ubik v5: uniform referent-centered incidents; source count controls presentation only."""
 from collections import defaultdict
 
 def compose_v5(cards, relations, conflicts=()):
@@ -16,7 +16,7 @@ def compose_v5(cards, relations, conflicts=()):
         if cid in seen: raise ValueError("Cyclic part_of")
         return set().union(*(roots(p,seen|{cid}) for p in parents[cid])) if parents[cid] else {cid}
     membership={cid:sorted(roots(cid)) for cid in by_id}
-    matrices=[];single_source_groups=[];unresolved=[]
+    matrices=[];single_source_groups=[];incidents=[];unresolved=[]
     for root in sorted({r for rs in membership.values() for r in rs}):
         members=sorted(cid for cid,rs in membership.items() if root in rs)
         source_ids=set().union(*(set(by_id[c].get("source_ids",[])) for c in members))
@@ -31,9 +31,13 @@ def compose_v5(cards, relations, conflicts=()):
                                      for r in links+reactions_to_group)
         item={"anchor_card":root,"cards":members,"source_ids":sorted(source_ids),
               "part_of":links,"reactions":reactions_to_group}
-        if len(source_ids)>=2 and (has_multisource_card or has_multisource_relation):
+        independent_ids=sorted(set(by_id[c].get("independent_origin_ids",[]) [0] if len(by_id[c].get("independent_origin_ids",[]))==1 else s for c in members for s in (by_id[c].get("independent_origin_ids") or by_id[c].get("source_ids",[]))))
+        item["independent_origin_ids"]=independent_ids
+        item["presentation"]="matrix" if len(independent_ids)>=2 and (has_multisource_card or has_multisource_relation) else "single_source"
+        incidents.append({"id":"incident:"+root,**item})
+        if item["presentation"]=="matrix":
             matrices.append({"id":"matrix:"+root,**item})
         else: single_source_groups.append(item)
-    return {"cards":cards,"matrices":matrices,"single_source_groups":single_source_groups,
+    return {"cards":cards,"incidents":incidents,"matrices":matrices,"single_source_groups":single_source_groups,
             "memberships":membership,"reactions":reactions,"conflicts":list(conflicts),
             "new_llm_calls":0}
