@@ -1,0 +1,41 @@
+name: Ubik monarch v5 frozen rejudge
+on:
+  push:
+    branches: [experiment/taxonomy-fewshot-pilot]
+    paths: [.github/workflows/monarch-v5-frozen-rejudge.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  rejudge:
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: experiment/taxonomy-fewshot-pilot
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Restore frozen extraction artifact
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p data/monarch-v5
+          gh api repos/nathanasso-code/Ubik/actions/artifacts/12694502656/zip > /tmp/frozen-monarch.zip
+          unzip -p /tmp/frozen-monarch.zip result.json > data/monarch-v5/frozen-result.json
+          python -c "import json; d=json.load(open('data/monarch-v5/frozen-result.json')); assert len(d['sources'])==2; print('Frozen source events:',[len(s['answer']['events']) for s in d['sources']])"
+      - name: Install E5-small
+        run: pip install sentence-transformers==3.4.1
+      - name: Rejudge and compose without re-extraction
+        env:
+          UBIK_LLM_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          UBIK_LLM_MODEL: deepseek/deepseek-v3.2
+        run: python -m ingestion.ubik_monarch_v5_rejudge
+      - name: Upload audit
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: monarch-v5-frozen-rejudge
+          path: data/monarch-v5/rejudge-result.json
