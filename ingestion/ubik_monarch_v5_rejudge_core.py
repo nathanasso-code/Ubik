@@ -1,6 +1,5 @@
 """Frozen monarch v5: E5-small role-filtered candidate retrieval and cautious grouping."""
 from collections import defaultdict
-from sentence_transformers import SentenceTransformer
 
 def role(event):
     return "container" if event.get("role")=="referenced" and (
@@ -9,6 +8,7 @@ def role(event):
 
 def candidates(sources,k=5):
     events=[(s["source_id"]+":"+e["id"],s["source_id"],e) for s in sources for e in s["answer"]["events"]]
+    from sentence_transformers import SentenceTransformer
     model=SentenceTransformer("intfloat/multilingual-e5-small",device="cpu")
     texts=["passage: "+str(e.get("action") or "")+" "+str(e.get("object") or "") for _,_,e in events]
     vec=model.encode(texts,normalize_embeddings=True,convert_to_numpy=True,show_progress_bar=False)
