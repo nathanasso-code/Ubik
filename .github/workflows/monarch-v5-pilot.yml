@@ -1,4 +1,5 @@
 name: Ubik monarch v5 end-to-end pilot
+# Rerun with revised independence gold and shared-origin detector
 on:
   push:
     branches: [experiment/taxonomy-fewshot-pilot]
