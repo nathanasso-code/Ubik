@@ -13,13 +13,13 @@ EXTRACT="""Extract from ONE source, independently. JSON only. Output events arra
 {id,role,actor,action,object,actuality,event_time,evidence,container_name,context_signal},
 and assignments array with {news_key,primary_event_id,part_of:[event_id],
 reacts_to:[{event_id,position}],mentions:[event_id],context_only}.
-Represent a concrete shared study as an event even if only referenced. Distinguish
-article date from event date. Background population statistics must not be
+Represent the concrete tracking project as a separate referenced container event, even if no news item narrates the project itself. Do not invent a named institution or journal. Distinguish
+article date from event date. Do not place an event in its own part_of list. Only reactions to a decision or position count as reacts_to, not technological enablement. Background population statistics must not be
 automatically part_of a study. Evidence must be grounded in provided excerpts.
 Do not invent details. Do not assume any other source exists."""
 JUDGE="""Compare two event descriptions from different sources. JSON only:
 {decision:'equivalent'|'distinct'|'uncertain',reason,detail_conflicts:[]}.
-Only equivalent if same identifiable real-world event or study. Report explicit
+Only equivalent if same identifiable real-world event or tracking project. If one report adds a distinct fact, distinguish the common core from the additional fact rather than forcing identity. Report explicit
 contradictory details with supporting evidence; absence of details is not conflict."""
 
 def ask(prompt,payload):
