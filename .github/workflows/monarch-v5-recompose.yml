@@ -1,0 +1,33 @@
+name: Ubik monarch v5 deterministic recomposition
+on:
+  push:
+    branches: [experiment/taxonomy-fewshot-pilot]
+    paths: [.github/workflows/monarch-v5-recompose.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  replay:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: experiment/taxonomy-fewshot-pilot
+      - name: Recover frozen artifacts
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p data/monarch-v5
+          gh api repos/nathanasso-code/Ubik/actions/artifacts/12694502656/zip > /tmp/extraction.zip
+          unzip -p /tmp/extraction.zip result.json > data/monarch-v5/frozen-result.json
+          gh api repos/nathanasso-code/Ubik/actions/artifacts/12697996778/zip > /tmp/judgments.zip
+          unzip -p /tmp/judgments.zip rejudge-result.json > data/monarch-v5/rejudge-result.json
+      - name: Recompose without model calls
+        run: python -m ingestion.ubik_monarch_v5_recompose
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: monarch-v5-cycle-audited-recomposition
+          path: data/monarch-v5/recomposed-result.json
