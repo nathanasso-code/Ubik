@@ -1,0 +1,43 @@
+name: Ubik monarch v5 end-to-end pilot
+on:
+  push:
+    branches: [experiment/taxonomy-fewshot-pilot]
+    paths: [.github/workflows/monarch-v5-pilot.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  pilot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: experiment/taxonomy-fewshot-pilot
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Recover archived source excerpts
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p data/monarch-v5
+          gh api repos/nathanasso-code/Ubik/actions/artifacts/12572749808/zip > /tmp/monarch-archive.zip
+          unzip -p /tmp/monarch-archive.zip joint-results.json > data/monarch-v5/joint-results.json
+          python scripts/prepare_monarch_v5_input.py
+      - name: Verify deterministic composer
+        run: python -m unittest tests.test_ubik_matrix_composer_v5
+      - name: Run independent v5 extraction and judge
+        env:
+          UBIK_LLM_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          UBIK_LLM_MODEL: deepseek/deepseek-v3.2
+        run: python -m ingestion.ubik_monarch_v5_pilot
+      - name: Upload pilot evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: monarch-v5-end-to-end
+          path: |
+            data/monarch-v5/input.json
+            data/monarch-v5/result.json
