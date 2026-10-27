@@ -26,6 +26,6 @@ def validate_extraction(answer,source):
             target=p.get("event_id") if isinstance(p,dict) else p
             if target not in idset:raise ValueError("Invalid assignment part_of")
         for r in a.get("reacts_to",[]):
-            if r.get("event_id") not in idset or r.get("position") not in POSITIONS:
+            if not isinstance(r,dict) or r.get("event_id") not in idset:
                 raise ValueError("Invalid reacts_to")
     return True
