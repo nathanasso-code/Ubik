@@ -1,0 +1,36 @@
+name: Ubik monarch v5 schema deterministic recomposition
+on:
+  push:
+    branches: [experiment/taxonomy-fewshot-pilot]
+    paths: [.github/workflows/monarch-v5-schema-recompose.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  recompose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: experiment/taxonomy-fewshot-pilot
+      - name: Download immutable extraction and judgments
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p data/monarch-v5
+          gh api repos/nathanasso-code/Ubik/actions/artifacts/12699582084/zip > /tmp/extraction.zip
+          unzip -p /tmp/extraction.zip schema-extraction-result.json > data/monarch-v5/schema-extraction-result.json
+          gh api repos/nathanasso-code/Ubik/actions/artifacts/12717056619/zip > /tmp/judgments.zip
+          unzip -p /tmp/judgments.zip schema-rejudge-result.json > data/monarch-v5/schema-rejudge-result.json
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Recompose without LLM calls
+        run: python -m ingestion.ubik_monarch_v5_schema_recompose
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: monarch-v5-schema-recomposed
+          path: data/monarch-v5/schema-recomposed-result.json
