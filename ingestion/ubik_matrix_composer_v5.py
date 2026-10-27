@@ -44,58 +44,84 @@ def compose_v5(cards, relations, conflicts=()):
 
 
 def compose_connected_v5(cards, relations, context_card_ids=(), conflicts=()):
-    """Connected components of part_of (undirected for incident membership).
-    Keep directed evidence edges; each card appears in exactly one incident.
-    Context-only cards never create incidents, but remain accessible as context.
+    """Structural components with reactions attached; isolated cards stay in Topic.
+
+    A reaction cannot bridge two structurally separate incidents. No LLM calls.
     """
     by_id={c["id"]:dict(c) for c in cards}
     if len(by_id)!=len(cards):raise ValueError("Duplicate card id")
     context=set(context_card_ids)
     if context-set(by_id):raise ValueError("Unknown context card")
     adjacency={cid:set() for cid in by_id}
+    reactions=[]
     for r in relations:
         a,b=r["source"],r["target"]
         if a not in by_id or b not in by_id:raise ValueError("Unknown endpoint")
-        if a==b:raise ValueError("Self relation")
+        if a==b:continue
         if r["type"]=="part_of":
             adjacency[a].add(b);adjacency[b].add(a)
-        elif r["type"]!="reacts_to":raise ValueError("Unknown relation")
-    seen=set();incidents=[];matrices=[];single=[];membership={}
+        elif r["type"]=="reacts_to":reactions.append(r)
+        else:raise ValueError("Unknown relation")
+    components=[];owner={};seen=set()
     for cid in sorted(by_id):
         if cid in seen:continue
-        stack=[cid];component=set()
+        component=set();stack=[cid]
         while stack:
             node=stack.pop()
             if node in component:continue
             component.add(node);stack.extend(adjacency[node]-component)
         seen.update(component)
-        active=component-context
+        idx=len(components);components.append(component)
+        for node in component:owner[node]=idx
+    outgoing=defaultdict(set)
+    for r in reactions:
+        if owner[r["source"]]!=owner[r["target"]]:
+            outgoing[owner[r["source"]]].add(owner[r["target"]])
+    attached={};ambiguous=[]
+    for idx,targets in sorted(outgoing.items()):
+        if len(components[idx])!=1:continue
+        if len(targets)!=1:
+            ambiguous.append({"cards":sorted(components[idx]),"target_components":sorted(targets)})
+            continue
+        dest=next(iter(targets));visited={idx}
+        while dest in outgoing and len(components[dest])==1 and len(outgoing[dest])==1 and dest not in visited:
+            visited.add(dest);dest=next(iter(outgoing[dest]))
+        if dest not in visited:attached[idx]=dest
+    grouped=defaultdict(set)
+    for idx,component in enumerate(components):
+        grouped[attached.get(idx,idx)].update(component)
+    incidents=[];matrices=[];single=[];membership={};topic_cards=[]
+    for idx,members_set in sorted(grouped.items()):
+        active=members_set-context
         if not active:continue
-        # Context may be linked to the incident but must not create an independent root.
-        members=sorted(component)
-        origins=sorted(set(o for x in members for o in
-            (by_id[x].get("independent_origin_ids") or by_id[x].get("source_ids",[]))))
-        source_ids=sorted(set(s for x in members for s in by_id[x].get("source_ids",[])))
-        edges=[r for r in relations if r["type"]=="part_of" and
-               r["source"] in component and r["target"] in component]
-        reacts=[r for r in relations if r["type"]=="reacts_to" and r["target"] in component]
-        cross=any(len(by_id[x].get("source_ids",[]))>=2 for x in members) or any(
-            set(by_id[r["source"]].get("source_ids",[])) !=
-            set(by_id[r["target"]].get("source_ids",[])) for r in edges)
+        members=sorted(members_set)
+        part=[r for r in relations if r["type"]=="part_of" and r["source"] in members_set and r["target"] in members_set]
+        react=[r for r in reactions if r["source"] in members_set and r["target"] in members_set]
+        if len(members)==1 and not part and not react:
+            topic_cards.extend(members);continue
+        # Only target/structural cards count toward matrix corroboration.
+        reaction_only={r["source"] for r in react if not adjacency[r["source"]]}
+        structural=members_set-reaction_only or members_set
+        origins=sorted(set(o for x in structural for o in (by_id[x].get("independent_origin_ids") or by_id[x].get("source_ids",[]))))
+        all_origins=sorted(set(o for x in members for o in (by_id[x].get("independent_origin_ids") or by_id[x].get("source_ids",[]))))
+        sources=sorted(set(s for x in members for s in by_id[x].get("source_ids",[])))
+        cross=any(len(set(by_id[x].get("source_ids",[])))>=2 for x in structural) or any(
+            set(by_id[r["source"]].get("source_ids",[]))!=set(by_id[r["target"]].get("source_ids",[])) for r in part)
         presentation="matrix" if len(origins)>=2 and cross else "single_source"
-        anchor=min(active)
+        anchor=min(structural)
         item={"id":"incident:"+anchor,"anchor_card":anchor,"cards":members,
-              "source_ids":source_ids,"independent_origin_ids":origins,
-              "part_of":edges,"reactions":reacts,"presentation":presentation}
+              "source_ids":sources,"independent_origin_ids":all_origins,
+              "part_of":part,"reactions":react,"presentation":presentation,
+              "origin_verification":"provisional"}
         incidents.append(item)
         for x in members:membership[x]=[item["id"]]
         if presentation=="matrix":matrices.append(item)
         else:single.append(item)
-    isolated_context=sorted(context-set(membership))
     return {"cards":cards,"incidents":incidents,"matrices":matrices,
             "single_source_groups":single,"memberships":membership,
-            "context_cards":isolated_context,"conflicts":list(conflicts),
-            "new_llm_calls":0}
+            "topic_cards":sorted(topic_cards),"ambiguous_reaction_attachments":ambiguous,
+            "context_cards":sorted(context-set(membership)),
+            "conflicts":list(conflicts),"new_llm_calls":0}
 
 
 def display_part_of_edges(relations):
