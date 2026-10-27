@@ -1,0 +1,836 @@
+{
+  "stage": "deterministic-recomposition",
+  "model_calls": 0,
+  "frozen_judgments": 131,
+  "original": {
+    "incidents": 30,
+    "matrices": 4
+  },
+  "corrected": {
+    "incidents": 7,
+    "matrices": 2,
+    "topic_cards": 14
+  },
+  "bridge_diagnostic": [],
+  "composition": {
+    "cards": [
+      {
+        "id": "card:S188:e1",
+        "events": [
+          "S188:e1",
+          "S383:e1",
+          "S433:e1",
+          "S465:e2"
+        ],
+        "source_ids": [
+          "S188",
+          "S383",
+          "S433",
+          "S465"
+        ]
+      },
+      {
+        "id": "card:S188:e2",
+        "events": [
+          "S188:e2",
+          "S383:e2"
+        ],
+        "source_ids": [
+          "S188",
+          "S383"
+        ]
+      },
+      {
+        "id": "card:S188:e3",
+        "events": [
+          "S188:e3"
+        ],
+        "source_ids": [
+          "S188"
+        ]
+      },
+      {
+        "id": "card:S305:e1",
+        "events": [
+          "S305:e1"
+        ],
+        "source_ids": [
+          "S305"
+        ]
+      },
+      {
+        "id": "card:S305:e2",
+        "events": [
+          "S305:e2"
+        ],
+        "source_ids": [
+          "S305"
+        ]
+      },
+      {
+        "id": "card:S382:E1",
+        "events": [
+          "S382:E1"
+        ],
+        "source_ids": [
+          "S382"
+        ]
+      },
+      {
+        "id": "card:S382:E2",
+        "events": [
+          "S382:E2"
+        ],
+        "source_ids": [
+          "S382"
+        ]
+      },
+      {
+        "id": "card:S382:E3",
+        "events": [
+          "S382:E3"
+        ],
+        "source_ids": [
+          "S382"
+        ]
+      },
+      {
+        "id": "card:S382:E4",
+        "events": [
+          "S382:E4"
+        ],
+        "source_ids": [
+          "S382"
+        ]
+      },
+      {
+        "id": "card:S382:E5",
+        "events": [
+          "S382:E5",
+          "S387:e1",
+          "S433:e3"
+        ],
+        "source_ids": [
+          "S382",
+          "S387",
+          "S433"
+        ]
+      },
+      {
+        "id": "card:S382:E6",
+        "events": [
+          "S382:E6"
+        ],
+        "source_ids": [
+          "S382"
+        ]
+      },
+      {
+        "id": "card:S387:e2",
+        "events": [
+          "S387:e2"
+        ],
+        "source_ids": [
+          "S387"
+        ]
+      },
+      {
+        "id": "card:S387:e3",
+        "events": [
+          "S387:e3"
+        ],
+        "source_ids": [
+          "S387"
+        ]
+      },
+      {
+        "id": "card:S387:e4",
+        "events": [
+          "S387:e4"
+        ],
+        "source_ids": [
+          "S387"
+        ]
+      },
+      {
+        "id": "card:S387:e5",
+        "events": [
+          "S387:e5"
+        ],
+        "source_ids": [
+          "S387"
+        ]
+      },
+      {
+        "id": "card:S389:e1",
+        "events": [
+          "S389:e1"
+        ],
+        "source_ids": [
+          "S389"
+        ]
+      },
+      {
+        "id": "card:S389:e2",
+        "events": [
+          "S389:e2"
+        ],
+        "source_ids": [
+          "S389"
+        ]
+      },
+      {
+        "id": "card:S389:e3",
+        "events": [
+          "S389:e3"
+        ],
+        "source_ids": [
+          "S389"
+        ]
+      },
+      {
+        "id": "card:S389:e4",
+        "events": [
+          "S389:e4"
+        ],
+        "source_ids": [
+          "S389"
+        ]
+      },
+      {
+        "id": "card:S389:e5",
+        "events": [
+          "S389:e5"
+        ],
+        "source_ids": [
+          "S389"
+        ]
+      },
+      {
+        "id": "card:S389:e6",
+        "events": [
+          "S389:e6"
+        ],
+        "source_ids": [
+          "S389"
+        ]
+      },
+      {
+        "id": "card:S408:e1",
+        "events": [
+          "S408:e1"
+        ],
+        "source_ids": [
+          "S408"
+        ]
+      },
+      {
+        "id": "card:S408:e2",
+        "events": [
+          "S408:e2"
+        ],
+        "source_ids": [
+          "S408"
+        ]
+      },
+      {
+        "id": "card:S408:e3",
+        "events": [
+          "S408:e3"
+        ],
+        "source_ids": [
+          "S408"
+        ]
+      },
+      {
+        "id": "card:S408:e4",
+        "events": [
+          "S408:e4"
+        ],
+        "source_ids": [
+          "S408"
+        ]
+      },
+      {
+        "id": "card:S408:e5",
+        "events": [
+          "S408:e5"
+        ],
+        "source_ids": [
+          "S408"
+        ]
+      },
+      {
+        "id": "card:S408:e6",
+        "events": [
+          "S408:e6"
+        ],
+        "source_ids": [
+          "S408"
+        ]
+      },
+      {
+        "id": "card:S408:e7",
+        "events": [
+          "S408:e7"
+        ],
+        "source_ids": [
+          "S408"
+        ]
+      },
+      {
+        "id": "card:S408:e8",
+        "events": [
+          "S408:e8"
+        ],
+        "source_ids": [
+          "S408"
+        ]
+      },
+      {
+        "id": "card:S433:e2",
+        "events": [
+          "S433:e2",
+          "S465:e1"
+        ],
+        "source_ids": [
+          "S433",
+          "S465"
+        ]
+      },
+      {
+        "id": "card:S433:e4",
+        "events": [
+          "S433:e4"
+        ],
+        "source_ids": [
+          "S433"
+        ]
+      }
+    ],
+    "incidents": [
+      {
+        "id": "incident:card:S188:e1",
+        "anchor_card": "card:S188:e1",
+        "cards": [
+          "card:S188:e1",
+          "card:S433:e2"
+        ],
+        "source_ids": [
+          "S188",
+          "S383",
+          "S433",
+          "S465"
+        ],
+        "independent_origin_ids": [
+          "S188",
+          "S383",
+          "S433",
+          "S465"
+        ],
+        "part_of": [],
+        "reactions": [
+          {
+            "type": "reacts_to",
+            "source": "card:S433:e2",
+            "target": "card:S188:e1",
+            "origin": "S433:3:n32"
+          },
+          {
+            "type": "reacts_to",
+            "source": "card:S433:e2",
+            "target": "card:S188:e1",
+            "origin": "S465:3:n34"
+          }
+        ],
+        "presentation": "matrix",
+        "origin_verification": "provisional"
+      },
+      {
+        "id": "incident:card:S305:e2",
+        "anchor_card": "card:S305:e2",
+        "cards": [
+          "card:S305:e1",
+          "card:S305:e2"
+        ],
+        "source_ids": [
+          "S305"
+        ],
+        "independent_origin_ids": [
+          "S305"
+        ],
+        "part_of": [],
+        "reactions": [
+          {
+            "type": "reacts_to",
+            "source": "card:S305:e1",
+            "target": "card:S305:e2",
+            "origin": "S305:3:n10"
+          }
+        ],
+        "presentation": "single_source",
+        "origin_verification": "provisional"
+      },
+      {
+        "id": "incident:card:S382:E1",
+        "anchor_card": "card:S382:E1",
+        "cards": [
+          "card:S382:E1",
+          "card:S382:E3"
+        ],
+        "source_ids": [
+          "S382"
+        ],
+        "independent_origin_ids": [
+          "S382"
+        ],
+        "part_of": [],
+        "reactions": [
+          {
+            "type": "reacts_to",
+            "source": "card:S382:E3",
+            "target": "card:S382:E1",
+            "origin": "S382:3:n12"
+          }
+        ],
+        "presentation": "single_source",
+        "origin_verification": "provisional"
+      },
+      {
+        "id": "incident:card:S382:E5",
+        "anchor_card": "card:S382:E5",
+        "cards": [
+          "card:S382:E4",
+          "card:S382:E5",
+          "card:S387:e2",
+          "card:S387:e3",
+          "card:S433:e4"
+        ],
+        "source_ids": [
+          "S382",
+          "S387",
+          "S433"
+        ],
+        "independent_origin_ids": [
+          "S382",
+          "S387",
+          "S433"
+        ],
+        "part_of": [
+          {
+            "type": "part_of",
+            "source": "card:S387:e2",
+            "target": "card:S382:E5",
+            "origin": "S387:e2",
+            "evidence": "The summary describes the sanctions lifting as being \"part of a supply deal\"."
+          }
+        ],
+        "reactions": [
+          {
+            "type": "reacts_to",
+            "source": "card:S382:E4",
+            "target": "card:S382:E5",
+            "origin": "S382:3:n13"
+          },
+          {
+            "type": "reacts_to",
+            "source": "card:S387:e3",
+            "target": "card:S387:e2",
+            "origin": "S387:3:n18"
+          },
+          {
+            "type": "reacts_to",
+            "source": "card:S433:e4",
+            "target": "card:S382:E5",
+            "origin": "S433:3:n33"
+          }
+        ],
+        "presentation": "matrix",
+        "origin_verification": "provisional"
+      },
+      {
+        "id": "incident:card:S387:e4",
+        "anchor_card": "card:S387:e4",
+        "cards": [
+          "card:S387:e4",
+          "card:S387:e5"
+        ],
+        "source_ids": [
+          "S387"
+        ],
+        "independent_origin_ids": [
+          "S387"
+        ],
+        "part_of": [],
+        "reactions": [
+          {
+            "type": "reacts_to",
+            "source": "card:S387:e5",
+            "target": "card:S387:e4",
+            "origin": "S387:3:n20"
+          }
+        ],
+        "presentation": "single_source",
+        "origin_verification": "provisional"
+      },
+      {
+        "id": "incident:card:S408:e6",
+        "anchor_card": "card:S408:e6",
+        "cards": [
+          "card:S408:e5",
+          "card:S408:e6"
+        ],
+        "source_ids": [
+          "S408"
+        ],
+        "independent_origin_ids": [
+          "S408"
+        ],
+        "part_of": [],
+        "reactions": [
+          {
+            "type": "reacts_to",
+            "source": "card:S408:e5",
+            "target": "card:S408:e6",
+            "origin": "S408:3:n29"
+          }
+        ],
+        "presentation": "single_source",
+        "origin_verification": "provisional"
+      },
+      {
+        "id": "incident:card:S408:e7",
+        "anchor_card": "card:S408:e7",
+        "cards": [
+          "card:S408:e7",
+          "card:S408:e8"
+        ],
+        "source_ids": [
+          "S408"
+        ],
+        "independent_origin_ids": [
+          "S408"
+        ],
+        "part_of": [],
+        "reactions": [
+          {
+            "type": "reacts_to",
+            "source": "card:S408:e8",
+            "target": "card:S408:e7",
+            "origin": "S408:3:n30"
+          }
+        ],
+        "presentation": "single_source",
+        "origin_verification": "provisional"
+      }
+    ],
+    "matrices": [
+      {
+        "id": "incident:card:S188:e1",
+        "anchor_card": "card:S188:e1",
+        "cards": [
+          "card:S188:e1",
+          "card:S433:e2"
+        ],
+        "source_ids": [
+          "S188",
+          "S383",
+          "S433",
+          "S465"
+        ],
+        "independent_origin_ids": [
+          "S188",
+          "S383",
+          "S433",
+          "S465"
+        ],
+        "part_of": [],
+        "reactions": [
+          {
+            "type": "reacts_to",
+            "source": "card:S433:e2",
+            "target": "card:S188:e1",
+            "origin": "S433:3:n32"
+          },
+          {
+            "type": "reacts_to",
+            "source": "card:S433:e2",
+            "target": "card:S188:e1",
+            "origin": "S465:3:n34"
+          }
+        ],
+        "presentation": "matrix",
+        "origin_verification": "provisional"
+      },
+      {
+        "id": "incident:card:S382:E5",
+        "anchor_card": "card:S382:E5",
+        "cards": [
+          "card:S382:E4",
+          "card:S382:E5",
+          "card:S387:e2",
+          "card:S387:e3",
+          "card:S433:e4"
+        ],
+        "source_ids": [
+          "S382",
+          "S387",
+          "S433"
+        ],
+        "independent_origin_ids": [
+          "S382",
+          "S387",
+          "S433"
+        ],
+        "part_of": [
+          {
+            "type": "part_of",
+            "source": "card:S387:e2",
+            "target": "card:S382:E5",
+            "origin": "S387:e2",
+            "evidence": "The summary describes the sanctions lifting as being \"part of a supply deal\"."
+          }
+        ],
+        "reactions": [
+          {
+            "type": "reacts_to",
+            "source": "card:S382:E4",
+            "target": "card:S382:E5",
+            "origin": "S382:3:n13"
+          },
+          {
+            "type": "reacts_to",
+            "source": "card:S387:e3",
+            "target": "card:S387:e2",
+            "origin": "S387:3:n18"
+          },
+          {
+            "type": "reacts_to",
+            "source": "card:S433:e4",
+            "target": "card:S382:E5",
+            "origin": "S433:3:n33"
+          }
+        ],
+        "presentation": "matrix",
+        "origin_verification": "provisional"
+      }
+    ],
+    "single_source_groups": [
+      {
+        "id": "incident:card:S305:e2",
+        "anchor_card": "card:S305:e2",
+        "cards": [
+          "card:S305:e1",
+          "card:S305:e2"
+        ],
+        "source_ids": [
+          "S305"
+        ],
+        "independent_origin_ids": [
+          "S305"
+        ],
+        "part_of": [],
+        "reactions": [
+          {
+            "type": "reacts_to",
+            "source": "card:S305:e1",
+            "target": "card:S305:e2",
+            "origin": "S305:3:n10"
+          }
+        ],
+        "presentation": "single_source",
+        "origin_verification": "provisional"
+      },
+      {
+        "id": "incident:card:S382:E1",
+        "anchor_card": "card:S382:E1",
+        "cards": [
+          "card:S382:E1",
+          "card:S382:E3"
+        ],
+        "source_ids": [
+          "S382"
+        ],
+        "independent_origin_ids": [
+          "S382"
+        ],
+        "part_of": [],
+        "reactions": [
+          {
+            "type": "reacts_to",
+            "source": "card:S382:E3",
+            "target": "card:S382:E1",
+            "origin": "S382:3:n12"
+          }
+        ],
+        "presentation": "single_source",
+        "origin_verification": "provisional"
+      },
+      {
+        "id": "incident:card:S387:e4",
+        "anchor_card": "card:S387:e4",
+        "cards": [
+          "card:S387:e4",
+          "card:S387:e5"
+        ],
+        "source_ids": [
+          "S387"
+        ],
+        "independent_origin_ids": [
+          "S387"
+        ],
+        "part_of": [],
+        "reactions": [
+          {
+            "type": "reacts_to",
+            "source": "card:S387:e5",
+            "target": "card:S387:e4",
+            "origin": "S387:3:n20"
+          }
+        ],
+        "presentation": "single_source",
+        "origin_verification": "provisional"
+      },
+      {
+        "id": "incident:card:S408:e6",
+        "anchor_card": "card:S408:e6",
+        "cards": [
+          "card:S408:e5",
+          "card:S408:e6"
+        ],
+        "source_ids": [
+          "S408"
+        ],
+        "independent_origin_ids": [
+          "S408"
+        ],
+        "part_of": [],
+        "reactions": [
+          {
+            "type": "reacts_to",
+            "source": "card:S408:e5",
+            "target": "card:S408:e6",
+            "origin": "S408:3:n29"
+          }
+        ],
+        "presentation": "single_source",
+        "origin_verification": "provisional"
+      },
+      {
+        "id": "incident:card:S408:e7",
+        "anchor_card": "card:S408:e7",
+        "cards": [
+          "card:S408:e7",
+          "card:S408:e8"
+        ],
+        "source_ids": [
+          "S408"
+        ],
+        "independent_origin_ids": [
+          "S408"
+        ],
+        "part_of": [],
+        "reactions": [
+          {
+            "type": "reacts_to",
+            "source": "card:S408:e8",
+            "target": "card:S408:e7",
+            "origin": "S408:3:n30"
+          }
+        ],
+        "presentation": "single_source",
+        "origin_verification": "provisional"
+      }
+    ],
+    "memberships": {
+      "card:S188:e1": [
+        "incident:card:S188:e1"
+      ],
+      "card:S433:e2": [
+        "incident:card:S188:e1"
+      ],
+      "card:S305:e1": [
+        "incident:card:S305:e2"
+      ],
+      "card:S305:e2": [
+        "incident:card:S305:e2"
+      ],
+      "card:S382:E1": [
+        "incident:card:S382:E1"
+      ],
+      "card:S382:E3": [
+        "incident:card:S382:E1"
+      ],
+      "card:S382:E4": [
+        "incident:card:S382:E5"
+      ],
+      "card:S382:E5": [
+        "incident:card:S382:E5"
+      ],
+      "card:S387:e2": [
+        "incident:card:S382:E5"
+      ],
+      "card:S387:e3": [
+        "incident:card:S382:E5"
+      ],
+      "card:S433:e4": [
+        "incident:card:S382:E5"
+      ],
+      "card:S387:e4": [
+        "incident:card:S387:e4"
+      ],
+      "card:S387:e5": [
+        "incident:card:S387:e4"
+      ],
+      "card:S408:e5": [
+        "incident:card:S408:e6"
+      ],
+      "card:S408:e6": [
+        "incident:card:S408:e6"
+      ],
+      "card:S408:e7": [
+        "incident:card:S408:e7"
+      ],
+      "card:S408:e8": [
+        "incident:card:S408:e7"
+      ]
+    },
+    "topic_cards": [
+      "card:S188:e2",
+      "card:S188:e3",
+      "card:S382:E2",
+      "card:S382:E6",
+      "card:S389:e1",
+      "card:S389:e2",
+      "card:S389:e3",
+      "card:S389:e4",
+      "card:S389:e5",
+      "card:S389:e6",
+      "card:S408:e1",
+      "card:S408:e2",
+      "card:S408:e3",
+      "card:S408:e4"
+    ],
+    "ambiguous_reaction_attachments": [
+      {
+        "cards": [
+          "card:S188:e3"
+        ],
+        "target_components": [
+          0,
+          1
+        ]
+      }
+    ],
+    "context_cards": [],
+    "conflicts": [],
+    "new_llm_calls": 0
+  },
+  "cost_audit_original": {
+    "model": "anthropic/claude-sonnet-5.5",
+    "calls": 131,
+    "total_reported_cost_usd": 0.5889759999999996,
+    "cost_complete": true
+  },
+  "unmodified_judgment_hash": "17383b26d60cea15bb402e00956c185f3cb4d7bbdae0c4d7c386ba59ae4af93c"
+}
