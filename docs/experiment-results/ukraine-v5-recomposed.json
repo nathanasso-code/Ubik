@@ -7,9 +7,9 @@
     "matrices": 4
   },
   "corrected": {
-    "incidents": 7,
-    "matrices": 2,
-    "topic_cards": 14
+    "incidents": 8,
+    "matrices": 3,
+    "topic_cards": 12
   },
   "bridge_diagnostic": [],
   "composition": {
@@ -314,6 +314,7 @@
         "anchor_card": "card:S188:e1",
         "cards": [
           "card:S188:e1",
+          "card:S188:e3",
           "card:S433:e2"
         ],
         "source_ids": [
@@ -332,6 +333,12 @@
         "reactions": [
           {
             "type": "reacts_to",
+            "source": "card:S188:e3",
+            "target": "card:S188:e1",
+            "origin": "S188:3:n2"
+          },
+          {
+            "type": "reacts_to",
             "source": "card:S433:e2",
             "target": "card:S188:e1",
             "origin": "S433:3:n32"
@@ -341,6 +348,33 @@
             "source": "card:S433:e2",
             "target": "card:S188:e1",
             "origin": "S465:3:n34"
+          }
+        ],
+        "presentation": "matrix",
+        "origin_verification": "provisional"
+      },
+      {
+        "id": "incident:card:S188:e2",
+        "anchor_card": "card:S188:e2",
+        "cards": [
+          "card:S188:e2",
+          "card:S188:e3"
+        ],
+        "source_ids": [
+          "S188",
+          "S383"
+        ],
+        "independent_origin_ids": [
+          "S188",
+          "S383"
+        ],
+        "part_of": [],
+        "reactions": [
+          {
+            "type": "reacts_to",
+            "source": "card:S188:e3",
+            "target": "card:S188:e2",
+            "origin": "S188:3:n2"
           }
         ],
         "presentation": "matrix",
@@ -530,6 +564,7 @@
         "anchor_card": "card:S188:e1",
         "cards": [
           "card:S188:e1",
+          "card:S188:e3",
           "card:S433:e2"
         ],
         "source_ids": [
@@ -548,6 +583,12 @@
         "reactions": [
           {
             "type": "reacts_to",
+            "source": "card:S188:e3",
+            "target": "card:S188:e1",
+            "origin": "S188:3:n2"
+          },
+          {
+            "type": "reacts_to",
             "source": "card:S433:e2",
             "target": "card:S188:e1",
             "origin": "S433:3:n32"
@@ -557,6 +598,33 @@
             "source": "card:S433:e2",
             "target": "card:S188:e1",
             "origin": "S465:3:n34"
+          }
+        ],
+        "presentation": "matrix",
+        "origin_verification": "provisional"
+      },
+      {
+        "id": "incident:card:S188:e2",
+        "anchor_card": "card:S188:e2",
+        "cards": [
+          "card:S188:e2",
+          "card:S188:e3"
+        ],
+        "source_ids": [
+          "S188",
+          "S383"
+        ],
+        "independent_origin_ids": [
+          "S188",
+          "S383"
+        ],
+        "part_of": [],
+        "reactions": [
+          {
+            "type": "reacts_to",
+            "source": "card:S188:e3",
+            "target": "card:S188:e2",
+            "origin": "S188:3:n2"
           }
         ],
         "presentation": "matrix",
@@ -746,8 +814,15 @@
       "card:S188:e1": [
         "incident:card:S188:e1"
       ],
+      "card:S188:e3": [
+        "incident:card:S188:e1",
+        "incident:card:S188:e2"
+      ],
       "card:S433:e2": [
         "incident:card:S188:e1"
+      ],
+      "card:S188:e2": [
+        "incident:card:S188:e2"
       ],
       "card:S305:e1": [
         "incident:card:S305:e2"
@@ -796,8 +871,6 @@
       ]
     },
     "topic_cards": [
-      "card:S188:e2",
-      "card:S188:e3",
       "card:S382:E2",
       "card:S382:E6",
       "card:S389:e1",
@@ -811,17 +884,13 @@
       "card:S408:e3",
       "card:S408:e4"
     ],
-    "ambiguous_reaction_attachments": [
-      {
-        "cards": [
-          "card:S188:e3"
-        ],
-        "target_components": [
-          0,
-          1
-        ]
-      }
-    ],
+    "ambiguous_reaction_attachments": [],
+    "multi_target_reaction_cards": {
+      "card:S188:e3": [
+        0,
+        1
+      ]
+    },
     "context_cards": [],
     "conflicts": [],
     "new_llm_calls": 0
