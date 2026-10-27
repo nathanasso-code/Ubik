@@ -1,0 +1,33 @@
+name: Publish verified Ukraine v5 recomposition JSON
+on:
+  push:
+    branches: [experiment/taxonomy-fewshot-pilot]
+    paths: [.github/workflows/publish-ukraine-v5-result.yml]
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: read
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: experiment/taxonomy-fewshot-pilot
+          persist-credentials: true
+      - name: Recover immutable JSON from successful run
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p docs/experiment-results
+          gh api repos/nathanasso-code/Ubik/actions/artifacts/12727673087/zip > /tmp/recomposed.zip
+          unzip -p /tmp/recomposed.zip v5-recomposed.json > docs/experiment-results/ukraine-v5-recomposed.json
+          python -m json.tool docs/experiment-results/ukraine-v5-recomposed.json > /dev/null
+          test "$(wc -c < docs/experiment-results/ukraine-v5-recomposed.json)" -eq 17774
+      - name: Commit only verified experimental result
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/experiment-results/ukraine-v5-recomposed.json
+          git commit -m "Archive frozen Ukraine v5 zero-cost recomposition result"
+          git push origin HEAD:experiment/taxonomy-fewshot-pilot
