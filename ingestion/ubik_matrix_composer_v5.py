@@ -96,3 +96,29 @@ def compose_connected_v5(cards, relations, context_card_ids=(), conflicts=()):
             "single_source_groups":single,"memberships":membership,
             "context_cards":isolated_context,"conflicts":list(conflicts),
             "new_llm_calls":0}
+
+
+def display_part_of_edges(relations):
+    """One display edge per child-parent pair; preserve all evidence, reduce transitive edges.
+    This is a VIEW only. Never use it to count independent confirmations.
+    """
+    by_pair={}
+    for r in relations:
+        if r["type"]!="part_of":continue
+        key=(r["source"],r["target"])
+        by_pair.setdefault(key,[]).append(r)
+    graph=defaultdict(set)
+    for child,parent in by_pair:graph[child].add(parent)
+    def alternative_path(child,parent):
+        todo=list(graph[child]-{parent});visited=set()
+        while todo:
+            n=todo.pop()
+            if n==parent:return True
+            if n in visited:continue
+            visited.add(n);todo.extend(graph[n]-visited)
+        return False
+    return [{"source":child,"target":parent,"type":"part_of",
+             "evidence_count":len(provenance),
+             "provenance":provenance}
+            for (child,parent),provenance in sorted(by_pair.items())
+            if not alternative_path(child,parent)]
