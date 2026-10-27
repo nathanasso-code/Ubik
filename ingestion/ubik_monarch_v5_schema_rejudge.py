@@ -48,7 +48,7 @@ def main():
             out["usage"].append({"pair":[left,right],"usage":usage})
         except Exception as e:
             out["errors"].append({"pair":[left,right],"error":str(e)[:300]})
-        (ROOT/"rejudge-result.json").write_text(json.dumps(out,ensure_ascii=False,indent=2))
+        (ROOT/"schema-rejudge-result.json").write_text(json.dumps(out,ensure_ascii=False,indent=2))
     if out["errors"]:raise RuntimeError("Judge failures; do not claim completion")
     out["assembly"]=cautious_groups(events,out["judgments"],scores)
     groups=out["assembly"]["groups"]
@@ -85,7 +85,7 @@ def main():
     out["quarantined_relations"]=rejected
     out["composition"]=compose_v5(cards,accepted,conflicts=rejected)
     out["expected_pairs"]={key:any(set((j["left"],j["right"]))==set(pair) for j in out["judgments"]) for key,pair in {"projects":("S473:e0","S474:e1"),"solar":("S473:e5","S474:e5")}.items()}
-    (ROOT/"rejudge-result.json").write_text(json.dumps(out,ensure_ascii=False,indent=2))
+    (ROOT/"schema-rejudge-result.json").write_text(json.dumps(out,ensure_ascii=False,indent=2))
     print(json.dumps({"candidate_pairs":len(pairs),"equivalent":sum(j["result"]["decision"]=="equivalent" for j in out["judgments"]),
      "part_of":sum(j["result"]["decision"]=="part_of" for j in out["judgments"]),
      "groups":len(groups),"incidents":len(out["composition"]["incidents"]),
