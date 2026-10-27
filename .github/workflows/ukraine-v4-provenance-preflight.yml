@@ -1,0 +1,33 @@
+name: Ubik Ukraine v4 baseline provenance preflight
+on:
+  push:
+    branches: [experiment/taxonomy-fewshot-pilot]
+    paths: [.github/workflows/ukraine-v4-provenance-preflight.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  screen:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: experiment/taxonomy-fewshot-pilot
+      - name: Restore archived Sonnet v4 source data
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p data/ukraine-v5
+          gh api repos/nathanasso-code/Ubik/actions/artifacts/12591716174/zip > /tmp/v4.zip
+          unzip -p /tmp/v4.zip v4-sonnet55.json > data/ukraine-v5/v4-sonnet55.json
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Screen overlap without model calls
+        run: python -m ingestion.ubik_ukraine_v4_provenance_screen data/ukraine-v5/v4-sonnet55.json data/ukraine-v5/provenance-screen.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ukraine-v4-provenance-preflight
+          path: data/ukraine-v5/provenance-screen.json
