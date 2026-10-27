@@ -31,3 +31,24 @@ On the SAME frozen AI corpus, v5 replaces v4 **only if all three conditions hold
 2. v5 does not reduce merge precision (no increase in incorrect mergers, measured on the same adjudicated pairs).
 3. v5 per-source total pipeline cost is <= 2.0 times v4 per-source cost, including extraction and attributed candidate-judgment costs.
 Report numerators, denominators, abstentions, costs, and the actual comparisons. If any condition fails or is not measurable, retain v4. This gate does not override the earlier Ukraine non-regression requirement.
+
+## Deterministic monarch replay expectation (registered before execution)
+Keep extraction (run 40425608641), all 37 candidate pairs and judge verdicts (run 40466373012) frozen. No additional model calls.
+- Resolve competing identity merges by same event_nature first (container/container or fact/fact), then E5 similarity. Preserve every rejected equivalent as a visible non-confirmatory conflict link; never count it as corroboration.
+- A vicenda is one undirected connected component of accepted event-level part_of edges after identity assembly and cycle quarantine. A multi-parent card occurs once in the incident, with every accepted edge retained. Disconnected context-only events are displayed as context, not standalone incidents.
+- Expected: one single-origin incident with project and technology-development/testing branches joined via technology; monarch decline remains context; S473 n0/n1 duplicate primary remains one scored level-1 error. Retain independent-origin constraint.
+- Recomposition-only replay must cost zero additional LLM calls. Record deviations without retuning.
+
+## Frozen weighted error taxonomy (2026-10-27, before Ukraine)
+Weights are (difference explicit in summary, difference absent), respectively:
+- Different facts merged in same card (false corroboration): (1,3)
+- Position and rebuttal merged: (1,3)
+- Unrelated incidents merged: (2,3)
+- Reaction attached to wrong target: (2,2)
+- One incident split into multiple: (2,2)
+- One fact split into two cards: (1,1)
+- Reaction vs mention mislabeled: (1,1)
+- Sources expanding same theme merged: (0,1)
+- Neighboring incidents merged with distinct cards: (0,1)
+Ukraine and monarch use the second (strict) weight; AI corpus scores both summary-explicit and summary-absent conditions. Compare total weighted error over BOTH Ukraine and AI clusters; blocking condition: v5 must not increase the count of weight-3 errors. A/B diesel agreement vs US executive order MUST never merge within one card; coexisting as separate cards within a grounded incident is assessed by incident error weight, not categorically forbidden. Keep the existing quantitative AI gate and v4 rollback criterion; if they conflict, require BOTH conditions rather than silently replacing the stricter rule.
+For summary generation, every judge-recorded contradictory detail and opposing position must be passed through to title/summary and have at least one explicit corresponding sentence, automatically checked. Summaries do not excuse errors in independence, positions, fact identity or other machine-facing relations.
