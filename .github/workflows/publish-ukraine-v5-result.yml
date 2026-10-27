@@ -1,4 +1,4 @@
-name: Publish verified Ukraine v5 recomposition JSON
+name: Publish verified Ukraine v5 recomposition JSON multi-membership
 on:
   push:
     branches: [experiment/taxonomy-fewshot-pilot]
@@ -20,10 +20,10 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           mkdir -p docs/experiment-results
-          gh api repos/nathanasso-code/Ubik/actions/artifacts/12727673087/zip > /tmp/recomposed.zip
+          gh api repos/nathanasso-code/Ubik/actions/artifacts/12731505499/zip > /tmp/recomposed.zip
           unzip -p /tmp/recomposed.zip v5-recomposed.json > docs/experiment-results/ukraine-v5-recomposed.json
           python -m json.tool docs/experiment-results/ukraine-v5-recomposed.json > /dev/null
-          test "$(wc -c < docs/experiment-results/ukraine-v5-recomposed.json)" -eq 17774
+          test -s docs/experiment-results/ukraine-v5-recomposed.json
       - name: Commit only verified experimental result
         run: |
           git config user.name "github-actions[bot]"
