@@ -10,7 +10,7 @@ permissions:
 jobs:
   rejudge:
     runs-on: ubuntu-latest
-    timeout-minutes: 55
+    timeout-minutes: 56
     steps:
       - uses: actions/checkout@v4
         with:
