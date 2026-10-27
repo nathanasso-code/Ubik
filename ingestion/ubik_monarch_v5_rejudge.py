@@ -4,6 +4,7 @@ from pathlib import Path
 from ingestion.ubik_monarch_v5_pilot import ask,save,JUDGE,ROOT
 from ingestion.ubik_monarch_v5_rejudge_core import candidates,cautious_groups
 from ingestion.ubik_matrix_composer_v5 import compose_v5
+from ingestion.ubik_part_of_validator_v5 import resolve_part_of
 
 JUDGE_V2="""Compare two event records from different sources. Return JSON only:
 {decision:'equivalent'|'distinct'|'uncertain'|'part_of',
@@ -60,7 +61,9 @@ def main():
         x,y=lookup[child],lookup[parent]
         if x!=y and {"type":"part_of","source":x,"target":y} not in relations:
             relations.append({"type":"part_of","source":x,"target":y})
-    out["composition"]=compose_v5(cards,relations)
+    accepted,rejected=resolve_part_of(relations)
+    out["quarantined_relations"]=rejected
+    out["composition"]=compose_v5(cards,accepted,conflicts=rejected)
     (ROOT/"rejudge-result.json").write_text(json.dumps(out,ensure_ascii=False,indent=2))
     print(json.dumps({"candidate_pairs":len(pairs),"equivalent":sum(j["result"]["decision"]=="equivalent" for j in out["judgments"]),
      "part_of":sum(j["result"]["decision"]=="part_of" for j in out["judgments"]),
