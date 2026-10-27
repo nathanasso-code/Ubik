@@ -1,0 +1,39 @@
+name: Ubik monarch v5 schema soft rejudge
+on:
+  push:
+    branches: [experiment/taxonomy-fewshot-pilot]
+    paths: [.github/workflows/monarch-v5-schema-rejudge.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  rejudge:
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: experiment/taxonomy-fewshot-pilot
+      - name: Recover schema-smoke extraction
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p data/monarch-v5
+          gh api repos/nathanasso-code/Ubik/actions/artifacts/12699582084/zip > /tmp/schema.zip
+          unzip -p /tmp/schema.zip schema-extraction-result.json > data/monarch-v5/schema-extraction-result.json
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install E5 retrieval
+        run: pip install sentence-transformers==3.4.1
+      - name: Judge and compose
+        env:
+          UBIK_LLM_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          UBIK_LLM_MODEL: deepseek/deepseek-v3.2
+        run: python -m ingestion.ubik_monarch_v5_schema_rejudge
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: monarch-v5-schema-soft-rejudge
+          path: data/monarch-v5/schema-rejudge-result.json
