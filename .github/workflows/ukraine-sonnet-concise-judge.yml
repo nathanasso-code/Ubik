@@ -1,0 +1,39 @@
+name: Ukraine frozen Sonnet concise 131-pair judge
+on:
+  push:
+    branches: [experiment/taxonomy-fewshot-pilot]
+    paths: [.github/workflows/ukraine-sonnet-concise-judge.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  judge:
+    runs-on: ubuntu-latest
+    timeout-minutes: 85
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: experiment/taxonomy-fewshot-pilot
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Restore frozen extraction and Sonnet baseline
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p data/ukraine-sonnet-concise-frozen
+          gh api repos/nathanasso-code/Ubik/actions/artifacts/12719538526/zip > /tmp/extraction.zip
+          gh api repos/nathanasso-code/Ubik/actions/artifacts/12725256478/zip > /tmp/judge.zip
+          unzip -p /tmp/extraction.zip v5-extraction.json > data/ukraine-sonnet-concise-frozen/v5-extraction.json
+          unzip -p /tmp/judge.zip v5-judge.json > data/ukraine-sonnet-concise-frozen/v5-judge.json
+      - name: Judge original 131 pairs with concise Sonnet
+        env:
+          UBIK_LLM_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+        run: python -m ingestion.ubik_ukraine_sonnet_concise_frozen
+      - name: Save complete or partial audit
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ukraine-sonnet-concise-131
+          path: data/ukraine-sonnet-concise-frozen/sonnet-concise-result.json
