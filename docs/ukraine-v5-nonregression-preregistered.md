@@ -4,7 +4,7 @@ Run after reviewing frozen monarch rejudge 40421847220. Preserve v4 corpus and o
 
 Hard checks: executive order one identity group with four source records; zero diesel-agreement/executive-order merges; no deterioration relative to v4 identity decisions; separate truce acts and reactions. Reader-facing matrix requires at least two independent origins, not merely two publications.
 
-Additional checks: senator and Zelenskyy criticism positions, Dmitriev support position only when supported by original evidence; diesel referenced-event identity evaluated without forced agreement; single-source fragments retained without matrix status; no context-only incident merge. Report missing evidence as unknown.
+Additional checks: senator and Zelenskyy criticism reactions, Dmitriev support reaction only when supported by original evidence (no position-field scoring); diesel referenced-event identity evaluated without forced agreement; single-source fragments retained without matrix status; no context-only incident merge. Report missing evidence as unknown.
 
 Measure candidate recall before judgment, including role-disagreement misses; preserve one event per source per identity group and permanent distinct veto. Report all calls, tokens, costs, pair judgments, conflicts and provenance. Do not tune rules on Ukraine gold; correct only documented implementation bugs.
 
@@ -16,3 +16,9 @@ Measure candidate recall before judgment, including role-disagreement misses; pr
 - Measure complete per-source v5 cost (extraction plus attributed judging) against comparable v4 per-source cost; missing baseline means 2x gate unproven.
 - Display each part_of edge once, retaining all origins; remove transitive child-to-ancestor edges only in presentation, never from evidence graph. Republished sources count as one independent origin.
 - Without summaries, score the strict error-weight column; mark contradiction/position sentence coverage as not evaluated.
+
+## Model audit before any Ukraine calls
+- Verified in repository workflow: monarch schema-rejudge explicitly sets UBIK_LLM_MODEL=deepseek/deepseek-v3.2; monarch schema extraction uses the same default in ingestion/ubik_monarch_v5_pilot.py unless overridden by workflow. Confirm exact extraction workflow env and the returned model metadata when available. The observed low cost is consistent with DeepSeek, not evidence of Sonnet.
+- V4 Sonnet 5.5 for both stages is a working hypothesis until checked against the frozen run artifacts/configuration; do not label verified prematurely. The comparison is full v5 procedure vs full v4 procedure at the same model, NOT isolated schema change.
+- Before setting presentation gold, run a deterministic near-duplicate/shared-origin scan on Ukraine source texts, explicitly including S188 n0 vs S383 n15; preserve raw similarity, shared excerpts and origin assignments, and avoid treating identical headlines alone as proof of common agency.
+- Price comparison uses same model, and reports total pipeline cost per source and judge cost per pair separately. An optional cheap-model run is a distinct later experiment.
