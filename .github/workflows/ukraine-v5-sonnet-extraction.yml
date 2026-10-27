@@ -2,7 +2,7 @@ name: Ubik Ukraine v5 Sonnet controlled extraction
 on:
   push:
     branches: [experiment/taxonomy-fewshot-pilot]
-    paths: [.github/workflows/ukraine-v5-sonnet-extraction.yml]
+    paths: [.github/workflows/ukraine-v5-sonnet-extraction.yml, ingestion/ubik_ukraine_v5_extract.py, ingestion/ubik_v5_extraction_validator.py]
   workflow_dispatch:
 permissions:
   contents: read
