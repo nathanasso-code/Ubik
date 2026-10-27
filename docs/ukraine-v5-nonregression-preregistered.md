@@ -22,3 +22,8 @@ Measure candidate recall before judgment, including role-disagreement misses; pr
 - V4 Sonnet 5.5 for both stages is a working hypothesis until checked against the frozen run artifacts/configuration; do not label verified prematurely. The comparison is full v5 procedure vs full v4 procedure at the same model, NOT isolated schema change.
 - Before setting presentation gold, run a deterministic near-duplicate/shared-origin scan on Ukraine source texts, explicitly including S188 n0 vs S383 n15; preserve raw similarity, shared excerpts and origin assignments, and avoid treating identical headlines alone as proof of common agency.
 - Price comparison uses same model, and reports total pipeline cost per source and judge cost per pair separately. An optional cheap-model run is a distinct later experiment.
+
+## Verified v4 baseline (artifact 12591716174, run 40174092045)
+- V4 Sonnet 5.5 extraction artifact has model `anthropic/claude-sonnet-5.5`, 9 source records, no per-source errors, and titles plus summaries as inputs; workflow run overall failed in its separate DeepSeek matrix leg, so Sonnet success must be assessed from its artifact, not overall run status.
+- The archived v4 artifact alone does NOT verify that its pair judge also ran Sonnet 5.5, nor does it provide original article text or per-call cost. These require separate evidence before a claimed matched-model end-to-end comparison.
+- Identical or similar generated titles/summaries cannot establish independent origin. The source-identity scan on this frozen input is a *screen*, not the requested original-excerpt provenance check. Mark uncertain pairs unknown until original excerpts are retrieved.
