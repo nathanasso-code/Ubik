@@ -1,10 +1,9 @@
 """Frozen monarch v5: E5-small role-filtered candidate retrieval and cautious grouping."""
 from collections import defaultdict
+from ingestion.ubik_event_axes_v5 import normalize_event
 
 def role(event):
-    return "container" if event.get("role")=="referenced" and (
-        event.get("container_name") or "project" in str(event.get("object","")).lower()
-        or "study" in str(event.get("object","")).lower()) else "fact"
+    return normalize_event(event)["event_nature"]
 
 def candidates(sources,k=5):
     events=[(s["source_id"]+":"+e["id"],s["source_id"],e) for s in sources for e in s["answer"]["events"]]
