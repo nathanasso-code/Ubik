@@ -1,0 +1,38 @@
+name: Publish frozen Ukraine DeepSeek JSON
+on:
+  push:
+    branches: [experiment/taxonomy-fewshot-pilot]
+    paths: [.github/workflows/publish-ukraine-deepseek-json.yml]
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: read
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: experiment/taxonomy-fewshot-pilot
+          persist-credentials: true
+      - name: Download original DeepSeek audit
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api repos/nathanasso-code/Ubik/actions/artifacts/12774790553/zip > /tmp/deepseek.zip
+          mkdir -p docs/experiment-results
+          unzip -p /tmp/deepseek.zip deepseek-result.json > docs/experiment-results/ukraine-deepseek-frozen-131.json
+          python - <<'PY'
+          import json
+          p='docs/experiment-results/ukraine-deepseek-frozen-131.json'
+          d=json.load(open(p))
+          assert d['candidate_pairs']==131 and len(d['judgments'])==131
+          assert d['status']=='completed_unadjudicated'
+          print('Verified 131 judgments, cost',d['total_pipeline_cost_usd'])
+          PY
+      - name: Commit unmodified audit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/experiment-results/ukraine-deepseek-frozen-131.json
+          git diff --cached --quiet || (git commit -m "Publish frozen DeepSeek 131-pair raw audit JSON" && git push origin HEAD:experiment/taxonomy-fewshot-pilot)
