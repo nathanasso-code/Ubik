@@ -1,0 +1,37 @@
+name: Ubik monarch v5 event schema smoke
+on:
+  push:
+    branches: [experiment/taxonomy-fewshot-pilot]
+    paths: [.github/workflows/monarch-v5-schema-smoke.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  extract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: experiment/taxonomy-fewshot-pilot
+      - name: Recover same frozen source excerpts
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p data/monarch-v5
+          gh api repos/nathanasso-code/Ubik/actions/artifacts/12694502656/zip > /tmp/monarch.zip
+          unzip -p /tmp/monarch.zip input.json > data/monarch-v5/input.json
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Run extraction only
+        env:
+          UBIK_LLM_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          UBIK_LLM_MODEL: deepseek/deepseek-v3.2
+        run: python -m ingestion.ubik_monarch_v5_schema_smoke
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: monarch-v5-schema-extraction
+          path: data/monarch-v5/schema-extraction-result.json
