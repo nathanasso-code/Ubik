@@ -27,3 +27,10 @@ Measure candidate recall before judgment, including role-disagreement misses; pr
 - V4 Sonnet 5.5 extraction artifact has model `anthropic/claude-sonnet-5.5`, 9 source records, no per-source errors, and titles plus summaries as inputs; workflow run overall failed in its separate DeepSeek matrix leg, so Sonnet success must be assessed from its artifact, not overall run status.
 - The archived v4 artifact alone does NOT verify that its pair judge also ran Sonnet 5.5, nor does it provide original article text or per-call cost. These require separate evidence before a claimed matched-model end-to-end comparison.
 - Identical or similar generated titles/summaries cannot establish independent origin. The source-identity scan on this frozen input is a *screen*, not the requested original-excerpt provenance check. Mark uncertain pairs unknown until original excerpts are retrieved.
+
+## Locked two-composer comparison and fail-closed model audit
+- PRIMARY: frozen v4 extraction+judge+legacy composer versus v5 extraction+judge+connected-component composer, both Sonnet 5.5. Score incidents as end-to-end procedure outcomes; do not attribute changes exclusively to extraction.
+- SECONDARY zero-LLM: pass frozen v4 extraction+judge outputs through v5 composer with an explicit lossless field adapter. If required part_of/identity evidence is missing, record not comparable rather than synthesize edges. This isolates compositional differences only where input equivalence is defensible.
+- All new v5 extraction and judgment calls MUST request exact `anthropic/claude-sonnet-5.5`; save requested model and provider-returned model in every call record. Abort on missing/mismatched model field; never silently fall back to DeepSeek. Include model ID and pricing/cost per call in artifact.
+- Executive-order B is expected visible matrix even if S188/S383 collapse to one shared origin, provided the other two origins are verified. Record provenance uncertainty explicitly.
+- No v5 calls until fixed v4 judge output and source input are identified and replay adapter is validated; otherwise report missing comparability instead of fabricating a baseline.
