@@ -87,9 +87,17 @@ def compose_connected_v5(cards, relations, context_card_ids=(), conflicts=()):
         while dest in outgoing and len(components[dest])==1 and len(outgoing[dest])==1 and dest not in visited:
             visited.add(dest);dest=next(iter(outgoing[dest]))
         if dest not in visited:attached[idx]=dest
+    # Multi-target reactions have multiple memberships, not a bridging edge.
+    multi={i:set(targets) for i,targets in outgoing.items()
+           if len(components[i])==1 and len(targets)>1}
     grouped=defaultdict(set)
     for idx,component in enumerate(components):
+        if idx in multi:continue
         grouped[attached.get(idx,idx)].update(component)
+    for idx,targets in multi.items():
+        for target in targets:
+            dest=attached.get(target,target)
+            if dest!=idx:grouped[dest].update(components[idx])
     incidents=[];matrices=[];single=[];membership={};topic_cards=[]
     for idx,members_set in sorted(grouped.items()):
         active=members_set-context
@@ -114,12 +122,13 @@ def compose_connected_v5(cards, relations, context_card_ids=(), conflicts=()):
               "part_of":part,"reactions":react,"presentation":presentation,
               "origin_verification":"provisional"}
         incidents.append(item)
-        for x in members:membership[x]=[item["id"]]
+        for x in members:membership.setdefault(x,[]).append(item["id"])
         if presentation=="matrix":matrices.append(item)
         else:single.append(item)
     return {"cards":cards,"incidents":incidents,"matrices":matrices,
             "single_source_groups":single,"memberships":membership,
-            "topic_cards":sorted(topic_cards),"ambiguous_reaction_attachments":ambiguous,
+            "topic_cards":sorted(topic_cards),"ambiguous_reaction_attachments":[],
+            "multi_target_reaction_cards":{sorted(components[i])[0]:sorted(targets) for i,targets in multi.items()},
             "context_cards":sorted(context-set(membership)),
             "conflicts":list(conflicts),"new_llm_calls":0}
 
