@@ -1,0 +1,37 @@
+name: Ubik Ukraine v5 Sonnet controlled extraction
+on:
+  push:
+    branches: [experiment/taxonomy-fewshot-pilot]
+    paths: [.github/workflows/ukraine-v5-sonnet-extraction.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  extract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: experiment/taxonomy-fewshot-pilot
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Restore frozen v4 Sonnet corpus
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p data/ukraine-v5
+          gh api repos/nathanasso-code/Ubik/actions/artifacts/12591716174/zip > /tmp/v4.zip
+          unzip -p /tmp/v4.zip v4-sonnet55.json > data/ukraine-v5/v4-sonnet55.json
+      - name: Extract nine sources with explicit Sonnet 5.5 and verify every response
+        env:
+          UBIK_LLM_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          UBIK_LLM_MODEL: anthropic/claude-sonnet-5.5
+        run: python -m ingestion.ubik_ukraine_v5_extract
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ukraine-v5-sonnet-extraction
+          path: data/ukraine-v5/v5-extraction.json
