@@ -5,7 +5,7 @@ from ingestion.ubik_event_axes_v5 import normalize_event
 def role(event):
     return normalize_event(event)["event_nature"]
 
-def candidates(sources,k=5):
+def candidates(sources,k=5,soft_nature=False):
     events=[(s["source_id"]+":"+e["id"],s["source_id"],e) for s in sources for e in s["answer"]["events"]]
     from sentence_transformers import SentenceTransformer
     model=SentenceTransformer("intfloat/multilingual-e5-small",device="cpu")
@@ -15,8 +15,8 @@ def candidates(sources,k=5):
     selected={}
     for i,(eid,sid,event) in enumerate(events):
         options=[j for j,(_,other_sid,other) in enumerate(events)
-                 if other_sid!=sid and role(event)==role(other)]
-        options.sort(key=lambda j:(-float(sims[i,j]),events[j][0]))
+                 if other_sid!=sid and (soft_nature or role(event)==role(other))]
+        options.sort(key=lambda j:(-(float(sims[i,j]) - (0.08 if soft_nature and role(event)!=role(events[j][2]) else 0.0)),events[j][0]))
         for j in options[:k]:
             a,b=sorted((eid,events[j][0]))
             selected[(a,b)]=max(selected.get((a,b),-1),float(sims[i,j]))
