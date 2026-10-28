@@ -1,4 +1,4 @@
-name: Ukraine DeepSeek V4.1 Flash 1017 frozen judge
+name: Ukraine DeepSeek V4.1 Flash Nebius FP8 frozen 131 pairs
 on:
   push:
     branches: [experiment/taxonomy-fewshot-pilot]
@@ -29,7 +29,7 @@ jobs:
           unzip -p /tmp/judge.zip v5-judge.json > data/ukraine-deepseek-v41-flash/v5-judge.json
       - name: Verify Python syntax before paid requests
         run: python -m py_compile ingestion/ubik_ukraine_deepseek_v41_flash.py
-      - name: Judge exact 131 pairs with pinned V4.1 Flash provider
+      - name: Judge exact 131 pairs with pinned Nebius FP8 provider
         env:
           UBIK_LLM_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
         run: python -m ingestion.ubik_ukraine_deepseek_v41_flash
