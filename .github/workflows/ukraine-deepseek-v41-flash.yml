@@ -27,6 +27,8 @@ jobs:
           gh api repos/nathanasso-code/Ubik/actions/artifacts/12725256478/zip > /tmp/judge.zip
           unzip -p /tmp/extraction.zip v5-extraction.json > data/ukraine-deepseek-v41-flash/v5-extraction.json
           unzip -p /tmp/judge.zip v5-judge.json > data/ukraine-deepseek-v41-flash/v5-judge.json
+      - name: Verify Python syntax before paid requests
+        run: python -m py_compile ingestion/ubik_ukraine_deepseek_v41_flash.py
       - name: Judge exact 131 pairs with pinned V4.1 Flash provider
         env:
           UBIK_LLM_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
