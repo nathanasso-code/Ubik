@@ -1,0 +1,38 @@
+name: Publish v5.1 run artifacts unmodified
+on:
+  push:
+    branches: [experiment/taxonomy-fewshot-pilot]
+    paths: [.github/workflows/publish-v51-results.yml, docs/experiment-results/v5.1/publish-list.tsv]
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: read
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: experiment/taxonomy-fewshot-pilot
+          persist-credentials: true
+      - name: Copy listed artifacts byte for byte and record their SHA-256
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          while IFS=$'\t' read -r artifact member dest; do
+            [ -z "$artifact" ] && continue
+            case "$artifact" in \#*) continue;; esac
+            mkdir -p "$(dirname "$dest")"
+            gh api "repos/nathanasso-code/Ubik/actions/artifacts/$artifact/zip" > /tmp/a.zip
+            unzip -p /tmp/a.zip "$member" > "$dest"
+            python -c "import json,sys; json.load(open(sys.argv[1]))" "$dest"
+            sha256sum "$dest" >> docs/experiment-results/v5.1/SHA256SUMS
+          done < docs/experiment-results/v5.1/publish-list.tsv
+          sort -u -k2 docs/experiment-results/v5.1/SHA256SUMS -o docs/experiment-results/v5.1/SHA256SUMS
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/experiment-results/v5.1
+          git diff --cached --quiet || (git commit -m "Publish unmodified v5.1 run artifacts" && git push origin HEAD:experiment/taxonomy-fewshot-pilot)
