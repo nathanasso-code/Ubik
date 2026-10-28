@@ -15,13 +15,13 @@ events={s["source_id"]+":"+e["id"]:e for s in ex["sources"] for e in s["answer"]
 pairs=[(j["left"],j["right"]) for j in baseline["judgments"]]
 assert len(set(pairs))==131 and all(a in events and b in events for a,b in pairs)
 model="deepseek/deepseek-v4.1-flash-1017"
-out={"model":model,"extraction_model":ex["model"],"baseline_artifact":"12725256478","extraction_artifact":"12719538526","candidate_pairs":131,"judgments":[],"usage":[],"invalid_after_retry":[],"errors":[]}
+out={"model":model,"extraction_model":ex["model"],"baseline_artifact":"12725256478","extraction_artifact":"12719538526","candidate_pairs":131,"requested_provider":"nebius/fp8","provider_quantization":"fp8","published_price_per_million_usd":{"input":0.30,"output":1.20},"reasoning_requested":"disabled","judgments":[],"usage":[],"invalid_after_retry":[],"errors":[]}
 def save(): (root/"deepseek-v41-flash-result.json").write_text(json.dumps(out,ensure_ascii=False,indent=2))
 save()
 for idx,(left,right) in enumerate(pairs):
   for attempt in (1,2):
     try:
-      payload={"model":model,"provider":{"order":["DeepSeek"],"allow_fallbacks":False,"require_parameters":True},"reasoning":{"effort":"medium"},"messages":[{"role":"system","content":PROMPT},{"role":"user","content":json.dumps({"left":events[left],"right":events[right]},ensure_ascii=False)}],"response_format":{"type":"json_object"},"max_tokens":3000}
+      payload={"model":model,"provider":{"order":["nebius/fp8"],"allow_fallbacks":False,"require_parameters":True},"reasoning":{"enabled":False},"messages":[{"role":"system","content":PROMPT},{"role":"user","content":json.dumps({"left":events[left],"right":events[right]},ensure_ascii=False)}],"response_format":{"type":"json_schema","json_schema":{"name":"ubik_pair_judgment","strict":True,"schema":{"type":"object","additionalProperties":False,"required":["decision","direction","reason","detail_conflicts"],"properties":{"decision":{"type":"string","enum":["equivalent","distinct","uncertain","part_of"]},"direction":{"type":["string","null"],"enum":["left_part_of_right","right_part_of_left",None]},"reason":{"type":"string"},"detail_conflicts":{"type":"array","items":{"type":"string"}}}}}},"max_tokens":3000}
       req=urllib.request.Request("https://openrouter.ai/api/v1/chat/completions",data=json.dumps(payload).encode(),headers={"Authorization":"Bearer "+os.environ["UBIK_LLM_API_KEY"],"Content-Type":"application/json"})
       try:
         with urllib.request.urlopen(req,timeout=240) as resp: raw=json.load(resp)
@@ -31,7 +31,7 @@ for idx,(left,right) in enumerate(pairs):
       usage=raw.get("usage",{})
       out["usage"].append({"pair":[left,right],"attempt":attempt,"model":raw.get("model"),"provider":raw.get("provider"),"usage":usage,"reasoning_tokens":usage.get("completion_tokens_details",{}).get("reasoning_tokens"),"cost_usd":usage.get("cost")})
       if raw.get("model")!=model:raise RuntimeError("Model identity mismatch; abort")
-      if raw.get("provider") and raw["provider"].lower()!="deepseek":raise RuntimeError("Provider identity mismatch; abort")
+      if raw.get("provider") and "nebius" not in raw["provider"].lower():raise RuntimeError("Provider identity mismatch; abort")
       answer=json.loads(raw["choices"][0]["message"]["content"].strip().removeprefix("```json").removesuffix("```").strip())
       if answer.get("decision") not in ("equivalent","distinct","uncertain","part_of"):raise ValueError("invalid decision")
       if answer["decision"]=="part_of" and answer.get("direction") not in ("left_part_of_right","right_part_of_left"):raise ValueError("invalid direction")
