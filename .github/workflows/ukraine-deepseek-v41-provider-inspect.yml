@@ -1,0 +1,28 @@
+name: Inspect DeepSeek V4.1 Flash provider metadata
+on:
+  push:
+    branches: [experiment/taxonomy-fewshot-pilot]
+    paths: [.github/workflows/ukraine-deepseek-v41-provider-inspect.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Read OpenRouter endpoint metadata without API spending
+        run: |
+          python - <<'PY'
+          import json,urllib.request
+          url="https://openrouter.ai/api/v1/models/deepseek/deepseek-v4.1-flash-1017/endpoints"
+          with urllib.request.urlopen(url,timeout=30) as r: data=json.load(r)
+          endpoints=data.get("data",{}).get("endpoints",[])
+          print("ENDPOINT_COUNT",len(endpoints))
+          for p in endpoints:
+            print("PROVIDER_METADATA",json.dumps(p,ensure_ascii=False,sort_keys=True))
+          with open("v41-flash-endpoints.json","w") as f:json.dump(data,f,indent=2)
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: deepseek-v41-provider-metadata
+          path: v41-flash-endpoints.json
