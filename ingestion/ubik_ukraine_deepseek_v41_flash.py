@@ -1,5 +1,5 @@
 """Frozen v5 extraction and frozen 131 pairs; DeepSeek-only judge substitution."""
-import json, os, urllib.request, time
+import json, os, urllib.request, urllib.error, time
 from pathlib import Path
 from ingestion.ubik_ukraine_v5_judge import PROMPT
 from ingestion.ubik_monarch_v5_rejudge_core import cautious_groups
@@ -21,9 +21,13 @@ save()
 for idx,(left,right) in enumerate(pairs):
   for attempt in (1,2):
     try:
-      payload={"model":model,"provider":{"order":["DeepSeek"],"allow_fallbacks":False,"require_parameters":True},"reasoning":{"effort":"medium"},"messages":[{"role":"system","content":PROMPT},{"role":"user","content":json.dumps({"left":events[left],"right":events[right]},ensure_ascii=False)}],"response_format":{"type":"json_schema","json_schema":{"name":"ubik_pair_judgment","strict":True,"schema":{"type":"object","additionalProperties":False,"required":["decision","direction","reason","detail_conflicts"],"properties":{"decision":{"type":"string","enum":["equivalent","distinct","uncertain","part_of"]},"direction":{"type":["string","null"],"enum":["left_part_of_right","right_part_of_left",None]},"reason":{"type":"string"},"detail_conflicts":{"type":"array","items":{"type":"string"}}}}}},"max_tokens":3000}
+      payload={"model":model,"provider":{"order":["DeepSeek"],"allow_fallbacks":False,"require_parameters":True},"reasoning":{"effort":"medium"},"messages":[{"role":"system","content":PROMPT},{"role":"user","content":json.dumps({"left":events[left],"right":events[right]},ensure_ascii=False)}],"response_format":{"type":"json_object"},"max_tokens":3000}
       req=urllib.request.Request("https://openrouter.ai/api/v1/chat/completions",data=json.dumps(payload).encode(),headers={"Authorization":"Bearer "+os.environ["UBIK_LLM_API_KEY"],"Content-Type":"application/json"})
-      with urllib.request.urlopen(req,timeout=240) as resp: raw=json.load(resp)
+      try:
+        with urllib.request.urlopen(req,timeout=240) as resp: raw=json.load(resp)
+      except urllib.error.HTTPError as exc:
+        print("OPENROUTER_HTTP_ERROR",exc.code,exc.read(4096).decode("utf-8","replace"),flush=True)
+        raise
       usage=raw.get("usage",{})
       out["usage"].append({"pair":[left,right],"attempt":attempt,"model":raw.get("model"),"provider":raw.get("provider"),"usage":usage,"reasoning_tokens":usage.get("completion_tokens_details",{}).get("reasoning_tokens"),"cost_usd":usage.get("cost")})
       if raw.get("model")!=model:raise RuntimeError("Model identity mismatch; abort")
