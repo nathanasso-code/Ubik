@@ -1,0 +1,42 @@
+name: Ubik Ukraine v5.1 extraction only (frozen prompt)
+on:
+  push:
+    branches: [experiment/taxonomy-fewshot-pilot]
+    paths: [.github/workflows/ukraine-v51-extraction.yml, ingestion/ubik_ukraine_v51_extract.py]
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  extract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: experiment/taxonomy-fewshot-pilot
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Verify frozen prompt hashes before any paid call
+        run: |
+          echo "22a63958b94064356077432f080c49fa5f15834fa8597e76154c67fde106290a  prompts/v5.1/extraction.txt" | sha256sum -c -
+          echo "703e308ae07b5e1c500674b6238dbe0248a5cdef0598921cd7beb8a5299d686f  prompts/v5.1/pair_judge.txt" | sha256sum -c -
+          python -m py_compile ingestion/ubik_ukraine_v51_extract.py ingestion/ubik_v51_prompts.py
+      - name: Restore frozen v4 input corpus (same input as v5)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p data/ukraine-v51
+          gh api repos/nathanasso-code/Ubik/actions/artifacts/12591716174/zip > /tmp/v4.zip
+          unzip -p /tmp/v4.zip v4-sonnet55.json > data/ukraine-v51/v4-sonnet55.json
+      - name: Extract nine sources with Sonnet 5.5 and the frozen v5.1 prompt
+        env:
+          UBIK_LLM_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          UBIK_LLM_MODEL: anthropic/claude-sonnet-5.5
+        run: python -m ingestion.ubik_ukraine_v51_extract
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ukraine-v51-extraction
+          path: data/ukraine-v51/v51-extraction.json
