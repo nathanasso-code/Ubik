@@ -1,4 +1,4 @@
-name: Ukraine DeepSeek V4.1 Flash 1017 one-pair smoke
+name: Ukraine DeepSeek V4.1 Flash Nebius FP8 one-pair smoke
 on:
   push:
     branches: [experiment/taxonomy-fewshot-pilot]
