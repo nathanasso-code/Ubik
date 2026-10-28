@@ -1,0 +1,42 @@
+name: Ukraine DeepSeek V4.1 Flash 1017 one-pair smoke
+on:
+  push:
+    branches: [experiment/taxonomy-fewshot-pilot]
+    paths: [.github/workflows/ukraine-deepseek-v41-flash-smoke.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  judge:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: experiment/taxonomy-fewshot-pilot
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Restore exact frozen artifacts
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p data/ukraine-deepseek-v41-flash
+          gh api repos/nathanasso-code/Ubik/actions/artifacts/12719538526/zip > /tmp/extraction.zip
+          gh api repos/nathanasso-code/Ubik/actions/artifacts/12725256478/zip > /tmp/judge.zip
+          unzip -p /tmp/extraction.zip v5-extraction.json > data/ukraine-deepseek-v41-flash/v5-extraction.json
+          unzip -p /tmp/judge.zip v5-judge.json > data/ukraine-deepseek-v41-flash/v5-judge.json
+      - name: Verify Python syntax before paid requests
+        run: python -m py_compile ingestion/ubik_ukraine_deepseek_v41_flash.py
+      - name: Judge only first pair and inspect endpoint
+        env:
+          UBIK_LLM_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          UBIK_SMOKE_ONLY: '1'
+        run: python -m ingestion.ubik_ukraine_deepseek_v41_flash
+      - name: Save complete or partial audit
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ukraine-deepseek-v41-flash-smoke
+          path: data/ukraine-deepseek-v41-flash/deepseek-v41-flash-result.json
