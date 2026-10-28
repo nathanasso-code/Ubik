@@ -1,0 +1,318 @@
+{
+  "version": "v5.1",
+  "stage": "blind mapping, frozen before any v5.1 judgment",
+  "extraction_file": "docs/experiment-results/v5.1/ukraine-v51-extraction.json",
+  "extraction_sha256": "851cc8db1712d6851ab0521b2462ec62470657cbf83fd88e8ff06599d1917fd7",
+  "reference": "Ubik - Riferimenti di valutazione (matrici e card attese, riferimento notizia per notizia, livello 2)",
+  "reference_ids": {
+    "A": "accordo sul diesel (accordo e revoca delle sanzioni sul diesel)",
+    "B": "ordine esecutivo che sospende il nuovo pacchetto di sanzioni e dazi",
+    "C": "tregua energetica",
+    "D": "attacchi alle raffinerie russe",
+    "X_INDETERMINATE": "allentamento USA delle sanzioni compatibile con A e B (escluso)",
+    "OUT/nXX": "notizia fuori dalle matrici",
+    "NONE": "nessun referente",
+    "A1..D2": "card del riferimento"
+  },
+  "rows": [
+    {
+      "extracted_event_id": "S188:e1",
+      "reference_id": "B/B1",
+      "match_status": "matched",
+      "evidence": "signed an executive order waiving newly-passed Russia sanctions",
+      "rationale": "Firma dell'ordine esecutivo (n0, B1)",
+      "reviewer": "claude (preparer); independent reviewer agent a28e17ef (agreed)"
+    },
+    {
+      "extracted_event_id": "S188:e2",
+      "reference_id": "A/A1",
+      "match_status": "matched",
+      "evidence": "announced a deal to bring Russian diesel into global markets",
+      "rationale": "Annuncio dell'accordo sul diesel (n1, A1)",
+      "reviewer": "claude (preparer); independent reviewer agent a28e17ef (agreed)"
+    },
+    {
+      "extracted_event_id": "S188:e3",
+      "reference_id": "A6",
+      "match_status": "matched",
+      "evidence": "criticized Trump's energy moves with Russia",
+      "rationale": "Critica di Ucraina e leader europei, reazione ad A e B (n2, A6)",
+      "reviewer": "claude (preparer); independent reviewer agent a28e17ef (agreed)"
+    },
+    {
+      "extracted_event_id": "S305:e1",
+      "reference_id": "D1",
+      "match_status": "matched",
+      "evidence": "said that Ukraine's resumption of strikes on Russian oil refineries was a disgrace",
+      "rationale": "Trump critica gli attacchi (n10, D1)",
+      "reviewer": "claude (preparer); independent reviewer agent a28e17ef (agreed)"
+    },
+    {
+      "extracted_event_id": "S305:e2",
+      "reference_id": "D",
+      "match_status": "matched",
+      "evidence": "Ukraine resumed strikes on Russian oil refineries",
+      "rationale": "Referente della vicenda D, evento richiamato",
+      "reviewer": "claude (preparer); independent reviewer agent a28e17ef (agreed)"
+    },
+    {
+      "extracted_event_id": "S382:e1",
+      "reference_id": "C/C1",
+      "match_status": "matched",
+      "evidence": "announced that Russia and Ukraine agreed to an immediate halt to strikes on energy infrastructure",
+      "rationale": "Annuncio della tregua energetica (n11, C1)",
+      "reviewer": "claude (preparer); independent reviewer agent a28e17ef (agreed)"
+    },
+    {
+      "extracted_event_id": "S382:e2",
+      "reference_id": "C2",
+      "match_status": "matched",
+      "evidence": "said he was unaware of the ceasefire announcement and that Ukraine would agree if Russia did",
+      "rationale": "Reazione di Zelenskyj (n12, C2)",
+      "reviewer": "claude (preparer); independent reviewer agent a28e17ef (agreed)"
+    },
+    {
+      "extracted_event_id": "S382:e3",
+      "reference_id": "A4",
+      "match_status": "matched",
+      "evidence": "called on the Trump administration to reverse a diesel deal with Russia",
+      "rationale": "Richiesta dei senatori (n13, A4)",
+      "reviewer": "claude (preparer); independent reviewer agent a28e17ef (agreed)"
+    },
+    {
+      "extracted_event_id": "S382:e4",
+      "reference_id": "A",
+      "match_status": "matched",
+      "evidence": "made a diesel deal with Russia",
+      "rationale": "Accordo sul diesel richiamato (gruppo A)",
+      "reviewer": "claude (preparer); independent reviewer agent a28e17ef (agreed)"
+    },
+    {
+      "extracted_event_id": "S382:e5",
+      "reference_id": "C3",
+      "match_status": "matched",
+      "evidence": "expressed support for President Zelenskyy and for a ceasefire protecting energy infrastructure",
+      "rationale": "Sostegno dei leader europei (n14, C3)",
+      "reviewer": "claude (preparer); independent reviewer agent a28e17ef (agreed)"
+    },
+    {
+      "extracted_event_id": "S383:e1",
+      "reference_id": "B/B1",
+      "match_status": "matched",
+      "evidence": "signed an executive order waiving the application of new US sanctions on Russia",
+      "rationale": "Firma dell'ordine esecutivo (n15, B1)",
+      "reviewer": "claude (preparer); independent reviewer agent a28e17ef (agreed)"
+    },
+    {
+      "extracted_event_id": "S383:e2",
+      "reference_id": "A",
+      "match_status": "matched",
+      "evidence": "announced a US agreement to purchase diesel from Russia",
+      "rationale": "Annuncio dell'accordo sul diesel richiamato in n16 (gruppo A)",
+      "reviewer": "claude (preparer); independent reviewer agent a28e17ef (agreed)"
+    },
+    {
+      "extracted_event_id": "S387:e1",
+      "reference_id": "A",
+      "match_status": "matched",
+      "evidence": "decided to lift sanctions on Russian diesel as part of a supply deal",
+      "rationale": "Stesso atto di A visto dal lato delle sanzioni (gruppo A del riferimento)",
+      "reviewer": "claude (preparer); independent reviewer agent a28e17ef (agreed)"
+    },
+    {
+      "extracted_event_id": "S387:e2",
+      "reference_id": "A3",
+      "match_status": "matched",
+      "evidence": "criticized the US decision to lift sanctions on Russian diesel",
+      "rationale": "Critica dei ministri tedesco e britannico (n18, A3)",
+      "reviewer": "claude (preparer); independent reviewer agent a28e17ef (agreed)"
+    },
+    {
+      "extracted_event_id": "S387:e3",
+      "reference_id": "C",
+      "match_status": "matched_vague",
+      "evidence": "raised the idea of an 'energy ceasefire' in Ukraine",
+      "rationale": "Trump's idea of an energy ceasefire; matched to C only because the reference keeps announcement and idea together 'per semplicita''",
+      "reviewer": "claude (preparer); reviewer a28e17ef: status weakened"
+    },
+    {
+      "extracted_event_id": "S387:e4",
+      "reference_id": "C4",
+      "match_status": "matched",
+      "evidence": "said the 'energy ceasefire' idea should be taken seriously and pursued",
+      "rationale": "Proposta di Miliband (n20, C4)",
+      "reviewer": "claude (preparer); independent reviewer agent a28e17ef (agreed)"
+    },
+    {
+      "extracted_event_id": "S389:e1",
+      "reference_id": "OUT/n22",
+      "match_status": "matched",
+      "evidence": "urged EU leaders to supply military power and financial support",
+      "rationale": "Fuori dalle matrici (n22)",
+      "reviewer": "claude (preparer); independent reviewer agent a28e17ef (agreed)"
+    },
+    {
+      "extracted_event_id": "S389:e2",
+      "reference_id": "OUT/n23",
+      "match_status": "matched",
+      "evidence": "stated that US relations have worsened",
+      "rationale": "Fuori dalle matrici (n23, menziona A)",
+      "reviewer": "claude (preparer); independent reviewer agent a28e17ef (agreed)"
+    },
+    {
+      "extracted_event_id": "S389:e3",
+      "reference_id": "NONE",
+      "match_status": "unmatched_no_reference",
+      "evidence": "made comments (content not specified)",
+      "rationale": "Commenti di Trump non specificati: nessun referente nel riferimento",
+      "reviewer": "claude (preparer); independent reviewer agent a28e17ef (agreed)"
+    },
+    {
+      "extracted_event_id": "S389:e4",
+      "reference_id": "A",
+      "match_status": "matched_vague",
+      "evidence": "a Russian diesel deal",
+      "rationale": "Il riferimento include S389:E4 in A; evento senza attore, abbinamento debole",
+      "reviewer": "claude (preparer); independent reviewer agent a28e17ef (agreed)"
+    },
+    {
+      "extracted_event_id": "S389:e5",
+      "reference_id": "OUT/n24",
+      "match_status": "matched",
+      "evidence": "expressed surprise at the disruptions to Ukraine's Starlink satellite internet",
+      "rationale": "Fuori dalle matrici (n24)",
+      "reviewer": "claude (preparer); independent reviewer agent a28e17ef (agreed)"
+    },
+    {
+      "extracted_event_id": "S389:e6",
+      "reference_id": "NONE",
+      "match_status": "unmatched_no_reference",
+      "evidence": "slowdown of Starlink satellite internet in Ukraine",
+      "rationale": "Rallentamento Starlink come sfondo: nessun referente",
+      "reviewer": "claude (preparer); independent reviewer agent a28e17ef (agreed)"
+    },
+    {
+      "extracted_event_id": "S408:e1",
+      "reference_id": "OUT/n26",
+      "match_status": "matched",
+      "evidence": "stated that negotiating with Trump is easier than dealing with Putin",
+      "rationale": "Fuori dalle matrici (n26)",
+      "reviewer": "claude (preparer); independent reviewer agent a28e17ef (agreed)"
+    },
+    {
+      "extracted_event_id": "S408:e2",
+      "reference_id": "D2",
+      "match_status": "matched",
+      "evidence": "defended Ukraine's right to defend itself, including strikes on Russian oil refineries",
+      "rationale": "Difesa del diritto a colpire (n27, D2)",
+      "reviewer": "claude (preparer); independent reviewer agent a28e17ef (agreed)"
+    },
+    {
+      "extracted_event_id": "S408:e3",
+      "reference_id": "D",
+      "match_status": "matched",
+      "evidence": "strikes on Russian oil refineries",
+      "rationale": "Referente D richiamato; nella v4 non esisteva un evento corrispondente in S408",
+      "reviewer": "claude (preparer); independent reviewer agent a28e17ef (agreed)"
+    },
+    {
+      "extracted_event_id": "S408:e4",
+      "reference_id": "OUT/n28",
+      "match_status": "matched",
+      "evidence": "accused Putin of having no genuine interest in peace negotiations",
+      "rationale": "Fuori dalle matrici (n28)",
+      "reviewer": "claude (preparer); independent reviewer agent a28e17ef (agreed)"
+    },
+    {
+      "extracted_event_id": "S408:e5",
+      "reference_id": "A2",
+      "match_status": "matched",
+      "evidence": "warned that easing sanctions on Russian diesel could lead to further concessions",
+      "rationale": "Zelenskyj contro l'allentamento delle sanzioni sul diesel (n29, A2)",
+      "reviewer": "claude (preparer); independent reviewer agent a28e17ef (agreed)"
+    },
+    {
+      "extracted_event_id": "S408:e6",
+      "reference_id": "A | X_INDETERMINATE",
+      "match_status": "uncertain_two_readings",
+      "evidence": "easing of sanctions on Russia (including diesel)",
+      "rationale": "Merges the target of n29 (A in the reference) and the US easing cited by n30 (indeterminate A/B, excluded). Scored in two separate readings: (1) e6 = A, n29 links to A; (2) e6 = X_INDETERMINATE excluded, n29's link to A unverifiable. Each reading is one complete scoring, never both in the same count",
+      "reviewer": "claude (preparer) proposed two readings; reviewer a28e17ef proposed exclusion only. Disagreement shown to the owner; both views are kept as the two readings"
+    },
+    {
+      "extracted_event_id": "S408:e7",
+      "reference_id": "A5",
+      "match_status": "excluded",
+      "evidence": "stated EU would not lift sanctions until Russia ends the war",
+      "rationale": "Von der Leyen (n30, A5): esclusa dalle misure",
+      "reviewer": "claude (preparer); independent reviewer agent a28e17ef (agreed)"
+    },
+    {
+      "extracted_event_id": "S408:e8",
+      "reference_id": "NONE",
+      "match_status": "unmatched_no_reference",
+      "evidence": "called for increased pressure on Moscow",
+      "rationale": "Costa: second event inside n30; card A5 names only von der Leyen. n30 is excluded either way",
+      "reviewer": "claude (preparer); reviewer a28e17ef: status made more precise"
+    },
+    {
+      "extracted_event_id": "S433:e1",
+      "reference_id": "B/B1",
+      "match_status": "matched",
+      "evidence": "signed an executive order waiving a new package of sanctions and tariffs",
+      "rationale": "Firma dell'ordine esecutivo (n31, B1)",
+      "reviewer": "claude (preparer); independent reviewer agent a28e17ef (agreed)"
+    },
+    {
+      "extracted_event_id": "S433:e2",
+      "reference_id": "B2",
+      "match_status": "matched",
+      "evidence": "called the decision to put the sanctions on hold a significant and historic moment",
+      "rationale": "Elogio di Dmitriev (n32, B2) B2 is a candidate card in the reference: a merge S433:e2+S465:e1 is reported separately, not as a confirmed pair",
+      "reviewer": "claude (preparer); independent reviewer agent a28e17ef (agreed)"
+    },
+    {
+      "extracted_event_id": "S433:e3",
+      "reference_id": "A2",
+      "match_status": "matched",
+      "evidence": "criticized the US-Russia diesel deal",
+      "rationale": "Critica di Zelenskyj all'accordo (n33, A2)",
+      "reviewer": "claude (preparer); independent reviewer agent a28e17ef (agreed)"
+    },
+    {
+      "extracted_event_id": "S433:e4",
+      "reference_id": "A",
+      "match_status": "matched",
+      "evidence": "made a diesel deal",
+      "rationale": "Accordo sul diesel richiamato (gruppo A)",
+      "reviewer": "claude (preparer); independent reviewer agent a28e17ef (agreed)"
+    },
+    {
+      "extracted_event_id": "S465:e1",
+      "reference_id": "B2",
+      "match_status": "matched",
+      "evidence": "described Trump's decision to waive new sanctions on Russia as 'historic'",
+      "rationale": "Elogio russo alla deroga (n34, B2) B2 is a candidate card in the reference: a merge S433:e2+S465:e1 is reported separately, not as a confirmed pair",
+      "reviewer": "claude (preparer); independent reviewer agent a28e17ef (agreed)"
+    },
+    {
+      "extracted_event_id": "S465:e2",
+      "reference_id": "B",
+      "match_status": "matched",
+      "evidence": "decided to waive new sanctions",
+      "rationale": "Deroga richiamata (gruppo B)",
+      "reviewer": "claude (preparer); reviewer a28e17ef: relabelled from B/B1, it is the referenced decision, not a signing report"
+    }
+  ],
+  "frozen_at": "2026-10-29",
+  "review": {
+    "reviewer": "independent general-purpose agent a28e17ef, given only reference sections, extraction and draft; no judgments exist",
+    "agree": 34,
+    "disagree": 2,
+    "resolved": "S465:e2 relabelled; S408:e6 kept as two readings including the reviewer's"
+  },
+  "extraction_level_check_before_judges": {
+    "n14_reacts_to_ceasefire": "yes (S382:e5 reacts_to S382:e1)",
+    "n27_reacts_to_refinery_strikes": "no (S408:e2 mentions S408:e3)"
+  }
+}
