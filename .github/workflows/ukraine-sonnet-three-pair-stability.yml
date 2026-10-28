@@ -1,0 +1,41 @@
+name: Ukraine original Sonnet three-pair stability adjudication
+on:
+  push:
+    branches: [experiment/taxonomy-fewshot-pilot]
+    paths: [.github/workflows/ukraine-sonnet-three-pair-stability.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  stability:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: experiment/taxonomy-fewshot-pilot
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Restore three frozen artifacts
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p data/ukraine-sonnet-stability
+          gh api repos/nathanasso-code/Ubik/actions/artifacts/12719538526/zip > /tmp/extraction.zip
+          gh api repos/nathanasso-code/Ubik/actions/artifacts/12725256478/zip > /tmp/original.zip
+          gh api repos/nathanasso-code/Ubik/actions/artifacts/12777392635/zip > /tmp/concise.zip
+          unzip -p /tmp/extraction.zip v5-extraction.json > data/ukraine-sonnet-stability/v5-extraction.json
+          unzip -p /tmp/original.zip v5-judge.json > data/ukraine-sonnet-stability/v5-judge.json
+          unzip -p /tmp/concise.zip sonnet-concise-result.json > data/ukraine-sonnet-stability/sonnet-concise-result.json
+      - name: Rejudge exactly three discordant pairs
+        env:
+          UBIK_LLM_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+        run: python -m ingestion.ubik_ukraine_sonnet_three_pair_stability
+      - name: Upload complete or partial audit
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ukraine-sonnet-three-pair-stability
+          path: data/ukraine-sonnet-stability/sonnet-three-pair-stability.json
