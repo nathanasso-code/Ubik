@@ -1,0 +1,649 @@
+{
+  "version": "v5.1",
+  "stage": "candidate pairs, frozen before any judgment",
+  "extraction_sha256": "851cc8db1712d6851ab0521b2462ec62470657cbf83fd88e8ff06599d1917fd7",
+  "retrieval": {
+    "model": "intfloat/multilingual-e5-small",
+    "text": "passage: action + object",
+    "k": 5,
+    "soft_nature": true,
+    "nature_penalty": 0.08,
+    "cross_source_only": true,
+    "dedup": "unordered pair, max similarity",
+    "order": "similarity desc, then id"
+  },
+  "events": 36,
+  "candidate_pairs": 126,
+  "pairs": [
+    {
+      "left": "S383:e1",
+      "right": "S433:e1",
+      "similarity": 0.9644020795822144
+    },
+    {
+      "left": "S188:e1",
+      "right": "S433:e1",
+      "similarity": 0.9620429277420044
+    },
+    {
+      "left": "S188:e1",
+      "right": "S383:e1",
+      "similarity": 0.9538658261299133
+    },
+    {
+      "left": "S305:e2",
+      "right": "S408:e3",
+      "similarity": 0.9502211809158325
+    },
+    {
+      "left": "S382:e4",
+      "right": "S389:e4",
+      "similarity": 0.9468504190444946
+    },
+    {
+      "left": "S382:e4",
+      "right": "S383:e2",
+      "similarity": 0.9449284672737122
+    },
+    {
+      "left": "S382:e4",
+      "right": "S433:e4",
+      "similarity": 0.9438798427581787
+    },
+    {
+      "left": "S188:e2",
+      "right": "S383:e2",
+      "similarity": 0.932991623878479
+    },
+    {
+      "left": "S383:e2",
+      "right": "S387:e1",
+      "similarity": 0.9326186180114746
+    },
+    {
+      "left": "S188:e2",
+      "right": "S387:e1",
+      "similarity": 0.9286085963249207
+    },
+    {
+      "left": "S389:e4",
+      "right": "S433:e4",
+      "similarity": 0.9262776970863342
+    },
+    {
+      "left": "S383:e1",
+      "right": "S465:e2",
+      "similarity": 0.9231754541397095
+    },
+    {
+      "left": "S389:e4",
+      "right": "S408:e3",
+      "similarity": 0.9213072657585144
+    },
+    {
+      "left": "S382:e4",
+      "right": "S387:e1",
+      "similarity": 0.9174797534942627
+    },
+    {
+      "left": "S387:e2",
+      "right": "S433:e3",
+      "similarity": 0.9165809154510498
+    },
+    {
+      "left": "S383:e1",
+      "right": "S465:e1",
+      "similarity": 0.9163030385971069
+    },
+    {
+      "left": "S382:e4",
+      "right": "S408:e6",
+      "similarity": 0.9125251173973083
+    },
+    {
+      "left": "S383:e2",
+      "right": "S389:e4",
+      "similarity": 0.9106287956237793
+    },
+    {
+      "left": "S387:e1",
+      "right": "S408:e6",
+      "similarity": 0.9097031354904175
+    },
+    {
+      "left": "S387:e2",
+      "right": "S408:e5",
+      "similarity": 0.9096865653991699
+    },
+    {
+      "left": "S305:e1",
+      "right": "S408:e2",
+      "similarity": 0.9092438220977783
+    },
+    {
+      "left": "S188:e2",
+      "right": "S382:e4",
+      "similarity": 0.9086644649505615
+    },
+    {
+      "left": "S387:e1",
+      "right": "S408:e5",
+      "similarity": 0.9081057906150818
+    },
+    {
+      "left": "S408:e6",
+      "right": "S465:e2",
+      "similarity": 0.9062086939811707
+    },
+    {
+      "left": "S433:e1",
+      "right": "S465:e1",
+      "similarity": 0.9061284065246582
+    },
+    {
+      "left": "S433:e1",
+      "right": "S465:e2",
+      "similarity": 0.9049378037452698
+    },
+    {
+      "left": "S383:e2",
+      "right": "S408:e6",
+      "similarity": 0.904379665851593
+    },
+    {
+      "left": "S382:e3",
+      "right": "S387:e2",
+      "similarity": 0.9034154415130615
+    },
+    {
+      "left": "S382:e5",
+      "right": "S387:e3",
+      "similarity": 0.899649977684021
+    },
+    {
+      "left": "S382:e1",
+      "right": "S387:e3",
+      "similarity": 0.8982430100440979
+    },
+    {
+      "left": "S188:e1",
+      "right": "S465:e1",
+      "similarity": 0.8981707096099854
+    },
+    {
+      "left": "S382:e3",
+      "right": "S433:e3",
+      "similarity": 0.8964890241622925
+    },
+    {
+      "left": "S188:e3",
+      "right": "S433:e3",
+      "similarity": 0.8963453769683838
+    },
+    {
+      "left": "S408:e4",
+      "right": "S433:e3",
+      "similarity": 0.8954739570617676
+    },
+    {
+      "left": "S389:e4",
+      "right": "S408:e6",
+      "similarity": 0.8950672149658203
+    },
+    {
+      "left": "S382:e2",
+      "right": "S408:e4",
+      "similarity": 0.8947372436523438
+    },
+    {
+      "left": "S188:e1",
+      "right": "S465:e2",
+      "similarity": 0.8944073915481567
+    },
+    {
+      "left": "S188:e2",
+      "right": "S433:e3",
+      "similarity": 0.8940999507904053
+    },
+    {
+      "left": "S389:e2",
+      "right": "S433:e3",
+      "similarity": 0.8935428857803345
+    },
+    {
+      "left": "S188:e3",
+      "right": "S382:e3",
+      "similarity": 0.8929083347320557
+    },
+    {
+      "left": "S387:e1",
+      "right": "S465:e2",
+      "similarity": 0.8915918469429016
+    },
+    {
+      "left": "S188:e2",
+      "right": "S382:e3",
+      "similarity": 0.8914811015129089
+    },
+    {
+      "left": "S383:e2",
+      "right": "S387:e2",
+      "similarity": 0.8886411190032959
+    },
+    {
+      "left": "S382:e5",
+      "right": "S387:e4",
+      "similarity": 0.8882902264595032
+    },
+    {
+      "left": "S387:e2",
+      "right": "S408:e6",
+      "similarity": 0.8877463936805725
+    },
+    {
+      "left": "S188:e3",
+      "right": "S387:e2",
+      "similarity": 0.8874448537826538
+    },
+    {
+      "left": "S305:e1",
+      "right": "S433:e3",
+      "similarity": 0.8874093890190125
+    },
+    {
+      "left": "S305:e1",
+      "right": "S387:e2",
+      "similarity": 0.8871790170669556
+    },
+    {
+      "left": "S188:e3",
+      "right": "S305:e1",
+      "similarity": 0.8859672546386719
+    },
+    {
+      "left": "S382:e5",
+      "right": "S389:e1",
+      "similarity": 0.8857953548431396
+    },
+    {
+      "left": "S188:e1",
+      "right": "S408:e5",
+      "similarity": 0.8854672312736511
+    },
+    {
+      "left": "S382:e2",
+      "right": "S387:e3",
+      "similarity": 0.8853727579116821
+    },
+    {
+      "left": "S188:e2",
+      "right": "S408:e5",
+      "similarity": 0.8851917386054993
+    },
+    {
+      "left": "S382:e2",
+      "right": "S433:e3",
+      "similarity": 0.8843817710876465
+    },
+    {
+      "left": "S408:e5",
+      "right": "S433:e3",
+      "similarity": 0.8836369514465332
+    },
+    {
+      "left": "S382:e2",
+      "right": "S387:e4",
+      "similarity": 0.8830378651618958
+    },
+    {
+      "left": "S383:e1",
+      "right": "S408:e6",
+      "similarity": 0.8817763328552246
+    },
+    {
+      "left": "S382:e3",
+      "right": "S387:e1",
+      "similarity": 0.8816546201705933
+    },
+    {
+      "left": "S305:e1",
+      "right": "S382:e2",
+      "similarity": 0.8807048201560974
+    },
+    {
+      "left": "S387:e3",
+      "right": "S389:e6",
+      "similarity": 0.8805490732192993
+    },
+    {
+      "left": "S305:e2",
+      "right": "S465:e2",
+      "similarity": 0.8804371953010559
+    },
+    {
+      "left": "S305:e2",
+      "right": "S389:e4",
+      "similarity": 0.8798608779907227
+    },
+    {
+      "left": "S305:e1",
+      "right": "S408:e3",
+      "similarity": 0.8793235421180725
+    },
+    {
+      "left": "S305:e2",
+      "right": "S382:e4",
+      "similarity": 0.879083514213562
+    },
+    {
+      "left": "S188:e2",
+      "right": "S382:e1",
+      "similarity": 0.878777027130127
+    },
+    {
+      "left": "S305:e2",
+      "right": "S408:e6",
+      "similarity": 0.8782551288604736
+    },
+    {
+      "left": "S188:e3",
+      "right": "S408:e1",
+      "similarity": 0.8776673078536987
+    },
+    {
+      "left": "S389:e1",
+      "right": "S408:e2",
+      "similarity": 0.8773466348648071
+    },
+    {
+      "left": "S305:e1",
+      "right": "S382:e1",
+      "similarity": 0.87718665599823
+    },
+    {
+      "left": "S188:e2",
+      "right": "S387:e3",
+      "similarity": 0.8763973712921143
+    },
+    {
+      "left": "S382:e4",
+      "right": "S408:e3",
+      "similarity": 0.8757408857345581
+    },
+    {
+      "left": "S383:e2",
+      "right": "S433:e4",
+      "similarity": 0.8752151727676392
+    },
+    {
+      "left": "S188:e3",
+      "right": "S408:e4",
+      "similarity": 0.874514102935791
+    },
+    {
+      "left": "S433:e2",
+      "right": "S465:e1",
+      "similarity": 0.8744336366653442
+    },
+    {
+      "left": "S387:e1",
+      "right": "S408:e7",
+      "similarity": 0.8731658458709717
+    },
+    {
+      "left": "S387:e2",
+      "right": "S465:e1",
+      "similarity": 0.8725976943969727
+    },
+    {
+      "left": "S408:e6",
+      "right": "S433:e1",
+      "similarity": 0.872040867805481
+    },
+    {
+      "left": "S382:e1",
+      "right": "S408:e2",
+      "similarity": 0.871437132358551
+    },
+    {
+      "left": "S188:e3",
+      "right": "S389:e2",
+      "similarity": 0.8707132339477539
+    },
+    {
+      "left": "S305:e1",
+      "right": "S389:e2",
+      "similarity": 0.8705714344978333
+    },
+    {
+      "left": "S408:e3",
+      "right": "S465:e2",
+      "similarity": 0.8702589869499207
+    },
+    {
+      "left": "S382:e5",
+      "right": "S408:e2",
+      "similarity": 0.86910080909729
+    },
+    {
+      "left": "S382:e2",
+      "right": "S408:e7",
+      "similarity": 0.868721604347229
+    },
+    {
+      "left": "S408:e8",
+      "right": "S465:e2",
+      "similarity": 0.8686385750770569
+    },
+    {
+      "left": "S188:e3",
+      "right": "S382:e5",
+      "similarity": 0.8684717416763306
+    },
+    {
+      "left": "S188:e1",
+      "right": "S408:e2",
+      "similarity": 0.8684449195861816
+    },
+    {
+      "left": "S383:e1",
+      "right": "S408:e7",
+      "similarity": 0.8664750456809998
+    },
+    {
+      "left": "S389:e2",
+      "right": "S408:e4",
+      "similarity": 0.8662742376327515
+    },
+    {
+      "left": "S188:e3",
+      "right": "S382:e1",
+      "similarity": 0.8660787343978882
+    },
+    {
+      "left": "S382:e4",
+      "right": "S408:e8",
+      "similarity": 0.8658629655838013
+    },
+    {
+      "left": "S382:e2",
+      "right": "S389:e2",
+      "similarity": 0.8657647371292114
+    },
+    {
+      "left": "S188:e3",
+      "right": "S387:e4",
+      "similarity": 0.8657159805297852
+    },
+    {
+      "left": "S305:e2",
+      "right": "S408:e8",
+      "similarity": 0.8647592067718506
+    },
+    {
+      "left": "S387:e3",
+      "right": "S408:e4",
+      "similarity": 0.8633798360824585
+    },
+    {
+      "left": "S387:e2",
+      "right": "S408:e7",
+      "similarity": 0.8629869222640991
+    },
+    {
+      "left": "S305:e1",
+      "right": "S389:e5",
+      "similarity": 0.8626439571380615
+    },
+    {
+      "left": "S387:e1",
+      "right": "S433:e4",
+      "similarity": 0.8619145750999451
+    },
+    {
+      "left": "S382:e2",
+      "right": "S389:e5",
+      "similarity": 0.861740231513977
+    },
+    {
+      "left": "S389:e6",
+      "right": "S408:e3",
+      "similarity": 0.8614650964736938
+    },
+    {
+      "left": "S389:e2",
+      "right": "S408:e1",
+      "similarity": 0.8594679832458496
+    },
+    {
+      "left": "S389:e6",
+      "right": "S433:e3",
+      "similarity": 0.859289288520813
+    },
+    {
+      "left": "S408:e7",
+      "right": "S433:e1",
+      "similarity": 0.8590875864028931
+    },
+    {
+      "left": "S389:e5",
+      "right": "S433:e3",
+      "similarity": 0.8584924936294556
+    },
+    {
+      "left": "S387:e3",
+      "right": "S408:e8",
+      "similarity": 0.858364462852478
+    },
+    {
+      "left": "S188:e3",
+      "right": "S389:e1",
+      "similarity": 0.8581419587135315
+    },
+    {
+      "left": "S382:e1",
+      "right": "S389:e1",
+      "similarity": 0.8568692207336426
+    },
+    {
+      "left": "S188:e2",
+      "right": "S433:e4",
+      "similarity": 0.8565665483474731
+    },
+    {
+      "left": "S389:e6",
+      "right": "S408:e6",
+      "similarity": 0.8548772931098938
+    },
+    {
+      "left": "S389:e5",
+      "right": "S408:e2",
+      "similarity": 0.8548420667648315
+    },
+    {
+      "left": "S382:e3",
+      "right": "S408:e1",
+      "similarity": 0.8547119498252869
+    },
+    {
+      "left": "S188:e1",
+      "right": "S433:e2",
+      "similarity": 0.8540219068527222
+    },
+    {
+      "left": "S389:e6",
+      "right": "S408:e4",
+      "similarity": 0.8528878092765808
+    },
+    {
+      "left": "S408:e1",
+      "right": "S433:e3",
+      "similarity": 0.8514487147331238
+    },
+    {
+      "left": "S383:e2",
+      "right": "S408:e8",
+      "similarity": 0.850981593132019
+    },
+    {
+      "left": "S387:e3",
+      "right": "S389:e1",
+      "similarity": 0.8499161005020142
+    },
+    {
+      "left": "S383:e1",
+      "right": "S433:e2",
+      "similarity": 0.8498953580856323
+    },
+    {
+      "left": "S387:e4",
+      "right": "S408:e1",
+      "similarity": 0.8480983376502991
+    },
+    {
+      "left": "S188:e3",
+      "right": "S389:e5",
+      "similarity": 0.8478212356567383
+    },
+    {
+      "left": "S387:e4",
+      "right": "S465:e1",
+      "similarity": 0.8472652435302734
+    },
+    {
+      "left": "S387:e2",
+      "right": "S433:e2",
+      "similarity": 0.8454505205154419
+    },
+    {
+      "left": "S382:e5",
+      "right": "S433:e2",
+      "similarity": 0.8453207015991211
+    },
+    {
+      "left": "S389:e3",
+      "right": "S433:e4",
+      "similarity": 0.8393859267234802
+    },
+    {
+      "left": "S389:e3",
+      "right": "S408:e6",
+      "similarity": 0.8081797957420349
+    },
+    {
+      "left": "S389:e3",
+      "right": "S408:e4",
+      "similarity": 0.8052049875259399
+    },
+    {
+      "left": "S389:e3",
+      "right": "S408:e3",
+      "similarity": 0.8030485510826111
+    },
+    {
+      "left": "S382:e4",
+      "right": "S389:e3",
+      "similarity": 0.7970554828643799
+    }
+  ]
+}
