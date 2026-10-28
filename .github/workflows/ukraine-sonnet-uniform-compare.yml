@@ -1,0 +1,39 @@
+name: Ukraine Sonnet original vs concise uniform composer
+on:
+  push:
+    branches: [experiment/taxonomy-fewshot-pilot]
+    paths: [.github/workflows/ukraine-sonnet-uniform-compare.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  compare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: experiment/taxonomy-fewshot-pilot
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Restore frozen artifacts
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p data/ukraine-sonnet-uniform
+          gh api repos/nathanasso-code/Ubik/actions/artifacts/12719538526/zip > /tmp/extraction.zip
+          gh api repos/nathanasso-code/Ubik/actions/artifacts/12725256478/zip > /tmp/original.zip
+          gh api repos/nathanasso-code/Ubik/actions/artifacts/12777392635/zip > /tmp/concise.zip
+          unzip -p /tmp/extraction.zip v5-extraction.json > data/ukraine-sonnet-uniform/v5-extraction.json
+          unzip -p /tmp/original.zip v5-judge.json > data/ukraine-sonnet-uniform/v5-judge.json
+          unzip -p /tmp/concise.zip sonnet-concise-result.json > data/ukraine-sonnet-uniform/sonnet-concise-result.json
+      - name: Recompose both arms with identical current composer
+        run: python -m ingestion.ubik_ukraine_sonnet_uniform_compare
+      - name: Publish structural comparison artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ukraine-sonnet-uniform-comparison
+          path: data/ukraine-sonnet-uniform/uniform-comparison.json
