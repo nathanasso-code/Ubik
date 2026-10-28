@@ -48,6 +48,8 @@ for idx,(left,right) in enumerate(pairs):
       out["errors"].append({"pair":[left,right],"attempt":attempt,"type":"api_or_transport","error":str(exc)[:200]})
       save();raise
     finally:save()
+  if os.getenv("UBIK_SMOKE_ONLY")=="1":
+    out["status"]="smoke_complete";save();print(json.dumps({"status":out["status"],"judgments":len(out["judgments"]),"usage":out["usage"]},ensure_ascii=False));raise SystemExit(0)
   if len(out["invalid_after_retry"])>=7:
     out["status"]="partial_invalid_threshold";save();break
 out["complete_pairs"]=len(out["judgments"])
