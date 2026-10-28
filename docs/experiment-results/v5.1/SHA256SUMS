@@ -1,3 +1,5 @@
 851cc8db1712d6851ab0521b2462ec62470657cbf83fd88e8ff06599d1917fd7  docs/experiment-results/v5.1/ukraine-v51-extraction.json
 de86f9d36a2570a9dbdf1405c2fb818f72ed9f7492b21d53cadb6bcfb6b76bce  docs/experiment-results/v5.1/ukraine-v51-blind-mapping.json
 b91889731b0f66e18d40363f7cd21e6331c905d3ba748d5acc0d66d59a403e5d  docs/experiment-results/v5.1/ukraine-v51-candidate-pairs.json
+c99fdc407848d564b87221b945f0c5c0c6b83a3a3652cc1d06fc0cdb6dd7b6c7  docs/experiment-results/v5.1/ukraine-v51-judge-sonnet.json
+f6ac395d3282aa9df9e894b68e0f3918416fffbb2103bbd3350872be8d9d898c  docs/experiment-results/v5.1/ukraine-v51-judge-deepseek.json
