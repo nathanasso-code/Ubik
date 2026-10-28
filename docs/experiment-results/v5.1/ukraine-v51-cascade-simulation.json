@@ -1,0 +1,1397 @@
+{
+ "stage": "cascade simulation from actual per-pair judgments (no new calls)",
+ "rule": "DeepSeek V4.1 Flash on all pairs; Sonnet verdict replaces every DeepSeek verdict that is not distinct",
+ "sent_to_sonnet": 30,
+ "sonnet_cost_usd": 0.141606,
+ "deepseek_cost_usd": 0.024827,
+ "extraction_cost_usd": 0.10377,
+ "judgments": [
+  {
+   "left": "S383:e1",
+   "right": "S433:e1",
+   "similarity": 0.9644020795822144,
+   "result": {
+    "decision": "equivalent",
+    "direction": null,
+    "reason": "Both records describe the same actor, President Trump, signing an executive order that waives new US sanctions on Russia. The right record adds that the package included tariffs and that the signing came shortly before the package was due to take effect. The left record adds a national security justification. These are differences in detail, not conflicts, and neither record gives a time that contradicts the other. The act, the object and the actor all match.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S188:e1",
+   "right": "S433:e1",
+   "similarity": 0.9620429277420044,
+   "result": {
+    "decision": "equivalent",
+    "direction": null,
+    "reason": "Both records describe Trump signing an executive order that waives a newly passed package of Russia sanctions and tariffs, shortly before it was due to take effect. The actor, action, object and timing all match. The left record adds detail (duties on Russian goods, penalties for buying Russian oil and gas) that is consistent with the right record's \"sanctions and tariffs\", so the difference is only in granularity.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S188:e1",
+   "right": "S383:e1",
+   "similarity": 0.9538658261299133,
+   "result": {
+    "decision": "equivalent",
+    "direction": null,
+    "reason": "Both records describe President Donald Trump signing an executive order that waives the application of newly passed US sanctions on Russia. The actor, action and object match. The left adds details (duties on Russian goods, penalties for buying Russian oil and gas, timing before the effective date) and the right adds the national security rationale. These are differences in detail, not conflicts, and the right record's missing time is not a difference.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S305:e2",
+   "right": "S408:e3",
+   "similarity": 0.9502211809158325,
+   "result": {
+    "decision": "uncertain",
+    "direction": null,
+    "reason": "Both records describe Ukraine striking Russian oil refineries, but each only mentions the strikes in passing as background. Neither gives an event time, a specific incident, or any other detail that would show whether they refer to the same strikes (for example, the same resumption) or to separate rounds or the general campaign. The right record is a generic reference to 'refinery strikes' and the left refers to a 'resumption'. The evidence is insufficient to establish equivalence or a positive difference.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S382:e4",
+   "right": "S389:e4",
+   "similarity": 0.9468504190444946,
+   "result": {
+    "decision": "uncertain",
+    "direction": null,
+    "reason": "Both records mention a Russian diesel deal as background, with no event time and no details. The left record attributes it to the Trump administration or Trump and Putin. The right record names no actor, only that Zelenskyy cited it alongside Trump's comments. The topic and the implied US-Russia parties overlap, but nothing in either record establishes that they refer to the same specific deal, and nothing shows they are different deals. That is not enough to call them equivalent or distinct.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S382:e4",
+   "right": "S383:e2",
+   "similarity": 0.9449284672737122,
+   "result": {
+    "decision": "equivalent",
+    "direction": null,
+    "reason": "Both records refer to the same diesel deal between the US (Trump administration) and Russia. The left record gives it as a deal to be reversed, and the right record as Trump's announcement of a US agreement to purchase diesel from Russia. The actor, object and nature of the act match. The left record has no time, so there is no conflict. The difference in framing (existing deal vs. announcement of it) is a difference of emphasis and detail, not of act.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S382:e4",
+   "right": "S433:e4",
+   "similarity": 0.9438798427581787,
+   "result": {
+    "decision": "uncertain",
+    "direction": null,
+    "reason": "invalid_after_retry",
+    "detail_conflicts": [],
+    "invalid_after_retry": true
+   }
+  },
+  {
+   "left": "S188:e2",
+   "right": "S383:e2",
+   "similarity": 0.932991623878479,
+   "result": {
+    "decision": "equivalent",
+    "direction": null,
+    "reason": "Both records describe Trump announcing a deal involving Russian diesel. The left record is narrated and the right one only references it as background to a sanctions waiver. The actor, the type of action (announcing a diesel deal with Russia) and the object (Russian diesel) all match. The framings differ: the left says the deal brings Russian diesel into global markets to lower prices, while the right says it is a US agreement to purchase diesel. This looks like a difference in emphasis and detail, not a different act. Neither record states a conflicting date or actor.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S383:e2",
+   "right": "S387:e1",
+   "similarity": 0.9326186180114746,
+   "result": {
+    "decision": "distinct",
+    "direction": null,
+    "reason": "The left record describes Trump announcing a US agreement to purchase diesel from Russia; the right record describes a US decision to lift sanctions on Russian diesel as part of a supply deal. These are different acts: one is announcing a purchase agreement, the other is lifting sanctions. Neither record indicates that one act is a constituent of the other, and the left's purchase announcement is not shown to be the same act as the sanctions waiver/lifting.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S188:e2",
+   "right": "S387:e1",
+   "similarity": 0.9286085963249207,
+   "result": {
+    "decision": "uncertain",
+    "direction": null,
+    "reason": "Both records concern a US action on Russian diesel tied to a deal, so they probably involve the same underlying arrangement. But the left record is Trump announcing a deal to bring Russian diesel into global markets, with volumes scheduled for delivery, and never mentions sanctions. The right record is the US decision to lift sanctions on Russian diesel 'as part of a supply deal', with no deal details. The evidence does not show that the 'supply deal' is the same deal Trump announced. It also does not show that the sanctions lift is a stated component of that announcement, so neither equivalence nor part_of is grounded. Nothing positively shows they are different acts either.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S389:e4",
+   "right": "S433:e4",
+   "similarity": 0.9262776970863342,
+   "result": {
+    "decision": "equivalent",
+    "direction": null,
+    "reason": "Both records are background references to a diesel deal involving Russia and the US. Each describes the object as Russian or US-Russia diesel, and neither gives a time or any other detail that could separate two deals. The left record's actor is only implied (US and Russia), which matches the right record's explicit US and Russia. The wording differs, but the records contain nothing that points to different acts, so they most plausibly refer to the same deal.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S383:e1",
+   "right": "S465:e2",
+   "similarity": 0.9231754541397095,
+   "result": {
+    "decision": "equivalent",
+    "direction": null,
+    "reason": "Both records describe President Donald Trump waiving new US sanctions on Russia. The left narrates the signing of an executive order that waives the sanctions, and the right briefly references the decision to waive them. The actor, action and object match, and neither record gives a time that conflicts with the other. The difference between a signing and a decision is only a difference in wording and detail, so this is an event narrated by one source and referenced by the other.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S389:e4",
+   "right": "S408:e3",
+   "similarity": 0.9213072657585144,
+   "result": {
+    "decision": "distinct",
+    "direction": null,
+    "reason": "The left record concerns a 'Russian diesel deal' (a transaction involving Russian diesel, with US and Russia implied actors), while the right record concerns Ukrainian strikes on Russian oil refineries (a military action by Ukraine). These are different actors, different kinds of action (deal/transaction vs. strikes), and different objects (diesel vs. oil refineries); the left is also referenced as a deal cited alongside Trump's comments, not as the refinery strikes.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S382:e4",
+   "right": "S387:e1",
+   "similarity": 0.9174797534942627,
+   "result": {
+    "decision": "equivalent",
+    "direction": null,
+    "reason": "Both records are background references to the same US (Trump administration) diesel arrangement with Russia. The left calls it a 'diesel deal with Russia' that critics want reversed. The right describes the US decision to lift sanctions on Russian diesel 'as part of a supply deal'. The difference is only in granularity and wording, and neither record states anything that contradicts the other.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S387:e2",
+   "right": "S433:e3",
+   "similarity": 0.9165809154510498,
+   "result": {
+    "decision": "distinct",
+    "direction": null,
+    "reason": "The two records show criticism by different actors (German and UK foreign ministers vs. Ukrainian President Zelenskyy), and the object of criticism differs: the left targets the US decision to lift sanctions on Russian diesel, while the right targets a US-Russia diesel deal and frames the objection around possible further concessions. Different critic and different stated object constitute different acts.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S383:e1",
+   "right": "S465:e1",
+   "similarity": 0.9163030385971069,
+   "result": {
+    "decision": "distinct",
+    "direction": null,
+    "reason": "The left record is Trump's act of signing an executive order waiving new sanctions on Russia; the right record is Russia's verbal characterization of that decision as 'historic'. These are different actors and different kinds of acts (a signing versus a public statement reacting to it), so the right is a response to, not the same as, the left event.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S382:e4",
+   "right": "S408:e6",
+   "similarity": 0.9125251173973083,
+   "result": {
+    "decision": "distinct",
+    "direction": null,
+    "reason": "The left record describes Trump/ Putin making a diesel deal with Russia, while the right describes a U.S. easing of sanctions on Russia (including diesel). These are different kinds of acts: a commercial deal versus a sanctions-relief measure. Overlap on 'diesel' and Russia does not establish the same concrete act.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S383:e2",
+   "right": "S389:e4",
+   "similarity": 0.9106287956237793,
+   "result": {
+    "decision": "uncertain",
+    "direction": null,
+    "reason": "Both records mention a Russian diesel deal as background. The left one says Trump announced a US agreement to purchase diesel from Russia. The right one only says Zelenskyy cited \"a Russian diesel deal\" alongside Trump's comments, with no actor, time or terms. The two plausibly refer to the same deal, but the right record is too sparse to confirm that. Nothing in either record contradicts the other. Equivalence would be a guess, and distinctness has no positive support.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S387:e1",
+   "right": "S408:e6",
+   "similarity": 0.9097031354904175,
+   "result": {
+    "decision": "uncertain",
+    "direction": null,
+    "reason": "Both records refer in the background to US easing of sanctions on Russia. The left record states a specific decision to lift sanctions on Russian diesel as part of a supply deal. The right record only says \"U.S. sanctions easing\", with the object given as sanctions on Russia (including diesel), and it is unclear whether this is occurring or only under consideration. They may be the same act, or the right may be a broader easing of which the diesel decision is one part. Neither record has a time, a deal detail or any other anchor that would settle which. Nothing positively shows they differ, so distinct is not supported.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S387:e2",
+   "right": "S408:e5",
+   "similarity": 0.9096865653991699,
+   "result": {
+    "decision": "distinct",
+    "direction": null,
+    "reason": "The left record is a criticism by German and UK foreign ministers of the US decision to lift sanctions on Russian diesel; the right record is a separate warning by Zelenskyy that easing sanctions on Russian diesel could lead to further concessions. Different actors (foreign ministers vs. Zelenskyy) and different kinds of speech acts (criticism of a decision vs. a warning about consequences) indicate distinct events, not the same act.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S305:e1",
+   "right": "S408:e2",
+   "similarity": 0.9092438220977783,
+   "result": {
+    "decision": "distinct",
+    "direction": null,
+    "reason": "The records describe different actors making different statements: Trump criticized Ukraine's strikes on Russian oil refineries, while Zelenskyy defended Ukraine's right to conduct such strikes. Although both concern the same object (Ukrainian strikes on Russian refineries), the acts are by different actors with opposing content, so they are distinct events.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S188:e2",
+   "right": "S382:e4",
+   "similarity": 0.9086644649505615,
+   "result": {
+    "decision": "equivalent",
+    "direction": null,
+    "reason": "Both records describe the same Trump-era diesel deal with Russia. The left narrates the announcement and delivery volumes, and the right briefly references it as an existing deal (\"reverse a diesel deal with Russia\"). The actor, the object (diesel) and the Russia link all match. The difference in detail and text role (narrated vs. referenced) does not make them different events.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S387:e1",
+   "right": "S408:e5",
+   "similarity": 0.9081057906150818,
+   "result": {
+    "decision": "distinct",
+    "direction": null,
+    "reason": "The left record is the United States' decision to lift sanctions on Russian diesel as part of a supply deal; the right record is Zelenskyy's warning that such easing could lead to further concessions. They involve different actors and different kinds of action (a US decision versus a Ukrainian warning/reaction), and the right is a response to the easing rather than the same act.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S408:e6",
+   "right": "S465:e2",
+   "similarity": 0.9062086939811707,
+   "result": {
+    "decision": "uncertain",
+    "direction": null,
+    "reason": "Both records mention US sanctions policy toward Russia as background, but they describe different things. The left record is a vague 'easing of sanctions on Russia (including diesel)', with an implied US actor and unclear details. The right record is Trump's specific decision to waive new sanctions. Waiving new sanctions could be a form of easing, or the left record could refer to a different measure, such as relief on existing sanctions on diesel. Neither record has a time, and the left evidence is too thin to confirm they are the same act or to show a positive difference.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S433:e1",
+   "right": "S465:e1",
+   "similarity": 0.9061284065246582,
+   "result": {
+    "decision": "distinct",
+    "direction": null,
+    "reason": "The left record is Trump's act of signing an executive order to waive sanctions/tariffs on Russia; the right record is Russia's verbal characterization of that decision as 'historic'. These are different actors and different kinds of action (an executive signing versus a diplomatic statement) — the right is a reaction to, not the same as, the left.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S433:e1",
+   "right": "S465:e2",
+   "similarity": 0.9049378037452698,
+   "result": {
+    "decision": "equivalent",
+    "direction": null,
+    "reason": "Both records describe Donald Trump waiving a new package of sanctions on Russia. The left record narrates the act as signing an executive order, and the right record briefly refers to it as his decision to waive new sanctions. The actor, action and object match, and neither record gives a conflicting detail. The right record's missing time and its background role reflect a different level of detail, not a different event.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S383:e2",
+   "right": "S408:e6",
+   "similarity": 0.904379665851593,
+   "result": {
+    "decision": "distinct",
+    "direction": null,
+    "reason": "The left record describes a US announcement of an agreement to purchase diesel from Russia, while the right record describes an easing of US sanctions on Russia. These are different acts with different objects (a purchase agreement vs. sanctions relief), and the evidence does not establish that one is a constituent of the other.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S382:e3",
+   "right": "S387:e2",
+   "similarity": 0.9034154415130615,
+   "result": {
+    "decision": "distinct",
+    "direction": null,
+    "reason": "Different actors (six US senators vs. German and UK foreign ministers) and different actions (calling on the administration to reverse a diesel deal vs. criticizing a US decision to lift sanctions on Russian diesel). Though related in topic, they are separate acts by separate actors.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S382:e5",
+   "right": "S387:e3",
+   "similarity": 0.899649977684021,
+   "result": {
+    "decision": "distinct",
+    "direction": null,
+    "reason": "The actors differ (European leaders vs. US President Trump) and the actions differ (expressing support for a ceasefire vs. raising the idea of an 'energy ceasefire'). The records describe different acts, not one constituent of the other.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S382:e1",
+   "right": "S387:e3",
+   "similarity": 0.8982430100440979,
+   "result": {
+    "decision": "uncertain",
+    "direction": null,
+    "reason": "Both records involve Trump and an 'energy ceasefire' in Ukraine. The left record narrates Trump announcing that Russia and Ukraine agreed to an immediate halt to energy infrastructure strikes. The right record only references that Trump raised the idea, as background, with no implementation stated. The right could be a brief reference to the same announcement, or to an earlier proposal or discussion, and neither record has a time or detail that settles which. Nothing shows a positive difference, but identity is not established either.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S188:e1",
+   "right": "S465:e1",
+   "similarity": 0.8981707096099854,
+   "result": {
+    "decision": "distinct",
+    "direction": null,
+    "reason": "The left record describes Trump signing an executive order to waive Russia sanctions; the right record describes Russia's characterization of that decision as 'historic'. These are different actors and different kinds of acts (an executive signing vs. a foreign state's verbal reaction/description), so the right event is a response to, not the same as, the left event.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S382:e3",
+   "right": "S433:e3",
+   "similarity": 0.8964890241622925,
+   "result": {
+    "decision": "distinct",
+    "direction": null,
+    "reason": "The actors and kinds of action differ: the left record describes a bipartisan group of six US senators calling on the Trump administration to reverse a diesel deal, while the right record describes Ukrainian President Zelenskyy criticizing the US-Russia diesel deal. These are separate acts by different actors, not the same event or a constituent part.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S188:e3",
+   "right": "S433:e3",
+   "similarity": 0.8963453769683838,
+   "result": {
+    "decision": "uncertain",
+    "direction": null,
+    "reason": "Both records describe criticism of a US/Trump-Russia energy arrangement by Ukraine's president, so they may refer to the same act. But the left record attributes the criticism to Zelenskyy together with European leaders and describes it as 'energy moves' that are 'a gift to Putin' funding the war. The right record has Zelenskyy alone criticizing a specific 'US-Russia diesel deal' that Ukraine 'cannot accept' because it could lead to further concessions. Neither record gives a time or enough detail to show that 'energy moves' means the diesel deal, or that the statements are the same one. Nothing positively shows they are different acts, and nothing positively shows they are the same one.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S408:e4",
+   "right": "S433:e3",
+   "similarity": 0.8954739570617676,
+   "result": {
+    "decision": "distinct",
+    "direction": null,
+    "reason": "The left record is Zelenskyy accusing Putin of lacking genuine interest in peace negotiations; the right record is Zelenskyy criticizing a US-Russia diesel deal. Different actions and different objects, so they are distinct acts despite sharing the same actor.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S389:e4",
+   "right": "S408:e6",
+   "similarity": 0.8950672149658203,
+   "result": {
+    "decision": "uncertain",
+    "direction": null,
+    "reason": "Both records are vague background references. The left one mentions 'a Russian diesel deal' cited by Zelenskyy, with unspecified actors. The right one mentions 'U.S. sanctions easing', which includes diesel in its object. They may point to the same arrangement, such as a sanctions easing that covers Russian diesel. However, a deal and a sanctions easing are different kinds of act, and neither record gives enough detail (actor, time, terms) to show that they are the same act, that one is part of the other, or that they differ. No positive difference is established, and identity is not supported either.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S382:e2",
+   "right": "S408:e4",
+   "similarity": 0.8947372436523438,
+   "result": {
+    "decision": "distinct",
+    "direction": null,
+    "reason": "The left record concerns Zelenskyy's statement about the announced energy ceasefire (unaware of it; Ukraine would agree if Russia did), while the right record concerns a separate accusation that Putin has no genuine interest in peace negotiations. These are different speech acts with different objects, not the same concrete act.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S188:e1",
+   "right": "S465:e2",
+   "similarity": 0.8944073915481567,
+   "result": {
+    "decision": "equivalent",
+    "direction": null,
+    "reason": "Both records describe Trump waiving the newly passed sanctions on Russia. The left narrates the act, an executive order signed days before the sanctions were due to take effect. The right only references it as Trump's decision to waive new sanctions on Russia. The actor, action and object match, and nothing in either record conflicts. The right's lack of time and detail reflects its background role, not a different event.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S188:e2",
+   "right": "S433:e3",
+   "similarity": 0.8940999507904053,
+   "result": {
+    "decision": "distinct",
+    "direction": null,
+    "reason": "The left record describes President Trump announcing a diesel deal; the right record describes President Zelenskyy criticizing that deal. Different actors and different kinds of action (announcement vs. criticism); the right is a reaction to the deal rather than the same act.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S389:e2",
+   "right": "S433:e3",
+   "similarity": 0.8935428857803345,
+   "result": {
+    "decision": "distinct",
+    "direction": null,
+    "reason": "Both records involve Zelenskyy making a statement, but the objects and content differ: the left is a general statement that US-Ukraine relations have worsened and the US seems less prioritised toward Ukraine and more sympathetic to Russia; the right is a specific criticism of a US-Russia diesel deal as unacceptable because it could lead to further concessions. These are different kinds of statements about different objects, and neither is shown to be a component of the other.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S188:e3",
+   "right": "S382:e3",
+   "similarity": 0.8929083347320557,
+   "result": {
+    "decision": "distinct",
+    "direction": null,
+    "reason": "The two records describe different actors and different kinds of action: left has Ukraine's President and European leaders criticizing Trump's energy moves with Russia, while right has a bipartisan group of six US senators calling on the Trump administration to reverse a diesel deal with Russia. Different actors (Ukrainian/European leaders vs US senators) and different acts (criticism vs a formal call to reverse a deal), so they are not the same event and neither is a constituent of the other.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S387:e1",
+   "right": "S465:e2",
+   "similarity": 0.8915918469429016,
+   "result": {
+    "decision": "uncertain",
+    "direction": null,
+    "reason": "Both records refer to a US decision about Russia sanctions, but the details differ and neither is enough to settle identity. The left record is about lifting sanctions on Russian diesel as part of a supply deal. The right record is about President Trump waiving new sanctions on Russia, with no mention of diesel or a deal. These could be one decision described at different levels of detail, or two separate sanctions decisions. Neither record has a date or any other detail that would decide it, and there is no positive evidence of a different act.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S188:e2",
+   "right": "S382:e3",
+   "similarity": 0.8914811015129089,
+   "result": {
+    "decision": "distinct",
+    "direction": null,
+    "reason": "The left record is President Trump's announcement of a deal to bring Russian diesel into global markets; the right record is a bipartisan group of six senators calling on the administration to reverse that diesel deal. Different actors and different kinds of action (announcing a deal vs. urging its reversal), with the senators' call being a response to the deal rather than the same act.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S383:e2",
+   "right": "S387:e2",
+   "similarity": 0.8886411190032959,
+   "result": {
+    "decision": "distinct",
+    "direction": null,
+    "reason": "The left record is the US announcement of a diesel purchase agreement with Russia; the right record is the German and UK foreign ministers' criticism of the US decision to lift sanctions on Russian diesel. Different actors (US/Trump vs. German and UK foreign ministers) and different kinds of action (announcing an agreement vs. criticizing a sanctions decision). The criticism is a reaction to a related US decision, not the same act.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S382:e5",
+   "right": "S387:e4",
+   "similarity": 0.8882902264595032,
+   "result": {
+    "decision": "distinct",
+    "direction": null,
+    "reason": "The left record is a collective statement by European leaders (including the Commission President and UK PM) supporting Zelenskyy and a ceasefire protecting energy infrastructure. The right record is a separate statement by UK Foreign Secretary Ed Miliband that Trump's 'energy ceasefire' idea should be taken seriously and pursued. Different actor (European leaders/UK PM vs. Foreign Secretary Miliband), different object (ceasefire protecting energy infrastructure and support for Zelenskyy vs. Trump's energy ceasefire idea), and different kind of act (expression of support vs. calling for an idea to be pursued). The records show different acts, not the same event.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S387:e2",
+   "right": "S408:e6",
+   "similarity": 0.8877463936805725,
+   "result": {
+    "decision": "distinct",
+    "direction": null,
+    "reason": "The left record is the criticism by German and UK foreign ministers of a US decision to lift sanctions on Russian diesel; the right record is the US easing of sanctions on Russia itself. The actors differ (critics vs. the United States) and the acts differ (verbal criticism vs. the sanctions-easing policy), so the criticism is a reaction to, not the same as, the easing.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S188:e3",
+   "right": "S387:e2",
+   "similarity": 0.8874448537826538,
+   "result": {
+    "decision": "distinct",
+    "direction": null,
+    "reason": "Both records describe criticism of US energy/sanctions policy toward Russia, but the actors differ (Ukraine's President and European leaders vs. German and UK foreign ministers) and the objects differ (Trump's energy moves with Russia vs. the US decision to lift sanctions on Russian diesel as part of a supply deal). Different actors and a different objected action indicate distinct acts.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S305:e1",
+   "right": "S433:e3",
+   "similarity": 0.8874093890190125,
+   "result": {
+    "decision": "distinct",
+    "direction": null,
+    "reason": "Different actor (Trump vs. Zelenskyy), different object (Ukraine's strikes on Russian refineries vs. US-Russia diesel deal), and different criticism content; no shared concrete act.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S305:e1",
+   "right": "S387:e2",
+   "similarity": 0.8871790170669556,
+   "result": {
+    "decision": "distinct",
+    "direction": null,
+    "reason": "The left record is Donald Trump criticizing Ukraine's strikes on Russian oil refineries; the right record is German and UK foreign ministers criticizing the US decision to lift sanctions on Russian diesel. Different actors, different objects, and different criticized actions, so they are different acts.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S188:e3",
+   "right": "S305:e1",
+   "similarity": 0.8859672546386719,
+   "result": {
+    "decision": "distinct",
+    "direction": null,
+    "reason": "The left record is criticism by Ukraine's President and European leaders of Trump's energy moves with Russia; the right record is Trump criticizing Ukraine's strikes on Russian oil refineries. Different actors (critics vs. Trump), different objects of criticism (Trump's energy moves vs. Ukraine's strikes), and opposite directions of criticism.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S382:e5",
+   "right": "S389:e1",
+   "similarity": 0.8857953548431396,
+   "result": {
+    "decision": "distinct",
+    "direction": null,
+    "reason": "The left record describes European leaders and the UK Prime Minister expressing support for Zelenskyy and a ceasefire on energy infrastructure. The right record describes Zelenskyy urging EU leaders to supply military power and financial support. The actors, actions, and objects differ: one is leaders voicing support for a ceasefire, the other is Zelenskyy making an appeal for military and financial aid. These are different acts, not the same event or a component of it.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S188:e1",
+   "right": "S408:e5",
+   "similarity": 0.8854672312736511,
+   "result": {
+    "decision": "distinct",
+    "direction": null,
+    "reason": "The left record is Trump signing an executive order waiving Russia sanctions; the right record is Zelenskyy warning that easing sanctions on Russian diesel could lead to further concessions. Different actors (Trump vs. Zelenskyy) and different acts (signing a waiver vs. issuing a warning), with the warning being a reaction rather than the same event.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S382:e2",
+   "right": "S387:e3",
+   "similarity": 0.8853727579116821,
+   "result": {
+    "decision": "distinct",
+    "direction": null,
+    "reason": "The left record describes Zelenskyy's statement about being unaware of a ceasefire announcement and Ukraine's conditional agreement; the right record describes Trump raising the idea of an 'energy ceasefire'. These are different actors performing different actions (a statement by Zelenskyy vs. proposing an idea by Trump), not the same concrete act.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S188:e2",
+   "right": "S408:e5",
+   "similarity": 0.8851917386054993,
+   "result": {
+    "decision": "distinct",
+    "direction": null,
+    "reason": "The left record is President Trump announcing a deal to bring Russian diesel into global markets; the right record is Zelenskyy warning that easing sanctions on Russian diesel could lead to further concessions. Different actors (Trump vs. Zelenskyy) and different kinds of acts (announcing a deal vs. issuing a warning) establish distinctness, even though both concern Russian diesel.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S382:e2",
+   "right": "S433:e3",
+   "similarity": 0.8843817710876465,
+   "result": {
+    "decision": "distinct",
+    "direction": null,
+    "reason": "Both records involve statements by Zelenskyy, but they concern different objects and different kinds of action: the left is a statement of unawareness/conditional agreement regarding an announced energy ceasefire, while the right is criticism of a US-Russia diesel deal. Different object and different act, not merely different emphasis.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S408:e5",
+   "right": "S433:e3",
+   "similarity": 0.8836369514465332,
+   "result": {
+    "decision": "equivalent",
+    "direction": null,
+    "reason": "Both records describe Zelenskyy publicly warning against or criticizing the easing of sanctions on Russian diesel (the US-Russia diesel deal), with the same stated rationale that it could lead to further concessions. The differences are only wording and emphasis (\"warned\" vs \"criticized\", \"easing of sanctions\" vs \"deal\"). Same actor, object, and speech act, with no conflicting details.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S382:e2",
+   "right": "S387:e4",
+   "similarity": 0.8830378651618958,
+   "result": {
+    "decision": "distinct",
+    "direction": null,
+    "reason": "The records attribute statements to different actors about the energy ceasefire: Zelenskyy said he was unaware of the announcement and that Ukraine would agree if Russia did, whereas UK Foreign Secretary Ed Miliband said Trump's idea should be taken seriously and pursued. These are different speakers making different statements, so they are separate acts.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S383:e1",
+   "right": "S408:e6",
+   "similarity": 0.8817763328552246,
+   "result": {
+    "decision": "uncertain",
+    "direction": null,
+    "reason": "The left record narrates a specific act: Trump signing an executive order that waives new sanctions on Russia. The right record only mentions \"U.S. sanctions easing\" in passing, as background. It gives no actor, no mechanism, no date, and its actuality is unclear (\"occurring or under consideration\"). It also adds \"including diesel\", which the left record does not mention. The right record could be a brief reference to the left act, but it could equally refer to a different easing measure, such as a general license or a diesel-specific action. Nothing in either record positively establishes identity or a difference, so the evidence is insufficient to decide.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S382:e3",
+   "right": "S387:e1",
+   "similarity": 0.8816546201705933,
+   "result": {
+    "decision": "distinct",
+    "direction": null,
+    "reason": "The left record is a call by six senators urging reversal of a diesel deal; the right record is the US decision to lift sanctions on Russian diesel as part of that supply deal. These are different acts by different actors (senators' appeal vs. the US administration's decision), and the senators' call is a reaction to the decision rather than the same act.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S305:e1",
+   "right": "S382:e2",
+   "similarity": 0.8807048201560974,
+   "result": {
+    "decision": "distinct",
+    "direction": null,
+    "reason": "The two records describe statements by different actors (Donald Trump vs. Volodymyr Zelenskyy) about different objects (Ukrainian strikes on Russian oil refineries vs. an announced energy ceasefire). Neither is a constituent of the other; they are separate statements.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S387:e3",
+   "right": "S389:e6",
+   "similarity": 0.8805490732192993,
+   "result": {
+    "decision": "distinct",
+    "direction": null,
+    "reason": "The left record is about US President Trump raising an 'energy ceasefire' idea; the right record is about a slowdown of Starlink satellite internet in Ukraine. These are different actions by different (or unspecified) actors on different objects, with no evidence that one is a constituent of the other.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S305:e2",
+   "right": "S465:e2",
+   "similarity": 0.8804371953010559,
+   "result": {
+    "decision": "distinct",
+    "direction": null,
+    "reason": "The records describe different actors and different actions: Ukraine resuming strikes on Russian oil refineries versus US President Donald Trump deciding to waive new sanctions on Russia. These are separate acts by different actors with different objects, not the same event nor a constituent part of one another.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S305:e2",
+   "right": "S389:e4",
+   "similarity": 0.8798608779907227,
+   "result": {
+    "decision": "distinct",
+    "direction": null,
+    "reason": "The left record concerns Ukraine resuming strikes on Russian oil refineries; the right record concerns a referenced Russian diesel deal cited by Zelenskyy. Different actors, actions, and objects, with no evidence that one is a constituent of the other.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S305:e1",
+   "right": "S408:e3",
+   "similarity": 0.8793235421180725,
+   "result": {
+    "decision": "distinct",
+    "direction": null,
+    "reason": "The left record is Trump's verbal criticism of Ukraine's strikes; the right record is the strikes themselves. Different actors (Trump vs Ukraine) and different kinds of action (a statement vs military strikes), so one is not the same act as the other; the right event is the object of the left's critique rather than its equivalent or component.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S305:e2",
+   "right": "S382:e4",
+   "similarity": 0.879083514213562,
+   "result": {
+    "decision": "distinct",
+    "direction": null,
+    "reason": "The left record concerns Ukraine resuming strikes on Russian oil refineries; the right record concerns the Trump administration/Trump and Putin making a diesel deal with Russia. Different actors, actions, and objects; neither is a constituent of the other.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S188:e2",
+   "right": "S382:e1",
+   "similarity": 0.878777027130127,
+   "result": {
+    "decision": "distinct",
+    "direction": null,
+    "reason": "The left record concerns Trump announcing a deal to bring Russian diesel into global markets to lower energy prices; the right record concerns Trump announcing a Russia-Ukraine halt to strikes on each other's energy infrastructure. Different objects (diesel deliveries vs. energy-infrastructure strikes) and different agreements, even though the same actor (Trump) announced each.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S305:e2",
+   "right": "S408:e6",
+   "similarity": 0.8782551288604736,
+   "result": {
+    "decision": "distinct",
+    "direction": null,
+    "reason": "The left record concerns Ukraine resuming strikes on Russian oil refineries; the right record concerns a U.S. easing of sanctions on Russia. They have different actors (Ukraine vs. United States) and different kinds of action (military strikes vs. sanctions policy), so they are separate acts rather than the same event or a component of one another.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S188:e3",
+   "right": "S408:e1",
+   "similarity": 0.8776673078536987,
+   "result": {
+    "decision": "distinct",
+    "direction": null,
+    "reason": "The left record describes Ukraine's President and European leaders criticizing Trump's energy moves with Russia as a gift to Putin that funds the war. The right record describes Zelenskyy stating that negotiating with Trump is easier than dealing with Putin. These are different speech acts with different objects and content: criticism of energy policy versus a comparative statement about negotiating ease. Different actors and different kinds of statements, so they are distinct.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S389:e1",
+   "right": "S408:e2",
+   "similarity": 0.8773466348648071,
+   "result": {
+    "decision": "distinct",
+    "direction": null,
+    "reason": "The left record describes Zelenskyy appealing to EU leaders for military and financial support; the right record describes Zelenskyy defending Ukraine's right to strike Russian oil refineries as lawful. These are different actions with different objects and audiences, and neither is a constituent of the other.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S305:e1",
+   "right": "S382:e1",
+   "similarity": 0.87718665599823,
+   "result": {
+    "decision": "distinct",
+    "direction": null,
+    "reason": "The left record reports Trump criticizing Ukraine's strikes on Russian oil refineries as a disgrace, while the right record reports Trump announcing a Russia-Ukraine agreement to halt strikes on each other's energy infrastructure. These are different statements about different objects: a criticism of resumed strikes versus an announcement of a ceasefire agreement.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S188:e2",
+   "right": "S387:e3",
+   "similarity": 0.8763973712921143,
+   "result": {
+    "decision": "distinct",
+    "direction": null,
+    "reason": "The left record describes Trump announcing a deal to bring Russian diesel into global markets to lower energy prices; the right record describes Trump raising an 'energy ceasefire' idea in Ukraine. These are different actions with different objects (diesel import deal vs. a ceasefire proposal), so one is not a constituent of the other.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S382:e4",
+   "right": "S408:e3",
+   "similarity": 0.8757408857345581,
+   "result": {
+    "decision": "distinct",
+    "direction": null,
+    "reason": "Left record describes a diesel deal made by the Trump administration/Trump and Putin; right record describes Ukraine's strikes on Russian oil refineries. Different actors and different kinds of action (a deal vs. military strikes), so these are different acts, not the same event or a constituent of one another.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S383:e2",
+   "right": "S433:e4",
+   "similarity": 0.8752151727676392,
+   "result": {
+    "decision": "equivalent",
+    "direction": null,
+    "reason": "Both records refer to the same US-Russia diesel purchase deal. The left says Trump announced a US agreement to purchase diesel from Russia, and the right mentions a US-Russia diesel deal. Both are background references with the same actors and object. The right record's missing time and details do not conflict with the left.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S188:e3",
+   "right": "S408:e4",
+   "similarity": 0.874514102935791,
+   "result": {
+    "decision": "distinct",
+    "direction": null,
+    "reason": "The left record concerns Ukraine's President and European leaders criticizing Trump's energy moves with Russia as a gift to Putin; the right record concerns Zelenskyy accusing Putin of lacking genuine interest in peace negotiations and wanting war to continue. The actors differ (collective leaders vs. Zelenskyy alone), the objects differ (Trump's energy moves vs. Putin/peace negotiations), and the actions differ (criticism of energy policy vs. accusation about peace intentions), so these are different acts.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S433:e2",
+   "right": "S465:e1",
+   "similarity": 0.8744336366653442,
+   "result": {
+    "decision": "equivalent",
+    "direction": null,
+    "reason": "Both records describe a Russian statement calling the US decision to put sanctions on hold or waive new sanctions 'historic'. The left record names Kirill Dmitriev, a Russian presidential envoy, as the speaker. The right record attributes the statement to 'Russia' generally. That is a difference in granularity, not a conflict. The speech act, the object (the sanctions decision) and the characterization are the same, and neither record gives a time that conflicts with the other.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S387:e1",
+   "right": "S408:e7",
+   "similarity": 0.8731658458709717,
+   "result": {
+    "decision": "distinct",
+    "direction": null,
+    "reason": "The left record describes a US decision to lift sanctions on Russian diesel as part of a supply deal; the right record describes a statement by Ursula von der Leyen that the EU would not lift sanctions until Russia ends the war. Different actors (US vs EU/von der Leyen), different kinds of action (a sanctions-lifting decision vs a public statement of refusal), and different objects (US sanctions on Russian diesel vs EU sanctions on Russia). These are separate acts.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S387:e2",
+   "right": "S465:e1",
+   "similarity": 0.8725976943969727,
+   "result": {
+    "decision": "distinct",
+    "direction": null,
+    "reason": "The left record concerns German and UK foreign ministers criticizing a US decision to lift sanctions on Russian diesel; the right record concerns Russia describing Trump's decision to waive new sanctions on Russia as 'historic'. They have different actors (German/UK ministers vs Russia), different actions (criticism vs praise), and different objects (lifting diesel sanctions vs waiving new sanctions), so they are different acts rather than the same event or a component relationship.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S408:e6",
+   "right": "S433:e1",
+   "similarity": 0.872040867805481,
+   "result": {
+    "decision": "uncertain",
+    "direction": null,
+    "reason": "The left record only mentions in passing a U.S. 'sanctions easing' on Russia (including diesel), with no actor, time or concrete act. The right record describes a specific act: Trump signing an executive order waiving a new package of sanctions and tariffs. They could be the same, but the left may refer to a broader or different easing (such as diesel-specific measures), and nothing in the evidence ties it to the executive order. Equivalence, distinctness and a part relationship are all unsupported.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S382:e1",
+   "right": "S408:e2",
+   "similarity": 0.871437132358551,
+   "result": {
+    "decision": "distinct",
+    "direction": null,
+    "reason": "The left record is Trump's announcement of a claimed Russia-Ukraine agreement to halt strikes on energy infrastructure; the right record is Zelenskyy's defense of Ukraine's right to strike Russian oil refineries as lawful self-defense. These are different actors performing different acts (an announcement of an alleged agreement vs. a justification of continuing strikes), with the right record effectively contradicting or responding to the premise of halting such strikes.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S188:e3",
+   "right": "S389:e2",
+   "similarity": 0.8707132339477539,
+   "result": {
+    "decision": "distinct",
+    "direction": null,
+    "reason": "The left record describes a criticism by Ukraine's President together with European leaders targeting Trump's energy moves with Russia, calling them a gift to Putin that funds the war. The right record describes a separate statement by Zelenskyy about worsened US-Ukraine relations and the US appearing less prioritized toward Ukraine and more sympathetic to Russia. The actors differ (a joint criticism with European leaders versus Zelenskyy alone), the objects differ (Trump's energy moves versus US-Ukraine relations broadly), and the actions differ (voicing criticism versus making a relational assessment).",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S305:e1",
+   "right": "S389:e2",
+   "similarity": 0.8705714344978333,
+   "result": {
+    "decision": "distinct",
+    "direction": null,
+    "reason": "The two records identify different actors making different statements about different objects: the left records Trump criticizing Ukraine's strikes on Russian oil refineries, while the right records Zelenskyy stating that US-Ukraine relations have worsened and the US appears more sympathetic to Russia. These are separate speech acts with different speakers and content, not the same act or a component of one another.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S408:e3",
+   "right": "S465:e2",
+   "similarity": 0.8702589869499207,
+   "result": {
+    "decision": "distinct",
+    "direction": null,
+    "reason": "The records describe different acts by different actors: Ukraine conducting strikes on Russian oil refineries versus US President Donald Trump deciding to waive new sanctions on Russia. Neither is a constituent of the other; the only connection is a shared Russia-related news context.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S382:e5",
+   "right": "S408:e2",
+   "similarity": 0.86910080909729,
+   "result": {
+    "decision": "distinct",
+    "direction": null,
+    "reason": "The left record is a statement by European leaders expressing support for Zelenskyy and a ceasefire on energy infrastructure; the right record is a separate statement by Zelenskyy defending Ukraine's right to strike Russian oil refineries. Different actors (European leaders vs. Zelenskyy) and different actions/objects (support and ceasefire advocacy vs. defense of refinery strikes).",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S382:e2",
+   "right": "S408:e7",
+   "similarity": 0.868721604347229,
+   "result": {
+    "decision": "distinct",
+    "direction": null,
+    "reason": "The two records describe different actors making different statements about different objects: Zelenskyy commenting on the energy ceasefire announcement, and von der Leyen stating the EU's sanctions position. Neither is a constituent of the other, and they are separate concrete acts.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S408:e8",
+   "right": "S465:e2",
+   "similarity": 0.8686385750770569,
+   "result": {
+    "decision": "distinct",
+    "direction": null,
+    "reason": "The left record describes António Costa calling for increased pressure on Moscow, while the right record describes Donald Trump deciding to waive new sanctions on Russia. These are different actors performing different actions (calling for pressure vs. waiving sanctions) with different objects, so they are distinct events.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S188:e3",
+   "right": "S382:e5",
+   "similarity": 0.8684717416763306,
+   "result": {
+    "decision": "distinct",
+    "direction": null,
+    "reason": "The left record describes criticism of Trump's energy moves with Russia as a gift to Putin; the right record describes European leaders expressing support for Zelenskyy and a ceasefire protecting energy infrastructure. Different actions (criticism vs. support) and different objects (Trump's energy moves vs. Zelenskyy/ceasefire), with no evidence that one is a constituent of the other.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S188:e1",
+   "right": "S408:e2",
+   "similarity": 0.8684449195861816,
+   "result": {
+    "decision": "distinct",
+    "direction": null,
+    "reason": "The left record describes Trump signing an executive order waiving Russia sanctions; the right record describes Zelenskyy defending Ukraine's right to strike Russian oil refineries. Different actors, different kinds of action (a sanctions-waiver order vs. a statement of justification), and different objects.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S383:e1",
+   "right": "S408:e7",
+   "similarity": 0.8664750456809998,
+   "result": {
+    "decision": "distinct",
+    "direction": null,
+    "reason": "The left record concerns President Trump signing an executive order waiving new US sanctions on Russia; the right record concerns Ursula von der Leyen stating the EU would not lift sanctions until Russia ends the war. Different actors, different kinds of action (executive order vs. statement), and different sanctions regimes (US vs. EU).",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S389:e2",
+   "right": "S408:e4",
+   "similarity": 0.8662742376327515,
+   "result": {
+    "decision": "distinct",
+    "direction": null,
+    "reason": "The records describe different statements by Zelenskyy: the left is a statement about US-Ukraine relations worsening and US sympathy toward Russia; the right is an accusation that Putin has no genuine interest in peace negotiations and wants war to continue. Different object and different content of the act, so they are distinct.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S188:e3",
+   "right": "S382:e1",
+   "similarity": 0.8660787343978882,
+   "result": {
+    "decision": "distinct",
+    "direction": null,
+    "reason": "The left record is criticism by Ukraine's President and European leaders of Trump's energy moves with Russia; the right record is Trump's announcement of a Russia-Ukraine energy ceasefire. Different actors (critics vs. Trump), different actions (voicing criticism vs. announcing an agreement), and different objects (Trump's energy moves vs. an energy infrastructure strike halt). The left is a reaction/criticism concerning policy, not the announced ceasefire event.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S382:e4",
+   "right": "S408:e8",
+   "similarity": 0.8658629655838013,
+   "result": {
+    "decision": "distinct",
+    "direction": null,
+    "reason": "The left record describes the Trump administration/Trump and Putin making a diesel deal with Russia; the right record describes António Costa calling for increased pressure on Moscow. These are different actors performing different actions (a deal versus a call for pressure), so they are distinct events.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S382:e2",
+   "right": "S389:e2",
+   "similarity": 0.8657647371292114,
+   "result": {
+    "decision": "distinct",
+    "direction": null,
+    "reason": "The records describe two different statements by Zelenskyy: the left is about a ceasefire announcement (unaware, willing if Russia agrees), while the right is about worsening US-Ukraine relations and US alignment toward Russia. Different objects and content of the statements, so they are different acts.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S188:e3",
+   "right": "S387:e4",
+   "similarity": 0.8657159805297852,
+   "result": {
+    "decision": "distinct",
+    "direction": null,
+    "reason": "The left record describes criticism of Trump's energy moves with Russia as a gift to Putin by Ukraine's President and European leaders; the right record describes UK Foreign Secretary Ed Miliband urging that Trump's 'energy ceasefire' idea be taken seriously and pursued. Different actors, different actions (criticizing versus endorsing/pursuing), and different objects (energy moves with Russia versus an 'energy ceasefire' idea).",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S305:e2",
+   "right": "S408:e8",
+   "similarity": 0.8647592067718506,
+   "result": {
+    "decision": "distinct",
+    "direction": null,
+    "reason": "The left record concerns Ukraine resuming strikes on Russian oil refineries; the right record concerns António Costa calling for increased pressure on Moscow. Different actors, different kinds of action, and no evidence that one is a constituent of the other.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S387:e3",
+   "right": "S408:e4",
+   "similarity": 0.8633798360824585,
+   "result": {
+    "decision": "distinct",
+    "direction": null,
+    "reason": "The two records describe different actors and different acts: the left records Trump raising an 'energy ceasefire' idea, while the right records Zelenskyy accusing Putin of lacking genuine interest in peace negotiations. These are separate speech acts by different actors, not the same event, and neither is a constituent of the other.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S387:e2",
+   "right": "S408:e7",
+   "similarity": 0.8629869222640991,
+   "result": {
+    "decision": "distinct",
+    "direction": null,
+    "reason": "The left record concerns German and UK foreign ministers criticizing a US decision to lift sanctions on Russian diesel. The right record concerns Ursula von der Leyen stating the EU would not lift sanctions until Russia ends the war. The actors differ (German/UK foreign ministers vs. von der Leyen), the target sanctions differ (US sanctions on Russian diesel vs. EU sanctions on Russia), and the actions differ (criticism of another actor's decision vs. a statement of the EU's own policy). These are separate statements by different actors about different sanctions regimes.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S305:e1",
+   "right": "S389:e5",
+   "similarity": 0.8626439571380615,
+   "result": {
+    "decision": "distinct",
+    "direction": null,
+    "reason": "The two records describe different acts by different actors on different objects: Trump criticized Ukraine's strikes on Russian oil refineries, while Zelenskyy expressed surprise at Starlink disruptions and discussed seeking partial solutions with countries like France. Neither is a constituent of the other.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S387:e1",
+   "right": "S433:e4",
+   "similarity": 0.8619145750999451,
+   "result": {
+    "decision": "uncertain",
+    "direction": null,
+    "reason": "Both records are brief background mentions. The left record describes the US decision to lift sanctions on Russian diesel, which it says was part of a supply deal. The right record mentions only a US-Russia diesel deal, with no terms or details. They probably concern the same story, but the left event is the sanctions-lifting decision and the right event is the deal itself. The right record does not say the deal included lifting sanctions, so the evidence does not show whether they are the same act or whether the decision is a term of the deal. Neither record has a time, so time cannot settle it. No positive difference is shown either.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S382:e2",
+   "right": "S389:e5",
+   "similarity": 0.861740231513977,
+   "result": {
+    "decision": "distinct",
+    "direction": null,
+    "reason": "The left record concerns Zelenskyy's statement on an energy ceasefire announcement (unaware of it, would agree if Russia did), while the right record concerns a different statement about Starlink internet disruptions and seeking partial solutions with countries like France. Different objects and different actions; no constituent relationship is supported.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S389:e6",
+   "right": "S408:e3",
+   "similarity": 0.8614650964736938,
+   "result": {
+    "decision": "distinct",
+    "direction": null,
+    "reason": "The left record concerns a slowdown/disruption of Ukraine's Starlink satellite internet affecting defense capabilities; the right record concerns Ukrainian strikes on Russian oil refineries. These are different actions on different objects by different (or unspecified) actors, with no component relationship supported by the evidence.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S389:e2",
+   "right": "S408:e1",
+   "similarity": 0.8594679832458496,
+   "result": {
+    "decision": "distinct",
+    "direction": null,
+    "reason": "Both records describe statements by Zelenskyy, but they concern different statements: the left concerns worsening US-Ukraine relations and perceived US sympathy toward Russia, while the right concerns the comparative ease of negotiating with Trump versus Putin. Different objects and content of the statements indicate different acts.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S389:e6",
+   "right": "S433:e3",
+   "similarity": 0.859289288520813,
+   "result": {
+    "decision": "distinct",
+    "direction": null,
+    "reason": "The left record concerns a slowdown of Ukraine's Starlink satellite internet affecting defense capabilities; the right record concerns Zelenskyy's criticism of a US-Russia diesel deal. Different actors, actions, and objects with no constituent relationship supported.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S408:e7",
+   "right": "S433:e1",
+   "similarity": 0.8590875864028931,
+   "result": {
+    "decision": "distinct",
+    "direction": null,
+    "reason": "The left record is a statement by Ursula von der Leyen about EU sanctions not being lifted until Russia ends the war; the right record is Donald Trump signing an executive order waiving a new package of US sanctions and tariffs on Russia. Different actors (von der Leyen vs. Trump), different actions (stating a condition vs. signing an order), different objects (EU sanctions vs. US sanctions/tariffs), so they are distinct acts.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S389:e5",
+   "right": "S433:e3",
+   "similarity": 0.8584924936294556,
+   "result": {
+    "decision": "distinct",
+    "direction": null,
+    "reason": "The left record concerns Zelenskyy's reaction to Starlink internet disruptions and seeking partial solutions with countries like France; the right record concerns Zelenskyy criticizing a US-Russia diesel deal. They are different statements about different objects (Starlink slowdown vs. diesel deal), so they show different acts.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S387:e3",
+   "right": "S408:e8",
+   "similarity": 0.858364462852478,
+   "result": {
+    "decision": "distinct",
+    "direction": null,
+    "reason": "The left record concerns US President Trump raising an idea of an 'energy ceasefire' in Ukraine; the right record concerns António Costa calling for increased pressure on Moscow. Different actors and different kinds of action, with no evidence that one is a constituent of the other.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S188:e3",
+   "right": "S389:e1",
+   "similarity": 0.8581419587135315,
+   "result": {
+    "decision": "distinct",
+    "direction": null,
+    "reason": "The left record describes Ukraine's President and European leaders criticizing Trump's energy moves with Russia as a gift to Putin; the right record describes Zelenskyy urging EU leaders to supply military and financial support. These are different acts: criticism of a third party's policy versus an appeal for aid, with different objects and different actor sets.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S382:e1",
+   "right": "S389:e1",
+   "similarity": 0.8568692207336426,
+   "result": {
+    "decision": "distinct",
+    "direction": null,
+    "reason": "The left record describes US President Trump announcing a Russia-Ukraine energy-infrastructure strike halt; the right record describes Ukrainian President Zelenskyy urging EU leaders for military and financial support. Different actors, actions, and objects; no constituent relationship is supported by the evidence.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S188:e2",
+   "right": "S433:e4",
+   "similarity": 0.8565665483474731,
+   "result": {
+    "decision": "equivalent",
+    "direction": null,
+    "reason": "Both records describe a US-Russia diesel deal. The left says President Trump announced a deal to bring Russian diesel into global markets, and the right briefly references 'a US-Russia diesel deal'. The actors (Trump for the US, with Russia), the object (diesel) and the action (a deal) are consistent. The right is a background reference with less detail, which does not make the events different. Neither record states a time, and neither contradicts the other.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S389:e6",
+   "right": "S408:e6",
+   "similarity": 0.8548772931098938,
+   "result": {
+    "decision": "distinct",
+    "direction": null,
+    "reason": "The left record concerns disruptions to Ukraine's Starlink satellite internet service, while the right record concerns the easing of U.S. sanctions on Russia (including diesel). They describe different actions on different objects by different (or unspecified) actors, with no evidence that one is a constituent of the other.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S389:e5",
+   "right": "S408:e2",
+   "similarity": 0.8548420667648315,
+   "result": {
+    "decision": "distinct",
+    "direction": null,
+    "reason": "Both records are statements by Zelenskyy, but they concern different acts: the left is about Starlink disruptions and seeking partial solutions with countries like France, while the right is a defense of Ukraine's right to strike Russian oil refineries. Different object and kind of statement; no constituent relationship is supported.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S382:e3",
+   "right": "S408:e1",
+   "similarity": 0.8547119498252869,
+   "result": {
+    "decision": "distinct",
+    "direction": null,
+    "reason": "The left record is a call by six bipartisan US senators directed at the Trump administration to reverse a diesel deal with Russia. The right record is a statement by Volodymyr Zelenskyy comparing negotiating with Trump to dealing with Putin. The actors, actions, and objects are different, with no evidence that either is a constituent of the other.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S188:e1",
+   "right": "S433:e2",
+   "similarity": 0.8540219068527222,
+   "result": {
+    "decision": "distinct",
+    "direction": null,
+    "reason": "The left record describes Trump signing an executive order waiving Russia sanctions; the right record describes Kirill Dmitriev making a statement calling the decision to put sanctions on hold significant. These are different actors and different kinds of acts (an executive signing versus a verbal characterization/reaction), so the right event is a response to rather than the same act as the left.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S389:e6",
+   "right": "S408:e4",
+   "similarity": 0.8528878092765808,
+   "result": {
+    "decision": "distinct",
+    "direction": null,
+    "reason": "The left record concerns a reported slowdown of Ukraine's Starlink service affecting defense capabilities; the right record is Zelenskyy's accusation that Putin lacks genuine interest in peace negotiations. They involve different actions (technical service disruption vs. a verbal accusation), different objects (Starlink service vs. Putin/negotiations), and no evidence links them as the same act or as a component relationship.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S408:e1",
+   "right": "S433:e3",
+   "similarity": 0.8514487147331238,
+   "result": {
+    "decision": "distinct",
+    "direction": null,
+    "reason": "The left record is a statement comparing ease of negotiating with Trump versus Putin; the right record is a criticism of a specific US-Russia diesel deal. Different action and object, so they are different acts.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S383:e2",
+   "right": "S408:e8",
+   "similarity": 0.850981593132019,
+   "result": {
+    "decision": "distinct",
+    "direction": null,
+    "reason": "The left record concerns President Donald Trump/US announcing a US agreement to purchase diesel from Russia; the right record concerns António Costa calling for increased pressure on Moscow. Different actors and different kinds of action, with no stated overlap connecting them as the same or constituent event.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S387:e3",
+   "right": "S389:e1",
+   "similarity": 0.8499161005020142,
+   "result": {
+    "decision": "distinct",
+    "direction": null,
+    "reason": "The left record describes US President Trump raising an idea of an 'energy ceasefire' in Ukraine, while the right record describes Ukrainian President Zelenskyy urging EU leaders for military and financial support. These are different actors and different kinds of actions with different objects, so they are distinct events.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S383:e1",
+   "right": "S433:e2",
+   "similarity": 0.8498953580856323,
+   "result": {
+    "decision": "distinct",
+    "direction": null,
+    "reason": "The left record describes Trump signing an executive order to waive new US sanctions on Russia. The right record describes a statement by Russian envoy Kirill Dmitriev characterizing the decision to pause the sanctions as significant and historic. These are different acts by different actors (an official action by Trump vs. a verbal reaction by Dmitriev); the right is a response to the left, not the same act.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S387:e4",
+   "right": "S408:e1",
+   "similarity": 0.8480983376502991,
+   "result": {
+    "decision": "distinct",
+    "direction": null,
+    "reason": "The two records describe different statements by different actors about different objects: Ed Miliband commented on Trump's 'energy ceasefire' idea, while Zelenskyy compared negotiating with Trump versus Putin. No shared concrete act is identified.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S188:e3",
+   "right": "S389:e5",
+   "similarity": 0.8478212356567383,
+   "result": {
+    "decision": "distinct",
+    "direction": null,
+    "reason": "The left record is a criticism by Ukraine's President and European leaders of Trump's energy moves with Russia; the right record is Zelenskyy expressing surprise at Starlink disruptions and seeking partial solutions. They involve different actions, different objects (energy policy vs. satellite internet), and no evidence that one is a constituent of the other.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S387:e4",
+   "right": "S465:e1",
+   "similarity": 0.8472652435302734,
+   "result": {
+    "decision": "distinct",
+    "direction": null,
+    "reason": "The left record is a statement by UK Foreign Secretary Ed Miliband endorsing Trump's 'energy ceasefire' idea for Ukraine; the right record is a Russian characterization of Trump's separate decision to waive new sanctions on Russia. Different actors, different objects (energy ceasefire vs. sanctions waiver), and different kinds of statements, so they are distinct acts.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S387:e2",
+   "right": "S433:e2",
+   "similarity": 0.8454505205154419,
+   "result": {
+    "decision": "distinct",
+    "direction": null,
+    "reason": "Different actors and different acts: the left records German and UK foreign ministers criticizing the US decision to lift sanctions on Russian diesel, while the right records Russian envoy Kirill Dmitriev calling the decision to put sanctions on hold significant and historic. These are separate statements by different actors, and one is not a constituent of the other.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S382:e5",
+   "right": "S433:e2",
+   "similarity": 0.8453207015991211,
+   "result": {
+    "decision": "distinct",
+    "direction": null,
+    "reason": "The left record concerns European leaders expressing support for Zelenskyy and an energy-infrastructure ceasefire; the right record concerns Russian envoy Dmitriev calling a sanctions-hold decision historic. They have different actors, different actions, and different objects, with no evidence of overlap or a component relationship.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S389:e3",
+   "right": "S433:e4",
+   "similarity": 0.8393859267234802,
+   "result": {
+    "decision": "distinct",
+    "direction": null,
+    "reason": "The left record concerns Trump making unspecified comments; the right record concerns a US-Russia diesel deal. They differ in actor (Trump vs. US and Russia) and in kind of action (comments vs. a deal), with no evidence connecting them as the same act or as component and whole.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S389:e3",
+   "right": "S408:e6",
+   "similarity": 0.8081797957420349,
+   "result": {
+    "decision": "distinct",
+    "direction": null,
+    "reason": "The left record concerns unspecified comments by Trump, while the right record concerns a U.S. easing of sanctions on Russia; these are different actors and different kinds of action, with no evidence that one is a component of the other.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S389:e3",
+   "right": "S408:e4",
+   "similarity": 0.8052049875259399,
+   "result": {
+    "decision": "distinct",
+    "direction": null,
+    "reason": "The left record is Trump making comments, which Zelenskyy cites as evidence. The right record is Zelenskyy accusing Putin of having no genuine interest in peace negotiations. The actors differ (Trump vs. Zelenskyy), and so do the acts (making comments vs. making an accusation). Trump's comments are only support for the accusation, not the accusation itself, so the two are related but not the same act. The records give no basis for treating one as a component of the other.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S389:e3",
+   "right": "S408:e3",
+   "similarity": 0.8030485510826111,
+   "result": {
+    "decision": "distinct",
+    "direction": null,
+    "reason": "The left record concerns Trump's comments cited by Zelenskyy, an actor/action distinct from the right record's Ukrainian strikes on Russian oil refineries. Different actors and kinds of action, with no evidence that one is a constituent of the other.",
+    "detail_conflicts": []
+   }
+  },
+  {
+   "left": "S382:e4",
+   "right": "S389:e3",
+   "similarity": 0.7970554828643799,
+   "result": {
+    "decision": "distinct",
+    "direction": null,
+    "reason": "The left record describes Trump administration entering a diesel deal with Russia, while the right record describes unspecified Trump comments cited by Zelenskyy. The actor activity and object differ: a commercial agreement versus verbal comments, so they are different kinds of acts.",
+    "detail_conflicts": []
+   }
+  }
+ ]
+}
