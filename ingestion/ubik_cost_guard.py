@@ -5,8 +5,12 @@ Unit costs are measured, not list prices: Ukraine v5.1 judges (126 pairs) and th
 UNIT_COST = {
     "judge:sonnet": 0.0041,          # USD per pair, Ukraine v5.1 Sonnet 5.5 arm (0.5146 / 126)
     "judge:deepseek": 0.0002,        # USD per pair, Ukraine v5.1 DeepSeek V4.1 Flash arm (0.0248 / 126)
-    "extract:sonnet_per_kchar": 0.0031,  # USD per 1000 input characters, corpus probe extraction (~0.31 USD for 24 items, 69k chars)
-    "extract:sonnet_per_call": 0.004,
+    # Extraction pilot 2026-10-29: Sonnet 0.0299 USD per article (~5400 input chars, ~2300 output tokens);
+    # output tokens dominate, so the earlier 0.0031/kchar estimate (derived from the probe total) was too low.
+    "extract:sonnet_per_kchar": 0.0055,
+    "extract:sonnet_per_call": 0.0,
+    "extract:deepseek_per_article_full": 0.0026,   # same pilot, D-full
+    "extract:deepseek_per_article_lede": 0.0013,   # same pilot, D-lede (~1500 chars)
 }
 SAFETY = 1.25
 
