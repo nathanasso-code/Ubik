@@ -22,7 +22,7 @@ from ingestion.ubik_ukraine_v5_model_audit import EXPECTED_MODEL, verify_respons
 from ingestion.ubik_v51_prompts import load_prompt
 from ingestion.ubik_v5_extraction_validator import validate_extraction
 
-CEILING_USD = 1.00
+CEILING_USD = 1.50
 MAX_CHARS = 6000
 
 
@@ -69,7 +69,7 @@ def main(selection_path, out_dir):
             answer = json.loads(content.strip().removeprefix("```json").removesuffix("```").strip())
             validate_extraction(answer, payload)
             out["sources"].append({"source_id": sid, "news": payload["news"], "answer": answer,
-                                   "kind": item["kind"], "corpus_id": item["corpus_id"], "url": item["url"],
+                                   "kind": item["kind"], "publisher": item.get("publisher"), "corpus_id": item["corpus_id"], "url": item["url"],
                                    "links_to": item.get("links_to")})
         except SystemExit:
             raise
@@ -111,6 +111,11 @@ def main(selection_path, out_dir):
         checks.append({"post": s["source_id"], "article": target, "post_reacts_to": reacts, "post_mentions": mentions,
                        "referent_matched_article_event": linked, "post_in_article_incident": same_incident})
     out["link_checks"] = checks
+    out["cards_by_probe_item"] = {s["source_id"]: sorted({lookup.get(s["source_id"] + ":" + e["id"]) for e in s["answer"]["events"]})
+                                  for s in out["sources"]}
+    out["multi_item_cards"] = [{"card": "card:" + g[0], "items": sorted({e.split(":")[0] for e in g}),
+                                "publishers": sorted({by_sid[e.split(":")[0]].get("publisher") for e in g})}
+                               for g in built["assembly"]["groups"] if len({e.split(":")[0] for e in g}) > 1]
     out["status"] = "completed"
     save()
     print(json.dumps({"sources": len(out["sources"]), "pairs": len(pairs), "cost": round(out["cost_usd"], 4),
