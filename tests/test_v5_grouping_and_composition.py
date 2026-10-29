@@ -86,13 +86,26 @@ class Composition(unittest.TestCase):
         out = compose_connected_v5([card("c:a", "S1")], [])
         self.assertEqual(out["topic_cards"], ["c:a"])
 
-    def test_LIMITATION_independence_not_checked(self):
-        # Two sources that republish the same agency text still count as two origins:
-        # cards carry no independent_origin_ids in the Ukraine pipeline.
+    def test_without_origins_sources_count_as_origins(self):
+        # Unchanged v5/v5.1 behaviour when cards carry no independent_origin_ids.
         out = compose_connected_v5([card("c:a", "S1", "S2"), card("c:p", "S1")],
                                    [{"type": "part_of", "source": "c:p", "target": "c:a"}])
         self.assertEqual(out["incidents"][0]["presentation"], "matrix")
         self.assertEqual(out["incidents"][0]["origin_verification"], "provisional")
+
+    def test_same_origin_feeds_do_not_corroborate(self):
+        # v5.2: an outlet's article and its own social post are one origin, so no matrix.
+        a = dict(card("c:a", "site", "masto"), independent_origin_ids=["outlet"])
+        p = dict(card("c:p", "site"), independent_origin_ids=["outlet"])
+        out = compose_connected_v5([a, p], [{"type": "part_of", "source": "c:p", "target": "c:a"}])
+        self.assertEqual(out["incidents"][0]["presentation"], "single_source")
+        self.assertEqual(out["incidents"][0]["origin_verification"], "registry")
+
+    def test_two_origins_still_make_a_matrix(self):
+        a = dict(card("c:a", "site", "other"), independent_origin_ids=["outlet", "other"])
+        p = dict(card("c:p", "site"), independent_origin_ids=["outlet"])
+        out = compose_connected_v5([a, p], [{"type": "part_of", "source": "c:p", "target": "c:a"}])
+        self.assertEqual(out["incidents"][0]["presentation"], "matrix")
 
     def test_LIMITATION_reaction_from_a_structural_card_is_dropped(self):
         # A card that is part of a part_of component and also reacts to another component:

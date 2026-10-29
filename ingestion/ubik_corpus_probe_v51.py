@@ -1,5 +1,9 @@
 """Exploratory v5.1 probe on collected corpus items (articles and social posts). Not a measurement.
 
+Cost discipline (after the first probe spent 1.50 USD on 290 Sonnet judgments): preflight estimates refuse a
+stage before any call, and pairs are judged in cascade (DeepSeek first, Sonnet only where DeepSeek did not say
+distinct). Cards count corroboration on origins (outlet or organisation), not feeds (composer v5.2).
+
 Each selected item is treated as one source with one news item (title + text, truncated). Runs the
 frozen v5.1 extraction and pair-judge prompts with Sonnet 5.5, the v5 retrieval and the v5 composition,
 and checks whether a post's reaction lands on the event of the article it links to.
@@ -17,23 +21,29 @@ import urllib.request
 from pathlib import Path
 
 from ingestion.ubik_monarch_v5_rejudge_core import candidates
-from ingestion.ubik_ukraine_v51_judge import compose, parse
+from ingestion.ubik_cost_guard import OverBudget, cascade_estimate, extraction_estimate, preflight
+from ingestion.ubik_ukraine_v51_judge import ARMS, DEEPSEEK, compose, parse
 from ingestion.ubik_ukraine_v5_model_audit import EXPECTED_MODEL, verify_response
 from ingestion.ubik_v51_prompts import load_prompt
 from ingestion.ubik_v5_extraction_validator import validate_extraction
 
-CEILING_USD = 1.50
+CEILING_USD = 0.60
 MAX_CHARS = 6000
+MAX_PAIRS = 400
 
 
-def call(system, user, max_tokens):
-    body = {"model": EXPECTED_MODEL, "max_tokens": max_tokens, "response_format": {"type": "json_object"},
+def call(system, user, max_tokens, arm="sonnet"):
+    body = {"model": ARMS[arm]["model"], "max_tokens": max_tokens,
             "messages": [{"role": "system", "content": system}, {"role": "user", "content": user}]}
+    body.update(ARMS[arm]["extra"])
     req = urllib.request.Request("https://openrouter.ai/api/v1/chat/completions", data=json.dumps(body).encode(),
                                  headers={"Authorization": "Bearer " + os.environ["UBIK_LLM_API_KEY"], "Content-Type": "application/json"})
     with urllib.request.urlopen(req, timeout=240) as resp:
         raw = json.load(resp)
-    verify_response(raw, stage="probe")
+    if arm == "sonnet":
+        verify_response(raw, stage="probe")
+    elif raw.get("model") != DEEPSEEK or (raw.get("provider") and "nebius" not in raw["provider"].lower()):
+        raise RuntimeError("Model or provider identity mismatch; abort")
     return raw
 
 
@@ -45,7 +55,8 @@ def main(selection_path, out_dir):
     judge_prompt, jh = load_prompt("pair_judge")
     out = {"kind": "exploratory probe, not a measurement", "model": EXPECTED_MODEL,
            "prompt_sha256": {"extraction": eh, "pair_judge": jh}, "selection": selection_path,
-           "sources": [], "raw": [], "errors": [], "judgments": [], "cost_usd": 0.0}
+           "judge_mode": "cascade: DeepSeek V4.1 Flash on every pair, Sonnet 5.5 on pairs DeepSeek did not call distinct",
+           "sources": [], "raw": [], "errors": [], "judgments": [], "cost_usd": 0.0, "preflight": []}
 
     def save():
         (out_dir / "probe-result.json").write_text(json.dumps(out, ensure_ascii=False, indent=1) + "\n")
@@ -57,6 +68,13 @@ def main(selection_path, out_dir):
             save()
             raise SystemExit("Cost ceiling exceeded")
 
+    try:
+        preflight("extraction", extraction_estimate(sum(min(len(i.get("text") or ""), MAX_CHARS) for i in selection["items"]),
+                                                    len(selection["items"])), CEILING_USD, out["preflight"])
+    except OverBudget as exc:
+        out["status"] = "refused_preflight"
+        save()
+        raise SystemExit(str(exc))
     for item in selection["items"]:
         sid = item["probe_id"]
         payload = {"source_id": sid, "news": [{"key": "n1", "title": item.get("title") or "",
@@ -79,19 +97,36 @@ def main(selection_path, out_dir):
 
     pairs, scores, events = candidates(out["sources"], k=5, soft_nature=True)
     out["candidate_pairs"] = len(pairs)
-    for left, right in pairs:
-        try:
-            raw = call(judge_prompt, json.dumps({"left": events[left], "right": events[right]}, ensure_ascii=False), 3000)
-            spend(raw)
-            answer = parse(raw["choices"][0]["message"]["content"])
-            out["judgments"].append({"left": left, "right": right, "similarity": scores[(left, right)], "result": answer})
-        except SystemExit:
-            raise
-        except Exception as exc:
-            out["errors"].append({"stage": "judge", "pair": [left, right], "error": str(exc)[:300]})
+    try:
+        if len(pairs) > MAX_PAIRS:
+            raise OverBudget(f"{len(pairs)} candidate pairs exceed MAX_PAIRS={MAX_PAIRS}; nothing was judged")
+        preflight("judge", cascade_estimate(len(pairs)), CEILING_USD - out["cost_usd"], out["preflight"])
+    except OverBudget as exc:
+        out["status"] = "refused_preflight"
         save()
+        raise SystemExit(str(exc))
 
-    built = compose(out, events, out["judgments"], scores)
+    def judge(left, right, arm):
+        for attempt in (1, 2):
+            raw = call(judge_prompt, json.dumps({"left": events[left], "right": events[right]}, ensure_ascii=False), 3000, arm)
+            spend(raw)
+            try:
+                return parse(raw["choices"][0]["message"]["content"])
+            except (ValueError, KeyError, TypeError) as exc:
+                out["errors"].append({"stage": "judge:" + arm, "pair": [left, right], "attempt": attempt, "error": str(exc)[:300]})
+        return {"decision": "uncertain", "direction": None, "reason": "invalid_after_retry", "detail_conflicts": []}
+
+    for left, right in pairs:
+        first = judge(left, right, "deepseek")
+        record = {"left": left, "right": right, "similarity": scores[(left, right)], "deepseek": first, "result": first}
+        if first["decision"] != "distinct":
+            record["result"] = judge(left, right, "sonnet")
+        out["judgments"].append(record)
+        save()
+    out["escalated_to_sonnet"] = sum("deepseek" in j and j["deepseek"]["decision"] != "distinct" for j in out["judgments"])
+
+    origin_of = {i["probe_id"]: i.get("origin") or i.get("publisher") for i in selection["items"]}
+    built = compose(out, events, out["judgments"], scores, origin_of=origin_of)
     out.update(built)
     by_sid = {s["source_id"]: s for s in out["sources"]}
     lookup = {e: "card:" + g[0] for g in built["assembly"]["groups"] for e in g}

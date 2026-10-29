@@ -1,0 +1,20 @@
+name: Tests (no model calls)
+on:
+  push:
+    branches: [main]
+    paths: ['ingestion/**', 'tests/**', '.github/workflows/tests.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Unit tests
+        run: python -m unittest discover -s tests -v
+      - name: Ukraine v5.1 composition unchanged without origin ids
+        run: python -m ingestion.ubik_v52_regression

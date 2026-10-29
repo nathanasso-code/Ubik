@@ -43,6 +43,10 @@ def compose_v5(cards, relations, conflicts=()):
             "new_llm_calls":0}
 
 
+def origin_ids(card):
+    return card.get("independent_origin_ids") or card.get("source_ids",[])
+
+
 def compose_connected_v5(cards, relations, context_card_ids=(), conflicts=()):
     """Structural components with reactions attached; isolated cards stay in Topic.
 
@@ -110,17 +114,19 @@ def compose_connected_v5(cards, relations, context_card_ids=(), conflicts=()):
         # Only target/structural cards count toward matrix corroboration.
         reaction_only={r["source"] for r in react if not adjacency[r["source"]]}
         structural=members_set-reaction_only or members_set
-        origins=sorted(set(o for x in structural for o in (by_id[x].get("independent_origin_ids") or by_id[x].get("source_ids",[]))))
-        all_origins=sorted(set(o for x in members for o in (by_id[x].get("independent_origin_ids") or by_id[x].get("source_ids",[]))))
+        origins=sorted(set(o for x in structural for o in origin_ids(by_id[x])))
+        all_origins=sorted(set(o for x in members for o in origin_ids(by_id[x])))
         sources=sorted(set(s for x in members for s in by_id[x].get("source_ids",[])))
-        cross=any(len(set(by_id[x].get("source_ids",[])))>=2 for x in structural) or any(
-            set(by_id[r["source"]].get("source_ids",[]))!=set(by_id[r["target"]].get("source_ids",[])) for r in part)
+        # v5.2: corroboration is counted on independent origins (outlet or organisation), not on feeds.
+        # Without independent_origin_ids the origins are the source ids, so v5/v5.1 outputs are unchanged.
+        cross=any(len(set(origin_ids(by_id[x])))>=2 for x in structural) or any(
+            set(origin_ids(by_id[r["source"]]))!=set(origin_ids(by_id[r["target"]])) for r in part)
         presentation="matrix" if len(origins)>=2 and cross else "single_source"
         anchor=min(structural)
         item={"id":"incident:"+anchor,"anchor_card":anchor,"cards":members,
               "source_ids":sources,"independent_origin_ids":all_origins,
               "part_of":part,"reactions":react,"presentation":presentation,
-              "origin_verification":"provisional"}
+              "origin_verification":"registry" if all(by_id[x].get("independent_origin_ids") for x in members) else "provisional"}
         incidents.append(item)
         for x in members:membership.setdefault(x,[]).append(item["id"])
         if presentation=="matrix":matrices.append(item)

@@ -57,11 +57,18 @@ def parse(content):
     return answer
 
 
-def compose(extraction, events, judgments, scores):
-    """Identical to the v5 Ukraine composition path (cautious groups, relations, part_of check, composer)."""
+def compose(extraction, events, judgments, scores, origin_of=None):
+    """Identical to the v5 Ukraine composition path (cautious groups, relations, part_of check, composer).
+
+    origin_of (v5.2): optional map source_id -> independent origin (outlet or organisation). Feeds of the same
+    origin, such as an outlet's site and its social accounts, then count once toward corroboration.
+    """
     assembly = cautious_groups(events, judgments, scores)
     lookup = {e: "card:" + g[0] for g in assembly["groups"] for e in g}
     cards = [{"id": "card:" + g[0], "events": g, "source_ids": sorted({e.split(":")[0] for e in g})} for g in assembly["groups"]]
+    if origin_of is not None:
+        for c in cards:
+            c["independent_origin_ids"] = sorted({origin_of.get(s, s) for s in c["source_ids"]})
     relations = []
     for s in extraction["sources"]:
         sid = s["source_id"]
