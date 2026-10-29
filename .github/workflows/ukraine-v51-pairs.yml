@@ -1,0 +1,34 @@
+name: Ubik Ukraine v5.1 candidate pairs (no model calls)
+on:
+  # Runs only on request: never on ordinary code pushes.
+  push:
+    branches: [main]
+    paths: [runs/ukraine-v51-pairs.request]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  pairs:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install frozen E5 retrieval (same version as v5)
+        run: pip install sentence-transformers==3.4.1
+      - name: Generate candidate pairs from the frozen v5.1 extraction
+        run: python -m ingestion.ubik_ukraine_v51_pairs
+      - name: Commit frozen pairs with SHA-256
+        run: |
+          f=docs/experiment-results/v5.1/ukraine-v51-candidate-pairs.json
+          sha256sum "$f" >> docs/experiment-results/v5.1/SHA256SUMS
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/experiment-results/v5.1
+          git commit -m "Freeze v5.1 candidate pairs before any judgment"
+          git push origin HEAD:main

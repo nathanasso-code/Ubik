@@ -1,0 +1,359 @@
+{
+  "schema_version": 1,
+  "topic_id": "ai-models",
+  "description": "Pilot discovery sources. Metadata-only; inclusion is not validation or endorsement.",
+  "sources": [
+    {
+      "id": "openai-news",
+      "name": "OpenAI News",
+      "url": "https://openai.com/news/rss.xml",
+      "kind": "rss",
+      "category": "lab",
+      "enabled": true
+    },
+    {
+      "id": "google-deepmind",
+      "name": "Google DeepMind Blog",
+      "url": "https://deepmind.google/blog/rss.xml",
+      "kind": "rss",
+      "category": "lab",
+      "enabled": true
+    },
+    {
+      "id": "arxiv-cs-ai",
+      "name": "arXiv cs.AI",
+      "url": "https://rss.arxiv.org/rss/cs.AI",
+      "kind": "rss",
+      "category": "research",
+      "enabled": true,
+      "empty_feed_fallback_url": "https://export.arxiv.org/api/query?search_query=cat%3Acs.AI&start=0&max_results=30&sortBy=submittedDate&sortOrder=descending"
+    },
+    {
+      "id": "arxiv-cs-cl",
+      "name": "arXiv cs.CL",
+      "url": "https://rss.arxiv.org/rss/cs.CL",
+      "kind": "rss",
+      "category": "research",
+      "enabled": true,
+      "empty_feed_fallback_url": "https://export.arxiv.org/api/query?search_query=cat%3Acs.CL&start=0&max_results=30&sortBy=submittedDate&sortOrder=descending"
+    },
+    {
+      "id": "arxiv-cs-lg",
+      "name": "arXiv cs.LG — Machine Learning",
+      "url": "https://rss.arxiv.org/rss/cs.LG",
+      "kind": "rss",
+      "category": "research",
+      "enabled": true,
+      "empty_feed_fallback_url": "https://export.arxiv.org/api/query?search_query=cat%3Acs.LG&start=0&max_results=30&sortBy=submittedDate&sortOrder=descending",
+      "verification_note": "Official arXiv API fallback; verify live run and respect API pacing; metadata only"
+    },
+    {
+      "id": "arxiv-cs-cv",
+      "name": "arXiv cs.CV — Computer Vision",
+      "url": "https://rss.arxiv.org/rss/cs.CV",
+      "kind": "rss",
+      "category": "research",
+      "enabled": true,
+      "empty_feed_fallback_url": "https://export.arxiv.org/api/query?search_query=cat%3Acs.CV&start=0&max_results=30&sortBy=submittedDate&sortOrder=descending",
+      "verification_note": "Official arXiv API fallback; verify live run and respect API pacing; metadata only"
+    },
+    {
+      "id": "arxiv-stat-ml",
+      "name": "arXiv stat.ML — Statistics Machine Learning",
+      "url": "https://rss.arxiv.org/rss/stat.ML",
+      "kind": "rss",
+      "category": "research",
+      "enabled": true,
+      "empty_feed_fallback_url": "https://export.arxiv.org/api/query?search_query=cat%3Astat.ML&start=0&max_results=30&sortBy=submittedDate&sortOrder=descending",
+      "verification_note": "Official arXiv API fallback; verify live run and respect API pacing; metadata only"
+    },
+    {
+      "id": "huggingface-blog",
+      "name": "Hugging Face Blog",
+      "url": "https://huggingface.co/blog/feed.xml",
+      "kind": "rss",
+      "category": "industry-research",
+      "enabled": true
+    },
+    {
+      "id": "the-batch",
+      "name": "The Batch",
+      "url": "https://www.deeplearning.ai/the-batch/feed/",
+      "kind": "rss",
+      "category": "analysis",
+      "enabled": true
+    },
+    {
+      "id": "bluesky",
+      "name": "Bluesky",
+      "kind": "api",
+      "category": "social",
+      "enabled": false,
+      "reason": "Requires separate access, rate-limit and source-selection policy"
+    },
+    {
+      "id": "major-publishers",
+      "name": "Major news publishers",
+      "kind": "review",
+      "category": "journalism",
+      "enabled": false,
+      "reason": "Verify publisher-specific feed availability and permitted metadata use"
+    },
+    {
+      "id": "simon-willison",
+      "name": "Simon Willison — independent blog",
+      "url": "https://simonwillison.net/atom/everything/",
+      "kind": "rss",
+      "category": "independent-expert",
+      "enabled": true
+    },
+    {
+      "id": "bair-blog",
+      "name": "Berkeley AI Research Blog",
+      "url": "https://bair.berkeley.edu/blog/feed.xml",
+      "kind": "rss",
+      "category": "academic-blog",
+      "enabled": true
+    },
+    {
+      "id": "github-releases",
+      "name": "GitHub repository releases",
+      "kind": "github-releases",
+      "category": "developer-primary",
+      "enabled": false,
+      "reason": "Per-repository subscriptions and API quotas require a selected repository list"
+    },
+    {
+      "id": "mastodon",
+      "name": "Mastodon public author feeds",
+      "kind": "mastodon-api",
+      "category": "independent-social",
+      "enabled": false,
+      "reason": "Requires per-instance API policies and selected accounts"
+    },
+    {
+      "id": "bluesky-author",
+      "name": "Bluesky selected author feeds",
+      "kind": "bluesky-author",
+      "category": "independent-social",
+      "enabled": false,
+      "reason": "Public unauthenticated API available; needs curated handles and ingestion adapter"
+    },
+    {
+      "id": "newsletter",
+      "name": "Independent newsletters / Substack",
+      "kind": "feed-discovery",
+      "category": "independent-newsletter",
+      "enabled": false,
+      "reason": "Per-publication feed discovery and rights/access review"
+    },
+    {
+      "id": "video",
+      "name": "Video creators / YouTube channels",
+      "kind": "video-feed",
+      "category": "independent-video",
+      "enabled": false,
+      "reason": "Channel-specific feeds and metadata; transcript access separate"
+    },
+    {
+      "id": "forums",
+      "name": "Reddit, Hacker News and specialized forums",
+      "kind": "forum-api",
+      "category": "community",
+      "enabled": false,
+      "reason": "Platform-specific APIs, rate limits and source selection"
+    },
+    {
+      "id": "ethan-mollick",
+      "name": "Ethan Mollick — One Useful Thing",
+      "url": "https://www.oneusefulthing.org/feed",
+      "kind": "rss",
+      "category": "independent-expert",
+      "enabled": true,
+      "attribution_note": "Author identity and byline must be confirmed from each entry; publisher is not automatically author."
+    },
+    {
+      "id": "nathan-lambert",
+      "name": "Nathan Lambert — Interconnects",
+      "url": "https://www.interconnects.ai/feed",
+      "kind": "rss",
+      "category": "independent-expert",
+      "enabled": true,
+      "attribution_note": "Author identity and byline must be confirmed from each entry; publisher is not automatically author."
+    },
+    {
+      "id": "sebastian-raschka",
+      "name": "Sebastian Raschka — Blog",
+      "url": "https://sebastianraschka.com/rss_feed.xml",
+      "kind": "rss",
+      "category": "independent-expert",
+      "enabled": true,
+      "attribution_note": "Author identity and byline must be confirmed from each entry; publisher is not automatically author."
+    },
+    {
+      "id": "jack-clark",
+      "name": "Jack Clark — Import AI",
+      "url": "https://importai.substack.com/feed",
+      "kind": "rss",
+      "category": "independent-newsletter",
+      "enabled": true,
+      "attribution_note": "Author identity and byline must be confirmed from each entry; publisher is not automatically author."
+    },
+    {
+      "id": "latent-space",
+      "name": "Latent Space — AI engineering",
+      "url": "https://www.latent.space/feed",
+      "kind": "rss",
+      "category": "independent-newsletter",
+      "enabled": true,
+      "attribution_note": "Author identity and byline must be confirmed from each entry; publisher is not automatically author."
+    },
+    {
+      "id": "normal-tech",
+      "name": "Normal Tech — AI criticism",
+      "url": "https://www.normaltech.ai/feed",
+      "kind": "rss",
+      "category": "independent-analysis",
+      "enabled": true,
+      "attribution_note": "Author identity and byline must be confirmed from each entry; publisher is not automatically author."
+    },
+    {
+      "id": "julia-evans",
+      "name": "Julia Evans",
+      "url": "https://jvns.ca/atom.xml",
+      "kind": "rss",
+      "category": "software-systems",
+      "language": "en",
+      "enabled": true,
+      "attribution_note": "Verify article-level byline; publication name is not the author."
+    },
+    {
+      "id": "dan-luu",
+      "name": "Dan Luu",
+      "url": "https://danluu.com/atom.xml",
+      "kind": "rss",
+      "category": "software-systems",
+      "language": "en",
+      "enabled": true,
+      "attribution_note": "Verify article-level byline; publication name is not the author."
+    },
+    {
+      "id": "the-feedback",
+      "name": "The Feedback — Philosophy and Neuroscience",
+      "url": "https://thefeedback.blog/feed/",
+      "kind": "rss",
+      "category": "philosophy-neuroscience",
+      "language": "en",
+      "enabled": true,
+      "attribution_note": "Verify article-level byline; publication name is not the author."
+    },
+    {
+      "id": "brains-blog",
+      "name": "The Brains Blog",
+      "url": "https://philosophyofbrains.com/category/philosophy-of-mind/feed",
+      "kind": "rss",
+      "category": "philosophy-of-mind",
+      "language": "en",
+      "enabled": true,
+      "attribution_note": "Verify article-level byline; publication name is not the author."
+    },
+    {
+      "id": "cognitive-neuroscience-society",
+      "name": "Cognitive Neuroscience Society",
+      "url": "https://www.cogneurosociety.org/feed/",
+      "kind": "rss",
+      "category": "cognitive-neuroscience",
+      "language": "en",
+      "enabled": true,
+      "attribution_note": "Verify article-level byline; publication name is not the author."
+    },
+    {
+      "id": "mind-hacks",
+      "name": "Mind Hacks",
+      "url": "https://mindhacks.com/feed/",
+      "kind": "rss",
+      "category": "neuroscience",
+      "language": "en",
+      "enabled": true,
+      "attribution_note": "Verify article-level byline; publication name is not the author."
+    },
+    {
+      "id": "equitable-growth",
+      "name": "Washington Center for Equitable Growth",
+      "url": "https://equitablegrowth.org/feed",
+      "kind": "rss",
+      "category": "economics-labor",
+      "language": "en",
+      "enabled": true,
+      "discovered_via": "https://rssatlas.com/feeds/475",
+      "attribution_note": "Filter articles for AI relevance; retain original author byline."
+    },
+    {
+      "id": "la-frontiere-economics-ai",
+      "name": "La Frontière — economics and AI research monitor",
+      "url": "https://djidonou.com/frontiere/feed.xml",
+      "kind": "rss",
+      "category": "economics-ai-research",
+      "language": "fr",
+      "enabled": true,
+      "discovered_via": "https://djidonou.com/en/frontier/",
+      "attribution_note": "Secondary discovery source: always follow original research URL and attribute its original authors."
+    },
+    {
+      "id": "economics-of-ai",
+      "name": "The Economics of AI — OpenAI Economic Research",
+      "url": "https://economicsofai.substack.com/feed",
+      "kind": "rss",
+      "category": "economics-ai-research",
+      "language": "en",
+      "enabled": true,
+      "attribution_note": "Organizational perspective; preserve actual article byline."
+    },
+    {
+      "id": "frankly-counterfactual",
+      "name": "Kosali Simon — Frankly the Counterfactual",
+      "url": "https://franklythecounterfactual.substack.com/feed",
+      "kind": "rss",
+      "category": "economics-ai-research",
+      "language": "en",
+      "enabled": true,
+      "attribution_note": "Broad economics feed; filter AI-related articles."
+    },
+    {
+      "id": "bbc-world",
+      "name": "BBC News World",
+      "url": "https://feeds.bbci.co.uk/news/world/rss.xml",
+      "kind": "rss",
+      "category": "general-world",
+      "enabled": true,
+      "verification_note": "Official/public feed candidate; availability must be confirmed by the GitHub Actions live run."
+    },
+    {
+      "id": "guardian-world",
+      "name": "The Guardian World",
+      "url": "https://www.theguardian.com/world/rss",
+      "kind": "rss",
+      "category": "general-world",
+      "enabled": true,
+      "verification_note": "Official/public feed candidate; availability must be confirmed by the GitHub Actions live run."
+    },
+    {
+      "id": "aljazeera-english",
+      "name": "Al Jazeera English",
+      "url": "https://www.aljazeera.com/xml/rss/all.xml",
+      "kind": "rss",
+      "category": "general-world",
+      "enabled": true,
+      "verification_note": "Official/public feed candidate; availability must be confirmed by the GitHub Actions live run."
+    },
+    {
+      "id": "nyt-world",
+      "name": "New York Times World",
+      "url": "https://rss.nytimes.com/services/xml/rss/nyt/World.xml",
+      "kind": "rss",
+      "category": "general-world",
+      "enabled": true,
+      "verification_note": "Official/public feed candidate; availability must be confirmed by the GitHub Actions live run."
+    }
+  ]
+}

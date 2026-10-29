@@ -1,0 +1,466 @@
+{
+  "stage": "evaluation",
+  "model_calls": 0,
+  "v51": {
+    "sonnet": {
+      "status": "completed_unadjudicated",
+      "cost_usd": 0.514604,
+      "pipeline_cost_usd": 0.618374,
+      "invalid_after_retry": 2,
+      "verdicts": {
+        "equivalent": 15,
+        "uncertain": 20,
+        "distinct": 91
+      },
+      "incidents": 7,
+      "matrices": 2,
+      "eu_diesel_reasons": [
+        {
+          "pair": [
+            "S387:e1",
+            "S408:e7"
+          ],
+          "reason": "The two records describe different acts by different actors. The left is the United States' decision to lift sanctions on Russian diesel as part of a supply deal. The right is Ursula von der Leyen's s"
+        },
+        {
+          "pair": [
+            "S387:e2",
+            "S408:e7"
+          ],
+          "reason": "The two records describe different acts by different actors. The left is German and UK foreign ministers criticizing the US decision to lift sanctions on Russian diesel. The right is Ursula von der Le"
+        }
+      ],
+      "judge_part_of": [],
+      "readings": {
+        "reading_1_e6_is_A": {
+          "ab_pair_verdicts": {
+            "uncertain": 4
+          },
+          "ab_group_merge": [],
+          "ab_incident_merge": [],
+          "a_fragments": [
+            "incident:card:S188:e2",
+            "incident:card:S387:e1",
+            "incident:card:S408:e6"
+          ],
+          "vicenda_containers": {
+            "A": [
+              "incident:card:S188:e2",
+              "incident:card:S387:e1",
+              "incident:card:S408:e6"
+            ],
+            "B": [
+              "incident:card:S188:e1"
+            ],
+            "C": [
+              "incident:card:S382:e1",
+              "incident:card:S387:e3"
+            ],
+            "D": [
+              "incident:card:S305:e2",
+              "topic:card:S408:e2",
+              "topic:card:S408:e3"
+            ]
+          },
+          "vicende_split": [
+            "A",
+            "C",
+            "D"
+          ],
+          "false_card_merges": [],
+          "unverifiable_merges": [],
+          "card_splits": {
+            "A": 2,
+            "A2": 0,
+            "B": 0,
+            "B2": 0,
+            "C": 1,
+            "D": 1
+          },
+          "weighted_error": 10,
+          "weighted_formula": "2 x split vicende (once each) + 3 x false card merges + 1 x extra cards per identity class"
+        },
+        "reading_2_e6_excluded": {
+          "ab_pair_verdicts": {
+            "uncertain": 1
+          },
+          "ab_group_merge": [],
+          "ab_incident_merge": [],
+          "a_fragments": [
+            "incident:card:S188:e2",
+            "incident:card:S387:e1"
+          ],
+          "vicenda_containers": {
+            "A": [
+              "incident:card:S188:e2",
+              "incident:card:S387:e1",
+              "incident:card:S408:e6"
+            ],
+            "B": [
+              "incident:card:S188:e1"
+            ],
+            "C": [
+              "incident:card:S382:e1",
+              "incident:card:S387:e3"
+            ],
+            "D": [
+              "incident:card:S305:e2",
+              "topic:card:S408:e2",
+              "topic:card:S408:e3"
+            ]
+          },
+          "vicende_split": [
+            "A",
+            "C",
+            "D"
+          ],
+          "false_card_merges": [],
+          "unverifiable_merges": [],
+          "card_splits": {
+            "A": 1,
+            "A2": 0,
+            "B": 0,
+            "B2": 0,
+            "C": 1,
+            "D": 1
+          },
+          "weighted_error": 9,
+          "weighted_formula": "2 x split vicende (once each) + 3 x false card merges + 1 x extra cards per identity class"
+        }
+      }
+    },
+    "deepseek": {
+      "status": "completed_unadjudicated",
+      "cost_usd": 0.024826992000000003,
+      "pipeline_cost_usd": 0.128596992,
+      "invalid_after_retry": 0,
+      "verdicts": {
+        "equivalent": 20,
+        "distinct": 96,
+        "part_of": 3,
+        "uncertain": 7
+      },
+      "incidents": 5,
+      "matrices": 4,
+      "eu_diesel_reasons": [
+        {
+          "pair": [
+            "S387:e1",
+            "S408:e7"
+          ],
+          "reason": "The left record describes a US decision to lift sanctions on Russian diesel as part of a supply deal; the right record describes a statement by Ursula von der Leyen that the EU would not lift sanction"
+        },
+        {
+          "pair": [
+            "S387:e2",
+            "S408:e7"
+          ],
+          "reason": "The left record concerns German and UK foreign ministers criticizing a US decision to lift sanctions on Russian diesel. The right record concerns Ursula von der Leyen stating the EU would not lift san"
+        }
+      ],
+      "judge_part_of": [
+        {
+          "pair": [
+            "S188:e2",
+            "S387:e1"
+          ],
+          "direction": "right_part_of_left"
+        },
+        {
+          "pair": [
+            "S382:e1",
+            "S387:e3"
+          ],
+          "direction": "right_part_of_left"
+        },
+        {
+          "pair": [
+            "S387:e1",
+            "S433:e4"
+          ],
+          "direction": "left_part_of_right"
+        }
+      ],
+      "readings": {
+        "reading_1_e6_is_A": {
+          "ab_pair_verdicts": {
+            "uncertain": 3,
+            "equivalent": 1
+          },
+          "ab_group_merge": [],
+          "ab_incident_merge": [],
+          "a_fragments": [
+            "incident:card:S188:e2",
+            "incident:card:S408:e6"
+          ],
+          "vicenda_containers": {
+            "A": [
+              "incident:card:S188:e1",
+              "incident:card:S188:e2",
+              "incident:card:S408:e6"
+            ],
+            "B": [
+              "incident:card:S188:e1"
+            ],
+            "C": [
+              "incident:card:S382:e1"
+            ],
+            "D": [
+              "incident:card:S305:e2",
+              "topic:card:S408:e2"
+            ]
+          },
+          "vicende_split": [
+            "A",
+            "D"
+          ],
+          "false_card_merges": [
+            {
+              "group": [
+                "S188:e3",
+                "S433:e3"
+              ],
+              "refs": [
+                "A6",
+                "A2"
+              ]
+            }
+          ],
+          "unverifiable_merges": [],
+          "card_splits": {
+            "A": 2,
+            "A2": 1,
+            "B": 0,
+            "B2": 0,
+            "C": 1,
+            "D": 0
+          },
+          "weighted_error": 11,
+          "weighted_formula": "2 x split vicende (once each) + 3 x false card merges + 1 x extra cards per identity class"
+        },
+        "reading_2_e6_excluded": {
+          "ab_pair_verdicts": {
+            "uncertain": 1
+          },
+          "ab_group_merge": [],
+          "ab_incident_merge": [],
+          "a_fragments": [
+            "incident:card:S188:e2"
+          ],
+          "vicenda_containers": {
+            "A": [
+              "incident:card:S188:e1",
+              "incident:card:S188:e2",
+              "incident:card:S408:e6"
+            ],
+            "B": [
+              "incident:card:S188:e1"
+            ],
+            "C": [
+              "incident:card:S382:e1"
+            ],
+            "D": [
+              "incident:card:S305:e2",
+              "topic:card:S408:e2"
+            ]
+          },
+          "vicende_split": [
+            "A",
+            "D"
+          ],
+          "false_card_merges": [
+            {
+              "group": [
+                "S188:e3",
+                "S433:e3"
+              ],
+              "refs": [
+                "A6",
+                "A2"
+              ]
+            }
+          ],
+          "unverifiable_merges": [],
+          "card_splits": {
+            "A": 1,
+            "A2": 1,
+            "B": 0,
+            "B2": 0,
+            "C": 1,
+            "D": 0
+          },
+          "weighted_error": 10,
+          "weighted_formula": "2 x split vicende (once each) + 3 x false card merges + 1 x extra cards per identity class"
+        }
+      }
+    }
+  },
+  "v5": {
+    "sonnet": {
+      "verdicts": {
+        "equivalent": 11,
+        "uncertain": 24,
+        "distinct": 96
+      },
+      "incidents": 8,
+      "matrices": 3,
+      "eu_diesel_reasons": [
+        {
+          "pair": [
+            "S389:e4",
+            "S408:e7"
+          ],
+          "reason": "The left event is a 'Russian diesel deal' that is cited, with no actor, time, or terms given, alongside Trump's comments. The right event is a generic US easing of sanctions on Russia, taken from a he"
+        },
+        {
+          "pair": [
+            "S408:e8",
+            "S433:e4"
+          ],
+          "reason": "[concise reason; original not available] The EU leaders' statements on maintaining sanctions and pressure are separate acts from Zelenskyy's criticism of the US-Russia diesel deal, and neither is a co"
+        }
+      ],
+      "score": {
+        "ab_pair_verdicts": {
+          "uncertain": 3
+        },
+        "ab_group_merge": [],
+        "ab_incident_merge": [],
+        "a_fragments": [
+          "incident:card:S188:e2",
+          "incident:card:S382:E5",
+          "incident:card:S408:e6",
+          "topic:card:S389:e4"
+        ],
+        "vicenda_containers": {
+          "A": [
+            "incident:card:S188:e2",
+            "incident:card:S382:E5",
+            "incident:card:S408:e6",
+            "topic:card:S389:e4"
+          ],
+          "B": [
+            "incident:card:S188:e1"
+          ],
+          "C": [
+            "incident:card:S382:E1",
+            "incident:card:S387:e4",
+            "topic:card:S382:E2",
+            "topic:card:S382:E6"
+          ],
+          "D": [
+            "incident:card:S305:e2",
+            "topic:card:S408:e2",
+            "topic:card:S408:e3"
+          ]
+        },
+        "vicende_split": [
+          "A",
+          "C",
+          "D"
+        ],
+        "false_card_merges": [],
+        "unverifiable_merges": [],
+        "card_splits": {
+          "A": 4,
+          "A2": 1,
+          "B": 0,
+          "B2": 0,
+          "C": 2,
+          "D": 1
+        },
+        "weighted_error": 14,
+        "weighted_formula": "2 x split vicende (once each) + 3 x false card merges + 1 x extra cards per identity class"
+      }
+    },
+    "deepseek": {
+      "verdicts": {
+        "equivalent": 13,
+        "distinct": 94,
+        "uncertain": 19,
+        "part_of": 5
+      },
+      "incidents": 5,
+      "matrices": 4,
+      "eu_diesel_reasons": [
+        {
+          "pair": [
+            "S408:e6",
+            "S433:e3"
+          ],
+          "reason": "Left describes a putative easing of sanctions on Russian diesel, evidenced only by Zelenskyy warning against it; right describes a US-Russia diesel deal that occurred. The suppression of new US sancti"
+        },
+        {
+          "pair": [
+            "S408:e6",
+            "S433:e1"
+          ],
+          "reason": "Left refers to a claimed/possible easing of sanctions specifically on Russian diesel, evidenced only by Zelenskyy warning against it; right is Trump signing an executive order waiving a new package of"
+        },
+        {
+          "pair": [
+            "S387:e3",
+            "S408:e8"
+          ],
+          "reason": "The left event is German and UK foreign ministers criticizing a US decision to lift sanctions on Russian diesel. The right event is EU leaders von der Leyen and Costa stating the EU would not lift san"
+        },
+        {
+          "pair": [
+            "S408:e8",
+            "S433:e4"
+          ],
+          "reason": "Left concerns EU leaders' statements on sanctions/pressure toward Russia; right concerns Zelenskyy criticizing a US-Russia diesel deal. Different actors, objects, and acts, sharing only the broader to"
+        }
+      ],
+      "score": {
+        "ab_pair_verdicts": {
+          "uncertain": 1,
+          "distinct": 2
+        },
+        "ab_group_merge": [],
+        "ab_incident_merge": [],
+        "a_fragments": [
+          "incident:card:S188:e2",
+          "incident:card:S382:E5",
+          "topic:card:S389:e4"
+        ],
+        "vicenda_containers": {
+          "A": [
+            "incident:card:S188:e2",
+            "incident:card:S382:E5",
+            "topic:card:S389:e4"
+          ],
+          "B": [
+            "incident:card:S188:e1"
+          ],
+          "C": [
+            "incident:card:S382:E1",
+            "topic:card:S382:E2",
+            "topic:card:S382:E6"
+          ],
+          "D": [
+            "incident:card:S305:e2",
+            "topic:card:S408:e2"
+          ]
+        },
+        "vicende_split": [
+          "A",
+          "C",
+          "D"
+        ],
+        "false_card_merges": [],
+        "unverifiable_merges": [],
+        "card_splits": {
+          "A": 5,
+          "A2": 1,
+          "B": 0,
+          "B2": 0,
+          "C": 2,
+          "D": 0
+        },
+        "weighted_error": 14,
+        "weighted_formula": "2 x split vicende (once each) + 3 x false card merges + 1 x extra cards per identity class"
+      }
+    }
+  }
+}

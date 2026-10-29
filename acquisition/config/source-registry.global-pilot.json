@@ -1,0 +1,265 @@
+{
+  "schema_version": 1,
+  "purpose": "global_topic_agnostic_rss",
+  "description": "Expanded cross-disciplinary empirical pilot; RSS descriptions and titles are not full article bodies; source availability and rights must be assessed individually",
+  "sources": [
+    {
+      "id": "bbc-world",
+      "name": "BBC World",
+      "url": "https://feeds.bbci.co.uk/news/world/rss.xml",
+      "kind": "rss",
+      "enabled": true
+    },
+    {
+      "id": "guardian-world",
+      "name": "The Guardian World",
+      "url": "https://www.theguardian.com/world/rss",
+      "kind": "rss",
+      "enabled": true
+    },
+    {
+      "id": "aljazeera",
+      "name": "Al Jazeera English",
+      "url": "https://www.aljazeera.com/xml/rss/all.xml",
+      "kind": "rss",
+      "enabled": true
+    },
+    {
+      "id": "nyt-world",
+      "name": "New York Times World",
+      "url": "https://rss.nytimes.com/services/xml/rss/nyt/World.xml",
+      "kind": "rss",
+      "enabled": true
+    },
+    {
+      "id": "nature",
+      "name": "Nature",
+      "url": "https://www.nature.com/nature.rss",
+      "kind": "rss",
+      "enabled": true
+    },
+    {
+      "id": "science-daily",
+      "name": "ScienceDaily Top",
+      "url": "https://www.sciencedaily.com/rss/top/science.xml",
+      "kind": "rss",
+      "enabled": true
+    },
+    {
+      "id": "ars-technica",
+      "name": "Ars Technica",
+      "url": "https://feeds.arstechnica.com/arstechnica/index",
+      "kind": "rss",
+      "enabled": true
+    },
+    {
+      "id": "guardian-environment",
+      "name": "Guardian Environment",
+      "url": "https://www.theguardian.com/environment/rss",
+      "kind": "rss",
+      "enabled": true
+    },
+    {
+      "id": "guardian-business",
+      "name": "Guardian Business",
+      "url": "https://www.theguardian.com/uk/business/rss",
+      "kind": "rss",
+      "enabled": true
+    },
+    {
+      "id": "guardian-technology",
+      "name": "Guardian Technology",
+      "url": "https://www.theguardian.com/uk/technology/rss",
+      "kind": "rss",
+      "enabled": true
+    },
+    {
+      "id": "dw-all",
+      "name": "Deutsche Welle",
+      "url": "https://rss.dw.com/xml/rss-en-all",
+      "kind": "rss",
+      "enabled": true
+    },
+    {
+      "id": "euronews",
+      "name": "Euronews",
+      "url": "https://www.euronews.com/rss",
+      "kind": "rss",
+      "enabled": true
+    },
+    {
+      "id": "france24-world",
+      "name": "France24 World",
+      "url": "https://www.france24.com/en/rss",
+      "kind": "rss",
+      "enabled": true
+    },
+    {
+      "id": "abc-world",
+      "name": "ABC Australia World",
+      "url": "https://www.abc.net.au/news/feed/51120/rss.xml",
+      "kind": "rss",
+      "enabled": true
+    },
+    {
+      "id": "npr-world",
+      "name": "NPR World",
+      "url": "https://feeds.npr.org/1004/rss.xml",
+      "kind": "rss",
+      "enabled": true
+    },
+    {
+      "id": "npr-science",
+      "name": "NPR Science",
+      "url": "https://feeds.npr.org/1007/rss.xml",
+      "kind": "rss",
+      "enabled": true
+    },
+    {
+      "id": "guardian-science",
+      "name": "Guardian Science",
+      "url": "https://www.theguardian.com/science/rss",
+      "kind": "rss",
+      "enabled": true
+    },
+    {
+      "id": "guardian-global-development",
+      "name": "Guardian Global Development",
+      "url": "https://www.theguardian.com/global-development/rss",
+      "kind": "rss",
+      "enabled": true
+    },
+    {
+      "id": "guardian-politics",
+      "name": "Guardian Politics",
+      "url": "https://www.theguardian.com/politics/rss",
+      "kind": "rss",
+      "enabled": true
+    },
+    {
+      "id": "guardian-culture",
+      "name": "Guardian Culture",
+      "url": "https://www.theguardian.com/culture/rss",
+      "kind": "rss",
+      "enabled": true
+    },
+    {
+      "id": "bbc-technology",
+      "name": "BBC Technology",
+      "url": "https://feeds.bbci.co.uk/news/technology/rss.xml",
+      "kind": "rss",
+      "enabled": true
+    },
+    {
+      "id": "bbc-science",
+      "name": "BBC Science",
+      "url": "https://feeds.bbci.co.uk/news/science_and_environment/rss.xml",
+      "kind": "rss",
+      "enabled": true
+    },
+    {
+      "id": "bbc-business",
+      "name": "BBC Business",
+      "url": "https://feeds.bbci.co.uk/news/business/rss.xml",
+      "kind": "rss",
+      "enabled": true
+    },
+    {
+      "id": "nyt-science",
+      "name": "New York Times Science",
+      "url": "https://rss.nytimes.com/services/xml/rss/nyt/Science.xml",
+      "kind": "rss",
+      "enabled": true
+    },
+    {
+      "id": "nyt-technology",
+      "name": "New York Times Technology",
+      "url": "https://rss.nytimes.com/services/xml/rss/nyt/Technology.xml",
+      "kind": "rss",
+      "enabled": true
+    },
+    {
+      "id": "nyt-business",
+      "name": "New York Times Business",
+      "url": "https://rss.nytimes.com/services/xml/rss/nyt/Business.xml",
+      "kind": "rss",
+      "enabled": true
+    },
+    {
+      "id": "phys-org",
+      "name": "Phys.org",
+      "url": "https://phys.org/rss-feed/",
+      "kind": "rss",
+      "enabled": true
+    },
+    {
+      "id": "sciencedaily-health",
+      "name": "ScienceDaily Health",
+      "url": "https://www.sciencedaily.com/rss/health_medicine.xml",
+      "kind": "rss",
+      "enabled": true
+    },
+    {
+      "id": "techcrunch",
+      "name": "TechCrunch",
+      "url": "https://techcrunch.com/feed/",
+      "kind": "rss",
+      "enabled": true
+    },
+    {
+      "id": "the-verge",
+      "name": "The Verge",
+      "url": "https://www.theverge.com/rss/index.xml",
+      "kind": "rss",
+      "enabled": true
+    },
+    {
+      "id": "arxiv-cs-ai",
+      "name": "arXiv Artificial Intelligence",
+      "url": "https://rss.arxiv.org/rss/cs.AI",
+      "kind": "rss",
+      "enabled": true,
+      "rights_status": "per_document_review_required"
+    },
+    {
+      "id": "arxiv-cs-lg",
+      "name": "arXiv Machine Learning",
+      "url": "https://rss.arxiv.org/rss/cs.LG",
+      "kind": "rss",
+      "enabled": true,
+      "rights_status": "per_document_review_required"
+    },
+    {
+      "id": "arxiv-econ",
+      "name": "arXiv Economics",
+      "url": "https://rss.arxiv.org/rss/econ",
+      "kind": "rss",
+      "enabled": true,
+      "rights_status": "per_document_review_required"
+    },
+    {
+      "id": "wikinews-en",
+      "name": "Wikinews English recent articles",
+      "url": "https://en.wikinews.org/w/api.php?action=feedrecentchanges&feedformat=rss&namespace=0",
+      "kind": "rss",
+      "enabled": true,
+      "rights_status": "per_document_review_required"
+    },
+    {
+      "id": "wikinews-it",
+      "name": "Wikinotizie Italian recent articles",
+      "url": "https://it.wikinews.org/w/api.php?action=feedrecentchanges&feedformat=rss&namespace=0",
+      "kind": "rss",
+      "enabled": true,
+      "rights_status": "per_document_review_required"
+    },
+    {
+      "id": "eea-news",
+      "name": "European Environment Agency",
+      "url": "https://www.eea.europa.eu/en/newsroom/rss",
+      "kind": "rss",
+      "enabled": true,
+      "rights_status": "per_document_review_required"
+    }
+  ]
+}
