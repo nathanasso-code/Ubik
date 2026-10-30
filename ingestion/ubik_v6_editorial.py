@@ -33,8 +33,9 @@ CEILING_USD = {"deepseek": 0.30, "sonnet": 1.20}
 EST_PER_CALL = {"deepseek": {"scheda": 0.0015, "compose": 0.01}, "sonnet": {"scheda": 0.012, "compose": 0.12}}
 
 
-def prompt(name):
-    raw = (PROMPTS / f"{name}.txt").read_text()
+def prompt(name, variant="base"):
+    folder = PROMPTS.parent / "v6.2" if variant == "v62" else PROMPTS
+    raw = (folder / f"{name}.txt").read_text()
     return raw.replace("{PERIMETER}", PERIMETER), hashlib.sha256(raw.encode()).hexdigest()
 
 
@@ -88,14 +89,14 @@ def main(selection_path, out_dir, arm, compose_runs=2, variant="base"):
     model = MODELS[arm]
     out_dir = Path(out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
-    p_scheda, h_scheda = prompt("scheda")
-    p_compose, h_compose = prompt("compose")
+    p_scheda, h_scheda = prompt("scheda", variant)
+    p_compose, h_compose = prompt("compose", variant)
     out = {"version": "v6-experimental", "arm": arm, "model": model, "code_commit": os.getenv("UBIK_COMMIT"),
            "prompt_sha256": {"scheda": h_scheda, "compose": h_compose}, "window": sel.get("window"),
            "preflight": [], "errors": [], "calls": [], "schede": {}, "pages": [], "cost": {"scheda": 0.0, "compose": 0.0}}
     out["variant"] = variant
     path = out_dir / (f"v6-{arm}.json" if variant == "base" else f"v6-{arm}-{variant}.json")
-    notes_from = out_dir / f"v6-{arm}.json"
+    notes_from = path if variant == "v62" else out_dir / f"v6-{arm}.json"
     if notes_from.exists():  # resume: keep notes already paid for, redo compositions
         prev = json.loads(notes_from.read_text())
         if prev.get("prompt_sha256") == out["prompt_sha256"] and prev.get("model") == model:
@@ -155,7 +156,7 @@ def main(selection_path, out_dir, arm, compose_runs=2, variant="base"):
     listing = [{"item_id": iid, "source": items[iid]["source_id"], "origin": items[iid]["origin"], "kind_hint": items[iid]["kind"],
                 "published": (items[iid].get("published") or "")[:10], "title": items[iid].get("title") or "",
                 "note": {k: v for k, v in n.items() if k != "item_id"} | {
-                    "facts": [{k: f[k] for k in ("id", "statement", "date", "reported_as_new") if k in f} for f in n["facts"]],
+                    "facts": [{k: f[k] for k in ("id", "type", "statement", "date", "reported_as_new", "according_to") if k in f} for f in n["facts"]],
                     "theses": [{k: t[k] for k in ("id", "claim", "about_fact") if k in t} for t in n["theses"]]}}
                for iid, n in notes.items()]
     for run in range(1, compose_runs + 1):
@@ -214,10 +215,26 @@ def controls(page, schede, items):
                 refs_bad.append({"where": f.get("id"), "item": iid, "ref": ref})
             if iid in items:
                 origins.add(items[iid]["origin"])
+        # collapse items that attribute the fact to the same original source (e.g. all citing Sveriges Radio)
+        groups = {}
+        for r in f.get("items", []):
+            iid = r.get("item_id")
+            nf = next((x for x in schede.get(iid, {}).get("facts", []) if x["id"] == r.get("fact_ref")), {})
+            acc = (nf.get("according_to") or "").strip().lower()
+            key = ("src", acc) if acc and acc not in ("own reporting", "unspecified") else ("origin", items.get(iid, {}).get("origin", iid))
+            groups.setdefault(key, set()).add(items.get(iid, {}).get("origin", iid))
+        originals = sorted(k[1] for k in groups if k[0] == "src")
+        f["original_sources"] = originals
+        if not f.get("date"):
+            pubs = sorted((items[r["item_id"]].get("published") or "")[:10] for r in f.get("items", []) if r.get("item_id") in items)
+            pubs = [x for x in pubs if x]
+            if pubs:
+                f["date"], f["date_source"] = pubs[0], "pubblicazione"
         f["independent_origins"] = sorted(origins)
         f["verified_quotes"] = sum(1 for r in f.get("items", []) for x in (schede.get(r.get("item_id"), {}).get("facts", []))
                                    if x["id"] == r.get("fact_ref") and x.get("quote_verified"))
-        f["status"] = "più origini" if len(origins) >= 2 else "origine unica"
+        independent = len(groups) if originals else len(origins)
+        f["status"] = "più origini" if len(origins) >= 2 and independent >= 2 else ("fonte originale unica" if len(origins) >= 2 else "origine unica")
     for key in ("comments", "analyses"):
         for c in page[key]:
             iid, ref = c.get("item_id"), c.get("thesis_ref")
@@ -225,6 +242,10 @@ def controls(page, schede, items):
             note = schede.get(iid)
             match = note and next((x for x in note["theses"] if x["id"] == ref), None)
             c["quote_verified"] = bool(match and match.get("quote_verified"))
+            if key == "comments" and match and match.get("about_fact"):
+                fact = next((f for f in page["facts"] if f.get("id") == c.get("fact")), None)
+                if not fact or not any(r.get("item_id") == iid and r.get("fact_ref") == match["about_fact"] for r in fact.get("items", [])):
+                    c["linkage_check"] = "mismatch"
             if not match:
                 refs_bad.append({"where": key, "item": iid, "ref": ref})
     for e in page["excluded"]:
@@ -235,7 +256,9 @@ def controls(page, schede, items):
             "summary": {"facts": len(page["facts"]), "multi_origin_facts": sum(f["status"] == "più origini" for f in page["facts"]),
                         "comments": len(page["comments"]), "analyses": len(page["analyses"]), "excluded": len(page["excluded"]),
                         "missing": len(missing), "unknown": len(unknown), "bad_refs": len(refs_bad),
-                        "comment_quotes_verified": sum(c["quote_verified"] for c in page["comments"] + page["analyses"])}}
+                        "comment_quotes_verified": sum(c["quote_verified"] for c in page["comments"] + page["analyses"]),
+                        "comment_linkage_mismatch": sum(c.get("linkage_check") == "mismatch" for c in page["comments"]),
+                        "report_facts": sum(f.get("type") == "report" for f in page["facts"])}}
 
 
 def date_and_duplicate_checks(page, schede, items):
@@ -267,7 +290,10 @@ def render(page, items, arm, k):
         return f"[{it.get('source_id', iid)}]({it.get('url', '')})"
     lines = [f"# Pagina v6 — {arm}, composizione {k}", "", "## Fatti", ""]
     for f in page["facts"]:
-        lines += [f"**{f.get('id')} — {f.get('statement')}** ({f.get('date') or 's.d.'}; {f['status']})", "",
+        kind = "rapporto o inchiesta" if f.get("type") == "report" else "evento"
+        orig = f"; fonte originale: {', '.join(f['original_sources'])}" if f.get("original_sources") else ""
+        dsrc = " (data di pubblicazione)" if f.get("date_source") else ""
+        lines += [f"**{f.get('id')} — {f.get('statement')}** ({kind}; {f.get('date') or 's.d.'}{dsrc}; {f['status']}{orig})", "",
                   "Fonti: " + ", ".join(src(i) for i in dict.fromkeys(r.get("item_id") for r in f.get("items", []))), "", f.get("what_sources_add", ""), ""]
     lines += ["## Commenti ai fatti", ""] + [f"- **{c.get('fact')} — {src(c.get('item_id'))}.** {c.get('point')}" for c in page["comments"]]
     lines += ["", "## Analisi", ""] + [f"- **{src(a.get('item_id'))}.** {a.get('point')}" for a in page["analyses"]]

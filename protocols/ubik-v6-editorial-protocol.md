@@ -146,3 +146,30 @@ Cost: 0.02 USD. Overall score 6/10 for both pages, against 7 and 6 for the base 
 - "più origini" assigned to stories that all derive from one original source (Sveriges Radio);
 - comments attached to the wrong fact;
 - one misattribution between outlets.
+
+## Addendum v6.2 (preregistered before its run, 2026-10-30)
+
+**User decision:** pertinent reports and investigations published in the week are valid facts, catalogued as such.
+
+**Prompt changes** (`prompts/v6.2/`):
+- Notes give each fact a type ("event" or "report") and an according_to field naming the original source.
+- The composition keeps two fact types and states the perimeter for facts explicitly: rules, governance or
+  public policy on AI, not finance, product launches or adjacent policy.
+- A comment must point to a page fact.
+
+**New code controls:**
+- The date falls back to the first publication date, marked "data di pubblicazione".
+- Items attributing a fact to the same original source collapse into one: label "fonte originale unica" plus
+  the source's name.
+- Comment-to-fact linkage is checked against the note.
+
+DeepSeek only: new notes plus 2 compositions, expected cost about 0.08 USD. Evaluation uses the same rubric,
+with the user's rule: a pertinent report or investigation of the week is a valid fact.
+
+**Predictions:**
+- Bad facts ≤2 per page.
+- Reference facts ≥5/6.
+- Comments plus analyses ≥10/15.
+- Coverage 100%.
+- The Swedish story labelled "fonte originale unica (Sveriges Radio)".
+- No fact without a date.

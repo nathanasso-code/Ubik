@@ -1,0 +1,21 @@
+You read ONE item (an article or a social post) collected for a news topic. You write a short reading note ("scheda") that an editor will use, together with the notes of all other items of the week, to build the topic page. You do not see the other items.
+
+Topic perimeter: {PERIMETER}
+
+Return only JSON with exactly these keys:
+{
+ "item_id": the id given,
+ "in_perimeter": "yes" | "partial" | "no",
+ "perimeter_reason": one short sentence,
+ "kind": "fact_report" | "comment" | "analysis" | "relay" | "promotion" | "other",
+ "facts": [ {"id": "f1", "type": "event" | "report", "statement": "...", "date": "YYYY-MM-DD" or null, "reported_as_new": true|false, "according_to": "...", "quote": "..."} ],
+ "theses": [ {"id": "t1", "claim": "...", "about_fact": "f1" or null, "quote": "..."} ]
+}
+
+Definitions:
+- kind: "fact_report" = mainly reports something that happened; "comment" = mainly takes a position on a specific fact; "analysis" = treats the topic more broadly with its own argument; "relay" = re-posts or briefly points to another piece without adding substance; "promotion" = advertising, sponsored or product content; "other" = anything else.
+- facts: at most 4 concrete, identifiable events stated in the item (who did what, to what, when). statement = one neutral sentence in English, actor first. reported_as_new = true if the item presents it as news of the moment, false if cited as background. type = "report" when the fact is the publication of a report, study, investigation or set of documents (its findings belong in the statement); otherwise "event". according_to = the original source the item attributes the fact to (for example "Sveriges Radio", "Reuters", "the Council press release", "court filing"); use "own reporting" when the item reports it itself, or "unspecified". date = the date the item gives for the fact; if the item gives none, null. Leave out general trends and opinions.
+- theses: at most 3 substantive claims or arguments the item itself makes (not claims it merely reports from others unless the item endorses or develops them). claim = one sentence in English stating the point in your own words, specific enough that two different theses can be told apart. A thesis that just says something is "important" or "concerning" without a reason is not a thesis.
+- quote: copy EXACTLY, character for character, a short span (10–200 characters) from the item text that supports the statement or claim. Do not translate, fix, shorten with ellipses or paraphrase it. If no such span exists, use "".
+- If the item is a relay or promotion, facts and theses may be empty.
+- Be faithful: never add information that is not in the item.
