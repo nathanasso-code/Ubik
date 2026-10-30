@@ -1,0 +1,190 @@
+"""Ubik v6 (experimental): reading notes per item, one editorial composition per week, mechanical controls.
+
+  1. scheda     one call per item: kind, perimeter, up to 4 facts and 3 theses, each with a verbatim quote
+  2. compose    one call per week over all notes: facts (cards), comments, analyses, excluded with reasons
+  3. controls   no model: quotes found verbatim in the text, every item accounted for, references valid,
+                independent origins per fact (an outlet's feeds count once)
+Notes are made once per model; the composition runs N times to measure stability.
+Runs only in the private corpus repository (inputs are full texts).
+
+Usage: python -m ingestion.ubik_v6_editorial SELECTION.json OUT_DIR deepseek|sonnet [compose_runs]
+"""
+import hashlib
+import json
+import os
+import re
+import sys
+import unicodedata
+from pathlib import Path
+
+from ingestion.ubik_cost_guard import OverBudget, preflight
+from ingestion.ubik_extraction_pilot import call
+from ingestion.ubik_ukraine_v51_judge import DEEPSEEK
+from ingestion.ubik_ukraine_v5_model_audit import EXPECTED_MODEL as SONNET
+
+PROMPTS = Path(__file__).resolve().parent.parent / "prompts" / "v6"
+MODELS = {"deepseek": DEEPSEEK, "sonnet": SONNET}
+PERIMETER = ("Rules for AI in Europe and the United States: laws, regulation, enforcement, courts, governance and "
+             "public policy on AI, including how governments use or restrict AI. Elsewhere in the world only when "
+             "it directly concerns European or US rules.")
+TEXT_CHARS = 8000
+CEILING_USD = {"deepseek": 0.30, "sonnet": 1.20}
+EST_PER_CALL = {"deepseek": {"scheda": 0.0015, "compose": 0.01}, "sonnet": {"scheda": 0.012, "compose": 0.12}}
+
+
+def prompt(name):
+    raw = (PROMPTS / f"{name}.txt").read_text()
+    return raw.replace("{PERIMETER}", PERIMETER), hashlib.sha256(raw.encode()).hexdigest()
+
+
+def norm(s):
+    s = unicodedata.normalize("NFKC", s or "")
+    s = s.replace("’", "'").replace("‘", "'").replace("“", '"').replace("”", '"').replace(" ", " ")
+    return re.sub(r"\s+", " ", s).strip().lower()
+
+
+def parse_json(content):
+    return json.loads((content or "").strip().removeprefix("```json").removesuffix("```").strip())
+
+
+def main(selection_path, out_dir, arm, compose_runs=2):
+    sel = json.loads(Path(selection_path).read_text())
+    items = {i["item_id"]: i for i in sel["items"]}
+    model = MODELS[arm]
+    out_dir = Path(out_dir)
+    out_dir.mkdir(parents=True, exist_ok=True)
+    p_scheda, h_scheda = prompt("scheda")
+    p_compose, h_compose = prompt("compose")
+    out = {"version": "v6-experimental", "arm": arm, "model": model, "code_commit": os.getenv("UBIK_COMMIT"),
+           "prompt_sha256": {"scheda": h_scheda, "compose": h_compose}, "window": sel.get("window"),
+           "preflight": [], "errors": [], "calls": [], "schede": {}, "pages": [], "cost": {"scheda": 0.0, "compose": 0.0}}
+    path = out_dir / f"v6-{arm}.json"
+
+    def save():
+        path.write_text(json.dumps(out, ensure_ascii=False, indent=1) + "\n")
+
+    def spend(stage, cost, extra):
+        out["cost"][stage] += cost
+        out["calls"].append({"stage": stage, "cost_usd": cost, **extra})
+        if sum(out["cost"].values()) > CEILING_USD[arm]:
+            out["status"] = "aborted_cost_ceiling"
+            save()
+            raise SystemExit("Cost ceiling exceeded")
+
+    est = len(items) * EST_PER_CALL[arm]["scheda"] + compose_runs * EST_PER_CALL[arm]["compose"]
+    try:
+        preflight(f"v6 {arm}", est, CEILING_USD[arm], out["preflight"])
+    except OverBudget as exc:
+        out["status"] = "refused_preflight"
+        save()
+        raise SystemExit(str(exc))
+
+    # 1. notes
+    for iid, it in items.items():
+        payload = {"item_id": iid, "kind_hint": it["kind"], "source": it["source_id"], "language": it["language"],
+                   "title": it.get("title") or "", "text": it["text"][:TEXT_CHARS]}
+        for attempt in (1, 2):
+            raw, cost, secs = call(model, p_scheda, payload)
+            spend("scheda", cost, {"item": iid, "attempt": attempt, "seconds": secs})
+            try:
+                note = parse_json(raw["choices"][0]["message"]["content"])
+                assert note.get("item_id") == iid and isinstance(note.get("facts"), list) and isinstance(note.get("theses"), list)
+            except Exception as exc:
+                out["errors"].append({"stage": "scheda", "item": iid, "attempt": attempt, "error": str(exc)[:200]})
+                continue
+            src = norm((it.get("title") or "") + " " + it["text"][:TEXT_CHARS])
+            for x in note["facts"] + note["theses"]:
+                q = norm(x.get("quote"))
+                x["quote_verified"] = bool(q) and q in src
+            out["schede"][iid] = note
+            break
+        save()
+
+    # 2. composition, N runs
+    listing = [{"item_id": iid, "source": items[iid]["source_id"], "origin": items[iid]["origin"], "kind_hint": items[iid]["kind"],
+                "published": (items[iid].get("published") or "")[:10], "title": items[iid].get("title") or "",
+                "note": {k: v for k, v in n.items() if k != "item_id"} | {
+                    "facts": [{k: f[k] for k in ("id", "statement", "date", "reported_as_new") if k in f} for f in n["facts"]],
+                    "theses": [{k: t[k] for k in ("id", "claim", "about_fact") if k in t} for t in n["theses"]]}}
+               for iid, n in out["schede"].items()]
+    for run in range(1, compose_runs + 1):
+        page = None
+        for attempt in (1, 2):
+            raw, cost, secs = call(model, p_compose, {"week": sel.get("window"), "notes": listing})
+            spend("compose", cost, {"run": run, "attempt": attempt, "seconds": secs})
+            try:
+                page = parse_json(raw["choices"][0]["message"]["content"])
+                assert all(isinstance(page.get(k), list) for k in ("facts", "comments", "analyses", "excluded"))
+                break
+            except Exception as exc:
+                out["errors"].append({"stage": "compose", "run": run, "attempt": attempt, "error": str(exc)[:200]})
+                page = None
+        if page is not None:
+            page["controls"] = controls(page, out["schede"], items)
+            out["pages"].append(page)
+        save()
+    out["total_cost_usd"] = sum(out["cost"].values())
+    out["status"] = "completed"
+    save()
+    for k, page in enumerate(out["pages"], 1):
+        (out_dir / f"v6-{arm}-page{k}.md").write_text(render(page, items, arm, k))
+    print(json.dumps({"arm": arm, "notes": len(out["schede"]), "pages": len(out["pages"]), "cost": out["cost"],
+                      "controls": [p["controls"]["summary"] for p in out["pages"]]}))
+
+
+def controls(page, schede, items):
+    refs_bad, accounted = [], set()
+    for f in page["facts"]:
+        origins = set()
+        for r in f.get("items", []):
+            iid, ref = r.get("item_id"), r.get("fact_ref")
+            accounted.add(iid)
+            note = schede.get(iid)
+            match = note and next((x for x in note["facts"] if x["id"] == ref), None)
+            if not match:
+                refs_bad.append({"where": f.get("id"), "item": iid, "ref": ref})
+            if iid in items:
+                origins.add(items[iid]["origin"])
+        f["independent_origins"] = sorted(origins)
+        f["verified_quotes"] = sum(1 for r in f.get("items", []) for x in (schede.get(r.get("item_id"), {}).get("facts", []))
+                                   if x["id"] == r.get("fact_ref") and x.get("quote_verified"))
+        f["status"] = "più origini" if len(origins) >= 2 else "origine unica"
+    for key in ("comments", "analyses"):
+        for c in page[key]:
+            iid, ref = c.get("item_id"), c.get("thesis_ref")
+            accounted.add(iid)
+            note = schede.get(iid)
+            match = note and next((x for x in note["theses"] if x["id"] == ref), None)
+            c["quote_verified"] = bool(match and match.get("quote_verified"))
+            if not match:
+                refs_bad.append({"where": key, "item": iid, "ref": ref})
+    for e in page["excluded"]:
+        accounted.add(e.get("item_id"))
+    missing = sorted(set(schede) - accounted)
+    unknown = sorted(accounted - set(schede) - {None})
+    return {"missing_items": missing, "unknown_items": unknown, "bad_references": refs_bad,
+            "summary": {"facts": len(page["facts"]), "multi_origin_facts": sum(f["status"] == "più origini" for f in page["facts"]),
+                        "comments": len(page["comments"]), "analyses": len(page["analyses"]), "excluded": len(page["excluded"]),
+                        "missing": len(missing), "unknown": len(unknown), "bad_refs": len(refs_bad),
+                        "comment_quotes_verified": sum(c["quote_verified"] for c in page["comments"] + page["analyses"])}}
+
+
+def render(page, items, arm, k):
+    def src(iid):
+        it = items.get(iid, {})
+        return f"[{it.get('source_id', iid)}]({it.get('url', '')})"
+    lines = [f"# Pagina v6 — {arm}, composizione {k}", "", "## Fatti", ""]
+    for f in page["facts"]:
+        lines += [f"**{f.get('id')} — {f.get('statement')}** ({f.get('date') or 's.d.'}; {f['status']})", "",
+                  "Fonti: " + ", ".join(src(r.get("item_id")) for r in f.get("items", [])), "", f.get("what_sources_add", ""), ""]
+    lines += ["## Commenti ai fatti", ""] + [f"- **{c.get('fact')} — {src(c.get('item_id'))}.** {c.get('point')}" for c in page["comments"]]
+    lines += ["", "## Analisi", ""] + [f"- **{src(a.get('item_id'))}.** {a.get('point')}" for a in page["analyses"]]
+    lines += ["", "## Escluse", ""] + [f"- {src(e.get('item_id'))}: {e.get('reason')}" + (f" (come {e.get('redundant_with')})" if e.get("redundant_with") else "")
+                                       for e in page["excluded"]]
+    c = page["controls"]["summary"]
+    lines += ["", "## Controlli", "", json.dumps(c, ensure_ascii=False)]
+    return "\n".join(lines) + "\n"
+
+
+if __name__ == "__main__":
+    main(sys.argv[1], sys.argv[2], sys.argv[3], int(sys.argv[4]) if len(sys.argv) > 4 else 2)
