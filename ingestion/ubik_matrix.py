@@ -104,7 +104,7 @@ def main(selection_path, out_dir, arm, compose_runs=2):
     # 2. composition
     listing = []
     for iid, n in notes["notes"].items():
-        if n.get("relevance") == "no":
+        if n.get("relevance") == "no" or iid not in items:  # notes of items no longer selected (e.g. duplicates)
             continue
         it = items[iid]
         listing.append({"item_id": iid, "source": it["publisher"], "source_role": n.get("source_role"), "language": it["language"],
