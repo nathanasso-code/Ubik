@@ -45,7 +45,7 @@ def main(selection_path, out_dir, arm, compose_runs=2):
     out_dir = Path(out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
     p_note, h_note = prompt("nota", nucleus)
-    p_comp, h_comp = prompt("compose", nucleus)
+    p_comp, h_comp = prompt(os.getenv("MATRIX_COMPOSE", "compose"), nucleus)
     p_rev, h_rev = prompt("revise", nucleus)
     notes_path = out_dir / "notes.json"
     notes = {"prompt_sha256": h_note, "model": DEEPSEEK, "notes": {}, "cost": 0.0, "errors": []}
@@ -57,7 +57,8 @@ def main(selection_path, out_dir, arm, compose_runs=2):
     out = {"version": "matrix-v1", "arm": arm, "model": MODELS[arm], "code_commit": os.getenv("UBIK_COMMIT"),
            "prompt_sha256": {"nota": h_note, "compose": h_comp, "revise": h_rev}, "nucleus": nucleus, "preflight": [], "pages": [],
            "errors": [], "calls": [], "cost": {"compose": 0.0}}
-    path = out_dir / f"matrix-{arm}.json"
+    tag = os.getenv("MATRIX_TAG", "")
+    path = out_dir / f"matrix-{arm}{tag}.json"
 
     def save():
         notes_path.write_text(json.dumps(notes, ensure_ascii=False, indent=1) + "\n")
@@ -140,7 +141,7 @@ def main(selection_path, out_dir, arm, compose_runs=2):
         page["violations"] = rule_violations(page, notes["notes"])
         page["controls"] = controls(page, notes["notes"], items)
         out["pages"].append(page)
-        (out_dir / f"matrix-{arm}-{run}.html").write_text(render(page, notes["notes"], items))
+        (out_dir / f"matrix-{arm}{tag}-{run}.html").write_text(render(page, notes["notes"], items))
         save()
     out["notes_cost"] = notes["cost"]
     out["total_cost_usd"] = notes["cost"] + out["cost"]["compose"]
