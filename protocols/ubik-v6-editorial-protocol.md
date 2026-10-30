@@ -173,3 +173,41 @@ with the user's rule: a pertinent report or investigation of the week is a valid
 - Coverage 100%.
 - The Swedish story labelled "fonte originale unica (Sveriges Radio)".
 - No fact without a date.
+
+## Results of v6.2 (2026-10-30)
+
+Cost: 0.07 USD (new notes 0.046 plus two compositions 0.025).
+
+Controls, run 2 recomputed locally after a KeyError in the control code (the pages are unchanged):
+
+| | Run 1 | Run 2 |
+|---|---|---|
+| Facts (reports) | 11 (4) | 14 (5) |
+| Comments / analyses / excluded | 6 / 13 / 19 | 40 / 38 / 42 (degenerate: repeated entries) |
+| Missing, unknown, bad references | 0, 0, 0 | 1, 2, 9 |
+| Comments linked to the wrong fact | 3 | 13 |
+
+**Predictions, checked mechanically.** No blind evaluation: run 2 fails the controls and run 1 shows no gain in
+selectivity.
+- Coverage 100%: confirmed for run 1; falsified for run 2.
+- No fact without a date: confirmed, through the publication-date fallback.
+- Swedish story labelled "fonte originale unica": **falsified**. according_to correctly names Sveriges Radio
+  for two items, but one item says "own reporting", so the code still counts two groups.
+- Bad facts ≤2: not evaluated blind. Both pages keep at least the German energy law; run 2 adds more.
+
+**Reading.**
+- The v6.2 instructions did not make DeepSeek more selective: 11 and 14 facts, against 12–14 in the base runs.
+- Composition variance is high: one composition in four so far is degenerate.
+- Two things did work:
+  - the controls flag the bad page by themselves;
+  - according_to names the original source in most cases (Gazzetta Ufficiale, Sveriges Radio, Open Rights
+    Group, Spotlight on Corruption, Freedom House).
+
+**Proposed next steps** (to discuss with the user before more prompt changes):
+1. An acceptance gate. A page with missing or unknown items, bad references or many wrong links is rejected
+   and recomposed automatically (about 0.01 USD per attempt).
+2. Selectivity as an explicit, visible rule rather than an instruction the model ignores. The code orders facts
+   by independent origins and type and shows the first N; the others go to "altri fatti della settimana",
+   collapsed. Nothing is lost.
+3. Fields stay only if a measure shows they help. The prefilter (pf) is removed; the fact type and according_to
+   stay for now, because they feed the labels the user asked for.
