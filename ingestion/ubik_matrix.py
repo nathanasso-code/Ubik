@@ -262,6 +262,17 @@ def revise_existing(selection_path, out_dir, arm):
                       "errors": out["errors"][-2:]}))
 
 
+def make_queries(selection_path, out_path):
+    """Search queries in five languages for what the corpus lacks about the nucleus (one cheap call)."""
+    sel = json.loads(Path(selection_path).read_text())
+    p_q, h_q = prompt("queries", sel["nucleus"])
+    have = [{"source": i["publisher"], "date": (i.get("published") or "")[:10], "title": i.get("title") or ""} for i in sel["items"]]
+    raw, cost, secs = call(DEEPSEEK, p_q, {"items_already_collected": have}, max_tokens=3000)
+    q = parse_json(raw["choices"][0]["message"]["content"])
+    Path(out_path).write_text(json.dumps({"prompt_sha256": h_q, "model": DEEPSEEK, "cost_usd": cost, **q}, ensure_ascii=False, indent=1) + "\n")
+    print(json.dumps({"queries": len(q.get("queries", [])), "cost": cost}))
+
+
 def claim(notes, ref):
     iid, _, cid = (ref or "").partition(":")
     c = next((x for x in notes.get(iid, {}).get("claims", []) if x.get("id") == cid), None)
@@ -372,7 +383,9 @@ def render(page, notes, items):
 
 
 if __name__ == "__main__":
-    if os.getenv("MATRIX_MODE") == "revise":
+    if os.getenv("MATRIX_MODE") == "queries":
+        make_queries(sys.argv[1], sys.argv[2])
+    elif os.getenv("MATRIX_MODE") == "revise":
         revise_existing(sys.argv[1], sys.argv[2], sys.argv[3])
     else:
         main(sys.argv[1], sys.argv[2], sys.argv[3], int(sys.argv[4]) if len(sys.argv) > 4 else 2)

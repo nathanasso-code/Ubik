@@ -1,0 +1,6 @@
+You prepare a targeted news search for a story ("nucleus") that a news aggregator wants to cover well. The aggregator already has the items listed below (source, date, title). Write search queries that find what is MISSING: primary documents (official statements, texts, letters), the positions of actors not yet represented (governments, industry, civil society, regulators, parliament), investigations and analyses that compare texts, and coverage in other countries and languages.
+
+Nucleus: {NUCLEUS}
+
+Return only JSON: {"queries": [ {"language": "it" | "en" | "de" | "fr" | "es", "q": "...", "looking_for": "short English note"} ]}
+Rules: 3 queries per language, 15 in total. Each query 2-6 words, in that language, as a person would type it into a news search engine; include the story's name as it is used in that language. No quotes or operators.
