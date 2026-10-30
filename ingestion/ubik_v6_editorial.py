@@ -126,13 +126,18 @@ def main(selection_path, out_dir, arm, compose_runs=2):
         page = None
         for attempt in (1, 2):
             try:
-                raw, cost, secs = call(model, p_compose, {"week": sel.get("window"), "notes": listing})
+                # Sonnet spends hidden reasoning tokens inside max_tokens: disable reasoning and allow a long page
+                raw, cost, secs = call(model, p_compose, {"week": sel.get("window"), "notes": listing}, max_tokens=20000,
+                                       extra={"reasoning": {"enabled": False}} if arm == "sonnet" else None)
             except (urllib.error.URLError, TimeoutError, OSError, RuntimeError, KeyError) as exc:
                 body = exc.read(500).decode("utf-8", "replace") if isinstance(exc, urllib.error.HTTPError) else ""
                 out["errors"].append({"stage": "compose", "run": run, "attempt": attempt, "error": f"{type(exc).__name__}: {exc} {body}"[:400]})
                 save()
                 continue
-            spend("compose", cost, {"run": run, "attempt": attempt, "seconds": secs})
+            u = raw.get("usage") or {}
+            spend("compose", cost, {"run": run, "attempt": attempt, "seconds": secs, "completion_tokens": u.get("completion_tokens"),
+                                    "reasoning_tokens": (u.get("completion_tokens_details") or {}).get("reasoning_tokens"),
+                                    "finish_reason": raw["choices"][0].get("finish_reason")})
             try:
                 page = parse_json(raw["choices"][0]["message"]["content"])
                 assert all(isinstance(page.get(k), list) for k in ("facts", "comments", "analyses", "excluded"))
@@ -143,6 +148,8 @@ def main(selection_path, out_dir, arm, compose_runs=2):
                                       "finish_reason": raw["choices"][0].get("finish_reason"), "content_len": len(content),
                                       "content_tail": content[-300:]})
                 page = None
+                if raw["choices"][0].get("finish_reason") == "length":
+                    break  # same request would be cut again: do not pay twice
         if page is not None:
             page["controls"] = controls(page, out["schede"], items)
             out["pages"].append(page)

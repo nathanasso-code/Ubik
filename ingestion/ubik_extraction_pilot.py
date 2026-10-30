@@ -39,10 +39,11 @@ def lede(text, limit):
     return cut[:stop + 1] if stop > limit // 2 else cut
 
 
-def call(model, prompt, payload):
-    body = {"model": model, "max_tokens": 6500,
+def call(model, prompt, payload, max_tokens=6500, extra=None):
+    body = {"model": model, "max_tokens": max_tokens,
             "messages": [{"role": "system", "content": prompt}, {"role": "user", "content": json.dumps(payload, ensure_ascii=False)}]}
     body.update(DEEPSEEK_EXTRA if model == DEEPSEEK else {"response_format": {"type": "json_object"}})
+    body.update(extra or {})
     req = urllib.request.Request("https://openrouter.ai/api/v1/chat/completions", data=json.dumps(body).encode(),
                                  headers={"Authorization": "Bearer " + os.environ["UBIK_LLM_API_KEY"], "Content-Type": "application/json"})
     t0 = time.time()
