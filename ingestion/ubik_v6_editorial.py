@@ -45,7 +45,8 @@ def norm(s):
 
 
 def parse_json(content):
-    return json.loads((content or "").strip().removeprefix("```json").removesuffix("```").strip())
+    # strict=False accepts raw newlines and tabs inside strings, which Sonnet emits in long Italian text
+    return json.loads((content or "").strip().removeprefix("```json").removesuffix("```").strip(), strict=False)
 
 
 def main(selection_path, out_dir, arm, compose_runs=2):
@@ -137,7 +138,10 @@ def main(selection_path, out_dir, arm, compose_runs=2):
                 assert all(isinstance(page.get(k), list) for k in ("facts", "comments", "analyses", "excluded"))
                 break
             except Exception as exc:
-                out["errors"].append({"stage": "compose", "run": run, "attempt": attempt, "error": str(exc)[:200]})
+                content = raw["choices"][0]["message"].get("content") or ""
+                out["errors"].append({"stage": "compose", "run": run, "attempt": attempt, "error": str(exc)[:200],
+                                      "finish_reason": raw["choices"][0].get("finish_reason"), "content_len": len(content),
+                                      "content_tail": content[-300:]})
                 page = None
         if page is not None:
             page["controls"] = controls(page, out["schede"], items)
