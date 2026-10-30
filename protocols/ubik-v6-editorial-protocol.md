@@ -268,3 +268,14 @@ No invalid continues ids.
 
 **Quality note.** One week 15–21 fact bundles three distinct events: the state lawsuits, AI Office requests and
 FTC subpoenas. This is a composition fault the controls do not catch.
+
+## Addendum, 30 ottobre: correzioni nel codice (nessuna chiamata al modello)
+
+Riscontrate rileggendo la settimana 22–28 ottobre e ricalcolate sulle pagine già pagate con `ingestion/ubik_v6_recheck.py`.
+
+1. **Conferme indipendenti gonfiate.** Le fonti citate dentro un solo articolo (un op-ed, un portavoce, il rapporto) contavano come conferme separate: Delaware risultava a 4, Home Office a 3, entrambi da un solo articolo ed entrambi in evidenza. Ora le conferme sono le testate (origini); due testate si fondono se attribuiscono il fatto alla stessa fonte originale o se una cita l'altra come fonte. Settimana 22: i fatti con più conferme reali sono 2 su 10 (Svezia 3, Digital Omnibus 2).
+2. **Riferimento sbagliato.** Un fatto (Spotlight on Corruption) puntava alla nota di un altro articolo (Germania e Nvidia). Ora un fatto deve condividere almeno un nome proprio (prefisso di 5 lettere, così da reggere la traduzione) con la nota e il testo che cita; altrimenti il riferimento si toglie, con registro.
+3. **Spareggio.** A parità di conferme contava il numero di riferimenti, che premiava i fatti accorpati; ora conta gli articoli distinti. Il numero di note fuse in un fatto è registrato (`bundled_note_facts`) ma non cambia l'ordine.
+4. **Provato e scartato:** escludere dall'evidenza i fatti con note datate oltre due settimane prima. Le schede sbagliano l'anno (Texas e Nvidia, entrambi della settimana, datati 2025): il filtro nascondeva fatti veri.
+
+Effetto sulla settimana 22: in evidenza Svezia, Digital Omnibus, Germania–Nvidia, decreto italiano, Texas; escono Delaware e Home Office, che restavano lì per il conteggio gonfiato. Settimana 15: invariata.

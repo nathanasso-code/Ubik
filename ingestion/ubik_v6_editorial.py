@@ -63,6 +63,25 @@ MONTHS = {m: i for i, names in enumerate([
 GATE = {"max_linkage_mismatch": 2, "attempts": 3, "max_repairs": 5}
 
 
+STOP_NAMES = {"il", "lo", "la", "i", "gli", "le", "un", "una", "uno", "secondo", "dopo", "con", "per", "nel", "nella", "dal", "dalla"}
+
+
+def proper_names(statement):
+    """Capitalised words after the first one (names of people, bodies, places), language-neutral enough to be
+    checked against an English or German source by a five-letter prefix."""
+    words = re.findall(r"[A-Za-zÀ-ÿ][\wÀ-ÿ'’-]*", statement or "")
+    return {w.lower()[:5] for w in words[1:] if w[0].isupper() and len(w) >= 3 and w.lower() not in STOP_NAMES}
+
+
+def names_found(names, items, schede, ref):
+    """A page fact must share at least one name with the note and text it cites; otherwise the reference is wrong."""
+    iid = ref.get("item_id")
+    nf = next((x for x in schede.get(iid, {}).get("facts", []) if x.get("id") == ref.get("fact_ref")), {})
+    hay = norm(" ".join([nf.get("statement") or "", nf.get("quote") or "", nf.get("according_to") or "",
+                         items.get(iid, {}).get("title") or "", items.get(iid, {}).get("text") or ""]))
+    return any(re.search(r"\b" + re.escape(n), hay) for n in names)
+
+
 def repair(page, schede, items):
     """Repair by removal (code, no model): references to notes that do not exist are removed, entries for unknown
     items are dropped, items the composition forgot are listed as excluded "non_valutato". Every repair is logged
@@ -77,6 +96,14 @@ def repair(page, schede, items):
         for r in f["items"]:
             if r not in keep:
                 log.append({"removed": "fact_source", "fact": f.get("id"), "item": r.get("item_id"), "ref": r.get("fact_ref")})
+        names = proper_names(f.get("statement"))
+        if len(names) >= 2:
+            ok = [r for r in keep if names_found(names, items, schede, r)]
+            for r in keep:
+                if r not in ok:
+                    log.append({"removed": "fact_source_mismatch", "fact": f.get("id"), "item": r.get("item_id"), "ref": r.get("fact_ref"),
+                                "names": sorted(names)})
+            keep = ok
         f["items"] = keep
     dropped = [f.get("id") for f in page["facts"] if not f["items"]]
     for fid in dropped:
@@ -124,12 +151,15 @@ def gate(page):
     return why
 
 
-def rank_facts(page):
-    """Display rule (code): independent original sources first, then distinct outlets, then number of items."""
+def rank_facts(page, window_start=None):
+    """Display rule (code): independent confirmations first, then official source, then distinct outlets, then
+    distinct items (not references: several notes of one item merged into a fact must not push it up)."""
+    # window_start is kept for the signature; a staleness rule on note dates was tried on 30 Oct and dropped:
+    # the notes get the year wrong (Texas and Nvidia, both of the week, dated 2025), so it hid real facts.
     def key(f):
         valid = f.get("type") in ("event", "report")
         return (not valid, -f.get("independent_count", 1), not f.get("official"), -len(f.get("independent_origins", [])),
-                -len(f.get("items", [])))
+                -len({r.get("item_id") for r in f.get("items", [])}))
     order = sorted(page["facts"], key=key)
     for i, f in enumerate(order):
         f["highlight"] = i < HIGHLIGHT
@@ -272,7 +302,7 @@ def main(selection_path, out_dir, arm, compose_runs=2, variant="base", previous_
             page["rejected_by_gate"] = gate(page)
             page["accepted"] = not page["rejected_by_gate"]
             if "error" not in page["controls"]:
-                rank_facts(page)
+                rank_facts(page, (sel.get("window") or [None])[0])
             out["pages"].append(page)
             save()
             if page["accepted"]:
@@ -312,15 +342,32 @@ def controls(page, schede, items):
                 refs_bad.append({"where": f.get("id"), "item": iid, "ref": ref})
             if iid in items:
                 origins.add(items[iid]["origin"])
-        # collapse items that attribute the fact to the same original source (e.g. all citing Sveriges Radio)
-        groups = {}
+        # Independent confirmations are outlets (origins). Outlets that attribute the fact to the same original
+        # source, or one that cites another outlet of the page as its source, collapse into one. Several sources
+        # quoted inside ONE outlet never count as several confirmations.
+        attrib = {}
         for r in f.get("items", []):
             iid = r.get("item_id")
             nf = next((x for x in schede.get(iid, {}).get("facts", []) if x.get("id") == r.get("fact_ref")), {})
             acc = (nf.get("according_to") or "").strip().lower()
-            key = ("src", acc) if acc and acc not in ("own reporting", "unspecified") else ("origin", items.get(iid, {}).get("origin", iid))
-            groups.setdefault(key, set()).add(items.get(iid, {}).get("origin", iid))
-        originals = sorted(k[1] for k in groups if k[0] == "src")
+            o = items.get(iid, {}).get("origin", iid)
+            attrib.setdefault(o, set())
+            if acc and acc not in ("own reporting", "unspecified", "unknown", "none"):
+                attrib[o].add(acc)
+        parent = {o: o for o in attrib}
+        def find(o):
+            while parent[o] != o:
+                o = parent[o]
+            return o
+        def tokens(o):
+            return {t for t in re.split(r"[-_ ]", o) if len(t) >= 4 and t not in ("policy", "tech", "news", "press", "europe", "digital")}
+        olist = sorted(attrib)
+        for a in olist:
+            for b in olist:
+                if a < b and (attrib[a] & attrib[b] or any(t in acc for t in tokens(a) for acc in attrib[b])
+                              or any(t in acc for t in tokens(b) for acc in attrib[a])):
+                    parent[find(b)] = find(a)
+        originals = sorted({acc for v in attrib.values() for acc in v})
         f["official"] = any(re.search(r"gazzetta|official|council|commission|parliament|court|filing|press release|federal register|ministry|government|regulator|garante|cnil|ftc", o) for o in originals) or \
             any(items.get(r.get("item_id"), {}).get("source_type") == "primary_official" for r in f.get("items", []))
         f["original_sources"] = originals
@@ -332,8 +379,14 @@ def controls(page, schede, items):
         f["independent_origins"] = sorted(origins)
         f["verified_quotes"] = sum(1 for r in f.get("items", []) for x in (schede.get(r.get("item_id"), {}).get("facts", []))
                                    if x.get("id") == r.get("fact_ref") and x.get("quote_verified"))
-        independent = len(groups) if originals else len(origins)
+        independent = len({find(o) for o in attrib}) if attrib else len(origins)
         f["independent_count"] = independent
+        per_item = {}
+        for r in f.get("items", []):
+            per_item[r.get("item_id")] = per_item.get(r.get("item_id"), 0) + 1
+        f["note_dates"] = sorted({nf.get("date") for r in f.get("items", []) for nf in schede.get(r.get("item_id"), {}).get("facts", [])
+                                  if nf.get("id") == r.get("fact_ref") and nf.get("date")})
+        f["bundled_note_facts"] = max(per_item.values(), default=0)  # >2: one outlet's several facts merged into one
         f["status"] = "più origini" if len(origins) >= 2 and independent >= 2 else ("fonte originale unica" if len(origins) >= 2 else "origine unica")
     for key in ("comments", "analyses"):
         for c in page[key]:
