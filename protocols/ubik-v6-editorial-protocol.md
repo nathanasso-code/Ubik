@@ -237,3 +237,34 @@ selection, v6.2 notes reused, 2 compositions) with the previous week as memory. 
 - Every published page passes the gate within 3 attempts.
 - At least one valid "continues" link: a fact of week 22–28 that is a later step of a week 15–21 story.
 - No continues link that an evaluator judges merely thematic.
+
+## Results of v6.3 (2026-10-30)
+
+Cost: 0.093 USD, of which 0.023 for new notes for week 15–21 and 0.07 for 7 compositions.
+
+**Week 15–21:** 1 composition, accepted at once. 7 facts, 6 comments, 6 analyses; no repairs.
+
+**Week 22–28:** the strict gate rejected all 6 compositions, mostly for 1–4 references to note ids that do not
+exist. Prediction "every published page passes the gate within 3 attempts" is **falsified**.
+
+**Change applied after the run** (code, applied locally to the same paid pages, content unchanged except the
+logged removals):
+- References that cannot be verified are removed.
+- Entries for unknown items are dropped.
+- Items the composition forgot are listed as excluded "non_valutato".
+- Every repair is logged; a page with more than 5 repairs is still rejected.
+
+With this repair-by-removal, the first acceptable composition is attempt 2 in run 1 (4 repairs) and attempt 1 in
+run 2 (3 repairs).
+
+**Continuity.** The model set "continues" on 2 facts in every composition of week 22–28, always the same two:
+- **Texas sues OpenAI → the suits by other states on 14 October.** A genuine later step of the same story
+  (prediction confirmed).
+- **Italian decree in force on 23 October → the same decree, announced the previous week.** The same fact seen
+  in two weeks: card continuity rather than a new step. It is not thematic, so the prediction on thematic links
+  holds. The matrix builder should distinguish "same fact, updated" from "next step".
+
+No invalid continues ids.
+
+**Quality note.** One week 15–21 fact bundles three distinct events: the state lawsuits, AI Office requests and
+FTC subpoenas. This is a composition fault the controls do not catch.

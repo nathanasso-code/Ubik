@@ -60,7 +60,45 @@ MONTHS = {m: i for i, names in enumerate([
     for m in names}
 
 
-GATE = {"max_linkage_mismatch": 2, "attempts": 3}
+GATE = {"max_linkage_mismatch": 2, "attempts": 3, "max_repairs": 5}
+
+
+def repair(page, schede, items):
+    """Repair by removal (code, no model): references to notes that do not exist are removed, entries for unknown
+    items are dropped, items the composition forgot are listed as excluded "non_valutato". Every repair is logged
+    and shown; nothing is added that the model did not write."""
+    log = []
+    def fact_ok(iid, ref):
+        return any(x.get("id") == ref for x in schede.get(iid, {}).get("facts", []))
+    def thesis_ok(iid, ref):
+        return any(x.get("id") == ref for x in schede.get(iid, {}).get("theses", []))
+    for f in page["facts"]:
+        keep = [r for r in f["items"] if r.get("item_id") in schede and fact_ok(r["item_id"], r.get("fact_ref"))]
+        for r in f["items"]:
+            if r not in keep:
+                log.append({"removed": "fact_source", "fact": f.get("id"), "item": r.get("item_id"), "ref": r.get("fact_ref")})
+        f["items"] = keep
+    dropped = [f.get("id") for f in page["facts"] if not f["items"]]
+    for fid in dropped:
+        log.append({"removed": "fact_without_valid_source", "fact": fid})
+    page["facts"] = [f for f in page["facts"] if f["items"]]
+    for key in ("comments", "analyses"):
+        keep = []
+        for c in page[key]:
+            if c.get("item_id") in schede and thesis_ok(c["item_id"], c.get("thesis_ref")):
+                keep.append(c)
+            else:
+                log.append({"removed": key[:-1], "item": c.get("item_id"), "ref": c.get("thesis_ref")})
+        page[key] = keep
+    page["excluded"] = [e for e in page["excluded"] if e.get("item_id") in schede or log.append({"removed": "excluded_unknown", "item": e.get("item_id")})]
+    seen = {r["item_id"] for f in page["facts"] for r in f["items"]} | {c["item_id"] for c in page["comments"] + page["analyses"]} | \
+           {e["item_id"] for e in page["excluded"]}
+    for iid in schede:
+        if iid not in seen:
+            page["excluded"].append({"item_id": iid, "reason": "non_valutato", "redundant_with": None})
+            log.append({"added": "excluded_non_valutato", "item": iid})
+    page["repairs"] = log
+    return log
 HIGHLIGHT = 5
 
 
@@ -74,6 +112,8 @@ def gate(page):
     for k in ("missing", "unknown", "bad_refs"):
         if s.get(k):
             why.append(k)
+    if len(page.get("repairs", [])) > GATE["max_repairs"]:
+        why.append("too_many_repairs")
     if s.get("comment_linkage_mismatch", 0) > GATE["max_linkage_mismatch"]:
         why.append("linkage")
     if c.get("possible_duplicate_facts"):
@@ -213,7 +253,10 @@ def main(selection_path, out_dir, arm, compose_runs=2, variant="base", previous_
                                       "content_tail": content[-300:]})
                 continue
             normalise(page)
+            page["controls_before_repair"] = None
             try:
+                page["controls_before_repair"] = controls(json.loads(json.dumps(page)), out["schede"], items)["summary"]
+                repair(page, out["schede"], items)
                 page["controls"] = controls(page, out["schede"], items)
                 page["controls"].update(date_and_duplicate_checks(page, out["schede"], items))
             except Exception as exc:  # a control bug must not lose a paid page
