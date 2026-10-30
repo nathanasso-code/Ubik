@@ -264,9 +264,10 @@ def revise_existing(selection_path, out_dir, arm):
 
 
 def make_queries(selection_path, out_path):
-    """Search queries in five languages for what the corpus lacks about the nucleus (one cheap call)."""
+    """Search queries in five languages for what the corpus lacks about the nucleus (one cheap call).
+    MATRIX_QUERIES=queries-specialist asks for primary documents and specialist analyses instead of news."""
     sel = json.loads(Path(selection_path).read_text())
-    p_q, h_q = prompt("queries", sel["nucleus"])
+    p_q, h_q = prompt(os.getenv("MATRIX_QUERIES", "queries"), sel["nucleus"])
     have = [{"source": i["publisher"], "date": (i.get("published") or "")[:10], "title": i.get("title") or ""} for i in sel["items"]]
     raw, cost, secs = call(DEEPSEEK, p_q, {"items_already_collected": have}, max_tokens=3000)
     q = parse_json(raw["choices"][0]["message"]["content"])

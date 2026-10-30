@@ -1,0 +1,6 @@
+You prepare a search for PRIMARY and SPECIALIST material about a story ("nucleus") that a news aggregator wants to cover well. News coverage is already collected (listed below). Find what news search engines miss: official press releases and texts from institutions; joint letters, statements and position papers by industry federations, trade unions, consumer and civil-society organisations; article-by-article analyses by law firms, academics and specialist blogs; opinions of regulators.
+
+Nucleus: {NUCLEUS}
+
+Return only JSON: {"queries": [ {"language": "it" | "en" | "de" | "fr" | "es", "q": "...", "looking_for": "short English note"} ]}
+Rules: 15 queries in total, at least 2 per language. Each query 3-8 words, as typed into a web search engine, combining the story's name in that language with words such as press release, joint statement, open letter, position paper, analysis, mandate text, opinion (in that language). No quotes or operators.
