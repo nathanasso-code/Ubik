@@ -188,18 +188,35 @@ def main(selection_path, out_dir, arm, compose_runs=2, variant="base"):
                 if raw["choices"][0].get("finish_reason") == "length":
                     break  # same request would be cut again: do not pay twice
         if page is not None:
-            page["controls"] = controls(page, out["schede"], items)
-            page["controls"].update(date_and_duplicate_checks(page, out["schede"], items))
+            normalise(page)
+            try:
+                page["controls"] = controls(page, out["schede"], items)
+                page["controls"].update(date_and_duplicate_checks(page, out["schede"], items))
+            except Exception as exc:  # a control bug must not lose a paid page
+                import traceback
+                page["controls"] = {"error": traceback.format_exc()[-1500:], "summary": {"control_error": str(exc)[:200]}}
             out["pages"].append(page)
         save()
     out["total_cost_usd"] = sum(out["cost"].values())
     out["status"] = "completed"
     save()
     for k, page in enumerate(out["pages"], 1):
+        if "error" in page.get("controls", {}):
+            continue
         suffix = "" if variant == "base" else f"-{variant}"
         (out_dir / f"v6-{arm}{suffix}-page{k}.md").write_text(render(page, items, arm, k))
     print(json.dumps({"arm": arm, "notes": len(out["schede"]), "pages": len(out["pages"]), "cost": out["cost"],
                       "controls": [p["controls"]["summary"] for p in out["pages"]]}))
+
+
+def normalise(page):
+    """Tolerate small shape deviations from the model without changing content."""
+    for f in page.get("facts", []):
+        f["items"] = [r if isinstance(r, dict) else {"item_id": str(r), "fact_ref": None} for r in (f.get("items") or [])]
+        for k in ("statement", "what_sources_add"):
+            f[k] = f.get(k) or ""
+    for key in ("comments", "analyses", "excluded"):
+        page[key] = [c for c in page.get(key, []) if isinstance(c, dict)]
 
 
 def controls(page, schede, items):
