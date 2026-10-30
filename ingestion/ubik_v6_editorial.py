@@ -11,6 +11,7 @@ Usage: python -m ingestion.ubik_v6_editorial SELECTION.json OUT_DIR deepseek|son
 """
 import hashlib
 import json
+import urllib.error
 import os
 import re
 import sys
@@ -59,6 +60,11 @@ def main(selection_path, out_dir, arm, compose_runs=2):
            "prompt_sha256": {"scheda": h_scheda, "compose": h_compose}, "window": sel.get("window"),
            "preflight": [], "errors": [], "calls": [], "schede": {}, "pages": [], "cost": {"scheda": 0.0, "compose": 0.0}}
     path = out_dir / f"v6-{arm}.json"
+    if path.exists():  # resume: keep notes already paid for, redo compositions
+        prev = json.loads(path.read_text())
+        if prev.get("prompt_sha256") == out["prompt_sha256"] and prev.get("model") == model:
+            out["schede"], out["cost"]["scheda"] = prev.get("schede", {}), prev.get("cost", {}).get("scheda", 0.0)
+            out["resumed_notes"] = len(out["schede"])
 
     def save():
         path.write_text(json.dumps(out, ensure_ascii=False, indent=1) + "\n")
@@ -71,7 +77,7 @@ def main(selection_path, out_dir, arm, compose_runs=2):
             save()
             raise SystemExit("Cost ceiling exceeded")
 
-    est = len(items) * EST_PER_CALL[arm]["scheda"] + compose_runs * EST_PER_CALL[arm]["compose"]
+    est = out["cost"]["scheda"] + len(set(items) - set(out["schede"])) * EST_PER_CALL[arm]["scheda"] + compose_runs * EST_PER_CALL[arm]["compose"]
     try:
         preflight(f"v6 {arm}", est, CEILING_USD[arm], out["preflight"])
     except OverBudget as exc:
@@ -81,10 +87,18 @@ def main(selection_path, out_dir, arm, compose_runs=2):
 
     # 1. notes
     for iid, it in items.items():
+        if iid in out["schede"]:
+            continue
         payload = {"item_id": iid, "kind_hint": it["kind"], "source": it["source_id"], "language": it["language"],
                    "title": it.get("title") or "", "text": it["text"][:TEXT_CHARS]}
         for attempt in (1, 2):
-            raw, cost, secs = call(model, p_scheda, payload)
+            try:
+                raw, cost, secs = call(model, p_scheda, payload)
+            except (urllib.error.URLError, TimeoutError, OSError, RuntimeError, KeyError) as exc:
+                body = exc.read(500).decode("utf-8", "replace") if isinstance(exc, urllib.error.HTTPError) else ""
+                out["errors"].append({"stage": "scheda", "item": iid, "attempt": attempt, "error": f"{type(exc).__name__}: {exc} {body}"[:400]})
+                save()
+                continue
             spend("scheda", cost, {"item": iid, "attempt": attempt, "seconds": secs})
             try:
                 note = parse_json(raw["choices"][0]["message"]["content"])
@@ -110,7 +124,13 @@ def main(selection_path, out_dir, arm, compose_runs=2):
     for run in range(1, compose_runs + 1):
         page = None
         for attempt in (1, 2):
-            raw, cost, secs = call(model, p_compose, {"week": sel.get("window"), "notes": listing})
+            try:
+                raw, cost, secs = call(model, p_compose, {"week": sel.get("window"), "notes": listing})
+            except (urllib.error.URLError, TimeoutError, OSError, RuntimeError, KeyError) as exc:
+                body = exc.read(500).decode("utf-8", "replace") if isinstance(exc, urllib.error.HTTPError) else ""
+                out["errors"].append({"stage": "compose", "run": run, "attempt": attempt, "error": f"{type(exc).__name__}: {exc} {body}"[:400]})
+                save()
+                continue
             spend("compose", cost, {"run": run, "attempt": attempt, "seconds": secs})
             try:
                 page = parse_json(raw["choices"][0]["message"]["content"])
