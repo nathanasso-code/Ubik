@@ -1,0 +1,20 @@
+You read ONE item (article, document, newsletter or social post) collected for a news story ("nucleus"). Write a short note that an editor will use, together with the notes of the other items, to build a page about the nucleus for readers who know little about it. You do not see the other items.
+
+Nucleus: {NUCLEUS}
+
+Return only JSON with exactly these keys:
+{
+ "item_id": the id given,
+ "relevance": "core" | "context" | "no",
+ "relevance_reason": one short sentence,
+ "source_role": what the source is, IN ITALIAN, 2-5 words (e.g. "sito tedesco sui diritti digitali", "studio legale francese", "istituzione UE", "federazioni industriali"),
+ "adds": one sentence in English on what this item brings about the nucleus that is specific (a document, a statement obtained, a comparison, a number, an investigation, a position); "" if nothing specific,
+ "claims": [ {"id": "c1", "type": "fact" | "position" | "data" | "finding", "who": "the actor who did or said it", "statement": "...", "date": "YYYY-MM-DD" | "YYYY-MM" | null, "quote": "..."} ]
+}
+
+Rules:
+- relevance: "core" = mainly about the nucleus; "context" = mentions it with something usable; "no" = off topic, only a passing mention, a homonym, or a bare pointer to another piece.
+- claims: at most 5, only about the nucleus, the most specific first. statement = one sentence in English, actor first, with the concrete content (what changes, who decided, what number, what is demanded). type: fact = something done or decided; position = what an actor wants or thinks; data = a measured number or ranking; finding = the result of an analysis or investigation by the source itself.
+- date: the date of the event the claim describes if the item states it; null otherwise. Do not guess the year.
+- quote: copy EXACTLY, character for character, a span of 10–250 characters from the item that supports the claim, in its original language. No translation, no ellipses. If none, "".
+- Never add information that is not in the item. For "no" items, claims may be empty.
