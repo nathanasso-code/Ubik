@@ -46,6 +46,7 @@ def main(selection_path, out_dir, arm, compose_runs=2):
     out_dir.mkdir(parents=True, exist_ok=True)
     p_note, h_note = prompt("nota", nucleus)
     p_comp, h_comp = prompt("compose", nucleus)
+    p_rev, h_rev = prompt("revise", nucleus)
     notes_path = out_dir / "notes.json"
     notes = {"prompt_sha256": h_note, "model": DEEPSEEK, "notes": {}, "cost": 0.0, "errors": []}
     if notes_path.exists():
@@ -54,7 +55,7 @@ def main(selection_path, out_dir, arm, compose_runs=2):
             notes = prev
     todo = [i for i in items if i not in notes["notes"]]
     out = {"version": "matrix-v1", "arm": arm, "model": MODELS[arm], "code_commit": os.getenv("UBIK_COMMIT"),
-           "prompt_sha256": {"nota": h_note, "compose": h_comp}, "nucleus": nucleus, "preflight": [], "pages": [],
+           "prompt_sha256": {"nota": h_note, "compose": h_comp, "revise": h_rev}, "nucleus": nucleus, "preflight": [], "pages": [],
            "errors": [], "calls": [], "cost": {"compose": 0.0}}
     path = out_dir / f"matrix-{arm}.json"
 
@@ -135,6 +136,21 @@ def main(selection_path, out_dir, arm, compose_runs=2):
             save()
             continue
         page["run"], page["_arm"] = run, arm
+        viol = rule_violations(page, notes["notes"])
+        page["violations_before_revision"] = viol
+        if viol:  # one revision call, only for the flagged fields
+            draft = {k: page[k] for k in ("title", "summary_short", "summary_long", "key_points", "cards", "timeline", "left_out") if k in page}
+            try:
+                raw, cost, secs = call(MODELS[arm], p_rev, {"page": draft, "violations": viol}, max_tokens=20000,
+                                       extra={"reasoning": {"effort": "low"}} if arm == "sonnet" else None)
+                out["cost"]["compose"] += cost
+                out["calls"].append({"run": run, "stage": "revise", "cost_usd": cost, "seconds": secs})
+                rev = parse_json(raw["choices"][0]["message"]["content"])
+                assert isinstance(rev.get("cards"), list)
+                page.update(rev)
+            except Exception as exc:
+                out["errors"].append({"run": run, "stage": "revise", "error": str(exc)[:300]})
+        page["violations"] = rule_violations(page, notes["notes"])
         page["controls"] = controls(page, notes["notes"], items)
         out["pages"].append(page)
         (out_dir / f"matrix-{arm}-{run}.html").write_text(render(page, notes["notes"], items))
@@ -144,7 +160,52 @@ def main(selection_path, out_dir, arm, compose_runs=2):
     out["status"] = "completed"
     save()
     print(json.dumps({"arm": arm, "notes": len(notes["notes"]), "relevant": len(listing), "notes_cost": notes["cost"],
-                      "compose_cost": out["cost"]["compose"], "controls": [p["controls"]["summary"] for p in out["pages"]]}))
+                      "compose_cost": out["cost"]["compose"], "controls": [p["controls"]["summary"] for p in out["pages"]],
+                      "violations": [[len(p["violations_before_revision"]), len(p["violations"])] for p in out["pages"]]}))
+
+
+ACRONYM_OK = {"UE", "USA", "GDPR", "IA"}
+ACRONYM = re.compile(r"\b(?:[A-Z]{2,}[a-z]?[A-Z]*|[A-Z]+&[A-Z]+)\b")
+LEGAL = re.compile(r"\b(?:articol[oi]|art\.|allegat[oi])\s+[\dIVX]+", re.I)
+
+
+def rule_violations(page, notes):
+    """Writing rules of docs/matrix-spec.md checked in code; the list feeds one revision call."""
+    v = []
+    full = " ".join([page.get("title", ""), page.get("summary_short", "")] + (page.get("summary_long") or []) +
+                    [k.get("heading", "") + " " + k.get("text", "") for k in page.get("key_points", [])] +
+                    [c.get("title", "") + " " + c.get("text", "") for c in page.get("cards", [])] +
+                    [t.get("text", "") for t in page.get("timeline", [])])
+    gdpr_ok = "protezione dei dati" in full.lower()
+
+    def check(field, text):
+        bad = sorted({a for a in ACRONYM.findall(text or "") if (a not in ACRONYM_OK or (a == "GDPR" and not gdpr_ok))
+                      and not re.search(r"\(" + re.escape(a) + r"\)|\b" + re.escape(a) + r"\s*\(", full)})
+        if bad:
+            v.append({"field": field, "rule": "acronyms", "found": bad})
+        if LEGAL.search(text or ""):
+            v.append({"field": field, "rule": "legal_article_numbers", "found": LEGAL.findall(text)})
+    check("title", page.get("title"))
+    check("summary_short", page.get("summary_short"))
+    for i, p in enumerate(page.get("summary_long") or []):
+        check(f"summary_long[{i}]", p)
+    for i, k in enumerate(page.get("key_points", [])):
+        check(f"key_points[{i}]", k.get("heading", "") + " " + k.get("text", ""))
+        if words(k.get("text")) > LIMITS["key_point"]:
+            v.append({"field": f"key_points[{i}].text", "rule": "length", "words": words(k.get("text"))})
+    for i, c in enumerate(page.get("cards", [])):
+        check(f"cards[{i}]", c.get("title", "") + " " + c.get("text", ""))
+        if words(c.get("text")) > LIMITS["card_text"] or words(c.get("title")) > LIMITS["card_title"]:
+            v.append({"field": f"cards[{i}]", "rule": "length", "words": [words(c.get("title")), words(c.get("text"))]})
+        if not any(notes.get(r.split(":")[0], {}).get("relevance") == "core" for r in c.get("support", [])):
+            v.append({"field": f"cards[{i}]", "rule": "off_core"})
+    for i, t in enumerate(page.get("timeline", [])):
+        check(f"timeline[{i}]", t.get("text"))
+    if words(page.get("title")) > LIMITS["title"]:
+        v.append({"field": "title", "rule": "length", "words": words(page.get("title"))})
+    if words(page.get("summary_short")) > LIMITS["summary_short"]:
+        v.append({"field": "summary_short", "rule": "length", "words": words(page.get("summary_short"))})
+    return v
 
 
 def claim(notes, ref):

@@ -39,6 +39,10 @@ Una Matrice racconta un nucleo di interesse (una vicenda, una decisione, un conf
 - Lunghezze: oltre i limiti, segnalate (non tagliate).
 - Fonte unica: se una scheda cita una sola origine, intestazione con titolo originale e link presi dai metadati, non dal modello.
 
+## Revisione
+
+Il codice controlla le regole di scrittura che si possono verificare: sigle non sciolte (ammesse UE, USA, IA e GDPR spiegato, o sigle sciolte tra parentesi altrove nella pagina), numeri di articoli e allegati, lunghezze, schede che non poggiano su almeno un elemento centrale per il nucleo. Se trova violazioni, una sola chiamata di revisione riscrive i campi segnalati senza toccare i riferimenti. Le violazioni prima e dopo restano registrate.
+
 ## Misura
 
 Contro il riferimento: schede del riferimento ritrovate (per contenuto), affermazioni senza supporto, leggibilità in valutazione cieca, costo. Gradini: (1) solo corpus, sintesi economica; (2) solo corpus, sintesi forte; (3) corpus più acquisizione mirata; (4) sintesi più forte.

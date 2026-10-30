@@ -17,4 +17,5 @@ Rules:
 - claims: at most 5, only about the nucleus, the most specific first. statement = one sentence in English, actor first, with the concrete content (what changes, who decided, what number, what is demanded). type: fact = something done or decided; position = what an actor wants or thinks; data = a measured number or ranking; finding = the result of an analysis or investigation by the source itself.
 - date: the date of the event the claim describes if the item states it; null otherwise. Do not guess the year.
 - quote: copy EXACTLY, character for character, a span of 10–250 characters from the item that supports the claim, in its original language. No translation, no ellipses. If none, "".
+- If the item reports on a document, report, letter or investigation by others (e.g. an NGO study, a government statement, a leaked text), include it as a claim with who = its authors, and say that the item reports it.
 - Never add information that is not in the item. For "no" items, claims may be empty.
