@@ -211,3 +211,29 @@ selectivity.
    collapsed. Nothing is lost.
 3. Fields stay only if a measure shows they help. The prefilter (pf) is removed; the fact type and according_to
    stay for now, because they feed the labels the user asked for.
+
+## v6.3 (preregistered 2026-10-30): user decisions applied, plus weekly continuity
+
+**User decisions:**
+- Keep the fields that work almost always: fact type (event, report) and according_to.
+- Drop the problematic ones: the prefilter is removed.
+- Highlight a fixed number of facts: 5.
+
+**Changes:**
+- **Acceptance gate (code).** A page is rejected and recomposed, up to 3 attempts, when it has missing or unknown
+  items, bad references, more than 2 comments linked to the wrong fact, possible duplicate facts or repeated
+  entries.
+- **Highlight rule (code).** Facts of type event or report come first. They are ordered by independent original
+  sources, then official origin, then distinct outlets, then number of items. The first 5 are "Fatti in
+  evidenza"; the rest go to "Altri fatti della settimana".
+- **Continuity.** The composition receives the facts of the previous accepted page and may set "continues" on a
+  later step of the same story (`prompts/v6.3/compose.txt`, sha c85b5d0e683689e9011fc0190cb8abfe9ea789ce96a8baa2d7df47e5703e0548; the notes prompt is unchanged from v6.2).
+  Invalid ids are dropped by code. `ingestion/ubik_v6_matrices.py` chains the links into vicende (matrices).
+
+**Run.** DeepSeek on week 15–21 October (22 items, new notes, 1 composition), then week 22–28 October (frozen
+selection, v6.2 notes reused, 2 compositions) with the previous week as memory. Expected cost about 0.06 USD.
+
+**Predictions:**
+- Every published page passes the gate within 3 attempts.
+- At least one valid "continues" link: a fact of week 22–28 that is a later step of a week 15–21 story.
+- No continues link that an evaluator judges merely thematic.

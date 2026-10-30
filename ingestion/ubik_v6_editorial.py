@@ -34,7 +34,7 @@ EST_PER_CALL = {"deepseek": {"scheda": 0.0015, "compose": 0.01}, "sonnet": {"sch
 
 
 def prompt(name, variant="base"):
-    folder = PROMPTS.parent / "v6.2" if variant == "v62" else PROMPTS
+    folder = {"v62": PROMPTS.parent / "v6.2", "v63": PROMPTS.parent / "v6.3"}.get(variant, PROMPTS)
     raw = (folder / f"{name}.txt").read_text()
     return raw.replace("{PERIMETER}", PERIMETER), hashlib.sha256(raw.encode()).hexdigest()
 
@@ -60,30 +60,43 @@ MONTHS = {m: i for i, names in enumerate([
     for m in names}
 
 
-def prefilter(note, window):
-    """v6-pf: mechanical selection from the note's own fields, before composition (no model).
-    Off-perimeter notes, relays and promotions carry no facts or theses; facts must be reported as new and not
-    dated more than 7 days before the week."""
-    n = json.loads(json.dumps(note))
-    if n.get("in_perimeter") == "no" or n.get("kind") in ("relay", "promotion"):
-        n["facts"], n["theses"] = [], []
-        return n
-    start = (window or [""])[0]
-    def recent(f):
-        d = f.get("date") or ""
-        if not (start and len(d) >= 10):
-            return True
-        from datetime import date, timedelta
-        return d[:10] >= (date.fromisoformat(start) - timedelta(days=7)).isoformat()
-    n["facts"] = [f for f in n["facts"] if f.get("reported_as_new") and recent(f)]
-    kept = {f["id"] for f in n["facts"]}
-    for t in n["theses"]:
-        if t.get("about_fact") not in kept:
-            t["about_fact"] = None
-    return n
+GATE = {"max_linkage_mismatch": 2, "attempts": 3}
+HIGHLIGHT = 5
 
 
-def main(selection_path, out_dir, arm, compose_runs=2, variant="base"):
+def gate(page):
+    """Acceptance gate (code, no model): a page that loses or invents items, cites missing notes, repeats entries
+    or duplicates facts is rejected and recomposed."""
+    c = page.get("controls", {})
+    if "error" in c:
+        return ["control_error"]
+    s, why = c["summary"], []
+    for k in ("missing", "unknown", "bad_refs"):
+        if s.get(k):
+            why.append(k)
+    if s.get("comment_linkage_mismatch", 0) > GATE["max_linkage_mismatch"]:
+        why.append("linkage")
+    if c.get("possible_duplicate_facts"):
+        why.append("duplicate_facts")
+    entries = [(x.get("item_id"), x.get("thesis_ref")) for x in page["comments"] + page["analyses"]]
+    if len(entries) != len(set(entries)):
+        why.append("repeated_entries")
+    return why
+
+
+def rank_facts(page):
+    """Display rule (code): independent original sources first, then distinct outlets, then number of items."""
+    def key(f):
+        valid = f.get("type") in ("event", "report")
+        return (not valid, -f.get("independent_count", 1), not f.get("official"), -len(f.get("independent_origins", [])),
+                -len(f.get("items", [])))
+    order = sorted(page["facts"], key=key)
+    for i, f in enumerate(order):
+        f["highlight"] = i < HIGHLIGHT
+    page["facts"] = order
+
+
+def main(selection_path, out_dir, arm, compose_runs=2, variant="base", previous_path=None):
     sel = json.loads(Path(selection_path).read_text())
     items = {i["item_id"]: i for i in sel["items"]}
     model = MODELS[arm]
@@ -95,13 +108,17 @@ def main(selection_path, out_dir, arm, compose_runs=2, variant="base"):
            "prompt_sha256": {"scheda": h_scheda, "compose": h_compose}, "window": sel.get("window"),
            "preflight": [], "errors": [], "calls": [], "schede": {}, "pages": [], "cost": {"scheda": 0.0, "compose": 0.0}}
     out["variant"] = variant
-    path = out_dir / (f"v6-{arm}.json" if variant == "base" else f"v6-{arm}-{variant}.json")
-    notes_from = path if variant == "v62" else out_dir / f"v6-{arm}.json"
-    if notes_from.exists():  # resume: keep notes already paid for, redo compositions
+    path = out_dir / ((f"v6-{arm}.json" if variant == "base" else f"v6-{arm}-{variant}.json") if previous_path is None
+                      else f"v6-{arm}-{variant}-{(sel.get('window') or ['x'])[0]}.json")
+    for notes_from in [path] + sorted(out_dir.glob(f"v6-{arm}*.json")):  # resume notes already paid for
+        if not notes_from.exists():
+            continue
         prev = json.loads(notes_from.read_text())
-        if prev.get("prompt_sha256") == out["prompt_sha256"] and prev.get("model") == model:
-            out["schede"], out["cost"]["scheda"] = prev.get("schede", {}), prev.get("cost", {}).get("scheda", 0.0)
-            out["resumed_notes"] = len(out["schede"])
+        if (prev.get("prompt_sha256", {}).get("scheda") == h_scheda and prev.get("model") == model
+                and prev.get("window") == sel.get("window") and prev.get("schede")):
+            out["schede"], out["cost"]["scheda"] = prev["schede"], prev.get("cost", {}).get("scheda", 0.0)
+            out["resumed_notes_from"] = notes_from.name
+            break
 
     def save():
         path.write_text(json.dumps(out, ensure_ascii=False, indent=1) + "\n")
@@ -152,19 +169,30 @@ def main(selection_path, out_dir, arm, compose_runs=2, variant="base"):
         save()
 
     # 2. composition, N runs
-    notes = {iid: (prefilter(n, sel.get("window")) if variant == "pf" else n) for iid, n in out["schede"].items()}
+    notes = out["schede"]
     listing = [{"item_id": iid, "source": items[iid]["source_id"], "origin": items[iid]["origin"], "kind_hint": items[iid]["kind"],
                 "published": (items[iid].get("published") or "")[:10], "title": items[iid].get("title") or "",
                 "note": {k: v for k, v in n.items() if k != "item_id"} | {
                     "facts": [{k: f[k] for k in ("id", "type", "statement", "date", "reported_as_new", "according_to") if k in f} for f in n["facts"]],
                     "theses": [{k: t[k] for k in ("id", "claim", "about_fact") if k in t} for t in n["theses"]]}}
                for iid, n in notes.items()]
+    previous = []
+    if previous_path and Path(previous_path).exists():
+        prevd = json.loads(Path(previous_path).read_text())
+        acc = next((p for p in prevd.get("pages", []) if p.get("accepted")), None)
+        if acc:
+            wk = (prevd.get("window") or ["?"])[0]
+            previous = [{"id": f"{wk}:{f.get('id')}", "statement": f.get("statement"), "date": f.get("date")} for f in acc["facts"]]
+            out["previous_page"] = {"file": Path(previous_path).name, "facts": len(previous)}
+    payload = {"week": sel.get("window"), "notes": listing}
+    if previous:
+        payload["previous_facts"] = previous
     for run in range(1, compose_runs + 1):
-        page = None
-        for attempt in (1, 2):
+        for attempt in range(1, GATE["attempts"] + 1):
+            page = None
             try:
                 # Sonnet spends mandatory reasoning tokens inside max_tokens: keep reasoning low and allow a long page
-                raw, cost, secs = call(model, p_compose, {"week": sel.get("window"), "notes": listing}, max_tokens=20000,
+                raw, cost, secs = call(model, p_compose, payload, max_tokens=20000,
                                        extra={"reasoning": {"effort": "low"}} if arm == "sonnet" else None)
             except (urllib.error.URLError, TimeoutError, OSError, RuntimeError, KeyError) as exc:
                 body = exc.read(500).decode("utf-8", "replace") if isinstance(exc, urllib.error.HTTPError) else ""
@@ -178,16 +206,12 @@ def main(selection_path, out_dir, arm, compose_runs=2, variant="base"):
             try:
                 page = parse_json(raw["choices"][0]["message"]["content"])
                 assert all(isinstance(page.get(k), list) for k in ("facts", "comments", "analyses", "excluded"))
-                break
             except Exception as exc:
                 content = raw["choices"][0]["message"].get("content") or ""
                 out["errors"].append({"stage": "compose", "run": run, "attempt": attempt, "error": str(exc)[:200],
                                       "finish_reason": raw["choices"][0].get("finish_reason"), "content_len": len(content),
                                       "content_tail": content[-300:]})
-                page = None
-                if raw["choices"][0].get("finish_reason") == "length":
-                    break  # same request would be cut again: do not pay twice
-        if page is not None:
+                continue
             normalise(page)
             try:
                 page["controls"] = controls(page, out["schede"], items)
@@ -195,16 +219,29 @@ def main(selection_path, out_dir, arm, compose_runs=2, variant="base"):
             except Exception as exc:  # a control bug must not lose a paid page
                 import traceback
                 page["controls"] = {"error": traceback.format_exc()[-1500:], "summary": {"control_error": str(exc)[:200]}}
+            if previous:
+                ids = {p["id"] for p in previous}
+                for f in page["facts"]:
+                    if f.get("continues") and f["continues"] not in ids:
+                        page["controls"].setdefault("bad_continues", []).append([f.get("id"), f["continues"]])
+                        f["continues"] = None
+            page["run"], page["attempt"] = run, attempt
+            page["rejected_by_gate"] = gate(page)
+            page["accepted"] = not page["rejected_by_gate"]
+            if "error" not in page["controls"]:
+                rank_facts(page)
             out["pages"].append(page)
-        save()
+            save()
+            if page["accepted"]:
+                break
     out["total_cost_usd"] = sum(out["cost"].values())
     out["status"] = "completed"
     save()
-    for k, page in enumerate(out["pages"], 1):
-        if "error" in page.get("controls", {}):
-            continue
-        suffix = "" if variant == "base" else f"-{variant}"
-        (out_dir / f"v6-{arm}{suffix}-page{k}.md").write_text(render(page, items, arm, k))
+    suffix = "" if variant == "base" else f"-{variant}"
+    stem = f"v6-{arm}{suffix}" + (f"-{(sel.get('window') or ['x'])[0]}" if previous_path is not None else "")
+    for page in out["pages"]:
+        if page.get("accepted"):
+            (out_dir / f"{stem}-page{page['run']}.md").write_text(render(page, items, arm, page["run"]))
     print(json.dumps({"arm": arm, "notes": len(out["schede"]), "pages": len(out["pages"]), "cost": out["cost"],
                       "controls": [p["controls"]["summary"] for p in out["pages"]]}))
 
@@ -241,6 +278,8 @@ def controls(page, schede, items):
             key = ("src", acc) if acc and acc not in ("own reporting", "unspecified") else ("origin", items.get(iid, {}).get("origin", iid))
             groups.setdefault(key, set()).add(items.get(iid, {}).get("origin", iid))
         originals = sorted(k[1] for k in groups if k[0] == "src")
+        f["official"] = any(re.search(r"gazzetta|official|council|commission|parliament|court|filing|press release|federal register|ministry|government|regulator|garante|cnil|ftc", o) for o in originals) or \
+            any(items.get(r.get("item_id"), {}).get("source_type") == "primary_official" for r in f.get("items", []))
         f["original_sources"] = originals
         if not f.get("date"):
             pubs = sorted((items[r["item_id"]].get("published") or "")[:10] for r in f.get("items", []) if r.get("item_id") in items)
@@ -251,6 +290,7 @@ def controls(page, schede, items):
         f["verified_quotes"] = sum(1 for r in f.get("items", []) for x in (schede.get(r.get("item_id"), {}).get("facts", []))
                                    if x.get("id") == r.get("fact_ref") and x.get("quote_verified"))
         independent = len(groups) if originals else len(origins)
+        f["independent_count"] = independent
         f["status"] = "più origini" if len(origins) >= 2 and independent >= 2 else ("fonte originale unica" if len(origins) >= 2 else "origine unica")
     for key in ("comments", "analyses"):
         for c in page[key]:
@@ -305,12 +345,19 @@ def render(page, items, arm, k):
     def src(iid):
         it = items.get(iid, {})
         return f"[{it.get('source_id', iid)}]({it.get('url', '')})"
-    lines = [f"# Pagina v6 — {arm}, composizione {k}", "", "## Fatti", ""]
-    for f in page["facts"]:
+    lines = [f"# Pagina v6 — {arm}, composizione {k}", ""]
+    hl = [f for f in page["facts"] if f.get("highlight", True)]
+    rest = [f for f in page["facts"] if not f.get("highlight", True)]
+    for title, group in (("## Fatti in evidenza", hl), ("## Altri fatti della settimana", rest)):
+      if not group:
+        continue
+      lines += [title, ""]
+      for f in group:
         kind = "rapporto o inchiesta" if f.get("type") == "report" else "evento"
         orig = f"; fonte originale: {', '.join(f['original_sources'])}" if f.get("original_sources") else ""
         dsrc = " (data di pubblicazione)" if f.get("date_source") else ""
-        lines += [f"**{f.get('id')} — {f.get('statement')}** ({kind}; {f.get('date') or 's.d.'}{dsrc}; {f['status']}{orig})", "",
+        cont = f"; prosegue {f['continues']}" if f.get("continues") else ""
+        lines += [f"**{f.get('id')} — {f.get('statement')}** ({kind}; {f.get('date') or 's.d.'}{dsrc}; {f['status']}{orig}{cont})", "",
                   "Fonti: " + ", ".join(src(i) for i in dict.fromkeys(r.get("item_id") for r in f.get("items", []))), "", f.get("what_sources_add", ""), ""]
     lines += ["## Commenti ai fatti", ""] + [f"- **{c.get('fact')} — {src(c.get('item_id'))}.** {c.get('point')}" for c in page["comments"]]
     lines += ["", "## Analisi", ""] + [f"- **{src(a.get('item_id'))}.** {a.get('point')}" for a in page["analyses"]]
@@ -323,4 +370,4 @@ def render(page, items, arm, k):
 
 if __name__ == "__main__":
     main(sys.argv[1], sys.argv[2], sys.argv[3], int(sys.argv[4]) if len(sys.argv) > 4 else 2,
-         sys.argv[5] if len(sys.argv) > 5 else "base")
+         sys.argv[5] if len(sys.argv) > 5 else "base", sys.argv[6] if len(sys.argv) > 6 else None)
