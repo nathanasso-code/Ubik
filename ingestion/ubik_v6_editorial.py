@@ -126,9 +126,9 @@ def main(selection_path, out_dir, arm, compose_runs=2):
         page = None
         for attempt in (1, 2):
             try:
-                # Sonnet spends hidden reasoning tokens inside max_tokens: disable reasoning and allow a long page
+                # Sonnet spends mandatory reasoning tokens inside max_tokens: keep reasoning low and allow a long page
                 raw, cost, secs = call(model, p_compose, {"week": sel.get("window"), "notes": listing}, max_tokens=20000,
-                                       extra={"reasoning": {"enabled": False}} if arm == "sonnet" else None)
+                                       extra={"reasoning": {"effort": "low"}} if arm == "sonnet" else None)
             except (urllib.error.URLError, TimeoutError, OSError, RuntimeError, KeyError) as exc:
                 body = exc.read(500).decode("utf-8", "replace") if isinstance(exc, urllib.error.HTTPError) else ""
                 out["errors"].append({"stage": "compose", "run": run, "attempt": attempt, "error": f"{type(exc).__name__}: {exc} {body}"[:400]})
