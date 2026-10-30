@@ -4,29 +4,46 @@ Aggregatore di notizie selezionate: le fonti si organizzano in fatti (card), vic
 
 Riordinato il 29 ottobre 2026. Lo stato precedente dei tre rami è conservato, intero, nei rami `archive/2026-10-29-main` (vecchio sito a domande), `archive/2026-10-29-develop-ubik-core` (acquisizione e prototipi) e `archive/2026-10-29-experiment-v5.1` (pipeline v2–v5.1 con la sua cronologia).
 
+## Stato attuale: v6 (lettura editoriale)
+
+Dal 30 ottobre 2026 la pipeline corrente è la v6, provata sul Topic "Regole sull'IA in Europa e negli Stati Uniti".
+1. **Scheda per testo**: il modello legge ogni articolo o post e ne scrive una scheda con fatti (tipo evento/rapporto, data, fonte dichiarata, citazione letterale) e tesi.
+2. **Composizione settimanale**: dalle schede il modello compone la pagina (fatti, commenti, analisi, esclusi con motivo, "continua" verso i fatti della settimana prima).
+3. **Controlli nel codice**: citazioni letterali, copertura, riferimenti, origini indipendenti, date e duplicati. Le violazioni lievi si correggono per rimozione (registrata); oltre 5 correzioni la pagina si ricompone (fino a 3 tentativi). I 5 fatti in evidenza sono scelti da una regola dichiarata, non dal modello.
+4. **Matrici**: le vicende nascono concatenando i legami "continua" tra settimane.
+
+Modello di produzione candidato: DeepSeek V4.1 Flash (circa 0,07 dollari a settimana). Sonnet 5.5 resta come braccio di confronto.
+
 ## Struttura
 
-| Cartella | Contenuto | Stato |
+| Percorso | Contenuto | Stato |
 | --- | --- | --- |
-| `ingestion/` | Estrazione e accorpamento: versione corrente v5.1 (`ubik_v51_prompts`, `ubik_ukraine_v51_*`), moduli comuni (`ubik_v5_extraction_validator`, `ubik_monarch_v5_rejudge_core` per recupero E5 e gruppi prudenti, `ubik_part_of_validator_v5`, `ubik_matrix_composer_v5`, `ubik_ukraine_v5_model_audit`, `ubik_shared_origin_v5`, `ubik_acquisition_provenance_v5`) e gli script delle versioni precedenti (v2–v5, piloti monarca, bracci dei giudici) come storia | Corrente: v5.1 |
-| `prompts/v5.1/` | Prompt congelati di estrazione e giudizio, letti dagli script con controllo SHA-256 | Congelati |
-| `protocols/` | Protocolli preregistrati | — |
-| `docs/experiment-results/v5.1/` | Risultati della diagnosi sull'Ucraina, con `SHA256SUMS` e `ukraine-v51-report.md` | — |
-| `acquisition/` | Scoperta RSS, verifica del testo accessibile, Mastodon, registri delle fonti | Riferimento, da rifare |
-| `attacks-map/`, `scripts/`, `data/` | Mappa degli attacchi russi in Ucraina e pipeline UCDP, aggiornata ogni martedì | Conservata |
-| `tests/` | Test del compositore v5 | — |
+| `ingestion/ubik_v6_editorial.py` | Schede, composizione, controlli, correzione, regola di evidenza, resa | Corrente |
+| `ingestion/ubik_v6_matrices.py` | Vicende tra settimane dai legami "continua" | Corrente |
+| `ingestion/ubik_cost_guard.py` | Costi unitari misurati e controllo preventivo di spesa | Corrente |
+| `prompts/v6.3/` | Prompt correnti (scheda uguale a v6.2; composizione con "continua") | Congelati |
+| `prompts/v6/`, `prompts/v6.2/` | Varianti precedenti della v6 | Storia |
+| `protocols/ubik-v6-editorial-protocol.md` | Preregistrazione e risultati v6, v6-pf, v6.2, v6.3 | — |
+| `ingestion/` (altri script), `prompts/v5.1/` | Pipeline a coppie v2–v5.1, pilota di estrazione | Abbandonati, conservati come storia |
+| `docs/experiment-results/`, `docs/history/` | Risultati degli esperimenti e documenti storici | — |
+| `acquisition/` | Scoperta RSS, verifica del testo, Mastodon | Riferimento |
+| `attacks-map/`, `scripts/`, `data/` | Mappa degli attacchi russi in Ucraina (pipeline UCDP, ogni martedì) | Conservata |
+| `tests/` | Test | — |
 
-La documentazione di progetto vive nei documenti condivisi su Claude: "Ubik — Architettura e modello informativo", "Ubik — Diario sperimentale", "Ubik — Riferimenti di valutazione".
+I testi degli articoli, i registri delle fonti, la raccolta (RSS, social, newsletter) e le pagine prodotte stanno nel repository privato `ubik-corpus`; qui restano solo codice e cifre.
 
-## Come si esegue la pipeline v5.1
+La documentazione di progetto vive nei documenti condivisi su Claude: "Ubik — Architettura e modello informativo", "Ubik — Acquisizione", "Ubik — Diario sperimentale", "Ubik — Riferimenti di valutazione".
 
-Le esecuzioni a pagamento partono solo su richiesta esplicita, mai a un normale push di codice: si aggiunge o modifica il file `runs/<workflow>.request` (o si avvia il workflow a mano).
+## Esperimenti abbandonati
 
-1. `runs/ukraine-v51-extraction.request` — estrazione (Sonnet 5.5).
-2. Mappatura cieca degli eventi sul riferimento, congelata con hash prima dei giudizi.
-3. `runs/ukraine-v51-pairs.request` — coppie candidate (E5-small, nessuna chiamata al modello).
-4. `runs/ukraine-v51-judges.request` — giudici Sonnet e DeepSeek V4.1 Flash.
-5. Valutazione: `python -m ingestion.ubik_ukraine_v51_evaluate ...`.
+- **v2–v5.1, accorpamento a coppie**: giudizi su coppie di eventi estratti dai testi. Costosa (1,50 dollari per un solo sondaggio) e cieca al contesto. Prompt e script restano in `ingestion/` e `prompts/v5.1/`.
+- **v6-pf, prefiltro**: nessun guadagno, rimosso.
+- **GDELT come corroborazione**: bloccato dai limiti di frequenza sugli indirizzi di GitHub.
+- **Soglie di embedding e cluster di articoli**: non distinguono fatti diversi sullo stesso tema.
+
+## Come si esegue
+
+Le esecuzioni a pagamento partono solo su richiesta esplicita, mai a un normale push di codice: nel repository privato si modifica `runs/v6.request` (con `variant=v63`) o si avvia il workflow a mano. Ogni fase stima la spesa prima delle chiamate e si rifiuta se supera il tetto.
 
 Segreto richiesto nelle Actions: `OPENROUTER_API_KEY`.
 
