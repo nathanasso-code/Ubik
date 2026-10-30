@@ -196,7 +196,7 @@ def render(page, items, arm, k):
     lines = [f"# Pagina v6 — {arm}, composizione {k}", "", "## Fatti", ""]
     for f in page["facts"]:
         lines += [f"**{f.get('id')} — {f.get('statement')}** ({f.get('date') or 's.d.'}; {f['status']})", "",
-                  "Fonti: " + ", ".join(src(r.get("item_id")) for r in f.get("items", [])), "", f.get("what_sources_add", ""), ""]
+                  "Fonti: " + ", ".join(src(i) for i in dict.fromkeys(r.get("item_id") for r in f.get("items", []))), "", f.get("what_sources_add", ""), ""]
     lines += ["## Commenti ai fatti", ""] + [f"- **{c.get('fact')} — {src(c.get('item_id'))}.** {c.get('point')}" for c in page["comments"]]
     lines += ["", "## Analisi", ""] + [f"- **{src(a.get('item_id'))}.** {a.get('point')}" for a in page["analyses"]]
     lines += ["", "## Escluse", ""] + [f"- {src(e.get('item_id'))}: {e.get('reason')}" + (f" (come {e.get('redundant_with')})" if e.get("redundant_with") else "")
