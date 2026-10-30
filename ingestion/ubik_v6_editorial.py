@@ -227,7 +227,7 @@ def controls(page, schede, items):
             iid, ref = r.get("item_id"), r.get("fact_ref")
             accounted.add(iid)
             note = schede.get(iid)
-            match = note and next((x for x in note["facts"] if x["id"] == ref), None)
+            match = note and next((x for x in note["facts"] if x.get("id") == ref), None)
             if not match:
                 refs_bad.append({"where": f.get("id"), "item": iid, "ref": ref})
             if iid in items:
@@ -236,7 +236,7 @@ def controls(page, schede, items):
         groups = {}
         for r in f.get("items", []):
             iid = r.get("item_id")
-            nf = next((x for x in schede.get(iid, {}).get("facts", []) if x["id"] == r.get("fact_ref")), {})
+            nf = next((x for x in schede.get(iid, {}).get("facts", []) if x.get("id") == r.get("fact_ref")), {})
             acc = (nf.get("according_to") or "").strip().lower()
             key = ("src", acc) if acc and acc not in ("own reporting", "unspecified") else ("origin", items.get(iid, {}).get("origin", iid))
             groups.setdefault(key, set()).add(items.get(iid, {}).get("origin", iid))
@@ -249,7 +249,7 @@ def controls(page, schede, items):
                 f["date"], f["date_source"] = pubs[0], "pubblicazione"
         f["independent_origins"] = sorted(origins)
         f["verified_quotes"] = sum(1 for r in f.get("items", []) for x in (schede.get(r.get("item_id"), {}).get("facts", []))
-                                   if x["id"] == r.get("fact_ref") and x.get("quote_verified"))
+                                   if x.get("id") == r.get("fact_ref") and x.get("quote_verified"))
         independent = len(groups) if originals else len(origins)
         f["status"] = "più origini" if len(origins) >= 2 and independent >= 2 else ("fonte originale unica" if len(origins) >= 2 else "origine unica")
     for key in ("comments", "analyses"):
@@ -257,7 +257,7 @@ def controls(page, schede, items):
             iid, ref = c.get("item_id"), c.get("thesis_ref")
             accounted.add(iid)
             note = schede.get(iid)
-            match = note and next((x for x in note["theses"] if x["id"] == ref), None)
+            match = note and next((x for x in note["theses"] if x.get("id") == ref), None)
             c["quote_verified"] = bool(match and match.get("quote_verified"))
             if key == "comments" and match and match.get("about_fact"):
                 fact = next((f for f in page["facts"] if f.get("id") == c.get("fact")), None)
@@ -284,7 +284,7 @@ def date_and_duplicate_checks(page, schede, items):
         cited = list(dict.fromkeys(r.get("item_id") for r in f.get("items", [])))
         texts = " ".join(norm(items[i]["text"]) for i in cited if i in items)
         note_dates = {x.get("date") for i in cited for x in schede.get(i, {}).get("facts", [])}
-        if f.get("date") and f["date"] not in note_dates:
+        if f.get("date") and not f.get("date_source") and f["date"] not in note_dates:
             unsupported.append({"fact": f.get("id"), "date": f["date"], "where": "date"})
         for day, month in re.findall(r"\b(\d{1,2})\s+([a-zà-ü]+)", norm(f.get("what_sources_add", "") + " " + f.get("statement", ""))):
             if month in MONTHS:
