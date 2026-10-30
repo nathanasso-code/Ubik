@@ -7,4 +7,4 @@ Rules being enforced:
 - Every card must rest on at least one claim from an item marked "core" for this story; a card flagged "off_core" must be removed, or rewritten around a core claim if one in its support fits.
 - Do not add facts, numbers, dates or people that are not already in the page.
 
-Return only the JSON.
+Return only the corrected page as a JSON object with the keys title, summary_short, summary_long, key_points, cards, timeline, left_out at the top level (not wrapped in another object), including the fields you did not change.

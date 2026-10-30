@@ -136,20 +136,7 @@ def main(selection_path, out_dir, arm, compose_runs=2):
             save()
             continue
         page["run"], page["_arm"] = run, arm
-        viol = rule_violations(page, notes["notes"])
-        page["violations_before_revision"] = viol
-        if viol:  # one revision call, only for the flagged fields
-            draft = {k: page[k] for k in ("title", "summary_short", "summary_long", "key_points", "cards", "timeline", "left_out") if k in page}
-            try:
-                raw, cost, secs = call(MODELS[arm], p_rev, {"page": draft, "violations": viol}, max_tokens=20000,
-                                       extra={"reasoning": {"effort": "low"}} if arm == "sonnet" else None)
-                out["cost"]["compose"] += cost
-                out["calls"].append({"run": run, "stage": "revise", "cost_usd": cost, "seconds": secs})
-                rev = parse_json(raw["choices"][0]["message"]["content"])
-                assert isinstance(rev.get("cards"), list)
-                page.update(rev)
-            except Exception as exc:
-                out["errors"].append({"run": run, "stage": "revise", "error": str(exc)[:300]})
+        revise(page, arm, p_rev, notes["notes"], out, run)
         page["violations"] = rule_violations(page, notes["notes"])
         page["controls"] = controls(page, notes["notes"], items)
         out["pages"].append(page)
@@ -206,6 +193,73 @@ def rule_violations(page, notes):
     if words(page.get("summary_short")) > LIMITS["summary_short"]:
         v.append({"field": "summary_short", "rule": "length", "words": words(page.get("summary_short"))})
     return v
+
+
+FIELDS = ("title", "summary_short", "summary_long", "key_points", "cards", "timeline", "left_out")
+
+
+def revise(page, arm, p_rev, notes, out, run):
+    """One revision call for the fields that break the writing rules. The model may return the whole page, the page
+    wrapped in {"page": ...}, or only the changed fields: all three are merged; anything else is logged."""
+    viol = rule_violations(page, notes)
+    page["violations_before_revision"] = viol
+    if not viol:
+        return
+    draft = {k: page[k] for k in FIELDS if k in page}
+    try:
+        raw, cost, secs = call(MODELS[arm], p_rev, {"page": draft, "violations": viol}, max_tokens=20000,
+                               extra={"reasoning": {"effort": "low"}} if arm == "sonnet" else None)
+    except (urllib.error.URLError, TimeoutError, OSError, RuntimeError, KeyError) as exc:
+        out["errors"].append({"run": run, "stage": "revise", "error": f"{type(exc).__name__}: {exc}"[:300]})
+        return
+    out["cost"]["compose"] += cost
+    out["calls"].append({"run": run, "stage": "revise", "cost_usd": cost, "seconds": secs})
+    content = raw["choices"][0]["message"].get("content") or ""
+    try:
+        rev = parse_json(content)
+        if isinstance(rev, dict) and isinstance(rev.get("page"), dict):
+            rev = rev["page"]
+        rev = {k: v for k, v in rev.items() if k in FIELDS}
+        if "cards" in rev and not isinstance(rev["cards"], list):
+            raise ValueError("cards is not a list")
+        if not rev:
+            raise ValueError("no known field returned")
+        # keep references the model must not change
+        for key in ("key_points", "cards", "timeline"):
+            if key in rev and len(rev[key]) == len(draft.get(key, [])):
+                for new, old in zip(rev[key], draft[key]):
+                    new.setdefault("support", old.get("support"))
+                    if key == "cards":
+                        new.setdefault("quote", old.get("quote"))
+        page.update(rev)
+        page["revised_fields"] = sorted(rev)
+    except Exception as exc:
+        out["errors"].append({"run": run, "stage": "revise", "error": f"{type(exc).__name__}: {exc}"[:200], "content_head": content[:400]})
+
+
+def revise_existing(selection_path, out_dir, arm):
+    """Revision only, on pages already composed (no new composition): the cleanest before/after comparison."""
+    sel = json.loads(Path(selection_path).read_text())
+    items = {i["item_id"]: i for i in sel["items"]}
+    out_dir = Path(out_dir)
+    path = out_dir / f"matrix-{arm}.json"
+    out = json.loads(path.read_text())
+    notes = json.loads((out_dir / "notes.json").read_text())["notes"]
+    p_rev, h_rev = prompt("revise", sel["nucleus"])
+    out["prompt_sha256"]["revise"] = h_rev
+    try:
+        preflight(f"matrix revise {arm}", len(out["pages"]) * EST[arm] / 2, CEILING_USD[arm], out["preflight"])
+    except OverBudget as exc:
+        raise SystemExit(str(exc))
+    for page in out["pages"]:
+        page.pop("violations", None)
+        revise(page, arm, p_rev, notes, out, page["run"])
+        page["violations"] = rule_violations(page, notes)
+        page["controls"] = controls(page, notes, items)
+        (out_dir / f"matrix-{arm}-{page['run']}.html").write_text(render(page, notes, items))
+        path.write_text(json.dumps(out, ensure_ascii=False, indent=1) + "\n")
+    print(json.dumps({"arm": arm, "violations": [[len(p["violations_before_revision"]), len(p["violations"])] for p in out["pages"]],
+                      "errors": out["errors"][-2:]}))
 
 
 def claim(notes, ref):
@@ -318,4 +372,7 @@ def render(page, notes, items):
 
 
 if __name__ == "__main__":
-    main(sys.argv[1], sys.argv[2], sys.argv[3], int(sys.argv[4]) if len(sys.argv) > 4 else 2)
+    if os.getenv("MATRIX_MODE") == "revise":
+        revise_existing(sys.argv[1], sys.argv[2], sys.argv[3])
+    else:
+        main(sys.argv[1], sys.argv[2], sys.argv[3], int(sys.argv[4]) if len(sys.argv) > 4 else 2)
