@@ -67,3 +67,53 @@ Stability: overlap of facts, comments and analyses between the two compositions 
 - If DeepSeek meets 1, 3, 4 and 6, it becomes the candidate for automatic weekly pages.
 - If only Sonnet does, the choice is cost versus quality, decided with the user.
 - If neither does, the composition step needs a stronger model or a different instruction before scaling.
+
+## Results of the first run (2026-10-30), before the addendum
+
+Blind evaluation by an independent agent. Pages were anonymised and shuffled; the key is in
+`ubik-corpus/reports/v6/eval-key.json`.
+
+| Prediction | DeepSeek (2 runs) | Sonnet (2 runs) |
+|---|---|---|
+| 1. Coverage ≥95% | confirmed: 100%, 100% | **falsified**: 98%, 88%; also cited non-existent item ids ("masto-dup", "masto-placeholder") |
+| 2. Verbatim quotes | confirmed: 240/241 | confirmed: 203/203 |
+| 3. Fact recall | confirmed: 5/6, 4/6 | confirmed: 5/6 (two reference facts merged), 4/6 |
+| 4. ≤2 bad facts | **falsified**: 5 and 4 (off perimeter, dated, one duplicate) | confirmed: 1 and 2 |
+| 5. Comments + analyses | confirmed: 12/15, 12/15 | confirmed: 12/15, 11/15 |
+| 6. Stability ≥70% of facts | confirmed: 12/14 matched | confirmed: 5/6 matched |
+| 7. Cost | confirmed: 0.07 USD | confirmed on valid runs: 0.74 USD; about 0.93 USD lost on truncated compositions (the reasoning budget cut the output; fixed) |
+
+- **Ranking by the evaluator:**
+  1. DeepSeek run 2 (7/10): most substance, finest detail.
+  2. Sonnet run 2 (6/10): most selective.
+  3. DeepSeek run 1 (6/10).
+  4. Sonnet run 1 (5/10).
+- **Common errors:**
+  - A date not found in the source ("29 aprile", DeepSeek, both runs).
+  - Exact dates of the week mostly missing.
+  - The one-line harmonised-standard fact missed by every page.
+- **Decision rule outcome:** neither arm met every criterion. DeepSeek fails on selectivity only; Sonnet fails on
+  coverage and integrity.
+
+## Addendum (preregistered before the run): variant v6-pf
+
+Same notes and the same frozen prompts. Two changes, both done by code, not by the model.
+
+**Mechanical prefilter before composition:**
+- notes judged off-perimeter carry no facts or theses;
+- notes classified as relay or promotion carry no facts or theses;
+- facts must be marked reported_as_new;
+- facts may not be dated more than 7 days before the week.
+
+**New controls after composition:**
+- dates written in a fact must appear in the cited notes or source texts;
+- possible duplicate facts are flagged (shared note fact, or item set contained in another).
+
+Arm: DeepSeek only, 2 compositions (expected cost about 0.03 USD).
+
+**Predictions:**
+- Bad facts per page ≤2 (prediction 4 now met).
+- Fact recall stays ≥4/6.
+- Comments and analyses ≥10/15.
+- Coverage 100%.
+- Stability ≥70%.

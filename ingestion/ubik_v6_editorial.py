@@ -49,7 +49,40 @@ def parse_json(content):
     return json.loads((content or "").strip().removeprefix("```json").removesuffix("```").strip(), strict=False)
 
 
-def main(selection_path, out_dir, arm, compose_runs=2):
+MONTHS = {m: i for i, names in enumerate([
+    ("january", "gennaio", "enero", "januar", "janvier"), ("february", "febbraio", "febrero", "februar", "février"),
+    ("march", "marzo", "marzo", "märz", "mars"), ("april", "aprile", "abril", "april", "avril"),
+    ("may", "maggio", "mayo", "mai", "mai"), ("june", "giugno", "junio", "juni", "juin"),
+    ("july", "luglio", "julio", "juli", "juillet"), ("august", "agosto", "agosto", "august", "août"),
+    ("september", "settembre", "septiembre", "september", "septembre"), ("october", "ottobre", "octubre", "oktober", "octobre"),
+    ("november", "novembre", "noviembre", "november", "novembre"), ("december", "dicembre", "diciembre", "dezember", "décembre")], 1)
+    for m in names}
+
+
+def prefilter(note, window):
+    """v6-pf: mechanical selection from the note's own fields, before composition (no model).
+    Off-perimeter notes, relays and promotions carry no facts or theses; facts must be reported as new and not
+    dated more than 7 days before the week."""
+    n = json.loads(json.dumps(note))
+    if n.get("in_perimeter") == "no" or n.get("kind") in ("relay", "promotion"):
+        n["facts"], n["theses"] = [], []
+        return n
+    start = (window or [""])[0]
+    def recent(f):
+        d = f.get("date") or ""
+        if not (start and len(d) >= 10):
+            return True
+        from datetime import date, timedelta
+        return d[:10] >= (date.fromisoformat(start) - timedelta(days=7)).isoformat()
+    n["facts"] = [f for f in n["facts"] if f.get("reported_as_new") and recent(f)]
+    kept = {f["id"] for f in n["facts"]}
+    for t in n["theses"]:
+        if t.get("about_fact") not in kept:
+            t["about_fact"] = None
+    return n
+
+
+def main(selection_path, out_dir, arm, compose_runs=2, variant="base"):
     sel = json.loads(Path(selection_path).read_text())
     items = {i["item_id"]: i for i in sel["items"]}
     model = MODELS[arm]
@@ -60,9 +93,11 @@ def main(selection_path, out_dir, arm, compose_runs=2):
     out = {"version": "v6-experimental", "arm": arm, "model": model, "code_commit": os.getenv("UBIK_COMMIT"),
            "prompt_sha256": {"scheda": h_scheda, "compose": h_compose}, "window": sel.get("window"),
            "preflight": [], "errors": [], "calls": [], "schede": {}, "pages": [], "cost": {"scheda": 0.0, "compose": 0.0}}
-    path = out_dir / f"v6-{arm}.json"
-    if path.exists():  # resume: keep notes already paid for, redo compositions
-        prev = json.loads(path.read_text())
+    out["variant"] = variant
+    path = out_dir / (f"v6-{arm}.json" if variant == "base" else f"v6-{arm}-{variant}.json")
+    notes_from = out_dir / f"v6-{arm}.json"
+    if notes_from.exists():  # resume: keep notes already paid for, redo compositions
+        prev = json.loads(notes_from.read_text())
         if prev.get("prompt_sha256") == out["prompt_sha256"] and prev.get("model") == model:
             out["schede"], out["cost"]["scheda"] = prev.get("schede", {}), prev.get("cost", {}).get("scheda", 0.0)
             out["resumed_notes"] = len(out["schede"])
@@ -116,12 +151,13 @@ def main(selection_path, out_dir, arm, compose_runs=2):
         save()
 
     # 2. composition, N runs
+    notes = {iid: (prefilter(n, sel.get("window")) if variant == "pf" else n) for iid, n in out["schede"].items()}
     listing = [{"item_id": iid, "source": items[iid]["source_id"], "origin": items[iid]["origin"], "kind_hint": items[iid]["kind"],
                 "published": (items[iid].get("published") or "")[:10], "title": items[iid].get("title") or "",
                 "note": {k: v for k, v in n.items() if k != "item_id"} | {
                     "facts": [{k: f[k] for k in ("id", "statement", "date", "reported_as_new") if k in f} for f in n["facts"]],
                     "theses": [{k: t[k] for k in ("id", "claim", "about_fact") if k in t} for t in n["theses"]]}}
-               for iid, n in out["schede"].items()]
+               for iid, n in notes.items()]
     for run in range(1, compose_runs + 1):
         page = None
         for attempt in (1, 2):
@@ -152,13 +188,15 @@ def main(selection_path, out_dir, arm, compose_runs=2):
                     break  # same request would be cut again: do not pay twice
         if page is not None:
             page["controls"] = controls(page, out["schede"], items)
+            page["controls"].update(date_and_duplicate_checks(page, out["schede"], items))
             out["pages"].append(page)
         save()
     out["total_cost_usd"] = sum(out["cost"].values())
     out["status"] = "completed"
     save()
     for k, page in enumerate(out["pages"], 1):
-        (out_dir / f"v6-{arm}-page{k}.md").write_text(render(page, items, arm, k))
+        suffix = "" if variant == "base" else f"-{variant}"
+        (out_dir / f"v6-{arm}{suffix}-page{k}.md").write_text(render(page, items, arm, k))
     print(json.dumps({"arm": arm, "notes": len(out["schede"]), "pages": len(out["pages"]), "cost": out["cost"],
                       "controls": [p["controls"]["summary"] for p in out["pages"]]}))
 
@@ -200,6 +238,29 @@ def controls(page, schede, items):
                         "comment_quotes_verified": sum(c["quote_verified"] for c in page["comments"] + page["analyses"])}}
 
 
+def date_and_duplicate_checks(page, schede, items):
+    unsupported, dup = [], []
+    for f in page["facts"]:
+        cited = list(dict.fromkeys(r.get("item_id") for r in f.get("items", [])))
+        texts = " ".join(norm(items[i]["text"]) for i in cited if i in items)
+        note_dates = {x.get("date") for i in cited for x in schede.get(i, {}).get("facts", [])}
+        if f.get("date") and f["date"] not in note_dates:
+            unsupported.append({"fact": f.get("id"), "date": f["date"], "where": "date"})
+        for day, month in re.findall(r"\b(\d{1,2})\s+([a-zà-ü]+)", norm(f.get("what_sources_add", "") + " " + f.get("statement", ""))):
+            if month in MONTHS:
+                names = [m for m, i in MONTHS.items() if i == MONTHS[month]]
+                if not any(re.search(rf"\b{day}\.?\s+(de\s+)?{m}\b|\b{m}\s+{day}\b", texts) for m in names):
+                    unsupported.append({"fact": f.get("id"), "date": f"{day} {month}", "where": "text"})
+    sets = [(f.get("id"), {(r.get("item_id"), r.get("fact_ref")) for r in f.get("items", [])},
+             {items[r.get("item_id")]["origin"] for r in f.get("items", []) if r.get("item_id") in items}) for f in page["facts"]]
+    for a in range(len(sets)):
+        for b in range(a + 1, len(sets)):
+            ia, ib = {i for i, _ in sets[a][1]}, {i for i, _ in sets[b][1]}
+            if sets[a][1] & sets[b][1] or (ia and ib and (ia <= ib or ib <= ia)):
+                dup.append([sets[a][0], sets[b][0]])
+    return {"unsupported_dates": unsupported, "possible_duplicate_facts": dup}
+
+
 def render(page, items, arm, k):
     def src(iid):
         it = items.get(iid, {})
@@ -218,4 +279,5 @@ def render(page, items, arm, k):
 
 
 if __name__ == "__main__":
-    main(sys.argv[1], sys.argv[2], sys.argv[3], int(sys.argv[4]) if len(sys.argv) > 4 else 2)
+    main(sys.argv[1], sys.argv[2], sys.argv[3], int(sys.argv[4]) if len(sys.argv) > 4 else 2,
+         sys.argv[5] if len(sys.argv) > 5 else "base")
