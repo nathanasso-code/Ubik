@@ -117,3 +117,32 @@ Arm: DeepSeek only, 2 compositions (expected cost about 0.03 USD).
 - Comments and analyses ≥10/15.
 - Coverage 100%.
 - Stability ≥70%.
+
+## Results of v6-pf (2026-10-30)
+
+Same blind procedure; same evaluator rubric, new evaluator instance.
+
+| Prediction | Run 1 | Run 2 |
+|---|---|---|
+| Bad facts ≤2 | **falsified**: 6 | **falsified**: 4 |
+| Fact recall ≥4/6 | confirmed: 5/6 | confirmed: 5/6 |
+| Comments + analyses ≥10/15 | confirmed: 10/15 | **falsified**: 9/15 |
+| Coverage 100% | confirmed | confirmed |
+| Stability ≥70% | not computed | not computed |
+
+Cost: 0.02 USD. Overall score 6/10 for both pages, against 7 and 6 for the base DeepSeek pages.
+
+**Reading.**
+- The prefilter removed the clearly off-topic facts (Siri, election spending) and the invented date, but did
+  not make the page more selective. It cost some commentary.
+- Most remaining "bad facts" are reports published this week: the Open Rights Group report, the Spotlight on
+  Corruption investigation and the EFF documents. The two evaluator instances labelled them differently: "valid
+  extra" in the first evaluation, "not a fact of the week" in the second.
+- The fact/analysis boundary for published reports is an editorial definition to settle, not a model error.
+  Single-evaluator judgments carry visible noise.
+
+**Other systematic issues:**
+- dates missing even when the source gives them;
+- "più origini" assigned to stories that all derive from one original source (Sveriges Radio);
+- comments attached to the wrong fact;
+- one misattribution between outlets.
