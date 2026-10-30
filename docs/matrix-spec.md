@@ -46,3 +46,15 @@ Il codice controlla le regole di scrittura che si possono verificare: sigle non 
 ## Misura
 
 Contro il riferimento: schede del riferimento ritrovate (per contenuto), affermazioni senza supporto, leggibilità in valutazione cieca, costo. Gradini: (1) solo corpus, sintesi economica; (2) solo corpus, sintesi forte; (3) corpus più acquisizione mirata; (4) sintesi più forte.
+
+## Risultati, 30 ottobre (Omnibus digitale)
+
+| Gradino | Elementi | Costo | Esito |
+| --- | --- | --- | --- |
+| 1, solo corpus | 59 | note 0,047 $; pagina DeepSeek ~0,01 $, Sonnet ~0,10 $ | 153 citazioni, tutte letterali; struttura stabile; mancano le fonti decisive; Sonnet viola le regole sulle sigle |
+| 1b, regole nel codice e revisione | 59 | revisione DeepSeek ~0,004 $, Sonnet ~0,04 $ per pagina | violazioni da 8–16 a 0–1; un caso di significato alterato ("ha votato contro" diventato "si astiene") |
+| 3, più acquisizione mirata | 102 | 15 ricerche 0,001 $; note nuove 0,057 $; pagina DeepSeek ~0,02 $, Sonnet ~0,23 $ | entrano editori, industria digitale tedesca, Bundesrat, stampa FR/ES/IT; non trovati il confronto testuale di Leto e la lettera delle confederazioni |
+
+Ricerca: Bing News consente la ricerca da robots.txt, Google News no (escluso). Gli articoli trovati si ricollegano alle testate del registro per dominio, altrimenti la stessa testata conta due volte.
+
+Spesa totale degli esperimenti sulla Matrice: circa 1,25 $.
