@@ -54,7 +54,11 @@ Contro il riferimento: schede del riferimento ritrovate (per contenuto), afferma
 | 1, solo corpus | 59 | note 0,047 $; pagina DeepSeek ~0,01 $, Sonnet ~0,10 $ | 153 citazioni, tutte letterali; struttura stabile; mancano le fonti decisive; Sonnet viola le regole sulle sigle |
 | 1b, regole nel codice e revisione | 59 | revisione DeepSeek ~0,004 $, Sonnet ~0,04 $ per pagina | violazioni da 8–16 a 0–1; un caso di significato alterato ("ha votato contro" diventato "si astiene") |
 | 3, più acquisizione mirata | 102 | 15 ricerche 0,001 $; note nuove 0,057 $; pagina DeepSeek ~0,02 $, Sonnet ~0,23 $ | entrano editori, industria digitale tedesca, Bundesrat, stampa FR/ES/IT; non trovati il confronto testuale di Leto e la lettera delle confederazioni |
+| 4a, esempi di stile (da un'altra vicenda) | 102 | come gradino 3 | schede più concrete: numeri, ragioni delle parti; violazioni prima della revisione in calo con DeepSeek |
+| 4b, più link citati negli articoli centrali | 132 | note nuove 0,04 $; pagina DeepSeek ~0,015 $, Sonnet ~0,29 $ | entrano documenti primari (mandato del Consiglio, parere delle autorità privacy, lettere aperte, inchiesta sulle lobby); la Germania che vota contro compare in entrambe |
 
 Ricerca: Bing News consente la ricerca da robots.txt, Google News no (escluso). Gli articoli trovati si ricollegano alle testate del registro per dominio, altrimenti la stessa testata conta due volte.
 
-Spesa totale degli esperimenti sulla Matrice: circa 1,25 $.
+Ricerca nel web generale: vietata da robots.txt di Bing, non usata. Seguire i link citati negli articoli centrali è gratuito e porta i documenti primari meglio di qualsiasi ricerca.
+
+Spesa totale degli esperimenti sulla Matrice: circa 2,5 $.
