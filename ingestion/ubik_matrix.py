@@ -204,7 +204,7 @@ def rule_violations(page, notes):
         check(f"cards[{i}]", c.get("title", "") + " " + card_body(c))
         if words(card_body(c)) > LIMITS["card_text"] + (40 if c.get("type") == "confronto" else 0) or words(c.get("title")) > LIMITS["card_title"]:
             v.append({"field": f"cards[{i}]", "rule": "length", "words": [words(c.get("title")), words(c.get("text"))]})
-        refs = c.get("support", []) + [r for x in c.get("sides", []) for r in x.get("support", [])]
+        refs = (c.get("support") or []) + [r for x in (c.get("sides") or []) if isinstance(x, dict) for r in (x.get("support") or [])]
         if not any(notes.get(r.split(":")[0], {}).get("relevance") == "core" for r in refs):
             v.append({"field": f"cards[{i}]", "rule": "off_core"})
     for i, t in enumerate(page.get("timeline", [])):
