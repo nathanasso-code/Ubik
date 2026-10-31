@@ -64,9 +64,10 @@ Contro il riferimento: schede del riferimento ritrovate (per contenuto), afferma
 | 3, più acquisizione mirata | 102 | 15 ricerche 0,001 $; note nuove 0,057 $; pagina DeepSeek ~0,02 $, Sonnet ~0,23 $ | entrano editori, industria digitale tedesca, Bundesrat, stampa FR/ES/IT; non trovati il confronto testuale di Leto e la lettera delle confederazioni |
 | 4a, esempi di stile (da un'altra vicenda) | 102 | come gradino 3 | schede più concrete: numeri, ragioni delle parti; violazioni prima della revisione in calo con DeepSeek |
 | 4b, più link citati negli articoli centrali | 132 | note nuove 0,04 $; pagina DeepSeek ~0,015 $, Sonnet ~0,29 $ | entrano documenti primari (mandato del Consiglio, parere delle autorità privacy, lettere aperte, inchiesta sulle lobby); la Germania che vota contro compare in entrambe |
+| v2, prompt rivisto, confronto, fedeltà (DeepSeek) | 132 | ~0,017 $ per pagina con revisione e fedeltà | titoli con la questione aperta; una scheda di confronto a tre lati; il controllo di fedeltà segnala 4–10 frasi per pagina e le corregge. Limiti: le correzioni possono appiattire il titolo; restano sigle introdotte dopo la revisione; un nome tradotto male (EDRi "Centro"); la Germania resta "non a favore" quando la scheda non cita la fonte che dice "contro" |
 
 Ricerca: Bing News consente la ricerca da robots.txt, Google News no (escluso). Gli articoli trovati si ricollegano alle testate del registro per dominio, altrimenti la stessa testata conta due volte.
 
 Ricerca nel web generale: vietata da robots.txt di Bing, non usata. Seguire i link citati negli articoli centrali è gratuito e porta i documenti primari meglio di qualsiasi ricerca.
 
-Spesa totale degli esperimenti sulla Matrice: circa 2,5 $.
+Spesa totale degli esperimenti sulla Matrice: circa 2,6 $.
