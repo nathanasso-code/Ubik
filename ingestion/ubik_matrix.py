@@ -41,6 +41,7 @@ def words(s):
 def main(selection_path, out_dir, arm, compose_runs=2):
     sel = json.loads(Path(selection_path).read_text())
     items = {i["item_id"]: i for i in sel["items"]}
+    TIERS.update({iid: i.get("tier", "approved") for iid, i in items.items()})
     nucleus = sel["nucleus"]
     out_dir = Path(out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -108,7 +109,8 @@ def main(selection_path, out_dir, arm, compose_runs=2):
         if n.get("relevance") == "no" or iid not in items:  # notes of items no longer selected (e.g. duplicates)
             continue
         it = items[iid]
-        listing.append({"item_id": iid, "source": it["publisher"], "source_role": n.get("source_role"), "language": it["language"],
+        listing.append({"item_id": iid, "source": it["publisher"], "source_tier": it.get("tier", "approved"),
+                        "source_role": n.get("source_role"), "language": it["language"],
                         "date": (it.get("published") or "")[:10], "original_title": it.get("title") or "", "relevance": n.get("relevance"),
                         "adds": n.get("adds"), "claims": [{k: c.get(k) for k in ("id", "type", "who", "statement", "date", "quote")}
                                                           for c in n["claims"]]})
@@ -171,6 +173,10 @@ def main(selection_path, out_dir, arm, compose_runs=2):
                       "violations": [[len(p["violations_before_revision"]), len(p["violations"])] for p in out["pages"]]}))
 
 
+TIERS = {}  # item_id -> approved | primary | probation | unknown (set by main from the selection)
+STRONG = ("approved", "primary")
+
+
 def card_body(c):
     """All the text of a card: a single card, or the intro and the sides of a comparison."""
     if c.get("type") == "confronto":
@@ -219,6 +225,9 @@ def rule_violations(page, notes):
         refs = (c.get("support") or []) + [r for x in (c.get("sides") or []) if isinstance(x, dict) for r in (x.get("support") or [])]
         if not any(notes.get(r.split(":")[0], {}).get("relevance") == "core" for r in refs):
             v.append({"field": f"cards[{i}]", "rule": "off_core"})
+        if refs and TIERS and not any(TIERS.get(r.split(":")[0], "approved") in STRONG for r in refs):
+            v.append({"field": f"cards[{i}]", "rule": "no_approved_source",
+                      "note": "rests only on probation or unknown sources: add an approved or primary source saying the same, or drop the card"})
     for i, t in enumerate(page.get("timeline", [])):
         check(f"timeline[{i}]", t.get("text"))
     if words(page.get("title")) > LIMITS["title"]:

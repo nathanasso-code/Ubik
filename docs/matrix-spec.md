@@ -47,6 +47,10 @@ Il codice controlla le regole di scrittura che si possono verificare: formule re
 
 Dopo la revisione, un modello economico confronta ogni frase delle schede, dei punti chiave e dei passaggi con le affermazioni citate a sostegno e segnala ciò che è indebolito, rafforzato, senza riscontro o contraddetto. Le frasi segnalate si sostituiscono con la correzione proposta o si tolgono; tutto resta registrato. Il controllo vede anche le affermazioni di altre fonti che condividono nomi con la scheda e non sono citate: se una fonte dice di più ("ha votato contro" invece di "non ha votato a favore"), la frase si allinea alla fonte più precisa e quella fonte entra tra i riferimenti. Il titolo della pagina cambia solo per fatti senza riscontro o contraddetti, non per il tono. Dopo la fedeltà le regole di scrittura si ricontrollano; se le correzioni le hanno violate, si fa un secondo giro di revisione e fedeltà.
 
+## Livelli delle fonti
+
+Ogni elemento porta un livello: **approvata** (registro delle fonti), **primaria** (testi e siti istituzionali), **in prova** (entrata in automatico dalla lista dei link), **sconosciuta** (trovata da ricerca o link, non vagliata). Una scheda deve poggiare su almeno una fonte approvata o primaria; le altre possono aggiungere dettagli accanto, mai reggerla da sole. Il codice lo controlla e la revisione toglie o accorpa le schede che non lo rispettano. Nella lista dei link conta solo chi è citato da fonti approvate.
+
 ## Confronto
 
 Quando due o tre fronti si oppongono sullo stesso punto, una scheda di confronto li affianca graficamente; ogni lato ha la sua etichetta e le sue fonti.
