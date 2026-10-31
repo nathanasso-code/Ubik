@@ -138,16 +138,21 @@ def main(selection_path, out_dir, arm, compose_runs=2):
             save()
             continue
         page["run"], page["_arm"] = run, arm
-        revise(page, arm, p_rev, notes["notes"], out, run)
-        page["violations"] = rule_violations(page, notes["notes"])
-        page["controls"] = controls(page, notes["notes"], items)
-        first = page["controls"]["repairs"]
-        fidelity(page, notes["notes"], out, run, p_fid)
-        page["controls"] = controls(page, notes["notes"], items)
-        page["controls"]["repairs"] = first + page["controls"]["repairs"]
-        page["controls"]["summary"]["repairs"] = len(page["controls"]["repairs"])
         out["pages"].append(page)
-        (out_dir / f"matrix-{arm}{tag}-{run}.html").write_text(render(page, notes["notes"], items))
+        save()  # a paid page is never lost, whatever happens below
+        try:
+            revise(page, arm, p_rev, notes["notes"], out, run)
+            page["violations"] = rule_violations(page, notes["notes"])
+            page["controls"] = controls(page, notes["notes"], items)
+            first = page["controls"]["repairs"]
+            fidelity(page, notes["notes"], out, run, p_fid)
+            page["controls"] = controls(page, notes["notes"], items)
+            page["controls"]["repairs"] = first + page["controls"]["repairs"]
+            page["controls"]["summary"]["repairs"] = len(page["controls"]["repairs"])
+            (out_dir / f"matrix-{arm}{tag}-{run}.html").write_text(render(page, notes["notes"], items))
+        except Exception:
+            import traceback
+            out["errors"].append({"run": run, "stage": "post", "error": traceback.format_exc()[-1500:]})
         save()
     out["notes_cost"] = notes["cost"]
     out["total_cost_usd"] = notes["cost"] + out["cost"]["compose"]
@@ -161,8 +166,9 @@ def main(selection_path, out_dir, arm, compose_runs=2):
 def card_body(c):
     """All the text of a card: a single card, or the intro and the sides of a comparison."""
     if c.get("type") == "confronto":
-        return " ".join([c.get("intro", "")] + [x.get("label", "") + " " + x.get("text", "") for x in c.get("sides", [])])
-    return c.get("text", "")
+        return " ".join([c.get("intro") or ""] + [(x.get("label") or "") + " " + (x.get("text") or "")
+                                                  for x in (c.get("sides") or []) if isinstance(x, dict)])
+    return c.get("text") or ""
 
 
 ACRONYM_OK = {"UE", "USA", "GDPR", "IA"}
@@ -401,8 +407,8 @@ def controls(page, notes, items):
         if words(card_body(c)) > LIMITS["card_text"] + (40 if c.get("type") == "confronto" else 0) or words(c.get("title")) > LIMITS["card_title"]:
             over.append({"card": c.get("title"), "words": words(card_body(c))})
     return {"repairs": log, "flags": flags, "over_length": over,
-            "summary": {"cards": len(page["cards"]), "key_points": len(page["key_points"]), "timeline": len(page["timeline"]),
-                        "single_source_cards": sum(c["single_source"] for c in page["cards"]), "repairs": len(log),
+            "summary": {"cards": len(page["cards"]), "key_points": len(page.get("key_points") or []), "timeline": len(page.get("timeline") or []),
+                        "single_source_cards": sum(bool(c.get("single_source")) for c in page["cards"]), "repairs": len(log),
                         "unsupported_numbers": len(flags), "over_length": len(over),
                         "quotes": sum(1 for c in page["cards"] if c.get("quote"))}}
 
