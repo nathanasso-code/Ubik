@@ -41,11 +41,11 @@ Una Matrice racconta un nucleo di interesse (una vicenda, una decisione, un conf
 
 ## Revisione
 
-Il codice controlla le regole di scrittura che si possono verificare: sigle non sciolte (ammesse UE, USA, IA e GDPR spiegato, o sigle sciolte tra parentesi altrove nella pagina), numeri di articoli e allegati, lunghezze, schede che non poggiano su almeno un elemento centrale per il nucleo. Se trova violazioni, una sola chiamata di revisione riscrive i campi segnalati senza toccare i riferimenti. Le violazioni prima e dopo restano registrate.
+Il codice controlla le regole di scrittura che si possono verificare: formule redazionali ("da un lato… dall'altro", "il nodo", "la partita"…), sigle non sciolte (ammesse UE, USA, IA e GDPR spiegato, o sigle sciolte tra parentesi altrove nella pagina), numeri di articoli e allegati, lunghezze, schede che non poggiano su almeno un elemento centrale per il nucleo. Se trova violazioni, una sola chiamata di revisione riscrive i campi segnalati senza toccare i riferimenti. Le violazioni prima e dopo restano registrate.
 
 ## Fedeltà
 
-Dopo la revisione, un modello economico confronta ogni frase delle schede, dei punti chiave e dei passaggi con le affermazioni citate a sostegno e segnala ciò che è indebolito, rafforzato, senza riscontro o contraddetto. Le frasi segnalate si sostituiscono con la correzione proposta o si tolgono; tutto resta registrato.
+Dopo la revisione, un modello economico confronta ogni frase delle schede, dei punti chiave e dei passaggi con le affermazioni citate a sostegno e segnala ciò che è indebolito, rafforzato, senza riscontro o contraddetto. Le frasi segnalate si sostituiscono con la correzione proposta o si tolgono; tutto resta registrato. Il controllo vede anche le affermazioni di altre fonti che condividono nomi con la scheda e non sono citate: se una fonte dice di più ("ha votato contro" invece di "non ha votato a favore"), la frase si allinea alla fonte più precisa e quella fonte entra tra i riferimenti. Il titolo della pagina cambia solo per fatti senza riscontro o contraddetti, non per il tono. Dopo la fedeltà le regole di scrittura si ricontrollano; se le correzioni le hanno violate, si fa un secondo giro di revisione e fedeltà.
 
 ## Confronto
 

@@ -29,6 +29,7 @@ Form:
 Writing rules:
 - Write like a good journalist: start with the fact, plain complete sentences, one idea per sentence. Neither didactic nor telegraphic.
 - No editorial formulas or rhetorical devices: no "il nodo è", "la partita", "chi vince e chi perde", "da un lato... dall'altro", "in gioco c'è", "secondo le parti in campo", no announcing what the text will say, no conclusions about what it all means. Let the facts and the attributed positions carry the story.
+- Names of organisations, laws and bodies: keep them as the sources write them, or use their established Italian name; never translate them freely (e.g. European Digital Rights stays European Digital Rights, explained once as a network of digital rights organisations).
 - No isolated acronyms: spell them out the first time or avoid them. No numbers of legal articles unless explained.
 - Facts, numbers, dates, positions and quotes come ONLY from the claims you cite in support, with the same strength: if a claim says someone voted against, write that they voted against, not that they "did not vote in favour". You may add context (what something is) but never new facts: no numbers, dates or people that are not in the notes.
 - Select. Few understandable, well-founded pieces are better than a collage. Plurality yes, exhibited no.

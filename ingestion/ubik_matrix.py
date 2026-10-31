@@ -141,11 +141,19 @@ def main(selection_path, out_dir, arm, compose_runs=2):
         out["pages"].append(page)
         save()  # a paid page is never lost, whatever happens below
         try:
-            revise(page, arm, p_rev, notes["notes"], out, run)
-            page["violations"] = rule_violations(page, notes["notes"])
-            page["controls"] = controls(page, notes["notes"], items)
-            first = page["controls"]["repairs"]
-            fidelity(page, notes["notes"], out, run, p_fid)
+            first = []
+            page["rounds"] = []
+            for rnd in (1, 2):  # rules, then facts; a second round only if the fixes broke a rule again
+                revise(page, arm, p_rev, notes["notes"], out, run)
+                page["controls"] = controls(page, notes["notes"], items)
+                first += page["controls"]["repairs"]
+                fidelity(page, notes["notes"], out, run, p_fid)
+                page["violations"] = rule_violations(page, notes["notes"])
+                page["rounds"].append({"round": rnd, "violations_before": len(page.get("violations_before_revision", [])),
+                                       "fidelity_flagged": page.get("fidelity", {}).get("flagged"),
+                                       "violations_after": len(page["violations"])})
+                if not page["violations"]:
+                    break
             page["controls"] = controls(page, notes["notes"], items)
             page["controls"]["repairs"] = first + page["controls"]["repairs"]
             page["controls"]["summary"]["repairs"] = len(page["controls"]["repairs"])
@@ -173,6 +181,8 @@ def card_body(c):
 
 ACRONYM_OK = {"UE", "USA", "GDPR", "IA"}
 ACRONYM = re.compile(r"\b(?:[A-Z]{2,}[a-z]?[A-Z]*|[A-Z]+&[A-Z]+)\b")
+FORMULAS = re.compile(r"\b(da un lato|dall'altro|da una parte|dall'altra|il nodo|la partita|in gioco|chi vince|chi perde|"
+                      r"chi ci guadagna|parti in campo|posizioni inconciliabili|braccio di ferro|scontro frontale)\b", re.I)
 LEGAL = re.compile(r"\b(?:articol[oi]|art\.|allegat[oi])\s+[\dIVX]+", re.I)
 
 
@@ -192,6 +202,8 @@ def rule_violations(page, notes):
             v.append({"field": field, "rule": "acronyms", "found": bad})
         if LEGAL.search(text or ""):
             v.append({"field": field, "rule": "legal_article_numbers", "found": LEGAL.findall(text)})
+        if FORMULAS.search(text or ""):
+            v.append({"field": field, "rule": "editorial_formula", "found": FORMULAS.findall(text)})
     check("title", page.get("title"))
     check("summary_short", page.get("summary_short"))
     for i, p in enumerate(page.get("summary_long") or []):
@@ -263,6 +275,22 @@ def fidelity(page, notes, out, run, p_fid):
     Corrections replace the sentence; a sentence with no correction is removed. Every check is logged."""
     def claims(refs):
         return [{k: (claim(notes, r)[1] or {}).get(k) for k in ("who", "statement", "date", "quote")} for r in refs]
+    pool = [(f"{iid}:{c.get('id')}", c) for iid, n in notes.items() if n.get("relevance") != "no" for c in n.get("claims", [])]
+
+    def related(text, refs, k=5):
+        """Claims NOT cited that share names with the sentence: lets the check notice a fact written weaker or
+        stronger than the best source says (e.g. 'did not vote in favour' when a source says 'voted against')."""
+        names = {w.lower()[:5] for w in re.findall(r"[A-ZÀ-Ý][\wÀ-ÿ'-]{3,}", text or "")}
+        scored = []
+        for ref, c in pool:
+            if ref in refs:
+                continue
+            hay = norm((c.get("statement") or "") + " " + (c.get("who") or ""))
+            score = sum(1 for nm in names if re.search(r"\b" + re.escape(nm), hay))
+            if score >= min(2, len(names)) and score:
+                scored.append((score, ref, c))
+        scored.sort(key=lambda x: -x[0])
+        return [{"ref": ref, "who": c.get("who"), "statement": c.get("statement")} for _, ref, c in scored[:k]]
     every = list(dict.fromkeys(r for x in (page.get("cards") or []) + (page.get("key_points") or [])
                                for r in (x.get("support") or [])))
     stmts = [{"id": "title", "text": page.get("title", ""), "claims": claims(every)},
@@ -270,12 +298,15 @@ def fidelity(page, notes, out, run, p_fid):
     for i, k in enumerate(page.get("key_points", [])):
         stmts.append({"id": f"key_points[{i}].text", "text": k.get("text", ""), "claims": claims(k.get("support", []))})
     for i, c in enumerate(page.get("cards", [])):
-        stmts.append({"id": f"cards[{i}].title", "text": c.get("title", ""), "claims": claims(c.get("support", []))})
+        sup = c.get("support") or []
+        stmts.append({"id": f"cards[{i}].title", "text": c.get("title", ""), "claims": claims(sup),
+                      "other_claims": related(c.get("title", "") + " " + card_body(c), sup)})
         if c.get("type") == "confronto":
             for j, x in enumerate(c.get("sides", [])):
                 stmts.append({"id": f"cards[{i}].sides[{j}].text", "text": x.get("text", ""), "claims": claims(x.get("support", []))})
         else:
-            stmts.append({"id": f"cards[{i}].text", "text": c.get("text", ""), "claims": claims(c.get("support", []))})
+            stmts.append({"id": f"cards[{i}].text", "text": c.get("text", ""), "claims": claims(sup),
+                          "other_claims": related(c.get("title", "") + " " + c.get("text", ""), sup)})
     for i, t in enumerate(page.get("timeline", [])):
         stmts.append({"id": f"timeline[{i}].text", "text": t.get("text", ""), "claims": claims(t.get("support", []))})
     try:
@@ -308,9 +339,16 @@ def fidelity(page, notes, out, run, p_fid):
             continue
         old = obj.get(key, "")
         new = ch.get("fix")
+        if cid == "title" and ch.get("verdict") not in ("unsupported", "contradicted"):
+            unapplied.append({**ch, "kept": "title tension kept"})  # the page title may sharpen; only false facts change
+            continue
         if ch["sentence"] in old and (new or key in ("text", "summary_short")):
             obj[key] = re.sub(r"\s{2,}", " ", old.replace(ch["sentence"], new or "")).strip()
             applied.append(ch)
+            add = [r for r in (ch.get("add_support") or []) if claim(notes, r)[1] is not None]
+            if add and re.match(r"cards\[\d+\]\.(title|text)$", cid):
+                card = page["cards"][int(re.search(r"\d+", cid).group())]
+                card["support"] = list(dict.fromkeys((card.get("support") or []) + add))
         else:
             unapplied.append(ch)
     page["fidelity"] = {"checked": len(stmts), "flagged": len([c for c in checks if c.get("verdict") not in (None, "ok")]),
