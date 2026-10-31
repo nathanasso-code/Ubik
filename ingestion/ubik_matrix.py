@@ -47,6 +47,7 @@ def main(selection_path, out_dir, arm, compose_runs=2):
     p_note, h_note = prompt("nota", nucleus)
     p_comp, h_comp = prompt(os.getenv("MATRIX_COMPOSE", "compose"), nucleus)
     p_rev, h_rev = prompt("revise", nucleus)
+    p_fid, h_fid = prompt("fidelity", nucleus)
     notes_path = out_dir / "notes.json"
     notes = {"prompt_sha256": h_note, "model": DEEPSEEK, "notes": {}, "cost": 0.0, "errors": []}
     if notes_path.exists():
@@ -55,7 +56,7 @@ def main(selection_path, out_dir, arm, compose_runs=2):
             notes = prev
     todo = [i for i in items if i not in notes["notes"]]
     out = {"version": "matrix-v1", "arm": arm, "model": MODELS[arm], "code_commit": os.getenv("UBIK_COMMIT"),
-           "prompt_sha256": {"nota": h_note, "compose": h_comp, "revise": h_rev}, "nucleus": nucleus, "preflight": [], "pages": [],
+           "prompt_sha256": {"nota": h_note, "compose": h_comp, "revise": h_rev, "fidelity": h_fid}, "nucleus": nucleus, "preflight": [], "pages": [],
            "errors": [], "calls": [], "cost": {"compose": 0.0}}
     tag = os.getenv("MATRIX_TAG", "")
     path = out_dir / f"matrix-{arm}{tag}.json"
@@ -140,6 +141,11 @@ def main(selection_path, out_dir, arm, compose_runs=2):
         revise(page, arm, p_rev, notes["notes"], out, run)
         page["violations"] = rule_violations(page, notes["notes"])
         page["controls"] = controls(page, notes["notes"], items)
+        first = page["controls"]["repairs"]
+        fidelity(page, notes["notes"], out, run, p_fid)
+        page["controls"] = controls(page, notes["notes"], items)
+        page["controls"]["repairs"] = first + page["controls"]["repairs"]
+        page["controls"]["summary"]["repairs"] = len(page["controls"]["repairs"])
         out["pages"].append(page)
         (out_dir / f"matrix-{arm}{tag}-{run}.html").write_text(render(page, notes["notes"], items))
         save()
@@ -152,6 +158,13 @@ def main(selection_path, out_dir, arm, compose_runs=2):
                       "violations": [[len(p["violations_before_revision"]), len(p["violations"])] for p in out["pages"]]}))
 
 
+def card_body(c):
+    """All the text of a card: a single card, or the intro and the sides of a comparison."""
+    if c.get("type") == "confronto":
+        return " ".join([c.get("intro", "")] + [x.get("label", "") + " " + x.get("text", "") for x in c.get("sides", [])])
+    return c.get("text", "")
+
+
 ACRONYM_OK = {"UE", "USA", "GDPR", "IA"}
 ACRONYM = re.compile(r"\b(?:[A-Z]{2,}[a-z]?[A-Z]*|[A-Z]+&[A-Z]+)\b")
 LEGAL = re.compile(r"\b(?:articol[oi]|art\.|allegat[oi])\s+[\dIVX]+", re.I)
@@ -162,7 +175,7 @@ def rule_violations(page, notes):
     v = []
     full = " ".join([page.get("title", ""), page.get("summary_short", "")] + (page.get("summary_long") or []) +
                     [k.get("heading", "") + " " + k.get("text", "") for k in page.get("key_points", [])] +
-                    [c.get("title", "") + " " + c.get("text", "") for c in page.get("cards", [])] +
+                    [c.get("title", "") + " " + card_body(c) for c in page.get("cards", [])] +
                     [t.get("text", "") for t in page.get("timeline", [])])
     gdpr_ok = "protezione dei dati" in full.lower()
 
@@ -182,10 +195,11 @@ def rule_violations(page, notes):
         if words(k.get("text")) > LIMITS["key_point"]:
             v.append({"field": f"key_points[{i}].text", "rule": "length", "words": words(k.get("text"))})
     for i, c in enumerate(page.get("cards", [])):
-        check(f"cards[{i}]", c.get("title", "") + " " + c.get("text", ""))
-        if words(c.get("text")) > LIMITS["card_text"] or words(c.get("title")) > LIMITS["card_title"]:
+        check(f"cards[{i}]", c.get("title", "") + " " + card_body(c))
+        if words(card_body(c)) > LIMITS["card_text"] + (40 if c.get("type") == "confronto" else 0) or words(c.get("title")) > LIMITS["card_title"]:
             v.append({"field": f"cards[{i}]", "rule": "length", "words": [words(c.get("title")), words(c.get("text"))]})
-        if not any(notes.get(r.split(":")[0], {}).get("relevance") == "core" for r in c.get("support", [])):
+        refs = c.get("support", []) + [r for x in c.get("sides", []) for r in x.get("support", [])]
+        if not any(notes.get(r.split(":")[0], {}).get("relevance") == "core" for r in refs):
             v.append({"field": f"cards[{i}]", "rule": "off_core"})
     for i, t in enumerate(page.get("timeline", [])):
         check(f"timeline[{i}]", t.get("text"))
@@ -238,6 +252,58 @@ def revise(page, arm, p_rev, notes, out, run):
         out["errors"].append({"run": run, "stage": "revise", "error": f"{type(exc).__name__}: {exc}"[:200], "content_head": content[:400]})
 
 
+def fidelity(page, notes, out, run, p_fid):
+    """Sentence-by-sentence check of what we wrote against the claims cited in support (cheap model, one call).
+    Corrections replace the sentence; a sentence with no correction is removed. Every check is logged."""
+    def claims(refs):
+        return [{k: (claim(notes, r)[1] or {}).get(k) for k in ("who", "statement", "date", "quote")} for r in refs]
+    stmts = []
+    for i, k in enumerate(page.get("key_points", [])):
+        stmts.append({"id": f"key_points[{i}].text", "text": k.get("text", ""), "claims": claims(k.get("support", []))})
+    for i, c in enumerate(page.get("cards", [])):
+        stmts.append({"id": f"cards[{i}].title", "text": c.get("title", ""), "claims": claims(c.get("support", []))})
+        if c.get("type") == "confronto":
+            for j, x in enumerate(c.get("sides", [])):
+                stmts.append({"id": f"cards[{i}].sides[{j}].text", "text": x.get("text", ""), "claims": claims(x.get("support", []))})
+        else:
+            stmts.append({"id": f"cards[{i}].text", "text": c.get("text", ""), "claims": claims(c.get("support", []))})
+    for i, t in enumerate(page.get("timeline", [])):
+        stmts.append({"id": f"timeline[{i}].text", "text": t.get("text", ""), "claims": claims(t.get("support", []))})
+    try:
+        raw, cost, secs = call(DEEPSEEK, p_fid, {"statements": stmts}, max_tokens=6000)
+        checks = parse_json(raw["choices"][0]["message"]["content"]).get("checks", [])
+    except Exception as exc:
+        out["errors"].append({"run": run, "stage": "fidelity", "error": f"{type(exc).__name__}: {exc}"[:300]})
+        return
+    out["cost"]["compose"] += cost
+    out["calls"].append({"run": run, "stage": "fidelity", "cost_usd": cost, "seconds": secs})
+
+    def locate(path):
+        obj = page
+        for part in re.findall(r"[a-z_]+|\[\d+\]", path):
+            obj = obj[int(part[1:-1])] if part.startswith("[") else obj if part in ("text", "title") else obj[part]
+        return obj
+    applied, unapplied = [], []
+    for ch in checks:
+        if ch.get("verdict") in (None, "ok") or not ch.get("sentence"):
+            continue
+        field = ch.get("id", "").rsplit(".", 1)
+        try:
+            obj, key = locate(field[0]), field[1]
+        except Exception:
+            unapplied.append(ch)
+            continue
+        old = obj.get(key, "")
+        new = ch.get("fix")
+        if ch["sentence"] in old and (new or key == "text"):
+            obj[key] = re.sub(r"\s{2,}", " ", old.replace(ch["sentence"], new or "")).strip()
+            applied.append(ch)
+        else:
+            unapplied.append(ch)
+    page["fidelity"] = {"checked": len(stmts), "flagged": len([c for c in checks if c.get("verdict") not in (None, "ok")]),
+                        "applied": applied, "unapplied": unapplied}
+
+
 def revise_existing(selection_path, out_dir, arm):
     """Revision only, on pages already composed (no new composition): the cleanest before/after comparison."""
     sel = json.loads(Path(selection_path).read_text())
@@ -288,6 +354,21 @@ def controls(page, notes, items):
     def valid(refs):
         return [r for r in (refs or []) if claim(notes, r)[1] is not None]
 
+    for c in page.get("cards") or []:
+        if c.get("type") != "confronto":
+            continue
+        sides = []
+        for x in c.get("sides") or []:
+            x["support"] = valid(x.get("support"))
+            if x["support"]:
+                sides.append(x)
+            else:
+                log.append({"removed": "side", "card": c.get("title"), "label": x.get("label")})
+        c["sides"] = sides
+        c["support"] = list(dict.fromkeys(r for x in sides for r in x["support"]))
+        if len(sides) == 1:  # a comparison with one side left is an ordinary card
+            c.update({"type": "posizioni", "text": sides[0].get("text", ""), "sides": []})
+            log.append({"changed": "comparison_to_card", "card": c.get("title")})
     for key in ("key_points", "cards", "timeline"):
         keep = []
         for x in page.get(key) or []:
@@ -304,11 +385,11 @@ def controls(page, notes, items):
             c["quote"] = None
         origins = sorted({items[r.split(":")[0]]["origin"] for r in c["support"] if r.split(":")[0] in items})
         c["origins"] = origins
-        c["single_source"] = len(origins) == 1
+        c["single_source"] = len(origins) == 1 and c.get("type") != "confronto"
         # numbers in our text must appear in the cited claims or cited texts
         hay = norm(" ".join([(claim(notes, r)[1] or {}).get("statement", "") + " " + (claim(notes, r)[1] or {}).get("quote", "")
                              for r in c["support"]] + [items[r.split(":")[0]]["text"] for r in c["support"] if r.split(":")[0] in items]))
-        for num in set(re.findall(r"\d[\d.,]*\d|\d", c.get("title", "") + " " + c.get("text", ""))):
+        for num in set(re.findall(r"\d[\d.,]*\d|\d", c.get("title", "") + " " + card_body(c))):
             if num.replace(".", "").replace(",", "") not in hay.replace(".", "").replace(",", ""):
                 flags.append({"card": c.get("title"), "unsupported_number": num})
     over = []
@@ -317,8 +398,8 @@ def controls(page, notes, items):
         if words(v) > LIMITS[k]:
             over.append({k: words(v)})
     for c in page["cards"]:
-        if words(c.get("text")) > LIMITS["card_text"] or words(c.get("title")) > LIMITS["card_title"]:
-            over.append({"card": c.get("title"), "words": words(c.get("text"))})
+        if words(card_body(c)) > LIMITS["card_text"] + (40 if c.get("type") == "confronto" else 0) or words(c.get("title")) > LIMITS["card_title"]:
+            over.append({"card": c.get("title"), "words": words(card_body(c))})
     return {"repairs": log, "flags": flags, "over_length": over,
             "summary": {"cards": len(page["cards"]), "key_points": len(page["key_points"]), "timeline": len(page["timeline"]),
                         "single_source_cards": sum(c["single_source"] for c in page["cards"]), "repairs": len(log),
@@ -326,7 +407,18 @@ def controls(page, notes, items):
                         "quotes": sum(1 for c in page["cards"] if c.get("quote"))}}
 
 
-TAG = {"documento": "t-fact", "fatto": "t-fact", "posizioni": "t-pos", "dato": "t-data", "inchiesta": "t-inq"}
+MESI = ["gennaio", "febbraio", "marzo", "aprile", "maggio", "giugno", "luglio", "agosto", "settembre", "ottobre", "novembre", "dicembre"]
+
+
+def data_it(d):
+    m = re.match(r"(\d{4})-(\d{2})(?:-(\d{2}))?", d or "")
+    if not m:
+        return d or ""
+    y, mo, dd = m.groups()
+    return (f"{int(dd)} " if dd else "") + f"{MESI[int(mo) - 1]} {y}"
+
+
+TAG = {"confronto": "t-cmp", "documento": "t-fact", "fatto": "t-fact", "posizioni": "t-pos", "dato": "t-data", "inchiesta": "t-inq"}
 LANG = {"it": "italiano", "en": "inglese", "de": "tedesco", "fr": "francese", "es": "spagnolo"}
 
 
@@ -352,14 +444,25 @@ def render(page, notes, items):
         iids = list(dict.fromkeys(r.split(":")[0] for r in c["support"]))
         cls = TAG.get(c.get("type"), "t-fact")
         parts.append(f'<article class="card {cls}">')
-        if c["single_source"]:
+        if c.get("type") == "confronto":
+            parts.append('<span class="tag">confronto</span>')
+        elif c["single_source"]:
             it = items[iids[0]]
             role = notes.get(iids[0], {}).get("source_role") or ""
             parts.append(f'<div class="one"><div class="top"><span class="tag">{e(c.get("type", ""))}</span>'
-                         f'<span class="out">{e(it["publisher"])} <span>{e(role)} · {(it.get("published") or "")[:10]}</span></span></div>'
+                         f'<span class="out">{e(it["publisher"])} <span>{e(role)} · {data_it((it.get("published") or "")[:10])}</span></span></div>'
                          f'<div class="orig"><a href="{e(it["url"])}">«{e(it.get("title") or it["url"])}»</a></div></div>')
         else:
             parts.append(f'<span class="tag">{e(c.get("type", ""))}</span>')
+        if c.get("type") == "confronto":
+            parts.append(f"<h3>{e(c.get('title', ''))}</h3><p>{e(c.get('intro', ''))}</p><div class=\"sides\">")
+            for x in c.get("sides", []):
+                sids = list(dict.fromkeys(r.split(":")[0] for r in x.get("support", [])))
+                srcs = " ".join(f'<a href="{e(items[i]["url"])}">{e(items[i]["publisher"])}</a>' for i in sids if i in items)
+                parts.append(f'<div class="side"><div class="who">{e(x.get("label", ""))}</div><p>{e(x.get("text", ""))}</p>'
+                             f'<div class="src">{srcs}</div></div>')
+            parts.append("</div></article>")
+            continue
         parts.append(f"<h3>{e(c.get('title', ''))}</h3><p>{e(c.get('text', ''))}</p>")
         if c.get("quote"):
             _, cl = claim(notes, c["quote"])
@@ -367,13 +470,13 @@ def render(page, notes, items):
             parts.append(f"<blockquote><q>{e(cl['quote'])}</q>{tr}</blockquote>")
         if not c["single_source"]:
             parts.append('<div class="src">' + " ".join(
-                f'<a href="{e(items[i]["url"])}">{e(items[i]["publisher"])}, {(items[i].get("published") or "")[:10]}</a> · {LANG.get(items[i]["language"], items[i]["language"])}'
+                f'<a href="{e(items[i]["url"])}">{e(items[i]["publisher"])}, {data_it((items[i].get("published") or "")[:10])}</a> · {LANG.get(items[i]["language"], items[i]["language"])}'
                 for i in iids if i in items) + "</div>")
         parts.append("</article>")
     parts.append("</div></section>")
     if page.get("timeline"):
         parts.append('<section><h2>I passaggi</h2><div class="tl">' + "".join(
-            f'<div class="ev"><time>{e(t.get("date", ""))}</time><p>{e(t.get("text", ""))}</p></div>' for t in page["timeline"]) +
+            f'<div class="ev"><time>{e(data_it(t.get("date", "")))}</time><p>{e(t.get("text", ""))}</p></div>' for t in page["timeline"]) +
             "</div></section>")
     used = sorted({items[r.split(":")[0]]["publisher"] for c in page["cards"] for r in c["support"] if r.split(":")[0] in items})
     parts.append(f'<section class="sources"><h2>Le fonti</h2><p><b>Usate nelle schede:</b> {e(", ".join(used))}.</p>'

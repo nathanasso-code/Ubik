@@ -43,6 +43,14 @@ Una Matrice racconta un nucleo di interesse (una vicenda, una decisione, un conf
 
 Il codice controlla le regole di scrittura che si possono verificare: sigle non sciolte (ammesse UE, USA, IA e GDPR spiegato, o sigle sciolte tra parentesi altrove nella pagina), numeri di articoli e allegati, lunghezze, schede che non poggiano su almeno un elemento centrale per il nucleo. Se trova violazioni, una sola chiamata di revisione riscrive i campi segnalati senza toccare i riferimenti. Le violazioni prima e dopo restano registrate.
 
+## Fedeltà
+
+Dopo la revisione, un modello economico confronta ogni frase delle schede, dei punti chiave e dei passaggi con le affermazioni citate a sostegno e segnala ciò che è indebolito, rafforzato, senza riscontro o contraddetto. Le frasi segnalate si sostituiscono con la correzione proposta o si tolgono; tutto resta registrato.
+
+## Confronto
+
+Quando due o tre fronti si oppongono sullo stesso punto, una scheda di confronto li affianca graficamente; ogni lato ha la sua etichetta e le sue fonti.
+
 ## Misura
 
 Contro il riferimento: schede del riferimento ritrovate (per contenuto), affermazioni senza supporto, leggibilità in valutazione cieca, costo. Gradini: (1) solo corpus, sintesi economica; (2) solo corpus, sintesi forte; (3) corpus più acquisizione mirata; (4) sintesi più forte.

@@ -61,6 +61,11 @@ details.more summary::after{content:" ↓"}
 details.more[open] summary::after{content:" ↑"}
 details.more[open] summary{margin-bottom:12px}
 details.more > div{display:grid;gap:12px}
+.t-cmp{--c:var(--mark);--cb:var(--sheet)}
+.sides{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.side{border-top:3px solid var(--rule);padding-top:8px;display:grid;gap:6px;align-content:start;min-width:0}
+.side .who{font-family:var(--display);font-weight:600;font-size:15.5px}
+.side p{font-size:16px}
 .t-fact{--c:var(--fact);--cb:var(--fact-bg)}
 .t-pos{--c:var(--pos);--cb:var(--pos-bg)}
 .t-inq{--c:var(--inq);--cb:var(--inq-bg)}
