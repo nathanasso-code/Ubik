@@ -65,9 +65,12 @@ Contro il riferimento: schede del riferimento ritrovate (per contenuto), afferma
 | 4a, esempi di stile (da un'altra vicenda) | 102 | come gradino 3 | schede più concrete: numeri, ragioni delle parti; violazioni prima della revisione in calo con DeepSeek |
 | 4b, più link citati negli articoli centrali | 132 | note nuove 0,04 $; pagina DeepSeek ~0,015 $, Sonnet ~0,29 $ | entrano documenti primari (mandato del Consiglio, parere delle autorità privacy, lettere aperte, inchiesta sulle lobby); la Germania che vota contro compare in entrambe |
 | v2, prompt rivisto, confronto, fedeltà (DeepSeek) | 132 | ~0,017 $ per pagina con revisione e fedeltà | titoli con la questione aperta; una scheda di confronto a tre lati; il controllo di fedeltà segnala 4–10 frasi per pagina e le corregge. Limiti: le correzioni possono appiattire il titolo; restano sigle introdotte dopo la revisione; un nome tradotto male (EDRi "Centro"); la Germania resta "non a favore" quando la scheda non cita la fonte che dice "contro" |
+| v2c, fedeltà con fonti non citate, secondo giro, formule | 132 | ~0,04 $ per pagina (due giri) | la Germania torna "contro" con la fonte giusta aggiunta tra i riferimenti; titoli protetti; violazioni dopo due giri 2–5, quasi tutte di lunghezza; resta una scheda debole per pagina |
 
 Ricerca: Bing News consente la ricerca da robots.txt, Google News no (escluso). Gli articoli trovati si ricollegano alle testate del registro per dominio, altrimenti la stessa testata conta due volte.
 
 Ricerca nel web generale: vietata da robots.txt di Bing, non usata. Seguire i link citati negli articoli centrali è gratuito e porta i documenti primari meglio di qualsiasi ricerca.
 
-Spesa totale degli esperimenti sulla Matrice: circa 2,6 $.
+Spesa totale degli esperimenti sulla Matrice: circa 2,7 $.
+
+Lista dei link: registro dei domini rigenerato ogni lunedì; per i domini candidati e da esplorare si cercano i feed (primo giro: EDPB, Corporate Europe Observatory, noyb, EUobserver, LobbyControl, Repubblica in inglese).
