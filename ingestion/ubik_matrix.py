@@ -263,7 +263,10 @@ def fidelity(page, notes, out, run, p_fid):
     Corrections replace the sentence; a sentence with no correction is removed. Every check is logged."""
     def claims(refs):
         return [{k: (claim(notes, r)[1] or {}).get(k) for k in ("who", "statement", "date", "quote")} for r in refs]
-    stmts = []
+    every = list(dict.fromkeys(r for x in (page.get("cards") or []) + (page.get("key_points") or [])
+                               for r in (x.get("support") or [])))
+    stmts = [{"id": "title", "text": page.get("title", ""), "claims": claims(every)},
+             {"id": "summary_short", "text": page.get("summary_short", ""), "claims": claims(every)}]
     for i, k in enumerate(page.get("key_points", [])):
         stmts.append({"id": f"key_points[{i}].text", "text": k.get("text", ""), "claims": claims(k.get("support", []))})
     for i, c in enumerate(page.get("cards", [])):
@@ -293,15 +296,19 @@ def fidelity(page, notes, out, run, p_fid):
     for ch in checks:
         if ch.get("verdict") in (None, "ok") or not ch.get("sentence"):
             continue
-        field = ch.get("id", "").rsplit(".", 1)
+        cid = ch.get("id", "")
         try:
-            obj, key = locate(field[0]), field[1]
+            if cid in ("title", "summary_short"):
+                obj, key = page, cid
+            else:
+                field = cid.rsplit(".", 1)
+                obj, key = locate(field[0]), field[1]
         except Exception:
             unapplied.append(ch)
             continue
         old = obj.get(key, "")
         new = ch.get("fix")
-        if ch["sentence"] in old and (new or key == "text"):
+        if ch["sentence"] in old and (new or key in ("text", "summary_short")):
             obj[key] = re.sub(r"\s{2,}", " ", old.replace(ch["sentence"], new or "")).strip()
             applied.append(ch)
         else:

@@ -9,3 +9,5 @@ Verdicts:
 - unsupported: the sentence contains a fact, number, date or person not found in the cited claims.
 - contradicted: the sentence says the opposite of a claim.
 For every verdict other than ok, write "fix": the same sentence corrected to match the claims exactly, in plain Italian; or null if the sentence should be removed. List only sentences with a verdict other than ok.
+Fixes follow the page's writing rules: plain Italian for a reader who knows little about the subject, no acronyms that the sentence did not already use, no numbers of legal articles or paragraphs, no technical detail the sentence did not need. Correct the meaning, not the style.
+The statements with id "title" and "summary_short" are checked against all the claims of the page: flag them only for facts or judgements that no claim supports (for example "i governi hanno ceduto" when no source says so).
