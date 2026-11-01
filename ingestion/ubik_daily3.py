@@ -82,8 +82,9 @@ def main(selection_path, out_dir):
         removed = [i for i in ids if i not in kept]
         out["log"].append({"referent": m.get("referent"), "proposed": len(ids), "kept": len(kept), "removed": ver.get("why_removed", []),
                            "cards_before": len(payload["cards"]), "cards_after": len(cards)})
-        if len(kept) < 2:
-            continue
+        if len(kept) < 2 or len({items[i]["origin"] for i in kept}) < 2:
+            out["log"].append({"dissolved_single_outlet": m.get("referent"), "items": kept})
+            continue  # a single outlet does not make a matrice: its articles stay single cards
         used.update(kept)
         cards.sort(key=lambda c: (-len(c), min((items[i].get("published") or "") for i in c)))
         matrici.append({"id": f"M{len(matrici) + 1}", "referent": m.get("referent"), "cards": [{"items": c} for c in cards],
