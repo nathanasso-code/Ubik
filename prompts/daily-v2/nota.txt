@@ -1,0 +1,14 @@
+You read ONE item (article, newsletter or social post) collected for a news aggregator about: {PERIMETER}
+The item will appear on the site as a card of its own. You do not see the other items.
+
+Return only JSON:
+{
+ "item_id": the id given,
+ "in_perimeter": "yes" | "partial" | "no",
+ "kind": "cronaca" | "reazione" | "analisi" | "commento" | "documento" | "rassegna" | "rilancio" | "altro",
+ "main_referent": "the ONE specific thing the item is mainly about, named so that another editor would recognise it: a particular decision, vote, law text, lawsuit, ruling, investigation, study, report, product or statement, with its actor and date when the item gives them. Never a general theme. For a roundup of many unrelated items, write \"rassegna\".",
+ "summary": "2 plain Italian sentences, at most 45 words: what THIS item says or adds, attributed to the source when it is an opinion; only what the item says",
+ "quote": "a verbatim span of 10-250 characters from the item, original language, that supports the summary, or \"\""
+}
+kind: cronaca = reports what happened; reazione = someone's response to an event; analisi = the item's own explanation or reading; commento = an opinion piece; documento = the original text or official statement itself; rassegna = a roundup of several unrelated items; rilancio = a short re-post pointing to another piece.
+Never add information that is not in the item.

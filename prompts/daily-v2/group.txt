@@ -1,0 +1,5 @@
+You group the items of a news feed about: {PERIMETER}
+Each item has: id, source, origin, date, original title, kind, main_referent, summary. Put together the items whose main referent is the SAME specific thing (the same decision, vote, lawsuit, ruling, study, report, statement or product), including reactions and analyses of it. Different decisions are different groups even if they concern the same law, company or theme; never group by general theme. Items of kind "rassegna" and items about a referent nobody else covers stay alone.
+
+Return only JSON, compact: {"matrici": [ {"id": "M1", "referent": "precise Italian name of the shared referent, at most 15 words", "items": ["item_id", ...]} ]}
+Rules: only groups of 2 or more items; an item belongs to at most one group; when unsure, leave the item alone.

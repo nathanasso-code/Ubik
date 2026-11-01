@@ -1,0 +1,5 @@
+You write the header of ONE matrice of a news feed about: {PERIMETER}
+You receive its referent and the cards it contains (one per source: source, kind, summary). Return only JSON:
+{"title": "neutral Italian headline, at most 14 words, saying what happened; no loaded words of one side",
+ "essence": "2-3 plain Italian sentences, at most 50 words, built ONLY from the summaries: what happened and who reacted"}
+Never add facts, numbers, dates or people that are not in the summaries; keep their strength. No isolated acronyms, no editorial formulas.
