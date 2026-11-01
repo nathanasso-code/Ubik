@@ -116,8 +116,15 @@ def components(ids, link):
     return list(groups.values())
 
 
-def merge(matrici, used, keep, items, out):
-    """Second pass: the model proposes unions between single items and matrici; the code confirms with same_event."""
+def strong(e):
+    """Evidence accepted in the merge pass: event fields or proper names, not a shared common phrase like "data center"."""
+    return e if e and not e.startswith("phrase") else None
+
+
+def merge(matrici, used, keep, items, out, previous=None):
+    """Second pass: the model proposes unions between single items and matrici; the code confirms with same_event,
+    accepting only strong evidence, because this pass invites broader unions. Items whose proposal is rejected but that
+    are strongly linked to each other (two outlets at least) form a matrice of their own."""
     p_merge, h_merge = prompt("merge")
     out["prompt_sha256"]["merge"] = h_merge
     singles = [i for i in keep if i not in used and keep[i].get("kind") != "rassegna"]
@@ -128,18 +135,22 @@ def merge(matrici, used, keep, items, out):
                             "date": (items[i].get("published") or "")[:10], "title": clean_title(items[i].get("title")),
                             "event": keep[i].get("event"), "main_referent": keep[i].get("main_referent"),
                             "summary": keep[i].get("summary")} for i in singles]}
-    try:
-        raw, cost, _ = call(DEEPSEEK, p_merge, payload, max_tokens=4000)
-        out["cost"]["merge"] = cost
-        prop = parse_json(raw["choices"][0]["message"]["content"])
-    except Exception as exc:
-        out["errors"].append({"stage": "merge", "error": str(exc)[:200]})
-        return
-    log = out["merge"] = {"proposed": prop, "joined": [], "new": [], "rejected": []}
+    if os.getenv("DAILY_REUSE_MERGE") and previous and previous.get("prompt", h_merge) == h_merge:
+        prop = previous["proposed"]
+        out["merge_reused"] = True
+    else:
+        try:
+            raw, cost, _ = call(DEEPSEEK, p_merge, payload, max_tokens=4000)
+            out["cost"]["merge"] = cost
+            prop = parse_json(raw["choices"][0]["message"]["content"])
+        except Exception as exc:
+            out["errors"].append({"stage": "merge", "error": str(exc)[:200]})
+            return
+    log = out["merge"] = {"prompt": h_merge, "proposed": prop, "joined": [], "new": [], "rejected": []}
     by_id = {m["id"]: m for m in matrici}
 
     def ev(a, b):
-        return same_event(keep[a], keep[b], items[a].get("title"), items[b].get("title"))
+        return strong(same_event(keep[a], keep[b], items[a].get("title"), items[b].get("title")))
     for j in prop.get("join") or []:
         m = by_id.get(j.get("matrice"))
         for i in j.get("items") or []:
@@ -179,6 +190,27 @@ def merge(matrici, used, keep, items, out):
                             "strong": any(items[i].get("tier", "approved") in v2.STRONG for i in comp),
                             "date": max((items[i].get("published") or "")[:10] for i in comp), "removed": []})
             log["new"].append({"referent": nm.get("referent"), "items": comp, "evidence": evidence, "why": nm.get("why")})
+    pool = [r["item"] for r in log["rejected"] if r["item"] not in used]
+    evidence = {}
+
+    def link2(a, b):
+        e = ev(a, b)
+        if e:
+            evidence[f"{a}~{b}"] = e
+        return bool(e)
+    for comp in components(list(dict.fromkeys(pool)), link2):
+        origins = {items[i]["origin"] for i in comp}
+        if len(comp) < 2 or len(origins) < 2:
+            continue
+        used.update(comp)
+        first = min(comp, key=lambda i: items[i].get("published") or "")
+        matrici.append({"id": f"M{len(matrici) + 1}", "referent": keep[first].get("main_referent"),
+                        "cards": [{"items": [i]} for i in comp], "items": comp, "origins": sorted(origins), "from_merge": True,
+                        "strong": any(items[i].get("tier", "approved") in v2.STRONG for i in comp),
+                        "date": max((items[i].get("published") or "")[:10] for i in comp), "removed": []})
+        log["new"].append({"referent": matrici[-1]["referent"], "items": comp, "from_rejected": True,
+                           "evidence": {k: v for k, v in evidence.items() if k.split("~")[0] in comp}})
+    log["rejected"] = [r for r in log["rejected"] if r["item"] not in used]
 
 
 def main(selection_path, out_dir):
@@ -272,7 +304,7 @@ def main(selection_path, out_dir):
                            "rejected": [{"id": i, "event": keep[i].get("event")} for i in rejected]})
     used_by_group = len(used)
     if os.getenv("DAILY_MERGE", "1") == "1":
-        merge(matrici, used, keep, items, out)
+        merge(matrici, used, keep, items, out, old.get("merge"))
     matrici.sort(key=lambda m: (not m["strong"], -len(m["origins"]), -len(m["items"]), m["date"]))
     for m in matrici:
         payload = {"referent": m["referent"], "cards": [{"index": k, "items": [{"source": items[i].get("publisher"), "kind": keep[i].get("kind"),
