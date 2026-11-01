@@ -1,8 +1,11 @@
 """Ubik daily matrici v4 (prototype): the model proposes, the code confirms.
 Each note describes the item's main event in structured form (actor, action, object, date; canonical English names).
 The model proposes matrici and cards over whole items; the code keeps only the links it can confirm:
-  same event   = the objects share a significant word AND (the actors share one OR the objects share two),
-                 and the event dates, when both are known, are at most 10 days apart
+  same event   = event dates, when both known, at most 10 days apart, and one of:
+                 (a) the objects share a significant word AND (the actors share one OR the objects share two);
+                 (b) actor and object share a proper name (Delaware, Anthropic, Reddit), not a generic institution;
+                 (c) title, main referent and object share a two-word phrase ("data center", "Kids Act").
+                 Each confirmed link records which evidence was used.
   same card    = same event AND same kind of piece (report / reaction / reading)
 A matrice is a connected group of confirmed items with at least two independent outlets; anything not confirmed is
 shown as a single card. Titles are written only from the summaries.
@@ -32,6 +35,16 @@ GENERIC = {"the", "and", "for", "with", "from", "into", "over", "about", "regula
            "united", "court", "case", "plan", "bill", "report", "study", "new", "national", "federal", "government",
            "artificial", "intelligence", "model", "models", "system", "systems", "company", "companies", "industry",
            "center", "centers", "centre", "centres", "public", "digital", "online", "global", "framework", "package"}
+NAME_GENERIC = {"state", "states", "united", "european", "union", "court", "district", "department", "government", "council",
+                "commission", "eu", "us", "usa", "ai", "the", "and", "for"}
+STOP = set("""the and for of a an in on to is are was this that with by at from it its how why what who will would
+il lo la i gli le di da del della dei delle degli un una e ed in su per con tra fra che non sul sulla sui nel nella nei negli
+al alla alle ai agli dal dalla dalle come perché cosa chi
+der die das und von zu im mit auf den des ein eine ist wie
+el los las de y en por con para se lo que como
+le les du et à au aux pour sur est des une""".split())
+PHRASE_GENERIC = {"artifi intell", "intell artifi", "europe commis", "commis europe", "united states", "stati uniti",
+                  "europe union", "unione europe", "big tech", "social media", "ai act", "elezio midter"}
 KIND_GROUP = {"cronaca": "report", "documento": "report", "reazione": "reaction", "analisi": "reading", "commento": "reading",
               "altro": "report"}
 
@@ -46,21 +59,36 @@ def toks(s, generic=True):
     return {w.lower()[:6] for w in words if not (generic and w.lower() in GENERIC) and w.lower() not in ("the", "and", "for", "of")}
 
 
-def same_event(a, b):
+def names(e):
+    s = (e.get("actor") or "") + " " + (e.get("object") or "")
+    return {w.lower()[:6] for w in re.findall(r"\b[A-Z][A-Za-zÀ-ÿ'\-]{2,}", s)
+            if w.lower() not in GENERIC and w.lower() not in NAME_GENERIC}
+
+
+def phrases(note, title):
+    s = " ".join([title or "", note.get("main_referent") or "", (note.get("event") or {}).get("object") or ""])
+    w = [x.lower()[:6] for x in re.findall(r"[A-Za-zÀ-ÿ][A-Za-zÀ-ÿ'\-]+", s) if x.lower() not in STOP]
+    return {a + " " + b for a, b in zip(w, w[1:])} - PHRASE_GENERIC
+
+
+def same_event(a, b, title_a="", title_b=""):
+    """Return the evidence ('event', 'names', 'phrase: ...') that a and b are about the same event, or None."""
     ea, eb = a.get("event") or {}, b.get("event") or {}
-    oa, ob = toks(ea.get("object")), toks(eb.get("object"))
-    aa, ab = toks(ea.get("actor"), generic=False), toks(eb.get("actor"), generic=False)
-    if not (oa & ob):
-        return False
-    if not (aa & ab) and len(oa & ob) < 2:
-        return False
     try:
-        da, db = dt.date.fromisoformat(ea["date"]), dt.date.fromisoformat(eb["date"])
-        if abs((da - db).days) > 10:
-            return False
+        if abs((dt.date.fromisoformat(ea["date"]) - dt.date.fromisoformat(eb["date"])).days) > 10:
+            return None
     except Exception:
         pass
-    return True
+    oa, ob = toks(ea.get("object")), toks(eb.get("object"))
+    aa, ab = toks(ea.get("actor"), generic=False), toks(eb.get("actor"), generic=False)
+    if oa & ob and (aa & ab or len(oa & ob) >= 2):
+        return "event"
+    if names(ea) & names(eb):
+        return "names: " + ", ".join(sorted(names(ea) & names(eb)))
+    common = phrases(a, title_a) & phrases(b, title_b)
+    if common:
+        return "phrase: " + ", ".join(sorted(common))
+    return None
 
 
 def components(ids, link):
@@ -87,6 +115,7 @@ def main(selection_path, out_dir):
     out_dir.mkdir(parents=True, exist_ok=True)
     (p_note, h_note), (p_group, h_group), (p_write, h_write) = prompt("nota"), prompt("group"), prompt("write")
     notes_path, path = out_dir / "notes-v4.json", out_dir / "daily-v4.json"
+    old = json.loads(path.read_text()) if path.exists() else {}
     notes = {"prompt_sha256": h_note, "notes": {}, "cost": 0.0, "errors": []}
     if notes_path.exists() and json.loads(notes_path.read_text()).get("prompt_sha256") == h_note:
         notes = json.loads(notes_path.read_text())
@@ -130,16 +159,27 @@ def main(selection_path, out_dir):
     listing = [{"id": iid, "source": items[iid].get("publisher"), "origin": items[iid]["origin"],
                 "date": (items[iid].get("published") or "")[:10], "title": items[iid].get("title") or "", "kind": n.get("kind"),
                 "event": n.get("event"), "main_referent": n.get("main_referent"), "summary": n.get("summary")} for iid, n in keep.items()]
-    raw, cost, _ = call(DEEPSEEK, p_group, {"items": listing}, max_tokens=10000)
-    out["cost"]["group"] = cost
-    proposed = parse_json(raw["choices"][0]["message"]["content"]).get("matrici", [])
+    if os.getenv("DAILY_REUSE_GROUP") and old.get("proposed") and old.get("prompt_sha256", {}).get("group") == h_group:
+        proposed = old["proposed"]
+        out["group_reused"] = True
+    else:
+        raw, cost, _ = call(DEEPSEEK, p_group, {"items": listing}, max_tokens=10000)
+        out["cost"]["group"] = cost
+        proposed = parse_json(raw["choices"][0]["message"]["content"]).get("matrici", [])
     out["proposed"] = proposed
 
     used, matrici = set(), []
     for m in proposed:
         ids = [i for c in m.get("cards") or [] for i in (c.get("items") or [])]
         ids = [i for i in dict.fromkeys(ids) if i in keep and i not in used and keep[i].get("kind") != "rassegna"]
-        comps = components(ids, lambda a, b: same_event(keep[a], keep[b]))
+        evidence = {}
+
+        def link(a, b):
+            e = same_event(keep[a], keep[b], items[a].get("title"), items[b].get("title"))
+            if e:
+                evidence[f"{a}~{b}"] = e
+            return bool(e)
+        comps = components(ids, link)
         rejected = [i for c in comps if len(c) < 2 for i in c]
         for comp in comps:
             origins = {items[i]["origin"] for i in comp}
@@ -155,6 +195,7 @@ def main(selection_path, out_dir):
                             "strong": any(items[i].get("tier", "approved") in v2.STRONG for i in comp),
                             "date": max((items[i].get("published") or "")[:10] for i in comp), "removed": []})
         out["log"].append({"referent": m.get("referent"), "proposed": len(ids), "confirmed": [len(c) for c in comps if len(c) > 1],
+                           "evidence": evidence,
                            "rejected": [{"id": i, "event": keep[i].get("event")} for i in rejected]})
     matrici.sort(key=lambda m: (not m["strong"], -len(m["origins"]), -len(m["items"]), m["date"]))
     for m in matrici:
@@ -177,14 +218,16 @@ def main(selection_path, out_dir):
         own = m["title"] + " " + m["essence"] + " " + " ".join(c.get("text", "") for c in m["cards"])
         m["unsupported_numbers"] = sorted({x for x in re.findall(r"\d[\d.,]*\d|\d", own)
                                            if x.replace(".", "").replace(",", "") not in hay.replace(".", "").replace(",", "")})
-    singles = [iid for iid, n in keep.items() if iid not in used and n.get("in_perimeter") == "yes"]
-    singles.sort(key=lambda i: (items[i].get("tier", "approved") not in v2.STRONG, items[i].get("published") or ""))
+    # every item in or partly in the perimeter is shown: alone if no matrice confirmed it, central items first
+    singles = [iid for iid, n in keep.items() if iid not in used and n.get("kind") != "rassegna"]
+    singles.sort(key=lambda i: (keep[i].get("in_perimeter") != "yes", items[i].get("tier", "approved") not in v2.STRONG,
+                                items[i].get("published") or ""))
     out.update({"matrici": matrici, "singles": singles})
-    proposed_items = sum(o["proposed"] for o in out["log"])
+    proposed_items = sum(o["proposed"] for o in out["log"] if o["proposed"] > 1)
     out["summary"] = {"items_in": len(listing), "proposed_matrici": len(proposed), "proposed_items": proposed_items,
                       "matrici": len(matrici), "items_in_matrici": len(used), "removed_by_check": proposed_items - len(used),
                       "multi_source_cards": sum(len(c["items"]) > 1 for m in matrici for c in m["cards"]),
-                      "multi_outlet": sum(len(m["origins"]) >= 2 for m in matrici), "singles": len(singles),
+                      "multi_outlet": sum(len(m["origins"]) >= 2 for m in matrici), "singles": len(singles), "singles_partial": sum(keep[i].get("in_perimeter") != "yes" for i in singles),
                       "unsupported_numbers": sum(bool(m["unsupported_numbers"]) for m in matrici)}
     out["cost"]["notes"] = notes["cost"]
     out["total_cost_usd"] = sum(out["cost"].values())
