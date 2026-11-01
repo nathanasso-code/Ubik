@@ -36,7 +36,10 @@ GENERIC = {"the", "and", "for", "with", "from", "into", "over", "about", "regula
            "artificial", "intelligence", "model", "models", "system", "systems", "company", "companies", "industry",
            "center", "centers", "centre", "centres", "public", "digital", "online", "global", "framework", "package"}
 NAME_GENERIC = {"state", "states", "united", "european", "union", "court", "district", "department", "government", "council",
-                "commission", "eu", "us", "usa", "ai", "the", "and", "for"}
+                "commission", "eu", "us", "usa", "ai", "the", "and", "for", "congress", "parliament", "senate", "house", "foundation",
+                "university", "universities", "institute", "institution", "group", "democracy", "democratic", "security", "appeal",
+                "appeals", "electronic", "frontier", "agency", "authority", "ministry", "office", "association", "observatory",
+                "network", "committee", "center", "centre", "researchers", "national", "federal"}
 STOP = set("""the and for of a an in on to is are was this that with by at from it its how why what who will would
 il lo la i gli le di da del della dei delle degli un una e ed in su per con tra fra che non sul sulla sui nel nella nei negli
 al alla alle ai agli dal dalla dalle come perché cosa chi
@@ -65,8 +68,13 @@ def names(e):
             if w.lower() not in GENERIC and w.lower() not in NAME_GENERIC}
 
 
+def clean_title(title):
+    """Drop the outlet name that feeds append to titles ("... - Agenda Digitale", "... | TechCrunch")."""
+    return re.sub(r"\s+[-|–]\s+[^-|–]{2,40}$", "", title or "")
+
+
 def phrases(note, title):
-    s = " ".join([title or "", note.get("main_referent") or "", (note.get("event") or {}).get("object") or ""])
+    s = " ".join([clean_title(title), note.get("main_referent") or "", (note.get("event") or {}).get("object") or ""])
     w = [x.lower()[:6] for x in re.findall(r"[A-Za-zÀ-ÿ][A-Za-zÀ-ÿ'\-]+", s) if x.lower() not in STOP]
     return {a + " " + b for a, b in zip(w, w[1:])} - PHRASE_GENERIC
 
@@ -108,6 +116,71 @@ def components(ids, link):
     return list(groups.values())
 
 
+def merge(matrici, used, keep, items, out):
+    """Second pass: the model proposes unions between single items and matrici; the code confirms with same_event."""
+    p_merge, h_merge = prompt("merge")
+    out["prompt_sha256"]["merge"] = h_merge
+    singles = [i for i in keep if i not in used and keep[i].get("kind") != "rassegna"]
+    payload = {"matrici": [{"id": m["id"], "referent": m["referent"],
+                            "items": [{"source": items[i].get("publisher"), "title": items[i].get("title"),
+                                       "event": keep[i].get("event")} for i in m["items"]]} for m in matrici],
+               "singles": [{"id": i, "source": items[i].get("publisher"), "origin": items[i]["origin"],
+                            "date": (items[i].get("published") or "")[:10], "title": clean_title(items[i].get("title")),
+                            "event": keep[i].get("event"), "main_referent": keep[i].get("main_referent"),
+                            "summary": keep[i].get("summary")} for i in singles]}
+    try:
+        raw, cost, _ = call(DEEPSEEK, p_merge, payload, max_tokens=4000)
+        out["cost"]["merge"] = cost
+        prop = parse_json(raw["choices"][0]["message"]["content"])
+    except Exception as exc:
+        out["errors"].append({"stage": "merge", "error": str(exc)[:200]})
+        return
+    log = out["merge"] = {"proposed": prop, "joined": [], "new": [], "rejected": []}
+    by_id = {m["id"]: m for m in matrici}
+
+    def ev(a, b):
+        return same_event(keep[a], keep[b], items[a].get("title"), items[b].get("title"))
+    for j in prop.get("join") or []:
+        m = by_id.get(j.get("matrice"))
+        for i in j.get("items") or []:
+            if not m or i not in keep or i in used:
+                continue
+            proof = next(((x, ev(i, x)) for x in m["items"] if ev(i, x)), None)
+            if not proof:
+                log["rejected"].append({"item": i, "to": j.get("matrice"), "why": j.get("why")})
+                continue
+            used.add(i)
+            m["items"].append(i)
+            m["cards"].append({"items": [i]})
+            m["origins"] = sorted({items[x]["origin"] for x in m["items"]})
+            m["date"] = max(m["date"], (items[i].get("published") or "")[:10])
+            log["joined"].append({"item": i, "to": m["id"], "evidence": f"{proof[0]}: {proof[1]}", "why": j.get("why")})
+    for nm in prop.get("new") or []:
+        ids = [i for c in nm.get("cards") or [] for i in c.get("items") or [] if i in keep and i not in used]
+        ids = list(dict.fromkeys(ids))
+        evidence = {}
+
+        def link(a, b):
+            e = ev(a, b)
+            if e:
+                evidence[f"{a}~{b}"] = e
+            return bool(e)
+        for comp in components(ids, link):
+            origins = {items[i]["origin"] for i in comp}
+            if len(comp) < 2 or len(origins) < 2:
+                log["rejected"] += [{"item": i, "to": nm.get("referent"), "why": nm.get("why")} for i in comp]
+                continue
+            card_of = {i: k for k, c in enumerate(nm.get("cards") or []) for i in c.get("items") or []}
+            cards = components(comp, lambda a, b: card_of.get(a) == card_of.get(b)
+                               and KIND_GROUP.get(keep[a].get("kind")) == KIND_GROUP.get(keep[b].get("kind")))
+            used.update(comp)
+            matrici.append({"id": f"M{len(matrici) + 1}", "referent": nm.get("referent"), "cards": [{"items": c} for c in cards],
+                            "items": comp, "origins": sorted(origins), "from_merge": True,
+                            "strong": any(items[i].get("tier", "approved") in v2.STRONG for i in comp),
+                            "date": max((items[i].get("published") or "")[:10] for i in comp), "removed": []})
+            log["new"].append({"referent": nm.get("referent"), "items": comp, "evidence": evidence, "why": nm.get("why")})
+
+
 def main(selection_path, out_dir):
     sel = json.loads(Path(selection_path).read_text())
     items = {i["item_id"]: i for i in sel["items"]}
@@ -121,7 +194,7 @@ def main(selection_path, out_dir):
         notes = json.loads(notes_path.read_text())
     out = {"version": "daily-v4", "window": sel.get("window"), "code_commit": os.getenv("UBIK_COMMIT"),
            "prompt_sha256": {"nota": h_note, "group": h_group, "write": h_write}, "preflight": [], "errors": [],
-           "cost": {"group": 0.0, "write": 0.0}, "log": []}
+           "cost": {"group": 0.0, "merge": 0.0, "write": 0.0}, "log": []}
 
     def save():
         notes_path.write_text(json.dumps(notes, ensure_ascii=False, indent=1) + "\n")
@@ -197,6 +270,9 @@ def main(selection_path, out_dir):
         out["log"].append({"referent": m.get("referent"), "proposed": len(ids), "confirmed": [len(c) for c in comps if len(c) > 1],
                            "evidence": evidence,
                            "rejected": [{"id": i, "event": keep[i].get("event")} for i in rejected]})
+    used_by_group = len(used)
+    if os.getenv("DAILY_MERGE", "1") == "1":
+        merge(matrici, used, keep, items, out)
     matrici.sort(key=lambda m: (not m["strong"], -len(m["origins"]), -len(m["items"]), m["date"]))
     for m in matrici:
         payload = {"referent": m["referent"], "cards": [{"index": k, "items": [{"source": items[i].get("publisher"), "kind": keep[i].get("kind"),
@@ -225,10 +301,13 @@ def main(selection_path, out_dir):
     out.update({"matrici": matrici, "singles": singles})
     proposed_items = sum(o["proposed"] for o in out["log"] if o["proposed"] > 1)
     out["summary"] = {"items_in": len(listing), "proposed_matrici": len(proposed), "proposed_items": proposed_items,
-                      "matrici": len(matrici), "items_in_matrici": len(used), "removed_by_check": proposed_items - len(used),
+                      "matrici": len(matrici), "items_in_matrici": len(used), "removed_by_check": proposed_items - used_by_group,
                       "multi_source_cards": sum(len(c["items"]) > 1 for m in matrici for c in m["cards"]),
                       "multi_outlet": sum(len(m["origins"]) >= 2 for m in matrici), "singles": len(singles), "singles_partial": sum(keep[i].get("in_perimeter") != "yes" for i in singles),
-                      "unsupported_numbers": sum(bool(m["unsupported_numbers"]) for m in matrici)}
+                      "unsupported_numbers": sum(bool(m["unsupported_numbers"]) for m in matrici),
+                      "merge_joined": len((out.get("merge") or {}).get("joined", [])),
+                      "merge_new_matrici": len((out.get("merge") or {}).get("new", [])),
+                      "merge_rejected": len((out.get("merge") or {}).get("rejected", []))}
     out["cost"]["notes"] = notes["cost"]
     out["total_cost_usd"] = sum(out["cost"].values())
     out["status"] = "completed"

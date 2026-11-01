@@ -1,0 +1,11 @@
+You review the news items of a weekly feed about: {PERIMETER}
+You receive the MATRICI already built (id, referent, their items) and the SINGLE items not yet in any matrice (id, source, origin, date, title, event, main_referent, summary).
+
+A matrice = items from different outlets about the SAME specific event or about tightly connected facts of the same days (the same lawsuit or case, even through different filings or briefs; the same site or company dispute; the same decision and the national rules that implement it). Never group by general theme alone ("copyright", "data centers", "elections").
+
+Propose only unions:
+- "join": a single item that belongs to an existing matrice;
+- "new": two or more single items, from at least two different origins, that form a new matrice. Inside it, items that say substantially the same thing share a card; otherwise each item is its own card.
+
+Return only compact JSON: {"join": [{"matrice": "M1", "items": ["item_id", ...], "why": "at most 15 English words"}], "new": [{"referent": "precise Italian name, at most 15 words", "cards": [{"items": ["item_id", ...]}], "why": "at most 15 English words"}]}
+Each item at most once. When unsure, leave the item single: most items of a week stay single, and that is fine.
