@@ -184,7 +184,7 @@ def render(out, keep, items):
                          + f'<div class="src3">{"".join(srcs)}</div></div>')
         parts.append("</div></details>")
     parts.append('</div></section><section id="notizie"><h2>Altre notizie</h2><div class="feed">')
-    parts += [f'<div class="single">{v2.card(i, keep[i], items, e)}</div>' for i in out["singles"][:40]]
+    parts += [f'<div class="single">{v2.card(i, keep[i], items, e)}</div>' for i in out["singles"][:80]]
     parts.append(f'</div></section><section class="method"><p>Prototipo v3: note per articolo (riusate), raggruppamento, verifica per Matrice e titoli '
                  f'con DeepSeek; controlli nel codice. Costo di questo giro {out.get("total_cost_usd", 0):.3f} $.</p></section></div>')
     return "\n".join(parts)
