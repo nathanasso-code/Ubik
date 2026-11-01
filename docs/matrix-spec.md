@@ -76,6 +76,14 @@ Ricerca: Bing News consente la ricerca da robots.txt, Google News no (escluso). 
 
 Ricerca nel web generale: vietata da robots.txt di Bing, non usata. Seguire i link citati negli articoli centrali è gratuito e porta i documenti primari meglio di qualsiasi ricerca.
 
-Spesa totale degli esperimenti sulla Matrice: circa 2,8 $.
+Spesa totale degli esperimenti sulla Matrice: circa 3,2 $.
 
 Lista dei link: registro dei domini rigenerato ogni lunedì; per i domini candidati e da esplorare si cercano i feed (primo giro: EDPB, Corporate Europe Observatory, noyb, EUobserver, LobbyControl, Repubblica in inglese).
+
+## Cosa è architettura e cosa dipende dalla Matrice (1 novembre)
+
+Stabile, uguale per ogni Matrice: prompt di nota (v2: pertinenza rispetto alla domanda del nucleo, tipo di fonte), prompt di composizione (v3: essenza, nessuna ripetizione tra schede e confronto), revisione, fedeltà, livelli delle fonti, scelta della composizione migliore con punteggio dichiarato, impaginazione. Verificato applicando la stessa versione all'Omnibus (note vecchie) e al nucleo cervello e modelli linguistici (note v2): entrambe danno 4–5 schede su fonti approvate o primarie, 1–2 violazioni residue.
+
+Da decidere per ogni nucleo: la domanda e i testi di partenza, il filtro per parole, la finestra di date, e soprattutto il registro delle fonti approvate del dominio (regole sull'IA, scienza). Un nucleo in un dominio nuovo richiede prima un registro di fonti approvate per quel dominio.
+
+Resta instabile: due composizioni dello stesso giro differiscono (3–5 schede, titoli diversi); la scelta tra le due è affidata al punteggio. Il controllo di fedeltà non sempre allinea una frase alla fonte più precisa (Germania "non a favore").
