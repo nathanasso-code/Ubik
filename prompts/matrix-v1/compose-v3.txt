@@ -37,6 +37,7 @@ Writing rules:
 - Facts, numbers, dates, positions and quotes come ONLY from the claims you cite in support, with the same strength: if a claim says someone voted against, write that they voted against, not that they "did not vote in favour". You may add context (what something is) but never new facts: no numbers, dates or people that are not in the notes.
 - Select. Few understandable, well-founded pieces are better than a collage. Plurality yes, exhibited no.
 - Every note has a source_tier: approved, primary (official texts and institutions), probation or unknown (found by search or links, not vetted). A card must rest on at least one approved or primary source; probation and unknown sources may add details next to them but never carry a card alone. When an unknown site reports what an approved or primary source says, cite the approved or primary one.
+- Notes come ordered from the strongest material. Each has a source_kind: when a claim exists both in an original_study or official_document and in reports about it, cite the original first; press releases and relays only add details.
 - Give precedence to: primary documents and comparisons between texts; information that only one source brings; verifiable data; investigations; positions of the actors who decide. Ignore items with relevance "no".
 - Every key point, card, comparison side and timeline step must cite at least one claim in support, written as "item_id:claim_id".
 

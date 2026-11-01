@@ -45,7 +45,7 @@ def main(selection_path, out_dir, arm, compose_runs=2):
     nucleus = sel["nucleus"]
     out_dir = Path(out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
-    p_note, h_note = prompt("nota", nucleus)
+    p_note, h_note = prompt(os.getenv("MATRIX_NOTE", "nota"), nucleus)
     p_comp, h_comp = prompt(os.getenv("MATRIX_COMPOSE", "compose"), nucleus)
     p_rev, h_rev = prompt("revise", nucleus)
     p_fid, h_fid = prompt("fidelity", nucleus)
@@ -114,6 +114,11 @@ def main(selection_path, out_dir, arm, compose_runs=2):
                         "date": (it.get("published") or "")[:10], "original_title": it.get("title") or "", "relevance": n.get("relevance"),
                         "adds": n.get("adds"), "claims": [{k: c.get(k) for k in ("id", "type", "who", "statement", "date", "quote")}
                                                           for c in n["claims"]]})
+    # strongest material first: primary texts and approved sources, then core before context
+    rank = {"primary": 0, "approved": 1, "probation": 2, "unknown": 3}
+    listing.sort(key=lambda x: (x["relevance"] != "core", rank.get(x["source_tier"], 3)))
+    for x in listing:
+        x["source_kind"] = notes["notes"][x["item_id"]].get("source_kind")
     out["input_notes"] = len(listing)
     for run in range(1, compose_runs + 1):
         try:
@@ -164,6 +169,10 @@ def main(selection_path, out_dir, arm, compose_runs=2):
             import traceback
             out["errors"].append({"run": run, "stage": "post", "error": traceback.format_exc()[-1500:]})
         save()
+    best = choose_best(out["pages"])
+    if best is not None:
+        out["best_run"] = best["run"]
+        (out_dir / f"matrix-{arm}{tag}-best.html").write_text(render(best, notes["notes"], items))
     out["notes_cost"] = notes["cost"]
     out["total_cost_usd"] = notes["cost"] + out["cost"]["compose"]
     out["status"] = "completed"
@@ -480,6 +489,26 @@ def data_it(d):
 
 TAG = {"confronto": "t-cmp", "documento": "t-fact", "fatto": "t-fact", "posizioni": "t-pos", "dato": "t-data", "inchiesta": "t-inq"}
 LANG = {"it": "italiano", "en": "inglese", "de": "tedesco", "fr": "francese", "es": "spagnolo"}
+
+
+def score(page):
+    """Declared rule for choosing among compositions of the same run (code, no model): cards resting on strong
+    sources count most, then fewer remaining rule violations, fewer unsupported numbers, fewer fidelity flags."""
+    strong = sum(1 for c in page.get("cards", []) if any(TIERS.get(r.split(":")[0], "approved") in STRONG
+                                                        for r in (c.get("support") or [])))
+    ctl = (page.get("controls") or {}).get("summary", {})
+    return (min(strong, 5), -len(page.get("violations") or []), -ctl.get("unsupported_numbers", 0),
+            -(page.get("fidelity") or {}).get("flagged", 0))
+
+
+def choose_best(pages):
+    ok = [p for p in pages if p.get("controls") and p.get("cards")]
+    if not ok:
+        return None
+    best = max(ok, key=score)
+    for p in ok:
+        p["score"] = list(score(p))
+    return best
 
 
 def essence(c):
