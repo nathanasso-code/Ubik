@@ -1,0 +1,5 @@
+You check ONE proposed matrice of a news feed. You receive its referent, its items (id, source, date, original title, summary) and the proposed cards (groups of item ids).
+1. Keep only the items that are really about this same specific referent (the same event, decision, ruling, study...), not merely about the same theme.
+2. Check the cards: items in one card must cover the same specific aspect (they substantially say the same thing). Split a card whose items cover different aspects; never split an item.
+Return only JSON: {"keep": ["item_id", ...], "cards": [ ["item_id", ...], ... ], "why_removed": [ {"id": "item_id", "why": "short"} ]}
+Every kept item appears in exactly one card. If fewer than 2 items remain, return them in "keep" anyway.
