@@ -27,8 +27,9 @@ from ingestion.ubik_v6_editorial import PERIMETER, norm, parse_json
 PROMPTS = Path(__file__).resolve().parent.parent / "prompts" / "daily-v1"
 TEXT_CHARS = 8000
 CEILING = 0.40
-EST = {"note": 0.0012, "group": 0.03, "state": 0.005}
+EST = {"note": 0.0012, "group": 0.03, "state": 0.005, "write": 0.06}
 STRONG = ("approved", "primary")
+MAX_WRITTEN = 30
 
 
 def prompt(name, **kw):
@@ -49,12 +50,13 @@ def main(selection_path, out_dir, vicende_path=None):
     p_group, h_group = prompt("group", VICENDE=json.dumps([{"id": v["id"], "description": v["description"]} for v in vicende],
                                                            ensure_ascii=False) or "[]")
     p_state, h_state = prompt("state")
+    p_write, h_write = prompt("write")
     notes_path, path = out_dir / "notes.json", out_dir / "daily.json"
     notes = {"prompt_sha256": h_note, "notes": {}, "cost": 0.0, "errors": []}
     if notes_path.exists() and json.loads(notes_path.read_text()).get("prompt_sha256") == h_note:
         notes = json.loads(notes_path.read_text())
     out = {"version": "daily-v1", "window": sel.get("window"), "code_commit": os.getenv("UBIK_COMMIT"),
-           "prompt_sha256": {"nota": h_note, "group": h_group, "state": h_state}, "preflight": [], "errors": [], "cost": {}}
+           "prompt_sha256": {"nota": h_note, "group": h_group, "state": h_state, "write": h_write}, "preflight": [], "errors": [], "cost": {}}
 
     def save():
         notes_path.write_text(json.dumps(notes, ensure_ascii=False, indent=1) + "\n")
@@ -62,7 +64,7 @@ def main(selection_path, out_dir, vicende_path=None):
 
     todo = [i for i in items if i not in notes["notes"]]
     try:
-        preflight("daily matrici", len(todo) * EST["note"] + EST["group"] + len(vicende) * EST["state"], CEILING, out["preflight"])
+        preflight("daily matrici", len(todo) * EST["note"] + EST["group"] + EST["write"] + len(vicende) * EST["state"], CEILING, out["preflight"])
     except OverBudget as exc:
         out["status"] = "refused_preflight"
         save()
@@ -108,7 +110,7 @@ def main(selection_path, out_dir, vicende_path=None):
                            "title": it.get("title") or "", **{k: c.get(k) for k in ("who", "type", "statement", "referent", "relation")}})
     out["claims_in"] = len(claims)
     try:
-        raw, cost, _ = call(DEEPSEEK, p_group, {"claims": claims}, max_tokens=20000)
+        raw, cost, _ = call(DEEPSEEK, p_group, {"claims": claims}, max_tokens=24000)
         out["cost"]["group"] = cost
         page = parse_json(raw["choices"][0]["message"]["content"])
         assert isinstance(page.get("matrici"), list)
@@ -118,6 +120,29 @@ def main(selection_path, out_dir, vicende_path=None):
         raise SystemExit("group failed")
     out["page"] = page
     controls(page, notes["notes"], items)
+    save()
+
+    # 2b. one short writing call per matrice (titles, essence, card texts), strongest first
+    out["cost"]["write"] = 0.0
+    for m in page["matrici"][:MAX_WRITTEN]:
+        payload = {"referent": m.get("referent"), "cards": [
+            {"index": i, "kind": c.get("kind"), "who": c.get("who"),
+             "claims": [{**{k: cl.get(k) for k in ("who", "statement", "quote", "date")},
+                         "source": items[r.split(":")[0]].get("publisher")} for r in c["claims"]
+                        for cl in [next(x for x in notes["notes"][r.split(":")[0]]["claims"] if x.get("id") == r.split(":")[1])]]}
+            for i, c in enumerate(m["cards"])]}
+        try:
+            raw, cost, _ = call(DEEPSEEK, p_write, payload, max_tokens=4000)
+            out["cost"]["write"] += cost
+            w = parse_json(raw["choices"][0]["message"]["content"])
+            m["title"], m["essence"] = w.get("title", ""), w.get("essence", "")
+            for x in w.get("cards", []):
+                if isinstance(x.get("index"), int) and 0 <= x["index"] < len(m["cards"]):
+                    m["cards"][x["index"]].update({"title": x.get("title", ""), "text": x.get("text", "")})
+        except Exception as exc:
+            out["errors"].append({"stage": "write", "matrice": m.get("id"), "error": f"{type(exc).__name__}: {exc}"[:200]})
+    page["matrici"] = [m for m in page["matrici"][:MAX_WRITTEN] if m.get("title")]
+    page["summary"]["shown"] = len(page["matrici"])
     save()
 
     # 4. vicende

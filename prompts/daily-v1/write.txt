@@ -1,0 +1,8 @@
+You write ONE matrice of Ubik's news feed about: {PERIMETER}
+You receive its referent and its cards; each card lists the claims (who, statement, quote, source, date) that support it. Write in Italian for an intelligent reader who knows little about the subject.
+
+Return only JSON:
+{"title": "headline, at most 14 words, saying what happened",
+ "essence": "2-3 plain sentences, at most 50 words: what happened and why it matters",
+ "cards": [ {"index": 0, "title": "at most 12 words", "text": "at most 50 words, only what the claims of this card say"} ]}
+Rules: one entry per card, same order and index as received. Use only the claims: never invent facts, numbers, dates or people, and keep the strength of each claim ("voted against" stays "voted against"). Plain complete sentences, no isolated acronyms, no editorial formulas ("il nodo", "la partita", "da un lato... dall'altro").
