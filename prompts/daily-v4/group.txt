@@ -1,0 +1,7 @@
+You organise the items of a news feed about: {PERIMETER}
+Each item (an article, a newsletter, a post) has: id, source, origin, date, original title, kind, event (actor, action, object, date), main_referent, summary. Items are never split: each item is used whole, at most once.
+
+Build MATRICI. A matrice = items about the SAME specific event or referent (one decision, vote, lawsuit, ruling, study, report, statement, product), published close in time. Inside a matrice, a CARD = the items that cover the SAME specific aspect of that event, so that they substantially say the same thing (e.g. three outlets reporting the decision; two outlets reporting the same reaction). Items on different aspects of the event go into different cards. A card may hold one item.
+
+Return only JSON, compact: {"matrici": [ {"referent": "precise Italian name, at most 15 words", "cards": [ {"aspect": "at most 10 Italian words", "items": ["item_id", ...]} ]} ]}
+Rules: a matrice needs at least 2 items in total; different decisions or events are different matrici even if they concern the same law, company or theme; never group by general theme; roundups (kind "rassegna") stay out; when unsure, leave an item out (it will be shown alone).

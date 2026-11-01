@@ -1,0 +1,200 @@
+"""Ubik daily matrici v4 (prototype): the model proposes, the code confirms.
+Each note describes the item's main event in structured form (actor, action, object, date; canonical English names).
+The model proposes matrici and cards over whole items; the code keeps only the links it can confirm:
+  same event   = the objects share a significant word AND (the actors share one OR the objects share two),
+                 and the event dates, when both are known, are at most 10 days apart
+  same card    = same event AND same kind of piece (report / reaction / reading)
+A matrice is a connected group of confirmed items with at least two independent outlets; anything not confirmed is
+shown as a single card. Titles are written only from the summaries.
+
+Usage: python -m ingestion.ubik_daily4 SELECTION.json OUT_DIR
+"""
+import datetime as dt
+import hashlib
+import json
+import os
+import re
+import sys
+import urllib.error
+from pathlib import Path
+
+from ingestion import ubik_daily2 as v2
+from ingestion import ubik_daily3 as v3
+from ingestion.ubik_cost_guard import OverBudget, preflight
+from ingestion.ubik_extraction_pilot import call
+from ingestion.ubik_ukraine_v51_judge import DEEPSEEK
+from ingestion.ubik_v6_editorial import PERIMETER, norm, parse_json
+
+PROMPTS = Path(__file__).resolve().parent.parent / "prompts" / "daily-v4"
+TEXT_CHARS = 8000
+GENERIC = {"the", "and", "for", "with", "from", "into", "over", "about", "regulation", "regulations", "rules", "rule", "law",
+           "laws", "policy", "policies", "proposal", "proposals", "act", "data", "european", "union", "state", "states",
+           "united", "court", "case", "plan", "bill", "report", "study", "new", "national", "federal", "government",
+           "artificial", "intelligence", "model", "models", "system", "systems", "company", "companies", "industry",
+           "center", "centers", "centre", "centres", "public", "digital", "online", "global", "framework", "package"}
+KIND_GROUP = {"cronaca": "report", "documento": "report", "reazione": "reaction", "analisi": "reading", "commento": "reading",
+              "altro": "report"}
+
+
+def prompt(name):
+    raw = (PROMPTS / f"{name}.txt").read_text()
+    return raw.replace("{PERIMETER}", PERIMETER), hashlib.sha256(raw.encode()).hexdigest()
+
+
+def toks(s, generic=True):
+    words = re.findall(r"[A-Za-zÀ-ÿ][A-Za-zÀ-ÿ'\-]{2,}", s or "")
+    return {w.lower()[:6] for w in words if not (generic and w.lower() in GENERIC) and w.lower() not in ("the", "and", "for", "of")}
+
+
+def same_event(a, b):
+    ea, eb = a.get("event") or {}, b.get("event") or {}
+    oa, ob = toks(ea.get("object")), toks(eb.get("object"))
+    aa, ab = toks(ea.get("actor"), generic=False), toks(eb.get("actor"), generic=False)
+    if not (oa & ob):
+        return False
+    if not (aa & ab) and len(oa & ob) < 2:
+        return False
+    try:
+        da, db = dt.date.fromisoformat(ea["date"]), dt.date.fromisoformat(eb["date"])
+        if abs((da - db).days) > 10:
+            return False
+    except Exception:
+        pass
+    return True
+
+
+def components(ids, link):
+    parent = {i: i for i in ids}
+
+    def find(x):
+        while parent[x] != x:
+            x = parent[x]
+        return x
+    for x in range(len(ids)):
+        for y in range(x + 1, len(ids)):
+            if link(ids[x], ids[y]):
+                parent[find(ids[y])] = find(ids[x])
+    groups = {}
+    for i in ids:
+        groups.setdefault(find(i), []).append(i)
+    return list(groups.values())
+
+
+def main(selection_path, out_dir):
+    sel = json.loads(Path(selection_path).read_text())
+    items = {i["item_id"]: i for i in sel["items"]}
+    out_dir = Path(out_dir)
+    out_dir.mkdir(parents=True, exist_ok=True)
+    (p_note, h_note), (p_group, h_group), (p_write, h_write) = prompt("nota"), prompt("group"), prompt("write")
+    notes_path, path = out_dir / "notes-v4.json", out_dir / "daily-v4.json"
+    notes = {"prompt_sha256": h_note, "notes": {}, "cost": 0.0, "errors": []}
+    if notes_path.exists() and json.loads(notes_path.read_text()).get("prompt_sha256") == h_note:
+        notes = json.loads(notes_path.read_text())
+    out = {"version": "daily-v4", "window": sel.get("window"), "code_commit": os.getenv("UBIK_COMMIT"),
+           "prompt_sha256": {"nota": h_note, "group": h_group, "write": h_write}, "preflight": [], "errors": [],
+           "cost": {"group": 0.0, "write": 0.0}, "log": []}
+
+    def save():
+        notes_path.write_text(json.dumps(notes, ensure_ascii=False, indent=1) + "\n")
+        path.write_text(json.dumps(out, ensure_ascii=False, indent=1) + "\n")
+    todo = [i for i in items if i not in notes["notes"]]
+    try:
+        preflight("daily matrici v4", len(todo) * 0.001 + 0.03, 0.40, out["preflight"])
+    except OverBudget as exc:
+        save()
+        raise SystemExit(str(exc))
+    for iid in todo:
+        it = items[iid]
+        payload = {"item_id": iid, "source": it.get("publisher"), "date": (it.get("published") or "")[:10],
+                   "title": it.get("title") or "", "text": it["text"][:TEXT_CHARS]}
+        for attempt in (1, 2):
+            try:
+                raw, cost, _ = call(DEEPSEEK, p_note, payload, max_tokens=1500)
+            except (urllib.error.URLError, TimeoutError, OSError, RuntimeError, KeyError) as exc:
+                notes["errors"].append({"item": iid, "error": str(exc)[:200]})
+                continue
+            notes["cost"] += cost
+            try:
+                n = parse_json(raw["choices"][0]["message"]["content"])
+                assert n.get("item_id") == iid and n.get("summary")
+            except Exception as exc:
+                notes["errors"].append({"item": iid, "error": str(exc)[:200]})
+                continue
+            q = norm(n.get("quote"))
+            n["quote_verified"] = bool(q) and q in norm((it.get("title") or "") + " " + it["text"][:TEXT_CHARS])
+            notes["notes"][iid] = n
+            break
+    save()
+    keep = {iid: n for iid, n in notes["notes"].items() if iid in items and n.get("in_perimeter") in ("yes", "partial")
+            and n.get("kind") not in ("rilancio",)}
+    listing = [{"id": iid, "source": items[iid].get("publisher"), "origin": items[iid]["origin"],
+                "date": (items[iid].get("published") or "")[:10], "title": items[iid].get("title") or "", "kind": n.get("kind"),
+                "event": n.get("event"), "main_referent": n.get("main_referent"), "summary": n.get("summary")} for iid, n in keep.items()]
+    raw, cost, _ = call(DEEPSEEK, p_group, {"items": listing}, max_tokens=10000)
+    out["cost"]["group"] = cost
+    proposed = parse_json(raw["choices"][0]["message"]["content"]).get("matrici", [])
+    out["proposed"] = proposed
+
+    used, matrici = set(), []
+    for m in proposed:
+        ids = [i for c in m.get("cards") or [] for i in (c.get("items") or [])]
+        ids = [i for i in dict.fromkeys(ids) if i in keep and i not in used and keep[i].get("kind") != "rassegna"]
+        comps = components(ids, lambda a, b: same_event(keep[a], keep[b]))
+        rejected = [i for c in comps if len(c) < 2 for i in c]
+        for comp in comps:
+            origins = {items[i]["origin"] for i in comp}
+            if len(comp) < 2 or len(origins) < 2:
+                continue
+            proposed_card = {i: k for k, c in enumerate(m.get("cards") or []) for i in (c.get("items") or [])}
+            cards = components(comp, lambda a, b: proposed_card.get(a) == proposed_card.get(b)
+                               and KIND_GROUP.get(keep[a].get("kind")) == KIND_GROUP.get(keep[b].get("kind")))
+            cards.sort(key=lambda c: (-len(c), min((items[i].get("published") or "") for i in c)))
+            used.update(comp)
+            matrici.append({"id": f"M{len(matrici) + 1}", "referent": m.get("referent"), "cards": [{"items": c} for c in cards],
+                            "items": comp, "origins": sorted(origins),
+                            "strong": any(items[i].get("tier", "approved") in v2.STRONG for i in comp),
+                            "date": max((items[i].get("published") or "")[:10] for i in comp), "removed": []})
+        out["log"].append({"referent": m.get("referent"), "proposed": len(ids), "confirmed": [len(c) for c in comps if len(c) > 1],
+                           "rejected": [{"id": i, "event": keep[i].get("event")} for i in rejected]})
+    matrici.sort(key=lambda m: (not m["strong"], -len(m["origins"]), -len(m["items"]), m["date"]))
+    for m in matrici:
+        payload = {"referent": m["referent"], "cards": [{"index": k, "items": [{"source": items[i].get("publisher"), "kind": keep[i].get("kind"),
+                                                                                 "summary": keep[i].get("summary")} for i in c["items"]]}
+                                                        for k, c in enumerate(m["cards"])]}
+        try:
+            raw, cost, _ = call(DEEPSEEK, p_write, payload, max_tokens=2500)
+            out["cost"]["write"] += cost
+            w = parse_json(raw["choices"][0]["message"]["content"])
+        except Exception as exc:
+            out["errors"].append({"stage": "write", "matrice": m["id"], "error": str(exc)[:200]})
+            w = {}
+        m["title"], m["essence"] = w.get("title") or m["referent"], w.get("essence", "")
+        for x in w.get("cards") or []:
+            if isinstance(x.get("index"), int) and 0 <= x["index"] < len(m["cards"]):
+                c = m["cards"][x["index"]]
+                c["title"], c["text"] = x.get("title", ""), (x.get("text", "") if len(c["items"]) > 1 else "")
+        hay = norm(" ".join(keep[i].get("summary", "") for i in m["items"]))
+        own = m["title"] + " " + m["essence"] + " " + " ".join(c.get("text", "") for c in m["cards"])
+        m["unsupported_numbers"] = sorted({x for x in re.findall(r"\d[\d.,]*\d|\d", own)
+                                           if x.replace(".", "").replace(",", "") not in hay.replace(".", "").replace(",", "")})
+    singles = [iid for iid, n in keep.items() if iid not in used and n.get("in_perimeter") == "yes"]
+    singles.sort(key=lambda i: (items[i].get("tier", "approved") not in v2.STRONG, items[i].get("published") or ""))
+    out.update({"matrici": matrici, "singles": singles})
+    proposed_items = sum(o["proposed"] for o in out["log"])
+    out["summary"] = {"items_in": len(listing), "proposed_matrici": len(proposed), "proposed_items": proposed_items,
+                      "matrici": len(matrici), "items_in_matrici": len(used), "removed_by_check": proposed_items - len(used),
+                      "multi_source_cards": sum(len(c["items"]) > 1 for m in matrici for c in m["cards"]),
+                      "multi_outlet": sum(len(m["origins"]) >= 2 for m in matrici), "singles": len(singles),
+                      "unsupported_numbers": sum(bool(m["unsupported_numbers"]) for m in matrici)}
+    out["cost"]["notes"] = notes["cost"]
+    out["total_cost_usd"] = sum(out["cost"].values())
+    out["status"] = "completed"
+    save()
+    html_page = v3.render(out, keep, items).replace("PROTOTIPO V3", "PROTOTIPO V4").replace(
+        "Il controllo ha tolto", "Il codice ha escluso").replace("Prototipo v3", "Prototipo v4")
+    (out_dir / "daily-v4.html").write_text(html_page)
+    print(json.dumps({"summary": out["summary"], "cost": out["cost"]}))
+
+
+if __name__ == "__main__":
+    main(*sys.argv[1:3])
