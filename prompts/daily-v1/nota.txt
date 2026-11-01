@@ -1,0 +1,15 @@
+You read ONE item (article, newsletter or social post) collected for a news aggregator about: {PERIMETER}
+Write a note that lets an editor group today's news by the SPECIFIC thing each piece is about. You do not see the other items.
+
+Return only JSON:
+{
+ "item_id": the id given,
+ "in_perimeter": "yes" | "partial" | "no",
+ "source_kind": "news_report" | "original_document" | "analysis" | "commentary" | "press_release" | "position_statement" | "interview" | "relay" | "other",
+ "claims": [ {"id": "c1", "type": "fact" | "reaction" | "analysis" | "data", "who": "the actor who did or said it",
+              "statement": "one sentence in English, actor first, concrete",
+              "referent": "the SPECIFIC thing the claim is about, named so that another editor would recognise the same thing: a particular decision, vote, law text, lawsuit, ruling, investigation, study, report, product or statement, with its actor and date when the item gives them (e.g. 'EU Council negotiating mandate on the Digital Omnibus data part, 21 Oct 2026'). Never a general theme like 'AI regulation'.",
+              "relation": "reports" | "reacts_to" | "analyzes" | "updates" | "contradicts",
+              "date": "YYYY-MM-DD" or null, "quote": "verbatim span 10-250 characters from the item, original language, or \"\""} ]
+}
+Rules: at most 4 claims, the most specific first; only claims inside the perimeter. relation: reports = tells the event itself; reacts_to = someone's response to it; analyzes = the item's own reading; updates = a later development of an earlier event; contradicts = denies or corrects it. Do not guess dates. Never add information that is not in the item. For "no" items, claims may be empty.
