@@ -482,68 +482,79 @@ TAG = {"confronto": "t-cmp", "documento": "t-fact", "fatto": "t-fact", "posizion
 LANG = {"it": "italiano", "en": "inglese", "de": "tedesco", "fr": "francese", "es": "spagnolo"}
 
 
+def essence(c):
+    """The 2-3 sentence preview of a card: the model's own field, else the first two sentences of the text."""
+    if c.get("essence"):
+        return c["essence"]
+    text = c.get("intro") if c.get("type") == "confronto" else c.get("text", "")
+    sents = re.split(r"(?<=[.!?])\s+", text or "")
+    return " ".join(sents[:2])
+
+
 def render(page, notes, items):
+    """Compact rendering: one summary (key points folded into the long version), an internal menu, cards that show
+    their essence and open on click to the full text, quote and sources."""
     e = html.escape
+
+    def src_line(iid):
+        it = items.get(iid, {})
+        return (f'<a href="{e(it.get("url", ""))}">{e(it.get("publisher", iid))}</a>'
+                f'<span class="when">{data_it((it.get("published") or "")[:10])} · {LANG.get(it.get("language"), it.get("language", ""))}</span>')
+
     css = CSS.read_text()
     parts = [f"<title>Matrice — {e(page.get('title', ''))[:60]}</title>",
              '<meta name="claude:viewport-fit-sides" content="cover">',
              '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo+Narrow:wght@500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=IBM+Plex+Mono:wght@400;500&display=swap">',
-             f"<style>{css}</style>", '<div class="wrap">', "<header>",
-             '<div class="eyebrow">MATRICE · GENERATA DA UBIK · ' + e(page.get("_arm", "")) + "</div>",
+             f"<style>{css}</style>",
+             '<nav class="mnav" aria-label="Sezioni della Matrice"><a href="#sintesi">Sintesi</a><a href="#schede">Schede</a>'
+             + ('<a href="#passaggi">Passaggi</a>' if page.get("timeline") else "") + '<a href="#fonti">Fonti</a></nav>',
+             '<div class="wrap">', '<header id="sintesi">',
+             '<div class="eyebrow">MATRICE · ' + e(page.get("_label", "GENERATA DA UBIK")) + "</div>",
              f"<h1>{e(page.get('title', ''))}</h1>", '<div class="lead">', f"<p>{e(page.get('summary_short', ''))}</p>"]
-    if page.get("summary_long"):
-        parts.append('<details class="more"><summary>Leggi tutto</summary><div>' +
-                     "".join(f"<p>{e(p)}</p>" for p in page["summary_long"]) + "</div></details>")
-    parts += ["</div>", "</header>"]
-    if page.get("key_points"):
-        parts.append('<section><h2>Cosa c\'è da sapere</h2><div class="changes">' +
-                     "".join(f"<div><h3>{e(k.get('heading', ''))}</h3><p>{e(k.get('text', ''))}</p></div>" for k in page["key_points"]) +
-                     "</div></section>")
-    parts.append('<section><h2>Le schede</h2><div class="cards">')
-    for c in page["cards"]:
-        iids = list(dict.fromkeys(r.split(":")[0] for r in c["support"]))
+    longer = [f"<p>{e(x)}</p>" for x in (page.get("summary_long") or [])] + \
+             [f"<p><b>{e(k.get('heading', ''))}.</b> {e(k.get('text', ''))}</p>" for k in (page.get("key_points") or [])]
+    if longer:
+        parts.append('<details class="more"><summary>Leggi tutto</summary><div>' + "".join(longer) + "</div></details>")
+    parts += ["</div>", "</header>", '<section id="schede"><h2>Le schede</h2><div class="cards">']
+    for n, c in enumerate(page["cards"]):
+        iids = list(dict.fromkeys(r.split(":")[0] for r in (c.get("support") or [])))
         cls = TAG.get(c.get("type"), "t-fact")
-        parts.append(f'<article class="card {cls}">')
+        kind = "confronto" if c.get("type") == "confronto" else c.get("type", "")
+        head_src = src_line(iids[0]) if c.get("single_source") and iids else (
+            f'<span class="when">{len(iids)} fonti</span>' if iids else "")
+        parts.append(f'<details class="card {cls}" id="scheda-{n + 1}"><summary>'
+                     f'<span class="top"><span class="tag">{e(kind)}</span><span class="srcs">{head_src}</span></span>'
+                     f'<span class="ttl">{e(c.get("title", ""))}</span><span class="ess">{e(essence(c))}</span>'
+                     '<span class="open">Apri la scheda</span></summary><div class="body">')
         if c.get("type") == "confronto":
-            parts.append('<span class="tag">confronto</span>')
-        elif c["single_source"]:
-            it = items[iids[0]]
-            role = notes.get(iids[0], {}).get("source_role") or ""
-            parts.append(f'<div class="one"><div class="top"><span class="tag">{e(c.get("type", ""))}</span>'
-                         f'<span class="out">{e(it["publisher"])} <span>{e(role)} · {data_it((it.get("published") or "")[:10])}</span></span></div>'
-                         f'<div class="orig"><a href="{e(it["url"])}">«{e(it.get("title") or it["url"])}»</a></div></div>')
-        else:
-            parts.append(f'<span class="tag">{e(c.get("type", ""))}</span>')
-        if c.get("type") == "confronto":
-            parts.append(f"<h3>{e(c.get('title', ''))}</h3><p>{e(c.get('intro', ''))}</p><div class=\"sides\">")
+            parts.append('<div class="sides">')
             for x in c.get("sides", []):
-                sids = list(dict.fromkeys(r.split(":")[0] for r in x.get("support", [])))
-                srcs = " ".join(f'<a href="{e(items[i]["url"])}">{e(items[i]["publisher"])}</a>' for i in sids if i in items)
+                sids = list(dict.fromkeys(r.split(":")[0] for r in (x.get("support") or [])))
                 parts.append(f'<div class="side"><div class="who">{e(x.get("label", ""))}</div><p>{e(x.get("text", ""))}</p>'
-                             f'<div class="src">{srcs}</div></div>')
-            parts.append("</div></article>")
-            continue
-        parts.append(f"<h3>{e(c.get('title', ''))}</h3><p>{e(c.get('text', ''))}</p>")
-        if c.get("quote"):
-            _, cl = claim(notes, c["quote"])
-            tr = f'<span class="tr">«{e(c["quote_translation"])}»</span>' if c.get("quote_translation") else ""
-            parts.append(f"<blockquote><q>{e(cl['quote'])}</q>{tr}</blockquote>")
-        if not c["single_source"]:
-            parts.append('<div class="src">' + " ".join(
-                f'<a href="{e(items[i]["url"])}">{e(items[i]["publisher"])}, {data_it((items[i].get("published") or "")[:10])}</a> · {LANG.get(items[i]["language"], items[i]["language"])}'
-                for i in iids if i in items) + "</div>")
-        parts.append("</article>")
+                             f'<div class="src">{" ".join(src_line(i) for i in sids if i in items)}</div></div>')
+            parts.append("</div>")
+        else:
+            if c.get("single_source") and iids and items.get(iids[0], {}).get("title"):
+                it = items[iids[0]]
+                parts.append(f'<p class="orig">Titolo originale: <a href="{e(it["url"])}">«{e(it["title"])}»</a></p>')
+            parts.append(f"<p>{e(c.get('text', ''))}</p>")
+            if c.get("quote"):
+                _, cl = claim(notes, c["quote"])
+                if cl:
+                    tr = f'<span class="tr">«{e(c["quote_translation"])}»</span>' if c.get("quote_translation") else ""
+                    parts.append(f"<blockquote><q>{e(cl['quote'])}</q>{tr}</blockquote>")
+            if len(iids) > 1:
+                parts.append('<div class="src list">' + "".join(f"<div>{src_line(i)}</div>" for i in iids if i in items) + "</div>")
+        parts.append('<div class="acts"><button type="button" disabled title="Presto: commenti, note e correzioni dei lettori">'
+                     'Commenta o correggi</button></div></div></details>')
     parts.append("</div></section>")
     if page.get("timeline"):
-        parts.append('<section><h2>I passaggi</h2><div class="tl">' + "".join(
+        parts.append('<section id="passaggi"><h2>I passaggi</h2><div class="tl">' + "".join(
             f'<div class="ev"><time>{e(data_it(t.get("date", "")))}</time><p>{e(t.get("text", ""))}</p></div>' for t in page["timeline"]) +
             "</div></section>")
-    used = sorted({items[r.split(":")[0]]["publisher"] for c in page["cards"] for r in c["support"] if r.split(":")[0] in items})
-    parts.append(f'<section class="sources"><h2>Le fonti</h2><p><b>Usate nelle schede:</b> {e(", ".join(used))}.</p>'
-                 f'<p><b>Lasciate fuori:</b> {e(page.get("left_out", ""))}</p></section>')
-    ctl = page["controls"]["summary"]
-    parts.append(f'<section class="method"><p>Controlli: {ctl["repairs"]} correzioni per rimozione, '
-                 f'{ctl["unsupported_numbers"]} numeri senza riscontro, {ctl["over_length"]} testi oltre i limiti.</p></section></div>')
+    used = sorted({items[r.split(":")[0]]["publisher"] for c in page["cards"] for r in (c.get("support") or []) if r.split(":")[0] in items})
+    parts.append(f'<section class="sources" id="fonti"><h2>Le fonti</h2><p><b>Usate nelle schede:</b> {e(", ".join(used))}.</p>'
+                 f'<p><b>Lasciate fuori:</b> {e(page.get("left_out", ""))}</p></section></div>')
     return "\n".join(parts)
 
 
