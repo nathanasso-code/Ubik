@@ -234,7 +234,7 @@ def main(selection_path, out_dir):
     out["status"] = "completed"
     save()
     html_page = v3.render(out, keep, items).replace("PROTOTIPO V3", "PROTOTIPO V4").replace(
-        "Il controllo ha tolto", "Il codice ha escluso").replace("Prototipo v3", "Prototipo v4")
+        "Il controllo ha tolto", "Il codice ha escluso").replace("articoli non pertinenti", "articoli che non poteva confermare").replace("Prototipo v3", "Prototipo v4")
     (out_dir / "daily-v4.html").write_text(html_page)
     print(json.dumps({"summary": out["summary"], "cost": out["cost"]}))
 
