@@ -163,7 +163,15 @@ def card(iid, n, items, e, k=None):
     return (f'<div class="sc"><div class="sh">{num}<span class="kd">{e(KIND.get(n.get("kind"), "Notizia"))}</span>'
             f'<a href="{e(it["url"])}">{e(it.get("publisher") or it["source_id"])}</a>'
             f'<span class="when">{e(data_it((it.get("published") or "")[:10]))} · {e(LANG.get(it["language"], it["language"]))}</span></div>'
-            f'<div class="ot">«{e(it.get("title") or "")}»</div><p>{e(n.get("summary", ""))}</p></div>')
+            f'<div class="ot">«{e(it.get("title") or "")}»</div><p>{e(n.get("summary", ""))}</p>{quote(n, e)}</div>')
+
+
+def quote(n, e):
+    """The verbatim quote, only when the code found it in the text, with its Italian translation when there is one."""
+    if not (n.get("quote_verified") and n.get("quote")):
+        return ""
+    tr = f'<span class="tr">{e(n["quote_it"])}</span>' if n.get("quote_it") else ""
+    return f'<blockquote><q>«{e(n["quote"])}»</q>{tr}</blockquote>'
 
 
 def render(out, keep, items):

@@ -337,6 +337,7 @@ def main(selection_path, out_dir):
                       "multi_source_cards": sum(len(c["items"]) > 1 for m in matrici for c in m["cards"]),
                       "multi_outlet": sum(len(m["origins"]) >= 2 for m in matrici), "singles": len(singles), "singles_partial": sum(keep[i].get("in_perimeter") != "yes" for i in singles),
                       "unsupported_numbers": sum(bool(m["unsupported_numbers"]) for m in matrici),
+                      "false_friend_numbers": sorted(i for i in keep if re.search(r"\bbilion[ei]\b", keep[i].get("summary", ""), re.I)),
                       "merge_joined": len((out.get("merge") or {}).get("joined", [])),
                       "merge_new_matrici": len((out.get("merge") or {}).get("new", [])),
                       "merge_rejected": len((out.get("merge") or {}).get("rejected", []))}
