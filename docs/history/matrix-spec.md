@@ -1,4 +1,4 @@
-# Matrice Ubik — specifica v1 (30 ottobre 2026)
+# Matrice lunga — specifica v1 (30 ottobre 2026, messa da parte il 1 novembre)
 
 Una Matrice racconta un nucleo di interesse (una vicenda, una decisione, un conflitto) a chi ne sa poco, usando il meglio delle fonti raccolte. La produce un LLM istruito; il codice la verifica e la impagina sempre allo stesso modo. Riferimento costruito a mano: "Matrice Omnibus digitale" (artifact del 30 ottobre, versione 3).
 

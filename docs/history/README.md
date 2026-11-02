@@ -15,3 +15,14 @@ schede delle fonti, con controlli meccanici fatti dal codice (protocollo `protoc
 Il motivo: con testi completi e modelli più capaci, scomporre in eventi e giudicare a coppie butta via il
 contesto che serve a giudicare il valore. Gli esperimenti di metà ottobre usavano modelli economici (Qwen,
 DeepSeek), e la complessità della pipeline compensava in parte la loro fragilità.
+
+Aggiunti il 2 novembre 2026:
+
+- `matrix-spec.md`: la Matrice lunga v1 (30 ottobre – 1 novembre), pagina di approfondimento su un nucleo con
+  schede, revisione, fedeltà e livelli delle fonti. Messa da parte: da mantenere a mano e non centrata
+  sull'attualità. Ne restano le regole di scrittura e i controlli sui numeri (`ingestion/ubik_matrix.py`).
+- `ubik-v5-extraction-judge-composer-contract.md`: il contratto della linea v5 (estrazione, giudizio a coppie,
+  compositore), abbandonata il 30 ottobre.
+
+Il 1 novembre la v6 è stata superata dalle Matrici della settimana (`docs/daily-spec.md`): non più una pagina
+composta dal modello, ma Matrici di articoli interi proposte dal modello e confermate dal codice.
