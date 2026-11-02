@@ -34,8 +34,12 @@ GENERIC = {"the", "and", "for", "with", "from", "into", "over", "about", "regula
            "laws", "policy", "policies", "proposal", "proposals", "act", "data", "european", "union", "state", "states",
            "united", "court", "case", "plan", "bill", "report", "study", "new", "national", "federal", "government",
            "artificial", "intelligence", "model", "models", "system", "systems", "company", "companies", "industry",
-           "center", "centers", "centre", "centres", "public", "digital", "online", "global", "framework", "package"}
-NAME_GENERIC = {"state", "states", "united", "european", "union", "court", "district", "department", "government", "council",
+           "center", "centers", "centre", "centres", "public", "digital", "online", "global", "framework", "package",
+           "use", "uses", "using", "access", "content", "contents", "work", "works", "art", "news", "media", "journal",
+           "inside", "generated", "ai-generated", "knowledge", "tool", "tools", "launch", "release", "results", "strategy",
+           "deal", "deals", "market", "markets", "service", "services", "product", "products", "people", "users", "trend"}
+NAME_GENERIC = {"news", "media", "journal", "inside", "times", "post", "institute", "report", "new", "world", "global",
+                "state", "states", "united", "european", "union", "court", "district", "department", "government", "council",
                 "commission", "eu", "us", "usa", "ai", "the", "and", "for", "congress", "parliament", "senate", "house", "foundation",
                 "university", "universities", "institute", "institution", "group", "democracy", "democratic", "security", "appeal",
                 "appeals", "electronic", "frontier", "agency", "authority", "ministry", "office", "association", "observatory",
@@ -62,8 +66,8 @@ def toks(s, generic=True):
     return {w.lower()[:6] for w in words if not (generic and w.lower() in GENERIC) and w.lower() not in ("the", "and", "for", "of")}
 
 
-def names(e):
-    s = (e.get("actor") or "") + " " + (e.get("object") or "")
+def names(e, field=None):
+    s = (e.get("actor") or "") + " " + (e.get("object") or "") if field is None else (e.get(field) or "")
     return {w.lower()[:6] for w in re.findall(r"\b[A-Z][A-Za-zÀ-ÿ'\-]{2,}", s)
             if w.lower() not in GENERIC and w.lower() not in NAME_GENERIC}
 
@@ -91,8 +95,11 @@ def same_event(a, b, title_a="", title_b=""):
     aa, ab = toks(ea.get("actor"), generic=False), toks(eb.get("actor"), generic=False)
     if oa & ob and (aa & ab or len(oa & ob) >= 2):
         return "event"
-    if names(ea) & names(eb):
-        return "names: " + ", ".join(sorted(names(ea) & names(eb)))
+    # a proper name shared by the actors, or two shared by the objects ("Reddit v. SerpAPI"), not one capitalised word
+    common = (names(ea, "actor") & names(eb, "actor")) | ((names(ea, "object") & names(eb, "object"))
+                                                          if len(names(ea, "object") & names(eb, "object")) >= 2 else set())
+    if common:
+        return "names: " + ", ".join(sorted(common))
     common = phrases(a, title_a) & phrases(b, title_b)
     if common:
         return "phrase: " + ", ".join(sorted(common))

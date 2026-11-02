@@ -51,6 +51,47 @@ def partial_text(it):
         or len(it["text"].split()) < 200
 
 
+def topic_filter(out, keep, items):
+    """A matrice stays in a sub-topic only if at least two of its items, and at least half, are mainly about that
+    sub-topic ("yes"); otherwise its items go back to the single cards. Items that are only partly about the sub-topic can
+    join a matrice but cannot carry one."""
+    kept, moved = [], []
+    for m in out["matrici"]:
+        ys = sum(keep[i]["in_perimeter"] == "yes" for i in m["items"])
+        if ys >= 2 and ys * 2 >= len(m["items"]):
+            kept.append(m)
+        else:
+            moved.append({"title": m.get("title"), "yes": ys, "items": len(m["items"])})
+            out["singles"] += m["items"]
+    out["matrici"] = kept
+    out["singles"] = list(dict.fromkeys(out["singles"]))
+    out["singles"].sort(key=lambda i: (keep[i].get("in_perimeter") != "yes", items[i].get("published") or ""))
+    out["topic_filter"] = moved
+    s = out["summary"]
+    s.update({"matrici_before_topic_filter": s["matrici"], "matrici": len(kept),
+              "items_in_matrici": sum(len(m["items"]) for m in kept), "singles": len(out["singles"]),
+              "multi_source_cards": sum(len(c["items"]) > 1 for m in kept for c in m["cards"]),
+              "singles_partial": sum(keep[i].get("in_perimeter") != "yes" for i in out["singles"])})
+
+
+def render(out, keep, items, name):
+    """v3 page; single cards mainly about the sub-topic in the feed, those only partly about it folded below."""
+    main = [i for i in out["singles"] if keep[i].get("in_perimeter") == "yes"]
+    side = [i for i in out["singles"] if keep[i].get("in_perimeter") != "yes"]
+    page = v3.render({**out, "singles": main}, keep, items)
+    if side:
+        e = html.escape
+        fold = (f'<details class="side"><summary>Collegate al tema ({len(side)})</summary><div class="feed">'
+                + "".join(f'<div class="single">{v3.v2.card(i, keep[i], items, e)}</div>' for i in side[:120]) + "</div></details>")
+        page = page.replace('</div></section><section class="method">', fold + '</div></section><section class="method">', 1)
+        page = page.replace("</style>", ".side>summary{cursor:pointer;font-family:var(--display);font-weight:600;color:var(--mark);"
+                            "padding:10px 0}.side .feed{margin-top:8px}</style>", 1)
+    return page.replace("REGOLE SULL\'IA", html.escape(name.upper())).replace(
+        "REGOLE SULL'IA", html.escape(name.upper())).replace("PROTOTIPO V3", "PROTOTIPO V5").replace(
+        "Il controllo ha tolto", "Il codice ha escluso").replace("articoli non pertinenti", "articoli che non poteva confermare").replace(
+        "Prototipo v3", "Prototipo v5")
+
+
 def make_notes(items, out_dir):
     p_note, h_note = note_prompt()
     path = out_dir / "notes-v5.json"
@@ -133,13 +174,11 @@ def main(selection_path, out_dir):
             out["errors"].append({"stage": "build", "error": f"{type(exc).__name__}: {exc}"[:300]})
             path.write_text(json.dumps(out, ensure_ascii=False, indent=1) + "\n")
             continue
+        topic_filter(out, keep, items)
         out["total_cost_usd"] = sum(out["cost"].values())
         out["status"] = "completed"
         path.write_text(json.dumps(out, ensure_ascii=False, indent=1) + "\n")
-        page = v3.render(out, keep, items).replace("REGOLE SULL\\'IA", html.escape(name.upper())).replace(
-            "REGOLE SULL'IA", html.escape(name.upper())).replace("PROTOTIPO V3", "PROTOTIPO V5").replace(
-            "Il controllo ha tolto", "Il codice ha escluso").replace("articoli non pertinenti", "articoli che non poteva confermare").replace(
-            "Prototipo v3", "Prototipo v5")
+        page = render(out, keep, items, name)
         (out_dir / f"daily-v5-{key}.html").write_text(page)
         index["topics"][key] = {"name": name, "items": len(keep), "yes": sum(n["in_perimeter"] == "yes" for n in keep.values()),
                                 "summary": out["summary"], "cost": out["cost"],
