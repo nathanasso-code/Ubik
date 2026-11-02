@@ -162,7 +162,8 @@ def card(iid, n, items, e, k=None):
     num = f"<b>N{k}</b>" if k else ""
     return (f'<div class="sc"><div class="sh">{num}<span class="kd">{e(KIND.get(n.get("kind"), "Notizia"))}</span>'
             f'<a href="{e(it["url"])}">{e(it.get("publisher") or it["source_id"])}</a>'
-            f'<span class="when">{e(data_it((it.get("published") or "")[:10]))} · {e(LANG.get(it["language"], it["language"]))}</span></div>'
+            f'<span class="when">{e(data_it((it.get("published") or "")[:10]))} · {e(LANG.get(it["language"], it["language"]))}'
+            f'{" · testo parziale" if it.get("text_partial") else ""}</span></div>'
             f'<div class="ot">«{e(it.get("title") or "")}»</div><p>{e(n.get("summary", ""))}</p>{quote(n, e)}</div>')
 
 

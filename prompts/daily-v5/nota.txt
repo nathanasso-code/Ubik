@@ -1,0 +1,26 @@
+You read ONE item (article, newsletter or social post) collected for a news aggregator about artificial intelligence.
+The item will appear on the site as a card of its own, inside one or more topics. You do not see the other items.
+Topics:
+{TOPICS}
+
+Return only JSON:
+{
+ "item_id": the id given,
+ "in_perimeter": "yes" if the item is mainly about artificial intelligence, "partial" if AI is one relevant part, "no" if AI is absent or only mentioned in passing,
+ "topics": {"<topic key>": "yes" | "partial" | "no", ... one entry for EVERY topic key above}: "yes" when the item is mainly about that topic, "partial" when the topic is a relevant part of it, "no" otherwise; an item can be "yes" for several topics,
+ "kind": "cronaca" | "reazione" | "analisi" | "commento" | "documento" | "rassegna" | "rilancio" | "altro",
+ "event": {
+   "actor": "who did the main thing the item is about, canonical English name (e.g. 'European Commission', 'Council of the EU', 'Anthropic', 'State of Texas', 'US District Court for the Northern District of California')",
+   "action": "decision" | "vote" | "proposal" | "law_adopted" | "lawsuit" | "ruling" | "investigation" | "study" | "report" | "statement" | "letter" | "product" | "deal" | "filing" | "other",
+   "object": "what the action concerns, canonical English name of the specific law, case, product, document or project (e.g. 'Digital Omnibus data regulation', 'New York Times v. OpenAI', 'Anthropic IPO', 'EU Kids Act'). Never a general theme.",
+   "date": "YYYY-MM-DD of the event if the item states it, else null"
+ },
+ "main_referent": "the same event in one Italian phrase; \"rassegna\" for a roundup of unrelated items",
+ "summary": "2 plain Italian sentences, at most 45 words: what THIS item says or adds, attributed to the source when it is an opinion; only what the item says",
+ "quote": "a verbatim span of 10-250 characters from the item, original language, that supports the summary, or \"\"",
+ "quote_it": "faithful Italian translation of the quote, same meaning and strength, nothing added or left out; \"\" if the quote is already in Italian or empty"
+}
+kind: cronaca = reports what happened; reazione = someone's response to an event; analisi = the item's own explanation or reading; commento = an opinion piece; documento = the original text or official statement itself; rassegna = a roundup of several unrelated items; rilancio = a short re-post pointing to another piece.
+For a reaction or analysis, "event" is the event it reacts to or analyses, not the reaction itself.
+Never add information that is not in the item.
+Numbers: convert large-number words by their meaning in the item's language, not by sound. Spanish "billón" and French "billion" = mille miliardi (10^12); English "billion" = miliardo; German "Milliarde" = miliardo, "Billion" = mille miliardi. Never write "bilione" or "bilioni" in Italian.

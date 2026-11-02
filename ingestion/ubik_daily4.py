@@ -213,54 +213,8 @@ def merge(matrici, used, keep, items, out, previous=None):
     log["rejected"] = [r for r in log["rejected"] if r["item"] not in used]
 
 
-def main(selection_path, out_dir):
-    sel = json.loads(Path(selection_path).read_text())
-    items = {i["item_id"]: i for i in sel["items"]}
-    out_dir = Path(out_dir)
-    out_dir.mkdir(parents=True, exist_ok=True)
-    (p_note, h_note), (p_group, h_group), (p_write, h_write) = prompt("nota"), prompt("group"), prompt("write")
-    notes_path, path = out_dir / "notes-v4.json", out_dir / "daily-v4.json"
-    old = json.loads(path.read_text()) if path.exists() else {}
-    notes = {"prompt_sha256": h_note, "notes": {}, "cost": 0.0, "errors": []}
-    if notes_path.exists() and json.loads(notes_path.read_text()).get("prompt_sha256") == h_note:
-        notes = json.loads(notes_path.read_text())
-    out = {"version": "daily-v4", "window": sel.get("window"), "code_commit": os.getenv("UBIK_COMMIT"),
-           "prompt_sha256": {"nota": h_note, "group": h_group, "write": h_write}, "preflight": [], "errors": [],
-           "cost": {"group": 0.0, "merge": 0.0, "write": 0.0}, "log": []}
-
-    def save():
-        notes_path.write_text(json.dumps(notes, ensure_ascii=False, indent=1) + "\n")
-        path.write_text(json.dumps(out, ensure_ascii=False, indent=1) + "\n")
-    todo = [i for i in items if i not in notes["notes"]]
-    try:
-        preflight("daily matrici v4", len(todo) * 0.001 + 0.03, 0.40, out["preflight"])
-    except OverBudget as exc:
-        save()
-        raise SystemExit(str(exc))
-    for iid in todo:
-        it = items[iid]
-        payload = {"item_id": iid, "source": it.get("publisher"), "date": (it.get("published") or "")[:10],
-                   "title": it.get("title") or "", "text": it["text"][:TEXT_CHARS]}
-        for attempt in (1, 2):
-            try:
-                raw, cost, _ = call(DEEPSEEK, p_note, payload, max_tokens=1500)
-            except (urllib.error.URLError, TimeoutError, OSError, RuntimeError, KeyError) as exc:
-                notes["errors"].append({"item": iid, "error": str(exc)[:200]})
-                continue
-            notes["cost"] += cost
-            try:
-                n = parse_json(raw["choices"][0]["message"]["content"])
-                assert n.get("item_id") == iid and n.get("summary")
-            except Exception as exc:
-                notes["errors"].append({"item": iid, "error": str(exc)[:200]})
-                continue
-            q = norm(n.get("quote"))
-            n["quote_verified"] = bool(q) and q in norm((it.get("title") or "") + " " + it["text"][:TEXT_CHARS])
-            notes["notes"][iid] = n
-            break
-    save()
-    keep = {iid: n for iid, n in notes["notes"].items() if iid in items and n.get("in_perimeter") in ("yes", "partial")
-            and n.get("kind") not in ("rilancio",)}
+def build(keep, items, out, old, p_group, h_group, p_write):
+    """Group, confirm, merge, write and summarise the matrici of the kept notes (mutates out)."""
     listing = [{"id": iid, "source": items[iid].get("publisher"), "origin": items[iid]["origin"],
                 "date": (items[iid].get("published") or "")[:10], "title": items[iid].get("title") or "", "kind": n.get("kind"),
                 "event": n.get("event"), "main_referent": n.get("main_referent"), "summary": n.get("summary")} for iid, n in keep.items()]
@@ -341,6 +295,57 @@ def main(selection_path, out_dir):
                       "merge_joined": len((out.get("merge") or {}).get("joined", [])),
                       "merge_new_matrici": len((out.get("merge") or {}).get("new", [])),
                       "merge_rejected": len((out.get("merge") or {}).get("rejected", []))}
+
+
+def main(selection_path, out_dir):
+    sel = json.loads(Path(selection_path).read_text())
+    items = {i["item_id"]: i for i in sel["items"]}
+    out_dir = Path(out_dir)
+    out_dir.mkdir(parents=True, exist_ok=True)
+    (p_note, h_note), (p_group, h_group), (p_write, h_write) = prompt("nota"), prompt("group"), prompt("write")
+    notes_path, path = out_dir / "notes-v4.json", out_dir / "daily-v4.json"
+    old = json.loads(path.read_text()) if path.exists() else {}
+    notes = {"prompt_sha256": h_note, "notes": {}, "cost": 0.0, "errors": []}
+    if notes_path.exists() and json.loads(notes_path.read_text()).get("prompt_sha256") == h_note:
+        notes = json.loads(notes_path.read_text())
+    out = {"version": "daily-v4", "window": sel.get("window"), "code_commit": os.getenv("UBIK_COMMIT"),
+           "prompt_sha256": {"nota": h_note, "group": h_group, "write": h_write}, "preflight": [], "errors": [],
+           "cost": {"group": 0.0, "merge": 0.0, "write": 0.0}, "log": []}
+
+    def save():
+        notes_path.write_text(json.dumps(notes, ensure_ascii=False, indent=1) + "\n")
+        path.write_text(json.dumps(out, ensure_ascii=False, indent=1) + "\n")
+    todo = [i for i in items if i not in notes["notes"]]
+    try:
+        preflight("daily matrici v4", len(todo) * 0.001 + 0.03, 0.40, out["preflight"])
+    except OverBudget as exc:
+        save()
+        raise SystemExit(str(exc))
+    for iid in todo:
+        it = items[iid]
+        payload = {"item_id": iid, "source": it.get("publisher"), "date": (it.get("published") or "")[:10],
+                   "title": it.get("title") or "", "text": it["text"][:TEXT_CHARS]}
+        for attempt in (1, 2):
+            try:
+                raw, cost, _ = call(DEEPSEEK, p_note, payload, max_tokens=1500)
+            except (urllib.error.URLError, TimeoutError, OSError, RuntimeError, KeyError) as exc:
+                notes["errors"].append({"item": iid, "error": str(exc)[:200]})
+                continue
+            notes["cost"] += cost
+            try:
+                n = parse_json(raw["choices"][0]["message"]["content"])
+                assert n.get("item_id") == iid and n.get("summary")
+            except Exception as exc:
+                notes["errors"].append({"item": iid, "error": str(exc)[:200]})
+                continue
+            q = norm(n.get("quote"))
+            n["quote_verified"] = bool(q) and q in norm((it.get("title") or "") + " " + it["text"][:TEXT_CHARS])
+            notes["notes"][iid] = n
+            break
+    save()
+    keep = {iid: n for iid, n in notes["notes"].items() if iid in items and n.get("in_perimeter") in ("yes", "partial")
+            and n.get("kind") not in ("rilancio",)}
+    build(keep, items, out, old, p_group, h_group, p_write)
     out["cost"]["notes"] = notes["cost"]
     out["total_cost_usd"] = sum(out["cost"].values())
     out["status"] = "completed"
