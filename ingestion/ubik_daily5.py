@@ -11,7 +11,9 @@ import html
 import json
 import os
 import sys
+import threading
 import urllib.error
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 from ingestion import ubik_daily3 as v3
@@ -61,7 +63,9 @@ def make_notes(items, out_dir):
     except OverBudget as exc:
         path.write_text(json.dumps(notes, ensure_ascii=False, indent=1) + "\n")
         raise SystemExit(str(exc))
-    for k, iid in enumerate(todo):
+    lock = threading.Lock()
+
+    def one(iid):
         it = items[iid]
         payload = {"item_id": iid, "source": it.get("publisher"), "date": (it.get("published") or "")[:10],
                    "title": it.get("title") or "", "text": it["text"][:TEXT_CHARS]}
@@ -69,21 +73,27 @@ def make_notes(items, out_dir):
             try:
                 raw, cost, _ = call(DEEPSEEK, p_note, payload, max_tokens=1600)
             except (urllib.error.URLError, TimeoutError, OSError, RuntimeError, KeyError) as exc:
-                notes["errors"].append({"item": iid, "error": str(exc)[:200]})
+                with lock:
+                    notes["errors"].append({"item": iid, "error": str(exc)[:200]})
                 continue
-            notes["cost"] += cost
+            with lock:
+                notes["cost"] += cost
             try:
                 n = parse_json(raw["choices"][0]["message"]["content"])
                 assert n.get("item_id") == iid and n.get("summary")
             except Exception as exc:
-                notes["errors"].append({"item": iid, "error": str(exc)[:200]})
+                with lock:
+                    notes["errors"].append({"item": iid, "error": str(exc)[:200]})
                 continue
             q = norm(n.get("quote"))
             n["quote_verified"] = bool(q) and q in norm((it.get("title") or "") + " " + it["text"][:TEXT_CHARS])
-            notes["notes"][iid] = n
-            break
-        if k % 50 == 49:
-            path.write_text(json.dumps(notes, ensure_ascii=False, indent=1) + "\n")
+            with lock:
+                notes["notes"][iid] = n
+                if len(notes["notes"]) % 50 == 0:
+                    path.write_text(json.dumps(notes, ensure_ascii=False, indent=1) + "\n")
+            return
+    with ThreadPoolExecutor(max_workers=int(os.getenv("DAILY_WORKERS", "6"))) as pool:
+        list(pool.map(one, todo))
     path.write_text(json.dumps(notes, ensure_ascii=False, indent=1) + "\n")
     return notes
 
