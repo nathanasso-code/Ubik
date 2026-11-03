@@ -51,26 +51,25 @@ def partial_text(it):
         or len(it["text"].split()) < 200
 
 
-def topic_filter(out, keep, items):
+def admits(keep):
     """A matrice stays in a sub-topic only if at least two of its items, and at least half, are mainly about that
-    sub-topic ("yes"); otherwise its items go back to the single cards. Items that are only partly about the sub-topic can
-    join a matrice but cannot carry one."""
-    kept, moved = [], []
-    for m in out["matrici"]:
+    sub-topic ("yes"). Items only partly about the sub-topic can join a matrice but cannot carry one. Applied inside the
+    build, before the titles, so refused matrici cost nothing to write."""
+    def ok(m):
         ys = sum(keep[i]["in_perimeter"] == "yes" for i in m["items"])
-        if ys >= 2 and ys * 2 >= len(m["items"]):
-            kept.append(m)
-        else:
-            moved.append({"title": m.get("title"), "yes": ys, "items": len(m["items"])})
-            out["singles"] += m["items"]
-    out["matrici"] = kept
+        return ys >= 2 and ys * 2 >= len(m["items"])
+    return ok
+
+
+def topic_filter(out, keep, items):
+    """Summary after the sub-topic filter (already applied by the build); single cards mainly about the sub-topic first."""
     out["singles"] = list(dict.fromkeys(out["singles"]))
     out["singles"].sort(key=lambda i: (keep[i].get("in_perimeter") != "yes", items[i].get("published") or ""))
-    out["topic_filter"] = moved
+    out.setdefault("topic_filter", [])
     s = out["summary"]
-    s.update({"matrici_before_topic_filter": s["matrici"], "matrici": len(kept),
-              "items_in_matrici": sum(len(m["items"]) for m in kept), "singles": len(out["singles"]),
-              "multi_source_cards": sum(len(c["items"]) > 1 for m in kept for c in m["cards"]),
+    s.update({"matrici_before_topic_filter": out.get("matrici_before_admit", s["matrici"]), "matrici": len(out["matrici"]),
+              "items_in_matrici": sum(len(m["items"]) for m in out["matrici"]), "singles": len(out["singles"]),
+              "multi_source_cards": sum(len(c["items"]) > 1 for m in out["matrici"] for c in m["cards"]),
               "singles_partial": sum(keep[i].get("in_perimeter") != "yes" for i in out["singles"])})
 
 
@@ -169,7 +168,7 @@ def main(selection_path, out_dir):
         if len(keep) < 2:
             continue
         try:
-            d4.build(keep, items, out, old, p_group, h_group, p_write)
+            d4.build(keep, items, out, old, p_group, h_group, p_write, admit=admits(keep))
         except Exception as exc:
             out["errors"].append({"stage": "build", "error": f"{type(exc).__name__}: {exc}"[:300]})
             path.write_text(json.dumps(out, ensure_ascii=False, indent=1) + "\n")

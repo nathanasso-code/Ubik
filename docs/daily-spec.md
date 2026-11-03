@@ -1,4 +1,4 @@
-# Matrici della settimana — specifica (2 novembre 2026)
+# Matrici della settimana — specifica (aggiornata il 3 novembre 2026)
 
 Pipeline corrente di Ubik: `ingestion/ubik_daily5.py` (macro Topic e sotto-topic) sul motore di
 `ingestion/ubik_daily4.py`. Prompt in `prompts/daily-v5/` (nota) e `prompts/daily-v4/` (raggruppamento,
@@ -16,13 +16,18 @@ La vicenda (catena di Matrici tra settimane con uno «stato al») è sospesa fin
 
 ## Fasi
 
-1. **Selezione** (`ubik-corpus/tools/select_ai_week.py`, senza modelli): gli articoli della finestra che parlano di
-   IA, dai corpus `ai-regulation` e `ai`, senza doppioni per indirizzo canonico; origine, testata, livello e
-   accesso al testo dal registro.
+1. **Selezione** (`ubik-corpus/tools/select_ai_week.py`, senza modelli): gli articoli della finestra dai corpus
+   `ai-regulation` e `ai`, senza doppioni per indirizzo canonico; origine, testata, livello e accesso al testo dal
+   registro. **Prefiltro**: tolte le righe che si ripetono in almeno tre articoli della stessa fonte (menu, link
+   correlati, piè di pagina), l'articolo passa se ha un termine IA nel titolo, tre nel testo, oppure uno nel testo
+   insieme a una parola di un sotto-topic o in un testo brevissimo (post social). I termini IA comprendono le principali
+   aziende e prodotti. Gli articoli scartati sono elencati nella selezione; `AI_PREFILTER=0` torna alla selezione larga.
 2. **Nota** (DeepSeek, una chiamata per articolo, in parallelo): pertinenza all'IA, tipo di pezzo, evento principale
    (`actor`, `action`, `object`, `date`, nomi canonici in inglese), riferimento e sintesi in italiano, citazione
-   letterale con traduzione, sotto-topic (`yes` / `partial` / `no`). Le cifre si convertono per significato nella
-   lingua dell'articolo; mai «bilioni».
+   letterale con traduzione, sotto-topic (`yes` / `partial` / `no`). `partial` solo se l'articolo porta almeno un
+   fatto o argomento specifico dentro il perimetro del sotto-topic; conti, raccolte di fondi, quotazioni, chip e
+   prodotti non sono energia né lavoro se l'articolo non riporta fatti su energia, data center o posti di lavoro. Le
+   cifre si convertono per significato nella lingua dell'articolo; mai «bilioni» né «trilioni» («duemila miliardi»).
 3. **Raggruppamento** (DeepSeek, una chiamata per sotto-topic): Matrici e card fatte di articoli interi.
 4. **Conferma del codice** (`same_event`). Date entro 10 giorni quando note, e una prova:
    - *evento*: gli oggetti condividono una parola significativa e gli attori una, oppure gli oggetti due;
@@ -36,7 +41,8 @@ La vicenda (catena di Matrici tra settimane con uno «stato al») è sospesa fin
    e propone unioni. Valgono solo le prove *evento* e *nomi*. Gli articoli scartati ma legati tra loro da prove forti
    diventano una Matrice a sé.
 6. **Filtro del sotto-topic**: una Matrice resta se almeno due articoli, e almeno la metà, sono `yes` per quel
-   sotto-topic; altrimenti i suoi articoli tornano card singole.
+   sotto-topic; altrimenti i suoi articoli tornano card singole. Il filtro si applica prima dei testi, così le Matrici
+   scartate non costano nulla.
 7. **Testi** (DeepSeek, una chiamata per Matrice): titolo neutro, essenza in 2–3 frasi, titolo e testo delle card
    con più fonti, solo dalle sintesi. Il codice segnala i numeri che non ritrova nelle sintesi.
 8. **Pagina**: Matrici, poi card singole centrali, poi in una sezione chiusa quelle solo collegate al tema. La card
@@ -65,10 +71,13 @@ Settimana 26 ottobre – 1 novembre 2026: 919 articoli, 653 sull'IA, 0,62 $ di n
 (raggruppamento, secondo giro, testi): 0,74 $. Risultato: Regole 7 Matrici, Lavoro 5, Data center ed energia 4,
 Diritto d'autore 8.
 
+## Prefiltro, misura sulla settimana di prova
+
+Confronto con le note già pagate della settimana 26 ottobre – 1 novembre (932 articoli candidati): il prefiltro ne
+toglie 263; dei 266 giudicati estranei all'IA ne toglie 215, dei 375 centrati sull'IA ne perde 4, dei 83 articoli
+nelle Matrici ne perde 3 (uno per Matrice, ciascuna resta con almeno due testate). Risparmio atteso sulle note: circa
+un quarto.
+
 ## Da fare
 
-- Nota più stretta su «in parte» (conti, prodotti e chip non sono energia né lavoro) e «duemila miliardi» invece di
-  «trilioni».
-- Filtro iniziale più severo: 266 articoli su 919 non parlavano di IA ma hanno pagato la nota.
-- Scrivere i testi solo per le Matrici che superano il filtro del sotto-topic.
 - Valutare un sotto-topic Economia dell'IA per gli articoli senza sotto-topic (168 nella settimana di prova).

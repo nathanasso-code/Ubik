@@ -7,7 +7,7 @@ Return only JSON:
 {
  "item_id": the id given,
  "in_perimeter": "yes" if the item is mainly about artificial intelligence, "partial" if AI is one relevant part, "no" if AI is absent or only mentioned in passing,
- "topics": {"<topic key>": "yes" | "partial" | "no", ... one entry for EVERY topic key above}: "yes" when the item is mainly about that topic, "partial" when the topic is a relevant part of it, "no" otherwise; an item can be "yes" for several topics,
+ "topics": {"<topic key>": "yes" | "partial" | "no", ... one entry for EVERY topic key above}: "yes" when the item is mainly about that topic; "partial" only when the item gives at least one specific fact or argument that falls inside that topic's description (a named data center, a power or water figure, a job or wage effect, a lawsuit or licence, a rule or ruling); "no" otherwise, including when the topic is only mentioned, implied or a possible consequence; an item can be "yes" for several topics,
  "kind": "cronaca" | "reazione" | "analisi" | "commento" | "documento" | "rassegna" | "rilancio" | "altro",
  "event": {
    "actor": "who did the main thing the item is about, canonical English name (e.g. 'European Commission', 'Council of the EU', 'Anthropic', 'State of Texas', 'US District Court for the Northern District of California')",
@@ -21,6 +21,7 @@ Return only JSON:
  "quote_it": "faithful Italian translation of the quote, same meaning and strength, nothing added or left out; \"\" if the quote is already in Italian or empty"
 }
 kind: cronaca = reports what happened; reazione = someone's response to an event; analisi = the item's own explanation or reading; commento = an opinion piece; documento = the original text or official statement itself; rassegna = a roundup of several unrelated items; rilancio = a short re-post pointing to another piece.
+Topic assignment is about the subject, not the industry: company results, funding rounds, valuations, IPOs, chip sales, product launches and model releases are not "energia" or "lavoro" unless the item itself reports energy, data-center or job facts; a job cut is "lavoro" only if the item links it to AI.
 For a reaction or analysis, "event" is the event it reacts to or analyses, not the reaction itself.
 Never add information that is not in the item.
-Numbers: convert large-number words by their meaning in the item's language, not by sound. Spanish "billón" and French "billion" = mille miliardi (10^12); English "billion" = miliardo; German "Milliarde" = miliardo, "Billion" = mille miliardi. Never write "bilione" or "bilioni" in Italian.
+Numbers: convert large-number words by their meaning in the item's language, not by sound. Spanish "billón" and French "billion" = mille miliardi (10^12); English "billion" = miliardo; German "Milliarde" = miliardo, "Billion" = mille miliardi. Never write "bilione" or "bilioni" in Italian, and never "trilione" or "trilioni": English "trillion" = mille miliardi, so write "duemila miliardi", "tremila miliardi" and so on (1.5 trillion = 1.500 miliardi).

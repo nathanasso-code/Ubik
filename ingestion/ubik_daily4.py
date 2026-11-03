@@ -220,8 +220,11 @@ def merge(matrici, used, keep, items, out, previous=None):
     log["rejected"] = [r for r in log["rejected"] if r["item"] not in used]
 
 
-def build(keep, items, out, old, p_group, h_group, p_write):
-    """Group, confirm, merge, write and summarise the matrici of the kept notes (mutates out)."""
+def build(keep, items, out, old, p_group, h_group, p_write, admit=None):
+    """Group, confirm, merge, write and summarise the matrici of the kept notes (mutates out).
+
+    admit(matrice) -> bool, if given, is applied after the merge pass and before the titles: a matrice it refuses is
+    recorded in out["topic_filter"], its items go back to the single cards, and no title is paid for it."""
     listing = [{"id": iid, "source": items[iid].get("publisher"), "origin": items[iid]["origin"],
                 "date": (items[iid].get("published") or "")[:10], "title": items[iid].get("title") or "", "kind": n.get("kind"),
                 "event": n.get("event"), "main_referent": n.get("main_referent"), "summary": n.get("summary")} for iid, n in keep.items()]
@@ -267,6 +270,13 @@ def build(keep, items, out, old, p_group, h_group, p_write):
     if os.getenv("DAILY_MERGE", "1") == "1":
         merge(matrici, used, keep, items, out, old.get("merge"))
     matrici.sort(key=lambda m: (not m["strong"], -len(m["origins"]), -len(m["items"]), m["date"]))
+    out["matrici_before_admit"] = len(matrici)
+    if admit:
+        refused = [m for m in matrici if not admit(m)]
+        out["topic_filter"] = [{"referent": m["referent"], "items": len(m["items"]), "origins": len(m["origins"])} for m in refused]
+        for m in refused:
+            used.difference_update(m["items"])
+        matrici = [m for m in matrici if admit(m)]
     for m in matrici:
         payload = {"referent": m["referent"], "cards": [{"index": k, "items": [{"source": items[i].get("publisher"), "kind": keep[i].get("kind"),
                                                                                  "summary": keep[i].get("summary")} for i in c["items"]]}
@@ -298,7 +308,7 @@ def build(keep, items, out, old, p_group, h_group, p_write):
                       "multi_source_cards": sum(len(c["items"]) > 1 for m in matrici for c in m["cards"]),
                       "multi_outlet": sum(len(m["origins"]) >= 2 for m in matrici), "singles": len(singles), "singles_partial": sum(keep[i].get("in_perimeter") != "yes" for i in singles),
                       "unsupported_numbers": sum(bool(m["unsupported_numbers"]) for m in matrici),
-                      "false_friend_numbers": sorted(i for i in keep if re.search(r"\bbilion[ei]\b", keep[i].get("summary", ""), re.I)),
+                      "false_friend_numbers": sorted(i for i in keep if re.search(r"\b(bilion|trilion)[ei]\b", keep[i].get("summary", ""), re.I)),
                       "merge_joined": len((out.get("merge") or {}).get("joined", [])),
                       "merge_new_matrici": len((out.get("merge") or {}).get("new", [])),
                       "merge_rejected": len((out.get("merge") or {}).get("rejected", []))}
