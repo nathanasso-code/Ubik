@@ -11,6 +11,9 @@ il modello propone le Matrici di articoli interi, il codice conferma ogni unione
 (evento, nomi propri, espressioni), un secondo giro recupera le card singole. Il macro Topic Intelligenza artificiale
 ha quattro sotto-topic: regole, lavoro, data center ed energia, diritto d'autore. Specifica: `docs/daily-spec.md`.
 
+In prova dal 3 novembre una seconda modalità, la conoscenza: nodi di dibattito progettati in redazione, con catene di
+smentita agganciate ad affermazioni precise e citazioni verificate. Specifica: `docs/nodi-spec.md`.
+
 Modello in esercizio: DeepSeek V4.1 Flash, circa 0,74 dollari per una settimana di 919 articoli e quattro sotto-topic.
 
 ## Struttura
@@ -23,6 +26,7 @@ Modello in esercizio: DeepSeek V4.1 Flash, circa 0,74 dollari per una settimana 
 | `ingestion/ubik_cost_guard.py` | Costi unitari e controllo preventivo di spesa | Corrente |
 | `prompts/daily-v5/`, `prompts/daily-v4/` | Prompt correnti | Correnti |
 | `docs/daily-spec.md` | Specifica delle Matrici della settimana | Corrente |
+| `docs/nodi-spec.md` | Specifica dei nodi di dibattito | Prototipo |
 | `ingestion/ubik_matrix.py`, `prompts/matrix-v1/` | Matrice lunga su un nucleo (`docs/history/matrix-spec.md`) | Messa da parte |
 | `ingestion/ubik_daily.py`, `prompts/daily-v1/`–`daily-v3/` | Matrici giornaliere v1–v3 | Abbandonate |
 | `ingestion/ubik_v6_*.py`, `prompts/v6*/`, `protocols/ubik-v6-editorial-protocol.md` | v6, composizione editoriale settimanale | Abbandonata |
