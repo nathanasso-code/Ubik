@@ -343,6 +343,12 @@ def fuse(matrici, keep, items, proposals, log):
                     continue
                 big, small = (m1, m2) if len(m1["items"]) >= len(m2["items"]) else (m2, m1)
                 big["items"] += small["items"]
+                # the twin's main cards report another fact (the regulator's investigation) unless the code finds them
+                # to be the same fact as a card of the absorbing matrice
+                for c in small["cards"]:
+                    if not c.get("distinct") and not any(card_link(keep[a], keep[b]) for a in c["items"]
+                                                         for b in big["items"]):
+                        c["distinct"], c["why"] = "fact", f"twin matrice: {small['referent']}"
                 big["cards"] += small["cards"]
                 big["origins"] = sorted(set(big["origins"]) | set(small["origins"]))
                 big["date"] = max(big["date"], small["date"])
@@ -357,11 +363,24 @@ def fuse(matrici, keep, items, proposals, log):
                 break
 
 
+def future_dates(keep, items, out):
+    """An event date after the item's publication is an announced date (a delay "to 20 November"), not the date of
+    the event reported: it is kept as announced_date and left out of the date checks."""
+    moved = []
+    for iid, n in keep.items():
+        e, pub = n.get("event") or {}, (items[iid].get("published") or "")[:10]
+        if e.get("date") and pub and e["date"] > pub:
+            n["event"] = {**e, "date": None, "announced_date": e["date"]}
+            moved.append(iid)
+    out["announced_dates"] = moved
+
+
 def build(keep, items, out, old, p_group, h_group, p_write, admit=None):
     """Group, confirm, merge, write and summarise the matrici of the kept notes (mutates out).
 
     admit(matrice) -> bool, if given, is applied after the merge pass and before the titles: a matrice it refuses is
     recorded in out["topic_filter"], its items go back to the single cards, and no title is paid for it."""
+    future_dates(keep, items, out)
     listing = [{"id": iid, "source": items[iid].get("publisher"), "origin": items[iid]["origin"],
                 "date": (items[iid].get("published") or "")[:10], "title": items[iid].get("title") or "", "kind": n.get("kind"),
                 "event": n.get("event"), "main_referent": n.get("main_referent"), "summary": n.get("summary")} for iid, n in keep.items()]

@@ -1,11 +1,11 @@
 You organise the items of a news feed about: {PERIMETER}
 Each item (an article, a newsletter, a post) has: id, source, origin, date, original title, kind, event (actor, action, object, date), main_referent, summary. Items are never split: each item is used whole, at most once.
 
-Build MATRICI. A matrice = items about the SAME specific event or referent (one decision, vote, lawsuit, ruling, study, report, statement, product), published close in time.
+Build MATRICI. A matrice = items about the SAME specific event or referent (one decision, vote, lawsuit, ruling, study, report, statement, product), published close in time. A lawsuit or case includes the briefs and filings that different parties submit in it in the same days: they form one matrice, each filing its own card.
 
 CARDS inside a matrice. ONE card is the default: every item that reports the same fact goes into the same card, whatever its outlet, language, kind (report, analysis, comment), angle, emphasis or level of detail. Open a separate card ONLY when its items:
 (a) report a DISTINCT FACT: another decision, ruling, filing, vote, statement or action, by another actor or at another moment (e.g. a court ruling inside a story about a company's new terms; a second brief filed by another organisation); or
-(b) say something the other items CONTRADICT or DO NOT HAVE at all: a contrary claim, a new document, figure or fact; not a different tone, context or background.
+(b) say something the other items CONTRADICT or DO NOT HAVE at all: a contrary claim, or a fact, figure, document or criticism absent from the other items (e.g. an analysis of the impact assessment that the reports do not mention); not a different tone, context, background or emphasis on the same facts.
 Never separate by angle, emphasis, framing, kind of piece or amount of detail. Each separate card names its reason: "distinct": "fact" or "adds" (contradicts or adds), with "why"; the main card has "distinct": null.
 
 Return only JSON, compact: {"matrici": [ {"referent": "precise Italian name, at most 15 words", "cards": [ {"aspect": "at most 10 Italian words", "distinct": null, "why": "", "items": ["item_id", ...]}, {"aspect": "...", "distinct": "fact", "why": "at most 15 English words: the distinct fact or what the others lack", "items": [...]} ]} ]}

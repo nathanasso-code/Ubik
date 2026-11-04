@@ -55,3 +55,12 @@ def test_twin_matrici():
     d4.fuse(ms, KEEP, items, [{"matrici": ["M1", "M2"]}, {"matrici": ["M3", "M4"]}], log)
     assert [m["id"] for m in ms] == ["M1", "M2", "M3"]
     assert log["fused"][0]["into"] == "M3" and log["fuse_rejected"] == [{"matrici": ["M1", "M2"]}]
+
+
+def test_announced_date_is_not_event_date():
+    keep = {"next": note("Meta", "Meta updated commercial terms", "2026-11-20"), "verge": note("Meta", "Meta business terms update", "2026-10-28")}
+    items = {"next": {"published": "2026-10-26T10:00:00Z"}, "verge": {"published": "2026-10-28T10:00:00Z"}}
+    out = {}
+    d4.future_dates(keep, items, out)
+    assert out["announced_dates"] == ["next"] and keep["next"]["event"]["announced_date"] == "2026-11-20"
+    assert d4.card_link(keep["next"], keep["verge"])

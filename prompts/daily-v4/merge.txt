@@ -3,6 +3,8 @@ You receive the MATRICI already built (id, referent, their items) and the SINGLE
 
 A matrice = items from different outlets about the SAME specific event or about tightly connected facts of the same days (the same lawsuit or case, even through different filings or briefs; the same site or company dispute; the same decision and the national rules that implement it). Never group by general theme alone ("copyright", "data centers", "elections").
 
+Check first, among the single items: briefs or filings by different parties in the same lawsuit or case (amicus briefs in the same case form one matrice); several outlets reporting the same announcement; a regulator acting on what an existing matrice reports.
+
 Propose only unions:
 - "join": a single item that belongs to an existing matrice;
 - "new": two or more single items, from at least two different origins, that form a new matrice. Inside it ONE card is the default: items reporting the same fact share it, whatever their angle, emphasis or kind; a separate card only for a distinct fact (another decision, ruling, filing or statement, by another actor or at another moment: "distinct": "fact") or for something the other items contradict or do not have ("distinct": "adds"), never for angle or emphasis;
