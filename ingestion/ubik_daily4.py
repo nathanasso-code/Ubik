@@ -373,7 +373,6 @@ def fuse(matrici, keep, items, proposals, log):
                         proposed.discard((m2["id"], m1["id"]))
                     continue
                 big, small = (m1, m2) if len(m1["items"]) >= len(m2["items"]) else (m2, m1)
-                big["items"] += small["items"]
                 # the twin's main cards report another fact (the regulator's investigation) unless the code finds them
                 # to be the same fact as a card of the absorbing matrice
                 for c in small["cards"]:
@@ -381,6 +380,7 @@ def fuse(matrici, keep, items, proposals, log):
                                                          for b in big["items"]):
                         c["distinct"], c["why"] = "fact", f"twin matrice: {small['referent']}"
                 big["cards"] += small["cards"]
+                big["items"] += small["items"]
                 big["origins"] = sorted(set(big["origins"]) | set(small["origins"]))
                 big["date"] = max(big["date"], small["date"])
                 big["strong"] = big["strong"] or small["strong"]

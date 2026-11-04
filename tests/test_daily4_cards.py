@@ -67,6 +67,7 @@ def test_twin_matrici():
     d4.fuse(ms, KEEP, items, [{"matrici": ["M1", "M2"]}, {"matrici": ["M3", "M4"]}], log)
     assert [m["id"] for m in ms] == ["M1", "M2", "M3"]
     assert log["fused"][0]["into"] == "M3" and log["fuse_rejected"] == [{"matrici": ["M1", "M2"]}]
+    assert [c.get("distinct") for c in ms[2]["cards"]] == [None, "fact"]
 
 
 def test_announced_date_is_not_event_date():
