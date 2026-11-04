@@ -6,10 +6,12 @@ The model proposes matrici and cards over whole items; the code keeps only the l
                  (b) actor and object share a proper name (Delaware, Anthropic, Reddit), not a generic institution;
                  (c) title, main referent and object share a two-word phrase ("data center", "Kids Act").
                  Each confirmed link records which evidence was used.
-  cards        = one card per matrice by default; the model opens a separate card only for a distinct fact or for
-                 something the other items contradict or lack ("distinct": "fact" / "adds"), never for angle or kind of
-                 piece. The code then fuses two cards when their items share actor AND object of the event and neither
-                 card was marked distinct (same test as the unions, applied to the splits).
+  cards        = one card per matrice by default; a separate card only for a distinct fact or a contradiction
+                 ("distinct": "fact" / "contradicts"), never for angle or kind of piece. What one source adds ("adds")
+                 becomes a line of the main card. The code fuses two cards when their items share actor AND object of
+                 the event and neither was marked distinct (the union test applied to the splits); an item in an
+                 unmarked split it cannot tie to the main card, or with the main card's actor but none of its object
+                 words (another event of the same company), goes back to the single cards.
   twin matrici = in the merge pass, two matrici of the same week about the same object are fused when the model
                  proposes it and the code confirms one item pair, or, unasked, when at least half of the items of each
                  matrice share two object words (besides the actors' names) with an item of the other.
@@ -180,8 +182,37 @@ def consolidate(m, keep, log):
              "why": cards[g[0]].get("why", "")}
         new.append(c)
     new.sort(key=lambda c: (bool(c.get("distinct")), -len(c["items"])))
+    removed = []
+    if new and not new[0].get("distinct"):
+        main = new[0]
+
+        def tied(i):
+            return any(card_link(keep[i], keep[x]) for x in main["items"])
+
+        def other_event(i):
+            # same actor as the main card but no object word in common: another event of the same company
+            return not tied(i) and any(actor_match(keep[i].get("event") or {}, keep[x].get("event") or {})
+                                       and not object_words(keep[i], keep[x]) for x in main["items"])
+        kept = [main]
+        for c in new[1:]:
+            out = [i for i in c["items"] if other_event(i)
+                   or not c.get("distinct") and not tied(i)]  # an unjustified split the code cannot tie to the main card
+            removed += [{"item": i, "why": "other event, same actor" if other_event(i) else "not tied to the main card"}
+                        for i in out]
+            c["items"] = [i for i in c["items"] if i not in out]
+            if not c["items"]:
+                continue
+            if c.get("distinct") == "adds":
+                # what one source adds is a line of the main card, not a card of its own
+                main["items"] += c["items"]
+                main.setdefault("adds", []).append({"items": c["items"], "why": c.get("why", "")})
+            else:
+                kept.append(c)
+        new = kept
     m["cards"] = new
     m["kept_distinct"] = [{"items": c["items"], "distinct": c["distinct"], "why": c["why"]} for c in new if c.get("distinct")]
+    m["removed_by_card_check"] = removed
+    return [r["item"] for r in removed]
 
 
 def proposed_cards(comp, cards_in):
@@ -191,7 +222,7 @@ def proposed_cards(comp, cards_in):
     out = []
     for part in parts:
         c = (cards_in or [{}])[card_of.get(part[0], 0)] if card_of.get(part[0]) is not None else {}
-        d = c.get("distinct") if c.get("distinct") in ("fact", "adds") else None
+        d = c.get("distinct") if c.get("distinct") in ("fact", "contradicts", "adds") else None
         out.append({"items": part, "distinct": d, "why": c.get("why", "") if d else ""})
     return out
 
@@ -421,9 +452,19 @@ def build(keep, items, out, old, p_group, h_group, p_write, admit=None):
     used_by_group = len(used)
     if os.getenv("DAILY_MERGE", "1") == "1":
         merge(matrici, used, keep, items, out, old.get("merge"))
-    out["cards_check"] = []
-    for m in matrici:
-        consolidate(m, keep, out["cards_check"])
+    out["cards_check"], out["removed_by_card_check"] = [], []
+    for m in list(matrici):
+        gone = consolidate(m, keep, out["cards_check"])
+        if not gone:
+            continue
+        m["items"] = [i for i in m["items"] if i not in gone]
+        m["origins"] = sorted({items[i]["origin"] for i in m["items"]})
+        out["removed_by_card_check"].append({"matrice": m["id"], "items": m["removed_by_card_check"]})
+        if len(m["items"]) < 2 or len(m["origins"]) < 2:
+            matrici.remove(m)
+            gone = gone + m["items"]
+            out["removed_by_card_check"][-1]["dissolved"] = True
+        used.difference_update(gone)
     matrici.sort(key=lambda m: (not m["strong"], -len(m["origins"]), -len(m["items"]), m["date"]))
     out["matrici_before_admit"] = len(matrici)
     if admit:
@@ -435,7 +476,9 @@ def build(keep, items, out, old, p_group, h_group, p_write, admit=None):
     for m in matrici:
         payload = {"referent": m["referent"], "cards": [{"index": k, "items": [{"source": items[i].get("publisher"), "kind": keep[i].get("kind"),
                                                                                  "summary": keep[i].get("summary")} for i in c["items"]],
-                                         **({"distinct_fact": c["why"]} if c.get("distinct") and c.get("why") else {})}
+                                         **({"distinct_fact": c["why"]} if c.get("distinct") and c.get("why") else {}),
+                                         **({"adds": [{"sources": [items[i].get("publisher") for i in a["items"]], "what": a["why"]}
+                                                      for a in c["adds"]]} if c.get("adds") else {})}
                                                         for k, c in enumerate(m["cards"])]}
         try:
             raw, cost, _ = call(DEEPSEEK, p_write, payload, max_tokens=2500)
@@ -449,6 +492,8 @@ def build(keep, items, out, old, p_group, h_group, p_write, admit=None):
             if isinstance(x.get("index"), int) and 0 <= x["index"] < len(m["cards"]):
                 c = m["cards"][x["index"]]
                 c["title"], c["text"] = x.get("title", ""), (x.get("text", "") if len(c["items"]) > 1 else "")
+                if c.get("adds"):
+                    c["adds_text"] = x.get("adds_text", "")
         hay = norm(" ".join(keep[i].get("summary", "") for i in m["items"]))
         own = m["title"] + " " + m["essence"] + " " + " ".join(c.get("text", "") for c in m["cards"])
         m["unsupported_numbers"] = sorted({x for x in re.findall(r"\d[\d.,]*\d|\d", own)
@@ -470,7 +515,9 @@ def build(keep, items, out, old, p_group, h_group, p_write, admit=None):
                       "merge_rejected": len((out.get("merge") or {}).get("rejected", [])),
                       "merge_fused": len((out.get("merge") or {}).get("fused", [])),
                       "cards_fused_by_code": sum(c["cards_before"] - c["cards_after"] for c in out["cards_check"]),
-                      "cards_kept_distinct": sum(len(m.get("kept_distinct", [])) for m in matrici)}
+                      "cards_kept_distinct": sum(len(m.get("kept_distinct", [])) for m in matrici),
+                      "adds_lines": sum(len(c.get("adds", [])) for m in matrici for c in m["cards"]),
+                      "removed_by_card_check": sum(len(r["items"]) for r in out.get("removed_by_card_check", []))}
 
 
 def main(selection_path, out_dir):

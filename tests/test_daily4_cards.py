@@ -40,11 +40,23 @@ def test_split_marked_distinct_is_kept():
 
 
 def test_other_actor_stays_apart_and_actor_name_is_not_an_object():
-    m = matrice("M3", [{"items": ["meta1"], "distinct": None}, {"items": ["oslo"], "distinct": None},
-                       {"items": ["ms3"], "distinct": None}])
-    d4.consolidate(m, KEEP, [])
-    assert len(m["cards"]) == 3
+    m = matrice("M3", [{"items": ["meta1"], "distinct": None}, {"items": ["oslo"], "distinct": "fact", "why": "ruling"}])
+    assert d4.consolidate(m, KEEP, []) == [] and len(m["cards"]) == 2
     assert d4.card_link(KEEP["ms1"], KEEP["ms3"]) is None
+
+
+def test_untied_split_and_other_event_go_back_to_singles():
+    m = matrice("M5", [{"items": ["ms1", "ms2"], "distinct": None}, {"items": ["ms3"], "distinct": "fact", "why": "results"},
+                       {"items": ["oslo"], "distinct": None}])
+    gone = d4.consolidate(m, KEEP, [])
+    assert sorted(gone) == ["ms3", "oslo"] and [c["items"] for c in m["cards"]] == [["ms1", "ms2"]]
+    assert {r["why"] for r in m["removed_by_card_check"]} == {"other event, same actor", "not tied to the main card"}
+
+
+def test_adds_becomes_a_line_of_the_main_card():
+    m = matrice("M6", [{"items": ["kid1"], "distinct": None}, {"items": ["kid2"], "distinct": "adds", "why": "critique"}])
+    d4.consolidate(m, KEEP, [])
+    assert [c["items"] for c in m["cards"]] == [["kid1", "kid2"]] and m["cards"][0]["adds"][0]["why"] == "critique"
 
 
 def test_twin_matrici():

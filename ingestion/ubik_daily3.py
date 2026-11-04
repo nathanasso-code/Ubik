@@ -181,6 +181,7 @@ def render(out, keep, items):
                 srcs.append(v2.card(i, keep[i], items, e, k).replace("<p>" + e(keep[i].get("summary", "")) + "</p>", body))
             parts.append(f'<div class="cd3"><span class="ct">{e(c.get("title", ""))}</span>'
                          + (f'<span class="cx">{e(c["text"])}</span>' if c.get("text") else "")
+                         + (f'<span class="cx add">{e(c["adds_text"])}</span>' if c.get("adds_text") else "")
                          + f'<div class="src3">{"".join(srcs)}</div></div>')
         parts.append("</div></details>")
     parts.append('</div></section><section id="notizie"><h2>Altre notizie</h2><div class="feed">')

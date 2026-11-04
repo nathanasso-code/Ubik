@@ -8,7 +8,7 @@ secondo giro, testi). Il modello propone, il codice conferma.
 
 | Livello | Definizione |
 | --- | --- |
-| Card | Le fonti che riportano lo stesso fatto sostanziale. In una Matrice la card unica è il default; una card separata solo per un fatto distinto (per esempio la sentenza del tribunale di Oslo dentro la vicenda dei termini di Meta) o per ciò che le altre fonti contraddicono o non hanno. Mai per angolo, enfasi o tipo di pezzo. Una fonte non si divide mai. |
+| Card | Le fonti che riportano lo stesso fatto sostanziale. In una Matrice la card unica è il default; una card separata solo per un fatto distinto (per esempio la sentenza del tribunale di Oslo dentro la vicenda dei termini di Meta) o per un'affermazione che le altre fonti contraddicono. Ciò che una fonte aggiunge diventa una riga della card principale («Next aggiunge…»). Mai per angolo, enfasi o tipo di pezzo. Una fonte non si divide mai. |
 | Matrice | Le card di testate diverse sullo stesso evento specifico, o su fatti strettamente legati negli stessi giorni. Almeno due origini indipendenti. |
 | Topic | Un perimetro che filtra il bacino comune. Un macro Topic ha sotto-topic; un articolo può stare in più sotto-topic con la stessa nota. |
 
@@ -29,7 +29,8 @@ La vicenda (catena di Matrici tra settimane con uno «stato al») è sospesa fin
    prodotti non sono energia né lavoro se l'articolo non riporta fatti su energia, data center o posti di lavoro. Le
    cifre si convertono per significato nella lingua dell'articolo; mai «bilioni» né «trilioni» («duemila miliardi»).
 3. **Raggruppamento** (DeepSeek, una chiamata per sotto-topic): Matrici e card fatte di articoli interi. Ogni card
-   separata dichiara il motivo: `distinct` = `fact` (fatto distinto) o `adds` (contraddice o aggiunge), con `why`.
+   separata dichiara il motivo: `distinct` = `fact` (fatto distinto), `contradicts` (contraddice) o `adds` (aggiunge: diventa
+   una riga della card principale), con `why`.
 4. **Conferma del codice** (`same_event`). Date entro 10 giorni quando note, e una prova:
    - *evento*: gli oggetti condividono una parola significativa e gli attori una, oppure gli oggetti due;
    - *nomi*: gli attori condividono un nome proprio, oppure gli oggetti due (esclusi nomi generici come
@@ -46,7 +47,10 @@ La vicenda (catena di Matrici tra settimane con uno «stato al») è sospesa fin
    almeno metà degli articoli di ciascuna ha una coppia con due parole d'oggetto in comune (almeno due coppie).
 5b. **Controllo delle card** (`consolidate`, senza modelli): due card della stessa Matrice si fondono se due loro
    articoli hanno lo stesso attore e una parola d'oggetto in comune che non sia il nome dell'attore, e il modello non ha
-   segnato nessuna delle due come distinta. È il test delle unioni applicato alle divisioni. Il registro (`cards_check`,
+   segnato nessuna delle due come distinta. È il test delle unioni applicato alle divisioni. Torna card singola un articolo
+   di una card non motivata che il codice non lega alla card principale, e un articolo con lo stesso attore della card
+   principale ma nessuna parola d'oggetto in comune (un altro evento della stessa azienda); se la Matrice scende sotto
+   due articoli o due origini si scioglie. Il registro (`cards_check`,
    `kept_distinct`) conserva le fusioni con la prova e le divisioni mantenute con il motivo.
 6. **Filtro del sotto-topic**: una Matrice resta se almeno due articoli, e almeno la metà, sono `yes` per quel
    sotto-topic; altrimenti i suoi articoli tornano card singole. Il filtro si applica prima dei testi, così le Matrici

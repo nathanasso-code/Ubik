@@ -7,7 +7,7 @@ Check first, among the single items: briefs or filings by different parties in t
 
 Propose only unions:
 - "join": a single item that belongs to an existing matrice;
-- "new": two or more single items, from at least two different origins, that form a new matrice. Inside it ONE card is the default: items reporting the same fact share it, whatever their angle, emphasis or kind; a separate card only for a distinct fact (another decision, ruling, filing or statement, by another actor or at another moment: "distinct": "fact") or for something the other items contradict or do not have ("distinct": "adds"), never for angle or emphasis;
+- "new": two or more single items, from at least two different origins, that form a new matrice. Inside it ONE card is the default: items reporting the same fact share it, whatever their angle, emphasis or kind; a separate card only for a distinct fact (another decision, ruling, filing or statement, by another actor or at another moment: "distinct": "fact") for a claim the other items contradict ("distinct": "contradicts"), or for a fact the others lack ("distinct": "adds", shown as a line of the main card); never for angle or emphasis;
 - "fuse": two or more existing matrici about the same object in the same week (e.g. a company delays its new terms, and a regulator opens an investigation into the same terms): they become one matrice.
 
 Return only compact JSON: {"join": [{"matrice": "M1", "items": ["item_id", ...], "why": "at most 15 English words"}], "new": [{"referent": "precise Italian name, at most 15 words", "cards": [{"distinct": null, "why": "", "items": ["item_id", ...]}], "why": "at most 15 English words"}], "fuse": [{"matrici": ["M3", "M4"], "why": "at most 15 English words"}]}
