@@ -1,4 +1,4 @@
-# Matrici della settimana — specifica (aggiornata il 3 novembre 2026)
+# Matrici della settimana — specifica (aggiornata il 4 novembre 2026)
 
 Pipeline corrente di Ubik: `ingestion/ubik_daily5.py` (macro Topic e sotto-topic) sul motore di
 `ingestion/ubik_daily4.py`. Prompt in `prompts/daily-v5/` (nota) e `prompts/daily-v4/` (raggruppamento,
@@ -8,7 +8,7 @@ secondo giro, testi). Il modello propone, il codice conferma.
 
 | Livello | Definizione |
 | --- | --- |
-| Card | Una o più fonti che trattano lo stesso aspetto in modo sovrapponibile. Una fonte sola è una card; una fonte non si divide mai. |
+| Card | Le fonti che riportano lo stesso fatto sostanziale. In una Matrice la card unica è il default; una card separata solo per un fatto distinto (per esempio la sentenza del tribunale di Oslo dentro la vicenda dei termini di Meta) o per ciò che le altre fonti contraddicono o non hanno. Mai per angolo, enfasi o tipo di pezzo. Una fonte non si divide mai. |
 | Matrice | Le card di testate diverse sullo stesso evento specifico, o su fatti strettamente legati negli stessi giorni. Almeno due origini indipendenti. |
 | Topic | Un perimetro che filtra il bacino comune. Un macro Topic ha sotto-topic; un articolo può stare in più sotto-topic con la stessa nota. |
 
@@ -28,7 +28,8 @@ La vicenda (catena di Matrici tra settimane con uno «stato al») è sospesa fin
    fatto o argomento specifico dentro il perimetro del sotto-topic; conti, raccolte di fondi, quotazioni, chip e
    prodotti non sono energia né lavoro se l'articolo non riporta fatti su energia, data center o posti di lavoro. Le
    cifre si convertono per significato nella lingua dell'articolo; mai «bilioni» né «trilioni» («duemila miliardi»).
-3. **Raggruppamento** (DeepSeek, una chiamata per sotto-topic): Matrici e card fatte di articoli interi.
+3. **Raggruppamento** (DeepSeek, una chiamata per sotto-topic): Matrici e card fatte di articoli interi. Ogni card
+   separata dichiara il motivo: `distinct` = `fact` (fatto distinto) o `adds` (contraddice o aggiunge), con `why`.
 4. **Conferma del codice** (`same_event`). Date entro 10 giorni quando note, e una prova:
    - *evento*: gli oggetti condividono una parola significativa e gli attori una, oppure gli oggetti due;
    - *nomi*: gli attori condividono un nome proprio, oppure gli oggetti due (esclusi nomi generici come
@@ -36,10 +37,17 @@ La vicenda (catena di Matrici tra settimane con uno «stato al») è sospesa fin
    - *espressione*: titolo, riferimento e oggetto condividono due parole consecutive (escluse le espressioni
      generiche; il nome della testata è tolto dal titolo).
    Le Matrici sono le componenti connesse degli articoli proposti insieme; servono almeno due origini. Le card sono
-   gli articoli che il modello ha messo nella stessa card e che sono dello stesso tipo (cronaca, reazione, lettura).
+   quelle proposte dal modello, senza più divisione per tipo di pezzo.
 5. **Secondo giro** (DeepSeek, una chiamata per sotto-topic): il modello rivede le card singole accanto alle Matrici
    e propone unioni. Valgono solo le prove *evento* e *nomi*. Gli articoli scartati ma legati tra loro da prove forti
-   diventano una Matrice a sé.
+   diventano una Matrice a sé. **Matrici gemelle**: due Matrici della stessa settimana sullo stesso oggetto (il rinvio
+   di Meta e l'indagine della CMA sugli stessi termini) si fondono se il modello lo propone e il codice conferma una
+   coppia di articoli (prova forte e una parola d'oggetto in comune oltre ai nomi degli attori); senza proposta, se
+   almeno metà degli articoli di ciascuna ha una coppia con due parole d'oggetto in comune (almeno due coppie).
+5b. **Controllo delle card** (`consolidate`, senza modelli): due card della stessa Matrice si fondono se due loro
+   articoli hanno lo stesso attore e una parola d'oggetto in comune che non sia il nome dell'attore, e il modello non ha
+   segnato nessuna delle due come distinta. È il test delle unioni applicato alle divisioni. Il registro (`cards_check`,
+   `kept_distinct`) conserva le fusioni con la prova e le divisioni mantenute con il motivo.
 6. **Filtro del sotto-topic**: una Matrice resta se almeno due articoli, e almeno la metà, sono `yes` per quel
    sotto-topic; altrimenti i suoi articoli tornano card singole. Il filtro si applica prima dei testi, così le Matrici
    scartate non costano nulla.

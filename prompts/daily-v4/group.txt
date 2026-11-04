@@ -1,7 +1,12 @@
 You organise the items of a news feed about: {PERIMETER}
 Each item (an article, a newsletter, a post) has: id, source, origin, date, original title, kind, event (actor, action, object, date), main_referent, summary. Items are never split: each item is used whole, at most once.
 
-Build MATRICI. A matrice = items about the SAME specific event or referent (one decision, vote, lawsuit, ruling, study, report, statement, product), published close in time. Inside a matrice, a CARD = the items that cover the SAME specific aspect of that event, so that they substantially say the same thing (e.g. three outlets reporting the decision; two outlets reporting the same reaction). Items on different aspects of the event go into different cards. A card may hold one item.
+Build MATRICI. A matrice = items about the SAME specific event or referent (one decision, vote, lawsuit, ruling, study, report, statement, product), published close in time.
 
-Return only JSON, compact: {"matrici": [ {"referent": "precise Italian name, at most 15 words", "cards": [ {"aspect": "at most 10 Italian words", "items": ["item_id", ...]} ]} ]}
+CARDS inside a matrice. ONE card is the default: every item that reports the same fact goes into the same card, whatever its outlet, language, kind (report, analysis, comment), angle, emphasis or level of detail. Open a separate card ONLY when its items:
+(a) report a DISTINCT FACT: another decision, ruling, filing, vote, statement or action, by another actor or at another moment (e.g. a court ruling inside a story about a company's new terms; a second brief filed by another organisation); or
+(b) say something the other items CONTRADICT or DO NOT HAVE at all: a contrary claim, a new document, figure or fact; not a different tone, context or background.
+Never separate by angle, emphasis, framing, kind of piece or amount of detail. Each separate card names its reason: "distinct": "fact" or "adds" (contradicts or adds), with "why"; the main card has "distinct": null.
+
+Return only JSON, compact: {"matrici": [ {"referent": "precise Italian name, at most 15 words", "cards": [ {"aspect": "at most 10 Italian words", "distinct": null, "why": "", "items": ["item_id", ...]}, {"aspect": "...", "distinct": "fact", "why": "at most 15 English words: the distinct fact or what the others lack", "items": [...]} ]} ]}
 Rules: a matrice needs at least 2 items in total; different decisions or events are different matrici even if they concern the same law, company or theme; never group by general theme; roundups (kind "rassegna") stay out; when unsure, leave an item out (it will be shown alone).

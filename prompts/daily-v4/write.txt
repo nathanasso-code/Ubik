@@ -2,5 +2,5 @@ You write ONE matrice of a news feed about: {PERIMETER}
 You receive its referent and its cards; each card lists its items (source, kind, summary). Return only JSON:
 {"title": "neutral Italian headline about the shared event, at most 14 words; no loaded words of one side",
  "essence": "2-3 plain Italian sentences, at most 50 words, built ONLY from the summaries",
- "cards": [ {"index": 0, "title": "Italian, at most 10 words, the aspect this card covers", "text": "ONLY for cards with 2 or more items: 1-2 Italian sentences, at most 40 words, what these sources say in common and what one adds; empty string for single-item cards"} ]}
+ "cards": [ {"index": 0, "title": "Italian, at most 10 words, the fact this card reports; for a card with distinct_fact, name that distinct fact", "text": "ONLY for cards with 2 or more items: 1-2 Italian sentences, at most 40 words, what these sources say in common and what one adds; empty string for single-item cards"} ]}
 Never add facts, numbers, dates or people that are not in the summaries; keep their strength. No isolated acronyms, no editorial formulas.

@@ -6,7 +6,13 @@ The model proposes matrici and cards over whole items; the code keeps only the l
                  (b) actor and object share a proper name (Delaware, Anthropic, Reddit), not a generic institution;
                  (c) title, main referent and object share a two-word phrase ("data center", "Kids Act").
                  Each confirmed link records which evidence was used.
-  same card    = same event AND same kind of piece (report / reaction / reading)
+  cards        = one card per matrice by default; the model opens a separate card only for a distinct fact or for
+                 something the other items contradict or lack ("distinct": "fact" / "adds"), never for angle or kind of
+                 piece. The code then fuses two cards when their items share actor AND object of the event and neither
+                 card was marked distinct (same test as the unions, applied to the splits).
+  twin matrici = in the merge pass, two matrici of the same week about the same object are fused when the model
+                 proposes it and the code confirms one item pair, or, unasked, when at least half of the items of each
+                 matrice share two object words (besides the actors' names) with an item of the other.
 A matrice is a connected group of confirmed items with at least two independent outlets; anything not confirmed is
 shown as a single card. Titles are written only from the summaries.
 
@@ -123,6 +129,73 @@ def components(ids, link):
     return list(groups.values())
 
 
+def actor_match(ea, eb):
+    """The two events have the same actor: same normalised string, or a shared specific (non-institutional) word."""
+    a, b = (ea.get("actor") or "").strip().lower(), (eb.get("actor") or "").strip().lower()
+    if not a or not b:
+        return None
+    if a == b:
+        return a
+    common = toks(ea.get("actor")) & toks(eb.get("actor")) - {w[:6] for w in NAME_GENERIC}
+    return ", ".join(sorted(common)) or None
+
+
+def card_link(a, b):
+    """Evidence that two items report the same fact: dates compatible, same actor AND a shared object word."""
+    ea, eb = a.get("event") or {}, b.get("event") or {}
+    try:
+        if abs((dt.date.fromisoformat(ea["date"]) - dt.date.fromisoformat(eb["date"])).days) > 10:
+            return None
+    except Exception:
+        pass
+    actor = actor_match(ea, eb)
+    # the shared object word must not be the actor's own name ("Anthropic IPO" and "Anthropic" are not the same fact)
+    obj = object_words(a, b)
+    return f"actor: {actor}; object: {', '.join(sorted(obj))}" if actor and obj else None
+
+
+def consolidate(m, keep, log):
+    """Fuse the cards of a matrice that the code finds to be the same fact (card_link on any pair of their items),
+    unless the model marked one of them distinct. Main card (not distinct) first, then by size."""
+    cards = m["cards"]
+    evidence = {}
+
+    def link(x, y):
+        if cards[x].get("distinct") or cards[y].get("distinct"):
+            return False
+        for a in cards[x]["items"]:
+            for b in cards[y]["items"]:
+                e = card_link(keep[a], keep[b])
+                if e:
+                    evidence[f"{x}~{y}"] = f"{a}~{b} {e}"
+                    return True
+        return False
+    groups = components(list(range(len(cards))), link)
+    if any(len(g) > 1 for g in groups):
+        log.append({"matrice": m["id"], "cards_before": len(cards), "cards_after": len(groups), "evidence": evidence})
+    new = []
+    for g in groups:
+        g.sort()
+        c = {"items": [i for k in g for i in cards[k]["items"]], "distinct": cards[g[0]].get("distinct"),
+             "why": cards[g[0]].get("why", "")}
+        new.append(c)
+    new.sort(key=lambda c: (bool(c.get("distinct")), -len(c["items"])))
+    m["cards"] = new
+    m["kept_distinct"] = [{"items": c["items"], "distinct": c["distinct"], "why": c["why"]} for c in new if c.get("distinct")]
+
+
+def proposed_cards(comp, cards_in):
+    """Cards of a confirmed component, as the model proposed them (no split by kind of piece any more)."""
+    card_of = {i: k for k, c in enumerate(cards_in or []) for i in c.get("items") or []}
+    parts = components(comp, lambda a, b: card_of.get(a) == card_of.get(b))
+    out = []
+    for part in parts:
+        c = (cards_in or [{}])[card_of.get(part[0], 0)] if card_of.get(part[0]) is not None else {}
+        d = c.get("distinct") if c.get("distinct") in ("fact", "adds") else None
+        out.append({"items": part, "distinct": d, "why": c.get("why", "") if d else ""})
+    return out
+
+
 def strong(e):
     """Evidence accepted in the merge pass: event fields or proper names, not a shared common phrase like "data center"."""
     return e if e and not e.startswith("phrase") else None
@@ -169,7 +242,7 @@ def merge(matrici, used, keep, items, out, previous=None):
                 continue
             used.add(i)
             m["items"].append(i)
-            m["cards"].append({"items": [i]})
+            m["cards"].append({"items": [i], "distinct": None, "why": ""})
             m["origins"] = sorted({items[x]["origin"] for x in m["items"]})
             m["date"] = max(m["date"], (items[i].get("published") or "")[:10])
             log["joined"].append({"item": i, "to": m["id"], "evidence": f"{proof[0]}: {proof[1]}", "why": j.get("why")})
@@ -188,11 +261,8 @@ def merge(matrici, used, keep, items, out, previous=None):
             if len(comp) < 2 or len(origins) < 2:
                 log["rejected"] += [{"item": i, "to": nm.get("referent"), "why": nm.get("why")} for i in comp]
                 continue
-            card_of = {i: k for k, c in enumerate(nm.get("cards") or []) for i in c.get("items") or []}
-            cards = components(comp, lambda a, b: card_of.get(a) == card_of.get(b)
-                               and KIND_GROUP.get(keep[a].get("kind")) == KIND_GROUP.get(keep[b].get("kind")))
             used.update(comp)
-            matrici.append({"id": f"M{len(matrici) + 1}", "referent": nm.get("referent"), "cards": [{"items": c} for c in cards],
+            matrici.append({"id": f"M{len(matrici) + 1}", "referent": nm.get("referent"), "cards": proposed_cards(comp, nm.get("cards")),
                             "items": comp, "origins": sorted(origins), "from_merge": True,
                             "strong": any(items[i].get("tier", "approved") in v2.STRONG for i in comp),
                             "date": max((items[i].get("published") or "")[:10] for i in comp), "removed": []})
@@ -212,12 +282,79 @@ def merge(matrici, used, keep, items, out, previous=None):
         used.update(comp)
         first = min(comp, key=lambda i: items[i].get("published") or "")
         matrici.append({"id": f"M{len(matrici) + 1}", "referent": keep[first].get("main_referent"),
-                        "cards": [{"items": [i]} for i in comp], "items": comp, "origins": sorted(origins), "from_merge": True,
+                        "cards": [{"items": [i], "distinct": None, "why": ""} for i in comp], "items": comp, "origins": sorted(origins), "from_merge": True,
                         "strong": any(items[i].get("tier", "approved") in v2.STRONG for i in comp),
                         "date": max((items[i].get("published") or "")[:10] for i in comp), "removed": []})
         log["new"].append({"referent": matrici[-1]["referent"], "items": comp, "from_rejected": True,
                            "evidence": {k: v for k, v in evidence.items() if k.split("~")[0] in comp}})
     log["rejected"] = [r for r in log["rejected"] if r["item"] not in used]
+    fuse(matrici, keep, items, prop.get("fuse") or [], log)
+
+
+def object_words(a, b):
+    """Object words shared by two events, without the actors' own names."""
+    ea, eb = a.get("event") or {}, b.get("event") or {}
+    return toks(ea.get("object")) & toks(eb.get("object")) - toks(ea.get("actor"), generic=False) - toks(eb.get("actor"), generic=False)
+
+
+def twin_pairs(m1, m2, keep, items, min_words=1):
+    """Item pairs across two matrici with strong evidence of the same event and at least min_words shared object
+    words that are not the actors' names (Microsoft's buyouts and Microsoft's quarterly results are not twins)."""
+    pairs = []
+    for a in m1["items"]:
+        for b in m2["items"]:
+            e = strong(same_event(keep[a], keep[b], items[a].get("title"), items[b].get("title")))
+            obj = object_words(keep[a], keep[b])
+            if e and len(obj) >= min_words:
+                pairs.append(f"{a}~{b} object: {', '.join(sorted(obj))}")
+    return pairs
+
+
+def fuse(matrici, keep, items, proposals, log):
+    """Twin matrici: fused when the model proposes it and at least one item pair is confirmed, or, without a proposal,
+    when at least half of the items of each matrice have a pair confirmed with two object words (two pairs at least). The larger matrice absorbs the other; cards are kept as they
+    are and checked again by consolidate()."""
+    log["fused"], log["fuse_rejected"] = [], []
+    proposed = set()
+    for f in proposals:
+        ids = [x for x in f.get("matrici") or [] if isinstance(x, str)]
+        for x in ids:
+            for y in ids:
+                if x < y:
+                    proposed.add((x, y))
+    changed = True
+    while changed:
+        changed = False
+        for m1 in matrici:
+            for m2 in matrici:
+                if m1 is m2 or m1["id"] > m2["id"]:
+                    continue
+                asked = (m1["id"], m2["id"]) in proposed or (m2["id"], m1["id"]) in proposed
+                pairs = twin_pairs(m1, m2, keep, items, 1 if asked else 2)
+                total = len(m1["items"]) * len(m2["items"])
+                # unasked: at least half of the items of EACH matrice have a confirmed pair
+                cover = min(len({p.split("~")[0] for p in pairs}) / len(m1["items"]),
+                            len({p.split("~")[1].split()[0] for p in pairs}) / len(m2["items"]))
+                if not (asked and pairs or len(pairs) >= 2 and cover >= 0.5):
+                    if asked:
+                        log["fuse_rejected"].append({"matrici": [m1["id"], m2["id"]]})
+                        proposed.discard((m1["id"], m2["id"]))
+                        proposed.discard((m2["id"], m1["id"]))
+                    continue
+                big, small = (m1, m2) if len(m1["items"]) >= len(m2["items"]) else (m2, m1)
+                big["items"] += small["items"]
+                big["cards"] += small["cards"]
+                big["origins"] = sorted(set(big["origins"]) | set(small["origins"]))
+                big["date"] = max(big["date"], small["date"])
+                big["strong"] = big["strong"] or small["strong"]
+                big.setdefault("fused_from", []).append({"id": small["id"], "referent": small["referent"]})
+                log["fused"].append({"into": big["id"], "from": small["id"], "proposed": asked,
+                                     "pairs": f"{len(pairs)}/{total}", "cover": round(cover, 2), "evidence": pairs[:5]})
+                matrici.remove(small)
+                changed = True
+                break
+            if changed:
+                break
 
 
 def build(keep, items, out, old, p_group, h_group, p_write, admit=None):
@@ -254,12 +391,8 @@ def build(keep, items, out, old, p_group, h_group, p_write, admit=None):
             origins = {items[i]["origin"] for i in comp}
             if len(comp) < 2 or len(origins) < 2:
                 continue
-            proposed_card = {i: k for k, c in enumerate(m.get("cards") or []) for i in (c.get("items") or [])}
-            cards = components(comp, lambda a, b: proposed_card.get(a) == proposed_card.get(b)
-                               and KIND_GROUP.get(keep[a].get("kind")) == KIND_GROUP.get(keep[b].get("kind")))
-            cards.sort(key=lambda c: (-len(c), min((items[i].get("published") or "") for i in c)))
             used.update(comp)
-            matrici.append({"id": f"M{len(matrici) + 1}", "referent": m.get("referent"), "cards": [{"items": c} for c in cards],
+            matrici.append({"id": f"M{len(matrici) + 1}", "referent": m.get("referent"), "cards": proposed_cards(comp, m.get("cards")),
                             "items": comp, "origins": sorted(origins),
                             "strong": any(items[i].get("tier", "approved") in v2.STRONG for i in comp),
                             "date": max((items[i].get("published") or "")[:10] for i in comp), "removed": []})
@@ -269,6 +402,9 @@ def build(keep, items, out, old, p_group, h_group, p_write, admit=None):
     used_by_group = len(used)
     if os.getenv("DAILY_MERGE", "1") == "1":
         merge(matrici, used, keep, items, out, old.get("merge"))
+    out["cards_check"] = []
+    for m in matrici:
+        consolidate(m, keep, out["cards_check"])
     matrici.sort(key=lambda m: (not m["strong"], -len(m["origins"]), -len(m["items"]), m["date"]))
     out["matrici_before_admit"] = len(matrici)
     if admit:
@@ -279,7 +415,8 @@ def build(keep, items, out, old, p_group, h_group, p_write, admit=None):
         matrici = [m for m in matrici if admit(m)]
     for m in matrici:
         payload = {"referent": m["referent"], "cards": [{"index": k, "items": [{"source": items[i].get("publisher"), "kind": keep[i].get("kind"),
-                                                                                 "summary": keep[i].get("summary")} for i in c["items"]]}
+                                                                                 "summary": keep[i].get("summary")} for i in c["items"]],
+                                         **({"distinct_fact": c["why"]} if c.get("distinct") and c.get("why") else {})}
                                                         for k, c in enumerate(m["cards"])]}
         try:
             raw, cost, _ = call(DEEPSEEK, p_write, payload, max_tokens=2500)
@@ -311,7 +448,10 @@ def build(keep, items, out, old, p_group, h_group, p_write, admit=None):
                       "false_friend_numbers": sorted(i for i in keep if re.search(r"\b(bilion|trilion)[ei]\b", keep[i].get("summary", ""), re.I)),
                       "merge_joined": len((out.get("merge") or {}).get("joined", [])),
                       "merge_new_matrici": len((out.get("merge") or {}).get("new", [])),
-                      "merge_rejected": len((out.get("merge") or {}).get("rejected", []))}
+                      "merge_rejected": len((out.get("merge") or {}).get("rejected", [])),
+                      "merge_fused": len((out.get("merge") or {}).get("fused", [])),
+                      "cards_fused_by_code": sum(c["cards_before"] - c["cards_after"] for c in out["cards_check"]),
+                      "cards_kept_distinct": sum(len(m.get("kept_distinct", [])) for m in matrici)}
 
 
 def main(selection_path, out_dir):
