@@ -1,7 +1,8 @@
-# Nodi di dibattito — specifica del prototipo (3 novembre 2026)
+# Nodi di dibattito — specifica del prototipo (aggiornata il 4 novembre 2026)
 
 Seconda modalità di Ubik accanto all'attualità (Matrici della settimana, `docs/daily-spec.md`): la conoscenza.
 Un Topic è una mappa di pochi nodi progettati in redazione; ogni nodo è una domanda su cui il racconto si divide.
+Regola Topic / nodo, modalità del Topic (attualità, conoscenza) e formato dei dati: `docs/modello-dati.md`.
 Dati dei prototipi nel repository privato (`ubik-corpus/reports/nodi/`).
 
 ## Struttura
@@ -27,7 +28,12 @@ esterna, dichiarato come tale; tiene il posto della comunità).
 
 - Si cercano per domanda, non dai feed: documenti primari, la versione più forte di ogni tesi, le verifiche indipendenti.
 - Opinioni solo se di valore e non ridondanti. Media di Stato solo come voce di parte dichiarata.
-- Registro delle voci per Topic, accanto a quello delle testate: venti-quaranta persone approvate dalla redazione,
+- Registro delle voci per Topic, accanto a quello delle testate (per l'IA: `ubik-corpus/registry/ai-voices.json`,
+  42 voci approvate il 4 novembre 2026, ciascuna con i suoi canali: feed, newsletter, social, ricerca per domanda).
+  Criteri da rendere espliciti per le prossime approvazioni: competenza dimostrata sul tema (ricerca, pratica,
+  giornalismo di settore), argomenti propri e non rilanci, citazioni e verifiche ricostruibili, posizione dichiarata
+  quando è di parte; il registro deve coprire le posizioni in disaccordo, non solo le più vicine al consenso.
+  Venti-quaranta persone approvate dalla redazione,
   ognuna con i suoi canali raccoglibili (blog, Substack, Bluesky, Mastodon, YouTube, podcast). La qualità si decide
   sulla persona, non sul singolo testo. Si allarga dalle voci che le voci citano; dopo un fatto importante si cerca
   chi del registro ne ha scritto. Testi segnalati dalla redazione: testo e link, conservati nel corpus privato,
@@ -49,8 +55,16 @@ esterna, dichiarato come tale; tiene il posto della comunità).
 
 ## Prossimi passi
 
-1. Bozza del registro delle voci per l'Intelligenza artificiale, da approvare.
-2. Primo nodo d'analisi: il paper MIT «Sparks of Weight-Space Programming» (novembre 2026), con un'analisi segnalata
-   dalla redazione di chi ha riprodotto parte degli esperimenti.
-3. Ricostruire il nodo del 20 febbraio con un modello forte dalle stesse fonti e confrontarlo con la versione cieca.
-4. Costruire il nodo «Il presunto coinvolgimento americano», con le affermazioni in circolazione agganciate.
+1. Primo nodo d'analisi: il paper MIT «Sparks of Weight-Space Programming» (novembre 2026), con un'analisi segnalata
+   dalla redazione di chi ha riprodotto parte degli esperimenti (Giorgio Gilestro). Costruito con la pipeline
+   automatica a due livelli (modello economico per leggere e scartare, modello forte per mettere in relazione), così
+   da misurare il costo vero di un nodo.
+2. Ricostruire il nodo del 20 febbraio con un modello forte dalle stesse fonti e confrontarlo con la versione cieca.
+3. Costruire il nodo «Il presunto coinvolgimento americano», con le affermazioni in circolazione agganciate.
+
+## Costi stimati (4 novembre 2026)
+
+I tre prototipi sono stati costruiti in conversazione: costo non misurato. Stima per un nodo automatico (una ventina
+di ricerche, 15–25 fonti lette): 1,8–2,5 $ con un modello di punta, 1–1,3 $ con un modello intermedio, 0,5–0,9 $ a due
+livelli. Le Matrici della settimana costano 0,74 $ per 900 articoli e quattro sotto-topic. Nessuna tabella di marcia
+fissa per i nodi: ognuno va scelto, e si aggiorna con le sole fonti nuove invece di ricostruirlo.
