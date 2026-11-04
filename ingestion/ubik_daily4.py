@@ -419,7 +419,7 @@ def build(keep, items, out, old, p_group, h_group, p_write, admit=None):
         proposed = old["proposed"]
         out["group_reused"] = True
     else:
-        raw, cost, _ = call(DEEPSEEK, p_group, {"items": listing}, max_tokens=10000)
+        raw, cost, _ = call(DEEPSEEK, p_group, {"items": listing}, max_tokens=16000)
         out["cost"]["group"] = cost
         proposed = parse_json(raw["choices"][0]["message"]["content"]).get("matrici", [])
     out["proposed"] = proposed
