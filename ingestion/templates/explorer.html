@@ -275,7 +275,9 @@ function viewMatrix(id) {
     <div class="row muted" style="margin-top:8px;font-size:13px"><span>${m.pezzi.length} fonti da ${m.origini.length} testate</span><span>ultima fonte ${esc(m.data)}</span></div></div>
     ${m.nodi.length ? `<div class="panel"><span class="label">Nodi collegati</span>${m.nodi.map(x => `<div class="row" style="margin-top:6px"><a href="#n-${esc(x.nodo)}">${esc(D.nodi[x.nodo].titolo)}</a><span class="muted">${x.fonti_comuni.length} fonti in comune</span></div>`).join("")}</div>` : ""}
     <section><h2>Card</h2>${m.card.map(c => `<div class="card">
+      ${c.motivo ? `<div class="row"><span class="chip">${esc({fact: "Fatto distinto", contradicts: "Contraddice"}[c.motivo] || c.motivo)}</span></div>` : ""}
       ${c.titolo ? `<h3>${esc(c.titolo)}</h3>` : ""}${c.testo ? `<div>${esc(c.testo)}</div>` : ""}
+      ${c.aggiunge ? `<div class="muted">${esc(c.aggiunge)}</div>` : ""}
       ${c.pezzi.map(p => srcLine(p)).join("")}</div>`).join("")}</section>
     <div class="panel"><span class="label">Scheda di lavoro</span>${site(m.cantiere)}</div>`;
 }
