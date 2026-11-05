@@ -96,6 +96,10 @@ td.n { text-align: right; font-family: var(--mono); font-variant-numeric: tabula
 blockquote { margin: 6px 0 0; padding: 2px 0 2px 12px; border-left: 2px solid var(--accent); color: var(--quote); font-style: italic }
 blockquote .it { display: block; font-style: normal; color: var(--muted); font-size: 13.5px; margin-top: 3px }
 .card { display: grid; gap: 6px; padding: 14px 16px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg) }
+.cites { display: grid; gap: 6px; border-top: 1px solid var(--line); padding-top: 10px; margin-top: 4px }
+.cite { display: grid; gap: 1px; font-size: 14px }
+.cite .meta { font: 400 12px/1.4 var(--mono); color: var(--muted) }
+details.check > summary { font: 500 12.5px var(--body); color: var(--muted) }
 .chain { display: grid; gap: 0 }
 .ring { display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 10px; padding-bottom: 14px }
 .ring .dot { position: relative; display: flex; justify-content: center }
@@ -170,6 +174,13 @@ function srcLine(pid, extra = "") {
     ${n ? quote(n.citazione, n.citazione_it) : ""}
     ${extra}
   </div>`;
+}
+function cite(pid) {
+  // one line per source under the card's common synthesis: outlet, date, language, original title
+  const p = D.pezzi[pid] || {};
+  const t = p.titolo ? (p.url ? `<a href="${esc(p.url)}" target="_blank" rel="noopener">${esc(p.titolo)}</a>` : esc(p.titolo)) : srcShort(pid);
+  const meta = [p.testata, p.data, LANG[p.lingua] || p.lingua, p.testo_parziale ? "testo parziale" : null].filter(Boolean).map(esc).join(" · ");
+  return `<div class="cite"><span class="meta">${meta}</span><span>${t}</span></div>`;
 }
 function srcShort(pid) {
   const p = D.pezzi[pid] || {};
@@ -276,9 +287,11 @@ function viewMatrix(id) {
     ${m.nodi.length ? `<div class="panel"><span class="label">Nodi collegati</span>${m.nodi.map(x => `<div class="row" style="margin-top:6px"><a href="#n-${esc(x.nodo)}">${esc(D.nodi[x.nodo].titolo)}</a><span class="muted">${x.fonti_comuni.length} fonti in comune</span></div>`).join("")}</div>` : ""}
     <section><h2>Card</h2>${m.card.map(c => `<div class="card">
       ${c.motivo ? `<div class="row"><span class="chip">${esc({fact: "Fatto distinto", contradicts: "Contraddice"}[c.motivo] || c.motivo)}</span></div>` : ""}
-      ${c.titolo ? `<h3>${esc(c.titolo)}</h3>` : ""}${c.testo ? `<div>${esc(c.testo)}</div>` : ""}
+      ${c.titolo ? `<h3>${esc(c.titolo)}</h3>` : ""}
+      <div>${esc(c.testo || D.note[c.pezzi[0]]?.sintesi || "")}</div>
       ${c.aggiunge ? `<div class="muted">${esc(c.aggiunge)}</div>` : ""}
-      ${c.pezzi.map(p => srcLine(p)).join("")}</div>`).join("")}</section>
+      <div class="cites"><span class="label">${c.pezzi.length === 1 ? "Fonte" : `Fonti (${c.pezzi.length})`}</span>${c.pezzi.map(cite).join("")}</div>
+      <details class="check"><summary>Controllo: sintesi e citazione di ogni fonte</summary>${c.pezzi.map(p => srcLine(p)).join("")}</details></div>`).join("")}</section>
     <div class="panel"><span class="label">Scheda di lavoro</span>${site(m.cantiere)}</div>`;
 }
 
