@@ -300,7 +300,7 @@ function viewNode(id) {
   if (!n) return notFound();
   const topic = D.topic[n.topic];
   let body = "";
-  if (n.tipo === "fatto") body = nodeFact(n);
+  if (n.catene) body = nodeFact(n);  // every node now uses chains and links; the other two renderers are kept for old data
   else if (n.tipo === "analisi") body = nodePositions(n);
   else body = nodeClaim(n);
   return `<div><div class="crumb"><a href="#topic-${esc(topic.id)}">${esc(topic.nome)}</a> · ${esc(NODE_KIND[n.tipo] || "Nodo")} · ${esc(n.forma || "")}</div>
