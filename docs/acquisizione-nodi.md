@@ -88,9 +88,46 @@ SSRN, Taylor & Francis e un sito ucraino rifiutano (403). Nessuno è stato aggir
 Costo: zero (nessun modello, servizi gratuiti, Actions). Tempo: circa tre minuti per nodo per la ricerca; la
 selezione, fatta da Claude in conversazione, è la parte lunga.
 
-Prossimi passi per l'acquisizione:
-1. un motore di ricerca con chiave (per esempio Brave Search API), da creare a cura della redazione e salvare nei
-   segreti di GitHub: è il percorso che manca per le analisi recenti;
-2. un account Bluesky di Ubik con una password per le app, per la ricerca dei post;
-3. una selezione automatica a due livelli (modello economico che scarta, criteri espliciti), da misurare contro la
-   selezione di questa prova.
+## Il bacino delle fonti e la qualità (proposta del 6 novembre)
+
+Ogni strumento di ricerca serve a scoprire fonti, non è un archivio da cui dipendere. Il bacino estende la lista dei
+link e le fonti in prova: siti e autori scoperti da qualsiasi strumento, ciascuno con la sua storia. Il passaggio al
+registro resta una decisione della redazione, su proposta motivata.
+
+Si conservano la selezione di Ubik e le pagine raccolte dalla fonte, con la provenienza («trovata con…»); non le liste
+restituite dagli strumenti, che alcune condizioni d'uso vietano di conservare (Brave, nei piani senza diritti di
+conservazione) e che comunque non servono.
+
+Oggi il punteggio dello scout misura quanto un contributo è stato trovato, non quanto vale. La qualità si propone su
+due piani:
+
+| Piano | Criterio | Come si verifica |
+| --- | --- | --- |
+| Contributo | Rimanda a fonti primarie | Codice: quota di link verso sentenze, paper, dati, atti, repository |
+| Contributo | Porta prove proprie | Modello economico, con la frase che lo dimostra |
+| Contributo | Discute la posizione opposta | Modello, con la frase |
+| Contributo | Autore identificabile e competente | Modello e registro |
+| Contributo | Citazioni e numeri ritrovati | Codice |
+| Fonte | Esito delle selezioni, con i motivi | Codice, dal bacino |
+| Fonte | Citata dalle voci e dalle fonti già scelte | Codice |
+| Fonte | Record nelle catene (affermazioni confermate o smentite) | Codice, dai nodi |
+| Fonte | Trasparenza e interessi in causa | Controllo una tantum; gli interessi si etichettano |
+
+Un giudizio del modello conta solo se indica la frase e il codice la ritrova nel testo. La posizione sostenuta non
+pesa. I numeri si mostrano scomposti e propongono, non decidono.
+
+## Programma di sviluppo (indicativo)
+
+Ogni fase si misura prima della successiva; una misura deludente può cambiare l'ordine o togliere una fase.
+
+| Fase | Cosa | Serve | Misura |
+| --- | --- | --- | --- |
+| 1 | Motivi della selezione registrati criterio per criterio; primo record nelle catene dai tre nodi | Nulla | Ogni scelta ha i suoi motivi |
+| 2 | Bacino aggiornato da scout, lista dei link, selezioni e catene; proposte settimanali per il registro | Fase 1 | Proposte approvate |
+| 3 | Brave per le lacune; Bluesky autenticato | `BRAVE_API_KEY`, `BLUESKY_HANDLE`, `BLUESKY_APP_PASSWORD` nei segreti di `ubik-corpus`; conferma del supporto Brave | Rifare la prova sui tre nodi |
+| 4 | Indice a testo pieno sul corpus | Nulla | Ricerche risolte in casa |
+| 5 | Selezione automatica a due livelli | Fase 1 | Accordo con la selezione del 6 novembre; costo per nodo |
+| 6 | Sorveglianza dei nodi e stato «da aggiornare» | Fasi 3 e 5 | Aggiornamenti segnalati e confermati |
+
+Da valutare alle stesse regole: Common Crawl, Internet Archive (anche per i collegamenti morti), Wikidata, le
+raccomandazioni di Substack. GDELT resta accantonato finché rifiuta i server di GitHub.
