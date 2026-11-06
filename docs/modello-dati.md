@@ -1,4 +1,4 @@
-# Modello dei dati — bozza (4 novembre 2026)
+# Modello dei dati — bozza (aggiornata il 6 novembre 2026)
 
 Scopo: un formato unico da cui si generano tutte le pagine di Ubik (Topic, Matrici, card, nodi), l'esploratore
 privato e, più avanti, il sito. Oggi ogni prototipo ha un JSON suo (`daily-v5-*.json`, `node-cieco.json`,
@@ -28,12 +28,12 @@ Ogni oggetto ha `id` stabile, `asof` (data dell'ultimo aggiornamento) e un blocc
 | --- | --- | --- |
 | `fonte` | id, origin, nome, tipo, livello, lingua, accesso al testo (pieno/parziale), canale (feed, newsletter, social, ricerca) | registri in `ubik-corpus/registry/` |
 | `voce` | id, nome, ruolo, posizione, sotto-topic, canali → fonti | `registry/ai-voices.json` |
-| `pezzo` | id, fonte, url, data, titolo originale, lingua, testo parziale sì/no. Il testo resta solo nel corpus privato | corpus privato |
+| `pezzo` | id, fonte, url, data, titolo originale, lingua, testo parziale sì/no. Il testo resta solo nel corpus privato. Tipi di provenienza: feed, newsletter, ricerca, scout, segnalazione della redazione, documento primario (`corpus/documents/`) | corpus privato |
 | `nota` | pezzo, tipo (cronaca, analisi…), evento, sintesi, citazione verificata con traduzione, sotto-topic | `notes-v5.json` |
 | `card` | pezzi, titolo, testo (solo se più fonti) | dentro le Matrici |
 | `matrice` | id, settimana, sotto-topic, titolo, essenza, card, origini, numeri non ritrovati, nodi collegati | `daily-v5-*.json` |
 | `topic` | id, nome, modalità (attualità/conoscenza), perimetro, sotto-topic, nodi, voci | `TOPICS` in `ubik_daily5.py`, mappe nei documenti |
-| `nodo` | id, topic, tipo (fatto/analisi), domanda, testo da cui parte tutto (affermazioni → catene), catene o voci, affermazioni in circolazione, cosa lo scioglierebbe | `reports/nodi/` |
+| `nodo` | id, topic, tipo (fatto/analisi), domanda, testo da cui parte tutto (affermazioni → catene), catene, domande aperte, affermazioni in circolazione. Un'architettura sola per tutti i tipi (6 novembre): catene di anelli con relazioni | `reports/nodi/<nodo>/` (`node.json`; per il 20 febbraio `node-cieco.json`) |
 | `catena` | id, domanda, stato (aperta/chiusa/stallo), sintesi, anelli | dentro il nodo |
 | `anello` | pezzo, cosa afferma, citazione verificata, relazione con l'anello sopra | dentro la catena |
 | `relazione` | da, a, verbo (conferma, contesta, smentisce, estende, risponde a…), tipo (dichiarata, ricostruita, verifica di Ubik, simulata), nota | `relations`, `rel` |
@@ -67,6 +67,11 @@ L'esploratore ne ricava la vista d'insieme: cosa c'è, in che stato, quanto è c
 
 ## Passi
 
-1. Convertire i dati esistenti: Topic IA e la settimana 26 ottobre, i nodi fair use, 20 febbraio e USAID.
-2. Esploratore privato generato dall'esportazione: Topic → Matrici → nodi, con la vista del cantiere.
+1. Convertire i dati esistenti: Topic IA e la settimana 26 ottobre, i nodi fair use, 20 febbraio e USAID. Fatto il
+   4 novembre (`ubik-corpus/tools/build_model.py`); il 6 novembre i nodi usano tutti lo stesso convertitore a catene.
+2. Esploratore privato generato dall'esportazione: Topic → Matrici → nodi, con la vista del cantiere. Fatto
+   (`ingestion/ubik_explorer.py`). Le card mostrano una sintesi comune e l'elenco delle fonti; il dettaglio per
+   fonte resta come controllo.
 3. Far scrivere il formato direttamente alle pipeline (daily-v5 e nodi), al posto dei JSON di oggi.
+4. Acquisizione per i nodi con lo scout (`docs/acquisizione-nodi.md`): i candidati e la loro provenienza entrano nel
+   cantiere del nodo.

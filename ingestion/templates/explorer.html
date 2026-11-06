@@ -300,7 +300,8 @@ function viewNode(id) {
   if (!n) return notFound();
   const topic = D.topic[n.topic];
   let body = "";
-  if (n.catene) body = nodeFact(n);  // every node now uses chains and links; the other two renderers are kept for old data
+  if (n.forma === "catene e anelli" || n.tipo === "fatto") body = nodeFact(n);  // the architecture of every node since 6 November
+  else if (n.tipo === "affermazione") body = nodeClaim(n);
   else if (n.tipo === "analisi") body = nodePositions(n);
   else body = nodeClaim(n);
   return `<div><div class="crumb"><a href="#topic-${esc(topic.id)}">${esc(topic.nome)}</a> · ${esc(NODE_KIND[n.tipo] || "Nodo")} · ${esc(n.forma || "")}</div>
