@@ -262,8 +262,8 @@ almeno due fonti del corpus in due settimane, i link sull'IA delle antenne, le s
 Il difetto era una coda lunghissima: centinaia di siti diversi, ciascuno citato una o due volte. Nessun abbonamento la
 copre; la copre la raccolta delle pagine citate (`tools/fetch_cited.py`, ogni giorno): le pagine citate da due fonti,
 condivise da un'antenna o in prima pagina su Hacker News, raccolte con le regole del raccoglitore in `corpus/cited/`,
-con chi le ha citate. Primo giro: 687 pagine, 403 con testo integrale; 105 rifiutano il programma (403), 15 lo vietano in
-robots.txt, 3 hanno la riserva TDM.
+con chi le ha citate. Primi due giri: 687 pagine, 403 con testo integrale; 179 risposte di errore (soprattutto 403: il sito rifiuta il
+programma), 25 vietate da robots.txt, 6 con la riserva TDM.
 
 Dalla stessa verifica, in prova: 13 fonti primarie (`registry/primary-ai-probation.json`: i notiziari di OpenAI, Google,
 DeepMind, Microsoft, Meta, NVIDIA, Amazon, Apple, Hugging Face, Anthropic dalla sitemap, sempre come parti in causa;
