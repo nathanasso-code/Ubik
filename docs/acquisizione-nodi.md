@@ -194,6 +194,18 @@ La proposta per la redazione è in `reports/bacino/ia-proposta.json`, a gruppi e
 prova, 6 in prova con l'interesse in causa dichiarato, 15 non proposti, 186 account Bluesky come antenne (i link che
 condividono entrano nel bacino e nello scout, nessun testo raccolto né pubblicato).
 
+**Approvazione e secondo giro (7 novembre, sera).** La redazione ha approvato i gruppi 1 e 2 (24 fonti in prova,
+`registry/ai-probation.json`, raccolte dal giro successivo) e le 186 antenne. Tre passi nuovi:
+
+| Passo | Cosa fa | Esito del primo giro |
+| --- | --- | --- |
+| `resolve` | Brave per chi ha solo il profilo Bluesky: una ricerca per nome; si tiene solo il sito che passa una regola (cognome nel dominio, nome nel titolo, niente pagine profonde), non le liste | 286 ricerche, 96 siti, a campione tutti corretti; ma pochi feed: 4 sull'IA. I giornalisti scrivono sulle testate, i siti personali sono spesso pagine di presentazione |
+| `mastodon` | Account Mastodon di voci, antenne e fonti in prova (descrizioni Bluesky, link rel="me" dei siti, registro); chi seguono, dai server; feed RSS di ogni account | 15 account di partenza, 7.749 account visti, 1.224 candidati (seguiti da almeno 2); 24 nuovi feed attivi sull'IA (Doctorow, Matthew Green, Citizen Lab, Open Rights Group, Rachel Thomas…) |
+| `antennas` | I link condivisi su Bluesky da voci e antenne negli ultimi 14 giorni, in `reports/bacino/ia-antenne.json` (link e titoli delle schede, nessun testo); un sito diventa candidato se tre account ne condividono link sull'IA; lo scout li legge come percorso «antenne» | 998 link dopo la pulizia, 166 sull'IA (la settimana delle elezioni pesa); 14 siti candidati |
+
+`clean` ora unisce anche la stessa persona trovata su Bluesky e su Mastodon (stesso nome completo). Il bacino conta
+3.109 voci, 2.487 candidate. Le prossime proposte alla redazione partiranno dai nuovi feed sull'IA.
+
 ## Programma di sviluppo (indicativo)
 
 Ogni fase si misura prima della successiva; una misura deludente può cambiare l'ordine o togliere una fase.
@@ -206,6 +218,8 @@ Ogni fase si misura prima della successiva; una misura deludente può cambiare l
 | 4 | Indice a testo pieno sul corpus (attivo dal 7 novembre, `tools/corpus_index.py`); poi esteso ai feed in prova e ai link delle antenne | Nulla | Quota di ricerche risolte in casa rispetto a Brave |
 | 5 | Selezione automatica a due livelli | Fase 1 | Accordo con la selezione del 6 novembre; costo per nodo |
 | 6 | Sorveglianza dei nodi e stato «da aggiornare» | Fasi 3 e 5 | Aggiornamenti segnalati e confermati |
+
+Modelli locali: un modello piccolo che gira su un computer della redazione può filtrare e classificare i testi del corpus senza che escano dalle nostre macchine, e con strumenti come Soup (addestramento su portatile con poca memoria video) si può addestrare sulle selezioni registrate per la prima scrematura della fase 5. Serve prima qualche centinaio di selezioni con i motivi, e un computer con scheda grafica: i server di GitHub non ne hanno.
 
 Da valutare alle stesse regole: Common Crawl, Internet Archive (anche per i collegamenti morti), Wikidata, le
 raccomandazioni di Substack. GDELT resta accantonato finché rifiuta i server di GitHub.
