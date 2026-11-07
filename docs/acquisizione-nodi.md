@@ -232,7 +232,7 @@ perché il feed RSS è vuoto nel fine settimana), i working paper dell'NBER, Int
 Nature Machine Intelligence, Technology in Society, JAIR. Si conserva l'abstract del feed (il testo integrale solo dove il
 feed lo porta); la pertinenza a topic e nodi la decide la pipeline. Esclusi: riviste senza articoli sull'IA nelle ultime
 quattro settimane, SocArXiv (solo API), le riviste Springer (nessun feed funzionante: da rifare con l'API di OpenAlex).
-Prima raccolta: 307 abstract. Il raccoglitore prende al massimo 40 voci nuove per fonte a ogni giro: per cs.AI, cs.CL e
+Prima raccolta: 297 abstract (Nature Machine Intelligence nessuno: il feed va ricontrollato). Il raccoglitore prende al massimo 40 voci nuove per fonte a ogni giro: per cs.AI, cs.CL e
 cs.LG, che pubblicano centinaia di preprint al giorno, è un campione, non la copertura completa.
 
 **Studiosi dalle citazioni dei nodi.** `bacino.py cited` sostituisce la ricerca per parole chiave su OpenAlex: parte
