@@ -225,6 +225,26 @@ delle pagine scelte con Brave entrano nel bacino, e quelli con un feed in prova 
 Perspectives, Foundation for American Innovation, CCIA). La misura va ripetuta a ogni giro; il registro
 dell'esecuzione, che contiene i risultati di Brave, viene cancellato dopo la lettura.
 
+**Raccoglitori di studi (7 novembre, notte).** Per ogni ambito il corpus va esteso ai raccoglitori pubblici di studi,
+non solo agli autori. Per l'IA ne sono stati controllati 20 (`registry/research-ai-candidates.json`) e 11 sono in prova
+(`registry/research-ai-probation.json`): cinque categorie di arXiv (cs.CY, cs.AI, cs.CL, cs.LG, econ.GN, dall'API
+perché il feed RSS è vuoto nel fine settimana), i working paper dell'NBER, Internet Policy Review, Big Data & Society,
+Nature Machine Intelligence, Technology in Society, JAIR. Si conserva l'abstract del feed (il testo integrale solo dove il
+feed lo porta); la pertinenza a topic e nodi la decide la pipeline. Esclusi: riviste senza articoli sull'IA nelle ultime
+quattro settimane, SocArXiv (solo API), le riviste Springer (nessun feed funzionante: da rifare con l'API di OpenAlex).
+Prima raccolta: 307 abstract. Il raccoglitore prende al massimo 40 voci nuove per fonte a ogni giro: per cs.AI, cs.CL e
+cs.LG, che pubblicano centinaia di preprint al giorno, è un campione, non la copertura completa.
+
+**Studiosi dalle citazioni dei nodi.** `bacino.py cited` sostituisce la ricerca per parole chiave su OpenAlex: parte
+dagli studi usati nei nodi (quattro trovati su OpenAlex), prende i lavori che li citano e quelli che citano, e propone
+gli autori presenti in almeno due di questi lavori. Primo giro: 145 lavori, 25 autori, quasi tutti pertinenti (la
+comunità dello «spazio dei pesi» per il nodo del MIT, gli studiosi di diritto d'autore e modelli linguistici per il fair
+use); una rassegna generica resta l'eccezione. Il loro canale è OpenAlex: servono allo scout, non alla raccolta.
+
+**Antenne Mastodon.** Gli account Mastodon seguiti da almeno quattro account della base sono diventati antenne (181), e
+i link che condividono entrano nello stesso archivio di Bluesky: 2.825 link, 297 sull'IA. Il bilancio delle fonti in
+prova e la nuova misura di Brave sono previsti per il 21 novembre.
+
 ## Programma di sviluppo (indicativo)
 
 Ogni fase si misura prima della successiva; una misura deludente può cambiare l'ordine o togliere una fase.
