@@ -204,7 +204,7 @@ condividono entrano nel bacino e nello scout, nessun testo raccolto né pubblica
 | `antennas` | I link condivisi su Bluesky da voci e antenne negli ultimi 14 giorni, in `reports/bacino/ia-antenne.json` (link e titoli delle schede, nessun testo); un sito diventa candidato se tre account ne condividono link sull'IA; lo scout li legge come percorso «antenne» | 998 link dopo la pulizia, 166 sull'IA (la settimana delle elezioni pesa); 14 siti candidati |
 
 `clean` ora unisce anche la stessa persona trovata su Bluesky e su Mastodon (stesso nome completo). Il bacino conta
-3.109 voci, 2.487 candidate. Seconda proposta (14 fonti, da Mastodon e dalle antenne) in prova lo stesso giorno, con Terence Tao (blog e Mastodon), segnalato dalla redazione. Dal 7 novembre la regola è questa: ogni gruppo proposto dal bacino entra in prova con i suoi motivi registrati, e la redazione toglie quello che non vuole. Prima raccolta: 40 fonti in prova, 39 con articoli (Future of Life Institute non risponde in tempo), circa 800 testi entrati nel corpus e nell'indice interno.
+3.109 voci, 2.487 candidate. Seconda proposta (14 fonti, da Mastodon e dalle antenne) in prova lo stesso giorno, con Terence Tao (blog e Mastodon), segnalato dalla redazione. Dal 7 novembre la regola è questa: ogni gruppo proposto dal bacino entra in prova con i suoi motivi registrati, e la redazione toglie quello che non vuole. Prima raccolta: 40 fonti in prova, 39 con articoli (Future of Life Institute non risponde in tempo), 731 testi entrati nel corpus e nell'indice interno.
 
 ## Programma di sviluppo (indicativo)
 
