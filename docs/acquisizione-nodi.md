@@ -110,6 +110,20 @@ dell'esecuzione, la selezione li legge, e dopo la selezione l'esecuzione viene c
 (`gh api -X DELETE repos/nathanasso-code/ubik-corpus/actions/runs/<id>`). Restano le pagine scelte e raccolte, con
 «trovata con Brave». Costo del giro: 21 ricerche, dentro il credito mensile gratuito.
 
+**Che cosa è entrato nei nodi (7 novembre).** 17 pagine scelte, 15 raccolte (Publishers Weekly vieta in robots.txt, Econ Journal Watch non è più all'indirizzo), 10 entrate nei nodi; ogni citazione è
+ritrovata parola per parola nel testo raccolto.
+
+| Nodo | Entrate | Effetto sul nodo |
+| --- | --- | --- |
+| MIT | Goedecke, R&D World, quattro repliche su GitHub | La catena su Qwen si chiude: la modifica pubblicata si riproduce (50-51%), ma con il ragionamento spento il modello di base fa già il 45%, e una replica ottiene la stessa modifica con script, senza Astra. Nuova catena: la modifica dei pesi al posto dell'addestramento, con due repliche che arrivano a esiti diversi su compiti diversi |
+| Fair use | Publishing Perspectives, CCIA, Foundation for American Innovation | Le 51 memorie di terzi nella causa contro OpenAI, lo studio sulla diluizione escluso dalle prove, una teoria nuova sul quarto fattore |
+| 20 febbraio | Katchanovski e Abrahms (2024) | Nuova catena: lo studio scrive che il processo ha confermato i «cecchini georgiani»; la sentenza ammette la deposizione e la dichiara smentita. La verifica è sul testo integrale già nel corpus |
+
+Scartate dopo la lettura: una pagina divulgativa scritta per i motori di ricerca e un saggio che ripete argomenti già
+nel nodo (MIT); la pagina di EFF che contiene solo il collegamento al PDF (fair use); Nonzero (testo riservato agli
+abbonati) e openDemocracy (87 parole raccolte, già nel nodo da un'altra pagina) per il 20 febbraio. Brave ha
+portato 9 delle 10 entrate; Bluesky una, Goedecke.
+
 ## Il bacino delle fonti e la qualità (proposta del 6 novembre)
 
 Ogni strumento di ricerca serve a scoprire fonti, non è un archivio da cui dipendere. Il bacino estende la lista dei
@@ -138,6 +152,48 @@ due piani:
 Un giudizio del modello conta solo se indica la frase e il codice la ritrova nel testo. La posizione sostenuta non
 pesa. I numeri si mostrano scomposti e propongono, non decidono.
 
+## Il bacino dell'IA: primo giro (7 novembre)
+
+Strumento: `ubik-corpus/tools/bacino.py`, workflow `bacino.yml` (su richiesta, `runs/bacino.request`), archivio
+`registry/bacino-ia.json`. Nessun modello; costo zero. I passi:
+
+| Passo | Cosa fa |
+| --- | --- |
+| `seed` | Le 42 voci approvate, i siti dei nodi, le firme degli articoli del corpus |
+| `expand` | Chi seguono le voci su Bluesky (almeno 3 voci), i siti che le voci citano (almeno 2), gli autori di OpenAlex sui sottotopic |
+| `channels` | Per ogni sito: robots.txt, feed dichiarati o agli indirizzi usuali, quota di articoli sull'IA, riserva TDM, data dell'ultimo articolo |
+| `clean` | Esclude domini già nel registro, doppioni dello stesso dominio, rumore residuo (testate generaliste, aziende, CDN, documenti primari, feed dei commenti); assegna a ogni voce una classe di canale |
+| `measure` | Che cosa avrebbero portato i feed in due settimane (26 ottobre - 7 novembre): articoli, quanti sull'IA, quanti su una Matrice della settimana o su un nodo. Solo titolo, link e data; nulla entra nel corpus |
+
+Ogni voce conserva come è stata trovata, da chi e con quali segnali; esclusioni e doppioni restano registrati con il
+motivo.
+
+| | Voci |
+| --- | --- |
+| Nel bacino | 1.736 (42 approvate) |
+| Già fonti del registro, doppioni | 28, 13 |
+| Feed attivo sull'IA (almeno 30% degli articoli, ultimo articolo entro 120 giorni) | 39 |
+| Feed attivo su altro | 64 |
+| Solo Bluesky | 832 (186 seguiti da almeno 5 voci) |
+| Solo OpenAlex | 311 |
+| Firme delle testate già approvate | 305 |
+
+Cosa dice la misura:
+- i 103 feed attivi hanno pubblicato 808 articoli in due settimane, 185 sull'IA; quasi tutti nuovi rispetto alle
+  Matrici (4 articoli su una Matrice della settimana del 26 ottobre, 1 su un nodo). Il confronto usa i nomi propri
+  dei titoli: è indicativo;
+- gli autori singoli scrivono poco (da zero a cinque articoli in due settimane): il loro valore è l'analisi, non la
+  copertura delle notizie. Per i nodi servono più come antenne e come spazio di ricerca che come abbonamento;
+- Bluesky è la fonte migliore di nomi: chi è seguito da molte voci è quasi sempre pertinente (ricercatori, giornalisti
+  specializzati, centri studi), con qualche eccezione da togliere a mano (politici, umoristi, omonimi);
+- i link citati dalle voci sono utili dopo la pulizia (METR, Epoch, LessWrong, Dwarkesh, Marginal Revolution);
+- OpenAlex, cercato per parole chiave sui lavori più citati, porta soprattutto autori di rassegne generiche e di
+  settori lontani. Risultato negativo: va rifatto partendo dalle citazioni dei documenti dei nodi.
+
+La proposta per la redazione è in `reports/bacino/ia-proposta.json`, a gruppi e con i motivi: 18 siti e autori in
+prova, 6 in prova con l'interesse in causa dichiarato, 15 non proposti, 186 account Bluesky come antenne (i link che
+condividono entrano nel bacino e nello scout, nessun testo raccolto né pubblicato).
+
 ## Programma di sviluppo (indicativo)
 
 Ogni fase si misura prima della successiva; una misura deludente può cambiare l'ordine o togliere una fase.
@@ -145,9 +201,9 @@ Ogni fase si misura prima della successiva; una misura deludente può cambiare l
 | Fase | Cosa | Serve | Misura |
 | --- | --- | --- | --- |
 | 1 | Motivi della selezione registrati criterio per criterio; primo record nelle catene dai tre nodi | Nulla | Ogni scelta ha i suoi motivi |
-| 2 | Bacino aggiornato da scout, lista dei link, selezioni e catene; proposte settimanali per il registro | Fase 1 | Proposte approvate |
+| 2 | Bacino aggiornato da scout, lista dei link, selezioni e catene; proposte settimanali per il registro (primo giro sull'IA il 7 novembre: semi, Bluesky, link delle voci, canali, misura) | Fase 1 | Proposte approvate; articoli pertinenti dei feed in prova |
 | 3 | Brave per le lacune; Bluesky autenticato (attivi dal 7 novembre) | `BRAVE_API_KEY`, `BLUESKY_HANDLE`, `BLUESKY_APP_PASSWORD` nei segreti di `ubik-corpus`; conferma del supporto Brave | Rifare la prova sui tre nodi |
-| 4 | Indice a testo pieno sul corpus | Nulla | Ricerche risolte in casa |
+| 4 | Indice a testo pieno sul corpus (attivo dal 7 novembre, `tools/corpus_index.py`); poi esteso ai feed in prova e ai link delle antenne | Nulla | Quota di ricerche risolte in casa rispetto a Brave |
 | 5 | Selezione automatica a due livelli | Fase 1 | Accordo con la selezione del 6 novembre; costo per nodo |
 | 6 | Sorveglianza dei nodi e stato «da aggiornare» | Fasi 3 e 5 | Aggiornamenti segnalati e confermati |
 
