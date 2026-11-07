@@ -271,9 +271,22 @@ l'AI Security Institute e GOV.UK) e 12 testate citate spesso ma assenti (New Yor
 Bloomberg e Nikkei con titolo e sommario soltanto, perché a pagamento; CNBC, BBC, Semafor, The Register, Pew Research,
 Citation Needed, Scientific American).
 
-Resta da fare: i feed di FTC, ICO, OCSE, Garante, AGCOM, CDT (indirizzi da trovare); EUR-Lex; le riviste Springer e i
-lavori degli studiosi tramite OpenAlex; Reuters non ha un feed pubblico. Le pagine che rifiutano il programma non si
-aggirano: restano fuori, o entrano dal feed della testata se è nel registro.
+Punti chiusi la stessa notte:
+- **OpenAlex nel raccoglitore.** Una fonte può essere un filtro di OpenAlex invece di un feed (`openalex`: una rivista
+  per ISSN, un elenco di autori): titolo, autori, data e abstract, senza aprire la pagina. Così entrano le quattro riviste
+  Springer (AI & Society, AI and Ethics, Philosophy & Technology, Minds and Machines), Nature Machine Intelligence e i
+  nuovi lavori dei 24 studiosi trovati con le citazioni dei nodi. Prima raccolta: 191 lavori, 113 con abstract.
+- **Sitemap con filtro.** Per i siti senza feed il raccoglitore legge la sitemap e tiene solo i percorsi indicati
+  (`sitemap_filter`): Anthropic (notizie, ricerca, ingegneria) e Artificial Analysis (articoli). `tools/sitemap_probe.py`
+  controlla robots.txt, sitemap e pagine recenti dei siti senza feed.
+- **Esiti negativi, registrati.** FTC: i feed esistono ma rispondono 403 al programma. Reuters: robots.txt vieta la
+  raccolta. Garante, AGCOM, ICO, CDT, Gizmodo: nessun feed né sitemap raggiungibile. Nessuno si aggira: le loro pagine
+  entrano solo quando le fonti le citano, se il sito le serve.
+- **EUR-Lex.** Gli avvisi RSS costruiti su una ricerca richiedono un account My EUR-Lex: lo crea la redazione, poi
+  l'indirizzo del feed entra nel registro come le altre fonti istituzionali.
+
+La prima raccolta delle fonti primarie e delle testate nuove funziona: OpenAI, DeepMind, Hugging Face e Anthropic al
+limite di 40 voci nuove per giro, le testate a pagamento con titolo e sommario. Microsoft AI non ha portato voci.
 
 ## Programma di sviluppo (indicativo)
 
