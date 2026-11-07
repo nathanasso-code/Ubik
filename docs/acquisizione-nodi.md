@@ -206,6 +206,25 @@ condividono entrano nel bacino e nello scout, nessun testo raccolto né pubblica
 `clean` ora unisce anche la stessa persona trovata su Bluesky e su Mastodon (stesso nome completo). Il bacino conta
 3.109 voci, 2.487 candidate. Seconda proposta (14 fonti, da Mastodon e dalle antenne) in prova lo stesso giorno, con Terence Tao (blog e Mastodon), segnalato dalla redazione. Dal 7 novembre la regola è questa: ogni gruppo proposto dal bacino entra in prova con i suoi motivi registrati, e la redazione toglie quello che non vuole. Prima raccolta: 40 fonti in prova, 39 con articoli (Future of Life Institute non risponde in tempo), 731 testi entrati nel corpus e nell'indice interno.
 
+**Terzo giro dello scout (7 novembre, sera): quanto serve ancora Brave.** Stesse ricerche dei giri precedenti, con le
+fonti in prova nel corpus, il percorso delle antenne e l'indice interno costruito senza le pagine già scelte dallo
+scout (altrimenti le ritroverebbe in casa per costruzione).
+
+| | 20 febbraio | Fair use | MIT |
+| --- | --- | --- | --- |
+| Ricerche risolte in casa (almeno tre risultati nell'indice) | 0 su 11 | 5 su 11 | 2 su 11 |
+| Fonti scelte a mano ritrovate | 3 su 10 | 14 su 22 (10 tra i primi 100, prima 6) | 1 su 2 |
+| Pagine scelte con Brave ritrovate per altre vie | 0 su 4 | 0 su 5 | 0 su 7 |
+| Candidati dalle antenne | 0 | 0 | 1 (il rapporto stesso) |
+
+Brave oggi non è sostituibile: le pagine che ha portato vengono da siti fuori dal corpus (stampa di settore,
+associazioni, repository di GitHub, riviste), e nessun altro percorso le ritrova. L'indice interno risponde alle
+domande generali dove il corpus è ampio (il fair use), non ai casi specifici, e non copre l'Euromaidan, che è fuori
+dall'ambito dell'IA. La via per ridurre la dipendenza è allargare il corpus proprio dove Brave ha trovato: i siti
+delle pagine scelte con Brave entrano nel bacino, e quelli con un feed in prova (R&D World, Ashish Kumar, Publishing
+Perspectives, Foundation for American Innovation, CCIA). La misura va ripetuta a ogni giro; il registro
+dell'esecuzione, che contiene i risultati di Brave, viene cancellato dopo la lettura.
+
 ## Programma di sviluppo (indicativo)
 
 Ogni fase si misura prima della successiva; una misura deludente può cambiare l'ordine o togliere una fase.
