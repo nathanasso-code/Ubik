@@ -88,6 +88,28 @@ SSRN, Taylor & Francis e un sito ucraino rifiutano (403). Nessuno è stato aggir
 Costo: zero (nessun modello, servizi gratuiti, Actions). Tempo: circa tre minuti per nodo per la ricerca; la
 selezione, fatta da Claude in conversazione, è la parte lunga.
 
+## Secondo giro: Brave e Bluesky (7 novembre)
+
+Chiave Brave e account Bluesky di Ubik (password per le app) nei segreti di `ubik-corpus`. Bluesky ora cerca con
+l'accesso; Brave serve solo per le ricerche sulle lacune (sette per nodo).
+
+| | 20 febbraio | Fair use | MIT |
+| --- | --- | --- | --- |
+| Fonti scelte a mano ritrovate, per indirizzo | 3 su 10 (prima 1) | 11 su 22 (prima 6) | 1 su 2 |
+| Stessa opera anche a un altro indirizzo | 4 su 10 | 14 su 22 | 1 su 2, più Goedecke (la lacuna del 6 novembre) |
+| Candidati da Bluesky | 50 | 290 | 93 |
+| Candidati da Brave | 85 | 123 | 65 |
+
+Bluesky ha trovato le memorie di ottobre sul fair use (EFF, Wikimedia, Kelly, Authors Alliance) e il testo di
+Goedecke; Brave ha trovato Risch, il capitolo di Katchanovski del 2024, la sua critica a SITU, le rassegne delle oltre 50
+memorie nella causa contro OpenAI e sei riproduzioni del paper del MIT. Il rumore di Brave è alto: decine di pagine
+divulgative scritte per i motori di ricerca.
+
+**Risultati di Brave.** Quelli trovati solo da Brave non entrano nel repository: lo scout li stampa nel registro
+dell'esecuzione, la selezione li legge, e dopo la selezione l'esecuzione viene cancellata
+(`gh api -X DELETE repos/nathanasso-code/ubik-corpus/actions/runs/<id>`). Restano le pagine scelte e raccolte, con
+«trovata con Brave». Costo del giro: 21 ricerche, dentro il credito mensile gratuito.
+
 ## Il bacino delle fonti e la qualità (proposta del 6 novembre)
 
 Ogni strumento di ricerca serve a scoprire fonti, non è un archivio da cui dipendere. Il bacino estende la lista dei
@@ -124,7 +146,7 @@ Ogni fase si misura prima della successiva; una misura deludente può cambiare l
 | --- | --- | --- | --- |
 | 1 | Motivi della selezione registrati criterio per criterio; primo record nelle catene dai tre nodi | Nulla | Ogni scelta ha i suoi motivi |
 | 2 | Bacino aggiornato da scout, lista dei link, selezioni e catene; proposte settimanali per il registro | Fase 1 | Proposte approvate |
-| 3 | Brave per le lacune; Bluesky autenticato | `BRAVE_API_KEY`, `BLUESKY_HANDLE`, `BLUESKY_APP_PASSWORD` nei segreti di `ubik-corpus`; conferma del supporto Brave | Rifare la prova sui tre nodi |
+| 3 | Brave per le lacune; Bluesky autenticato (attivi dal 7 novembre) | `BRAVE_API_KEY`, `BLUESKY_HANDLE`, `BLUESKY_APP_PASSWORD` nei segreti di `ubik-corpus`; conferma del supporto Brave | Rifare la prova sui tre nodi |
 | 4 | Indice a testo pieno sul corpus | Nulla | Ricerche risolte in casa |
 | 5 | Selezione automatica a due livelli | Fase 1 | Accordo con la selezione del 6 novembre; costo per nodo |
 | 6 | Sorveglianza dei nodi e stato «da aggiornare» | Fasi 3 e 5 | Aggiornamenti segnalati e confermati |
