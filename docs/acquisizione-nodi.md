@@ -245,6 +245,36 @@ use); una rassegna generica resta l'eccezione. Il loro canale è OpenAlex: servo
 i link che condividono entrano nello stesso archivio di Bluesky: 2.825 link, 297 sull'IA. Il bilancio delle fonti in
 prova e la nuova misura di Brave sono previsti per il 21 novembre.
 
+## Verifica della copertura (7 novembre, notte)
+
+Domanda: di ciò che il dibattito sull'IA sta leggendo, quanto arriva nel corpus? `tools/coverage.py` (workflow
+`coverage.yml`, ogni giorno) confronta quattro insiemi di riferimento con il registro e con il corpus: le pagine citate da
+almeno due fonti del corpus in due settimane, i link sull'IA delle antenne, le storie sull'IA di Hacker News con almeno
+100 punti, Techmeme. Si contano solo le pagine con testo.
+
+| Insieme | Link | Sito già fonte, prima → dopo | Pagina nel corpus, prima → dopo |
+| --- | --- | --- | --- |
+| Citate da due fonti | 316 | 16% → 29% | 7% → 71% |
+| Antenne | 297 | 34% → 37% | 22% → 87% |
+| Hacker News | 228 | 9% → 17% | 7% → 40% |
+| Techmeme | 15 | 0% → 60% | 0% → 13% |
+
+Il difetto era una coda lunghissima: centinaia di siti diversi, ciascuno citato una o due volte. Nessun abbonamento la
+copre; la copre la raccolta delle pagine citate (`tools/fetch_cited.py`, ogni giorno): le pagine citate da due fonti,
+condivise da un'antenna o in prima pagina su Hacker News, raccolte con le regole del raccoglitore in `corpus/cited/`,
+con chi le ha citate. Primo giro: 687 pagine, 403 con testo integrale; 105 rifiutano il programma (403), 15 lo vietano in
+robots.txt, 3 hanno la riserva TDM.
+
+Dalla stessa verifica, in prova: 13 fonti primarie (`registry/primary-ai-probation.json`: i notiziari di OpenAI, Google,
+DeepMind, Microsoft, Meta, NVIDIA, Amazon, Apple, Hugging Face, Anthropic dalla sitemap, sempre come parti in causa;
+l'AI Security Institute e GOV.UK) e 12 testate citate spesso ma assenti (New York Times, Washington Post, Financial Times,
+Bloomberg e Nikkei con titolo e sommario soltanto, perché a pagamento; CNBC, BBC, Semafor, The Register, Pew Research,
+Citation Needed, Scientific American).
+
+Resta da fare: i feed di FTC, ICO, OCSE, Garante, AGCOM, CDT (indirizzi da trovare); EUR-Lex; le riviste Springer e i
+lavori degli studiosi tramite OpenAlex; Reuters non ha un feed pubblico. Le pagine che rifiutano il programma non si
+aggirano: restano fuori, o entrano dal feed della testata se è nel registro.
+
 ## Programma di sviluppo (indicativo)
 
 Ogni fase si misura prima della successiva; una misura deludente può cambiare l'ordine o togliere una fase.
