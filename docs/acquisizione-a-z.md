@@ -24,7 +24,7 @@ prova di profondità).
 | --- | --- |
 | `nathanasso-code/Ubik` (pubblico) | Codice della pipeline delle Matrici (`ingestion/`), prompt delle Matrici (`prompts/`), documentazione (`docs/`) |
 | `nathanasso-code/ubik-corpus` (privato) | Registri delle fonti (`registry/`), corpus dei testi (`corpus/`), strumenti (`tools/`), prompt dei nodi (`prompts/`), workflow (`.github/workflows/`), richieste di esecuzione (`runs/`), risultati (`reports/`) |
-| Segreti di `ubik-corpus` (solo i nomi) | `OPENROUTER_API_KEY`, `BRAVE_API_KEY`, `BLUESKY_HANDLE`, `BLUESKY_APP_PASSWORD`, `GNEWS_API_KEY`, `UBIK_GMAIL_*`, `COURTLISTENER_API_TOKEN` |
+| Segreti di `ubik-corpus` (solo i nomi) | `OPENROUTER_API_KEY`, `BRAVE_API_KEY`, `BLUESKY_HANDLE`, `BLUESKY_APP_PASSWORD`, `GNEWS_API_KEY`, `UBIK_GMAIL_*`, `COURTLISTENER_API_KEY` |
 | Documento «Ubik — Acquisizione delle fonti» (Claude Docs) | La versione da leggere per la redazione |
 | Esploratore (artefatto) | Le Matrici e i nodi visti come pagina |
 
@@ -248,12 +248,15 @@ fermato al secondo giro (90 pagine): i contributi buoni erano quasi tutti PDF.
 - **Per l'attualità**: oltre a ciò che c'è, il valore aggiunto viene dalle citazioni interne alle fonti (pagine citate,
   antenne, setaccio), dalle segnalazioni della redazione e, più avanti, da una comunità. Rifare lo scout sul nodo ogni
   settimana, giudicando solo i candidati nuovi, è il modo economico di tenerlo aggiornato.
-- **CourtListener attraverso l'API** (approvata l'8 novembre, `tools/courtlistener.py`): il sito vieta i programmi in
-  robots.txt, l'API è aperta a chi ha un account. Quando il giudizio o la raccolta mirata incontrano una pagina di docket
-  con il numero della voce, o una sentenza, la sostituiscono con il documento RECAP (testo estratto o PDF su
-  storage.courtlistener.com) o con il testo della sentenza. Piano gratuito: 5 richieste al minuto, 50 l'ora, 125 al
-  giorno; le chiamate sono distanziate, al massimo 40 per esecuzione, e si fermano al primo rifiuto. Senza il segreto
-  `COURTLISTENER_API_TOKEN` non cambia nulla. Da valutare: le copie dell'Internet Archive per le pagine rifiutate.
+- **CourtListener attraverso l'API** (approvata l'8 novembre, `tools/courtlistener.py`, segreto `COURTLISTENER_API_KEY`).
+  robots.txt chiude tutto il sito ai programmi non nominati (`User-agent: *`, `Disallow: /`, che alla lettera comprende
+  anche l'API) e nello stesso file li manda all'API («If you would like to crawl CourtListener, please contact us. We also
+  have an extensive REST API»). Gli indirizzi dell'API, usati con il token dell'account e nei suoi limiti, sono l'unica
+  eccezione al controllo di robots.txt; tutto il resto, compresi i PDF su storage.courtlistener.com, resta controllato.
+  Quando il giudizio o la raccolta mirata incontrano una pagina di docket con il numero della voce, o una sentenza, la
+  sostituiscono con il documento RECAP (testo estratto o PDF) o con il testo della sentenza. Piano gratuito: 5 richieste al
+  minuto, 50 l'ora, 125 al giorno; al massimo 40 chiamate per esecuzione, ci si ferma al primo rifiuto. Token verificato l'8
+  novembre (risposta 200). Da valutare: le copie dell'Internet Archive per le pagine rifiutate.
 
 ## 10. Da fare
 
