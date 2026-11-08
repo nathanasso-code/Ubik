@@ -260,17 +260,29 @@ fermato al secondo giro (90 pagine): i contributi buoni erano quasi tutti PDF.
 
 ## 10. Da fare
 
-1. Difetti delle proposte: doppioni dello stesso documento, un limite di proposte per catena, l'etichetta per la
-   propaganda di Stato, il confronto delle affermazioni con i documenti primari del corpus.
-2. Le proposte nell'esploratore, da accettare o rifiutare.
-3. I riferimenti dei PDF e il grafo delle citazioni nel setaccio; rifare la prova di profondità con Wikipedia accesa e
-   spenta.
-4. Rilanciare il giudizio sui tre nodi con il primo livello nuovo, `k` più alto e CourtListener attivo, e misurare di
-   nuovo contro le scelte a mano.
-5. Un quarto nodo d'attualità costruito con la pipeline dall'inizio.
-6. 21 novembre (promemoria già fissato): bilancio delle fonti in prova e nuova misura di Brave.
-7. Feed fermi di ANSA, Corriere e Wired; variabilità del raggruppamento delle Matrici; simulazione della conservazione dei
-   testi (rinviata dalla redazione).
+In ordine (riordinato l'8 novembre, sera):
+
+1. **Rilanciare il giudizio sui tre nodi** e misurare di nuovo contro le scelte a mano. Mette alla prova, in
+   un'esecuzione vera, le correzioni dell'8 novembre: primo livello più largo, `k` più alto, riferimenti presi dal corpo
+   del testo, fascia «copertura», rimbalzo sull'archivio dell'ancora, CourtListener. Circa un dollaro. È anche il
+   confronto che conta oggi: pipeline automatica contro il lavoro fatto in conversazione.
+2. **Potare le vie che rendono poco** (sezione 9): Semantic Scholar, le antenne dentro lo scout, la ricerca per parole
+   chiave su OpenAlex, `resolve` (la ricerca dei siti con Brave), il terzo giro del setaccio. Decisione della redazione.
+3. **Un quarto nodo d'attualità** costruito con la pipeline dall'inizio: il banco di prova del metodo e delle proposte.
+4. **Difetti delle proposte** emersi lì e nei tre nodi: doppioni dello stesso documento, un limite di proposte per catena,
+   l'etichetta per la propaganda di Stato (lavoro di codice); il confronto delle affermazioni con i documenti primari del
+   corpus (il pezzo più difficile, quasi certamente con il modello). Poi le proposte nell'esploratore, da accettare o
+   rifiutare.
+5. **I riferimenti dei PDF e il grafo delle citazioni** nel setaccio; poi di nuovo la prova di profondità con Wikipedia
+   accesa e spenta.
+6. Il resto:
+   - 9 novembre (promemoria già fissato, nella conversazione da cui è partito): il giro delle Matrici sulla settimana
+     intera, dal 2 al 9 novembre, e la ripubblicazione della pagina; la misura dell'8 novembre si fermava al 7;
+   - 21 novembre (promemoria già fissato): bilancio delle fonti in prova e nuova misura di Brave;
+   - il nodo «Il presunto coinvolgimento americano» (Euromaidan): lavoro di contenuto su un tema storico, con semi e
+     affermazione di partenza già pronti; da non confondere con il quarto nodo d'attualità;
+   - feed fermi di ANSA, Corriere e Wired; variabilità del raggruppamento delle Matrici; simulazione della conservazione
+     dei testi (rinviata dalla redazione).
 
 ## 11. Come si lancia un'esecuzione
 
