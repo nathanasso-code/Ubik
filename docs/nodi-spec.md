@@ -88,3 +88,27 @@ dal codice (`ubik-corpus/tools/build_model.py`, `shown_quote`), per nodi e card:
 
 Una citazione oltre la regola resta nel file privato del nodo e non si mostra; l'anello mantiene la sintesi e il link. Il
 cantiere del nodo dice quante citazioni sono state nascoste.
+
+## Selezione automatica: prima prova (8 novembre 2026)
+
+Tre livelli, in `ubik-corpus/tools/`, sui candidati dello scout dei tre nodi:
+
+| Livello | Strumento | Cosa fa | Costo |
+| --- | --- | --- | --- |
+| 1 | `rank_candidates.py` | Filtro per codice su indirizzo, titolo, menzioni, voci: toglie piattaforme, pagine di servizio, repository fuori tema; tiene ciò che nomina il caso o porta prove | zero |
+| 2 | `judge_candidates.py`, `prompts/judge-node.txt` | DeepSeek legge l'inizio di ogni pagina tenuta (1.400 parole) e giudica: pertinenza, tipo, pagina derivata, prove proprie, novità per il nodo, argomenti contro, fonti primarie, autore competente. Ogni sì porta una frase che il codice ritrova nel testo; i testi non si conservano | 0,45 dollari per 1.050 pagine |
+| 3 | `propose_links.py`, `prompts/propose-link.txt` | Per le pagine con punteggio da 5 in su, propone l'anello nel formato del nodo; il codice controlla la citazione e la regola per la stampa. Le proposte vanno in `reports/nodi/<nodo>/proposte.json`, il nodo non si tocca | 0,07 dollari per 60 proposte |
+
+Il primo livello tiene circa un terzo dei candidati (475, 294, 281) e 25 delle 26 pagine scelte a mano presenti tra i
+candidati. Il secondo livello, con criteri severi («contributi, non copertura»: le pagine derivate perdono), mette in alto
+le scelte a mano leggibili (nel nodo del MIT 7 su 8 sopra 5) e trova molto che la selezione a mano non aveva: nel MIT
+una ventina di repliche e studi nuovi, nel fair use i documenti primari (sentenza d'appello su Ross, ordinanze di
+Chhabria, atto di citazione contro Meta, consultazione britannica) e uno studio su 14.419 libri che misura la
+diluizione del mercato, nel 20 febbraio testimonianze di manifestanti armati e le critiche metodologiche a Katchanovski.
+
+Revisione a campione delle 60 proposte: circa 22 su 25 utili nel MIT, 20 su 25 nel fair use, 8 su 10 nel 20 febbraio.
+Difetti da correggere prima di usarle: doppioni dello stesso documento a indirizzi diversi; troppe proposte per catena;
+fonti di propaganda statale etichettate solo come «parte interessata»; affermazioni su un documento primario (per
+esempio «la sentenza conferma…») proposte come verificate senza il confronto con il documento, che resta il lavoro
+della verifica di Ubik. Le pagine trovate solo da Brave non sono entrate nella prova: il giudizio va portato dentro il
+giro dello scout, prima che i risultati di Brave vengano cancellati.
