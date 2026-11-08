@@ -74,3 +74,17 @@ I tre prototipi sono stati costruiti in conversazione: costo non misurato. Stima
 di ricerche, 15–25 fonti lette): 1,8–2,5 $ con un modello di punta, 1–1,3 $ con un modello intermedio, 0,5–0,9 $ a due
 livelli. Le Matrici della settimana costano 0,74 $ per 900 articoli e quattro sotto-topic. Nessuna tabella di marcia
 fissa per i nodi: ognuno va scelto, e si aggiorna con le sole fonti nuove invece di ricostruirlo.
+
+## Citazioni mostrate (8 novembre 2026)
+
+I testi integrali restano nel corpus privato; nelle pagine si mostrano sintesi di Ubik e citazioni brevi. Regola applicata
+dal codice (`ubik-corpus/tools/build_model.py`, `shown_quote`), per nodi e card:
+
+| Fonte | Citazioni mostrate |
+| --- | --- |
+| Articoli di giornale e stampa di settore (diritto degli editori, art. 43-bis della legge sul diritto d'autore) | Al massimo una per articolo, entro circa 150 caratteri (gli «estratti molto brevi») |
+| Studi, blog, memorie, documenti delle parti | Citazione per discussione (art. 70), entro 300 caratteri |
+| Atti ufficiali (sentenze, leggi, documenti delle istituzioni) | Entro 300 caratteri; non protetti dal diritto d'autore |
+
+Una citazione oltre la regola resta nel file privato del nodo e non si mostra; l'anello mantiene la sintesi e il link. Il
+cantiere del nodo dice quante citazioni sono state nascoste.
