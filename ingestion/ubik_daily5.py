@@ -61,8 +61,27 @@ def admits(keep):
     return ok
 
 
+STRONG_TIERS = ("approved", "primary")
+
+
+def strong_only(out, items):
+    """A Matrice needs at least one approved or primary source: sources in probation never confirm each other
+    (registry rule). A Matrice made only of them is dissolved and its items go back to the single cards."""
+    kept, gone = [], []
+    for m in out["matrici"]:
+        if any(items.get(i, {}).get("tier", "approved") in STRONG_TIERS for i in m["items"]):
+            kept.append(m)
+        else:
+            gone.append(m["title"])
+            out["singles"] += [i for i in m["items"] if i in items]
+    out["matrici"] = kept
+    out.setdefault("log", []).extend({"stage": "strong_only", "dissolved": t} for t in gone)
+    out["summary"]["dissolved_probation_only"] = len(gone)
+
+
 def topic_filter(out, keep, items):
     """Summary after the sub-topic filter (already applied by the build); single cards mainly about the sub-topic first."""
+    strong_only(out, items)
     out["singles"] = list(dict.fromkeys(out["singles"]))
     out["singles"].sort(key=lambda i: (keep[i].get("in_perimeter") != "yes", items[i].get("published") or ""))
     out.setdefault("topic_filter", [])

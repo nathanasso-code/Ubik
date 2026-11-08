@@ -251,7 +251,7 @@ def merge(matrici, used, keep, items, out, previous=None):
         out["merge_reused"] = True
     else:
         try:
-            raw, cost, _ = call(DEEPSEEK, p_merge, payload, max_tokens=4000)
+            raw, cost, _ = call(DEEPSEEK, p_merge, payload, max_tokens=12000)  # 4000 truncated the JSON on weeks of 1,400 items
             out["cost"]["merge"] = cost
             prop = parse_json(raw["choices"][0]["message"]["content"])
         except Exception as exc:
