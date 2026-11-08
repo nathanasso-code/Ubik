@@ -24,7 +24,7 @@ prova di profondità).
 | --- | --- |
 | `nathanasso-code/Ubik` (pubblico) | Codice della pipeline delle Matrici (`ingestion/`), prompt delle Matrici (`prompts/`), documentazione (`docs/`) |
 | `nathanasso-code/ubik-corpus` (privato) | Registri delle fonti (`registry/`), corpus dei testi (`corpus/`), strumenti (`tools/`), prompt dei nodi (`prompts/`), workflow (`.github/workflows/`), richieste di esecuzione (`runs/`), risultati (`reports/`) |
-| Segreti di `ubik-corpus` (solo i nomi) | `OPENROUTER_API_KEY`, `BRAVE_API_KEY`, `BLUESKY_HANDLE`, `BLUESKY_APP_PASSWORD`, `GNEWS_API_KEY`, `UBIK_GMAIL_*` |
+| Segreti di `ubik-corpus` (solo i nomi) | `OPENROUTER_API_KEY`, `BRAVE_API_KEY`, `BLUESKY_HANDLE`, `BLUESKY_APP_PASSWORD`, `GNEWS_API_KEY`, `UBIK_GMAIL_*`, `COURTLISTENER_API_TOKEN` |
 | Documento «Ubik — Acquisizione delle fonti» (Claude Docs) | La versione da leggere per la redazione |
 | Esploratore (artefatto) | Le Matrici e i nodi visti come pagina |
 
@@ -248,8 +248,12 @@ fermato al secondo giro (90 pagine): i contributi buoni erano quasi tutti PDF.
 - **Per l'attualità**: oltre a ciò che c'è, il valore aggiunto viene dalle citazioni interne alle fonti (pagine citate,
   antenne, setaccio), dalle segnalazioni della redazione e, più avanti, da una comunità. Rifare lo scout sul nodo ogni
   settimana, giudicando solo i candidati nuovi, è il modo economico di tenerlo aggiornato.
-- **Da decidere**: l'API di CourtListener (gratuita, con un token: robots.txt vieta il sito, non l'API), che riaprirebbe
-  le memorie e le ordinanze per i nodi giudiziari; le copie dell'Internet Archive per le pagine rifiutate.
+- **CourtListener attraverso l'API** (approvata l'8 novembre, `tools/courtlistener.py`): il sito vieta i programmi in
+  robots.txt, l'API è aperta a chi ha un account. Quando il giudizio o la raccolta mirata incontrano una pagina di docket
+  con il numero della voce, o una sentenza, la sostituiscono con il documento RECAP (testo estratto o PDF su
+  storage.courtlistener.com) o con il testo della sentenza. Piano gratuito: 5 richieste al minuto, 50 l'ora, 125 al
+  giorno; le chiamate sono distanziate, al massimo 40 per esecuzione, e si fermano al primo rifiuto. Senza il segreto
+  `COURTLISTENER_API_TOKEN` non cambia nulla. Da valutare: le copie dell'Internet Archive per le pagine rifiutate.
 
 ## 10. Da fare
 
@@ -258,8 +262,8 @@ fermato al secondo giro (90 pagine): i contributi buoni erano quasi tutti PDF.
 2. Le proposte nell'esploratore, da accettare o rifiutare.
 3. I riferimenti dei PDF e il grafo delle citazioni nel setaccio; rifare la prova di profondità con Wikipedia accesa e
    spenta.
-4. Rilanciare il giudizio sui tre nodi con il primo livello nuovo e `k` più alto, e misurare di nuovo contro le scelte a
-   mano.
+4. Rilanciare il giudizio sui tre nodi con il primo livello nuovo, `k` più alto e CourtListener attivo, e misurare di
+   nuovo contro le scelte a mano.
 5. Un quarto nodo d'attualità costruito con la pipeline dall'inizio.
 6. 21 novembre (promemoria già fissato): bilancio delle fonti in prova e nuova misura di Brave.
 7. Feed fermi di ANSA, Corriere e Wired; variabilità del raggruppamento delle Matrici; simulazione della conservazione dei
