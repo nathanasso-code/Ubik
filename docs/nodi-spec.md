@@ -1,4 +1,6 @@
-# Nodi di dibattito — specifica del prototipo (aggiornata il 6 novembre 2026)
+# Nodi di dibattito — specifica del prototipo (aggiornata l'8 novembre 2026)
+
+Quadro completo del sistema, dalla raccolta ai nodi: `docs/acquisizione-a-z.md`.
 
 Seconda modalità di Ubik accanto all'attualità (Matrici della settimana, `docs/daily-spec.md`): la conoscenza.
 Un Topic è una mappa di pochi nodi progettati in redazione; ogni nodo è una domanda su cui il racconto si divide.
@@ -62,9 +64,8 @@ esterna, dichiarato come tale; tiene il posto della comunità).
 
 ## Prossimi passi
 
-1. Selezione automatica dei candidati dello scout a due livelli (modello economico per scartare, modello forte per
-   mettere in relazione), misurata contro la selezione fatta in conversazione il 6 novembre: darà il costo vero di un
-   nodo. Il nodo sul paper del MIT è stato costruito il 6 novembre con lo scout e la selezione in conversazione.
+1. Selezione automatica: attiva in prova dall'8 novembre (tre livelli, sotto). Restano i difetti delle proposte, le
+   proposte nell'esploratore e i riferimenti bibliografici nel setaccio (`docs/acquisizione-a-z.md`, sezione 10).
 2. Ricostruire il nodo del 20 febbraio con un modello forte dalle stesse fonti e confrontarlo con la versione cieca.
 3. Costruire il nodo «Il presunto coinvolgimento americano», con le affermazioni in circolazione agganciate.
 
@@ -112,3 +113,16 @@ fonti di propaganda statale etichettate solo come «parte interessata»; afferma
 esempio «la sentenza conferma…») proposte come verificate senza il confronto con il documento, che resta il lavoro
 della verifica di Ubik. Le pagine trovate solo da Brave non sono entrate nella prova: il giudizio va portato dentro il
 giro dello scout, prima che i risultati di Brave vengano cancellati.
+
+## Selezione automatica: Brave, setaccio e profondità (8 novembre 2026, sera)
+
+Il giudizio ora gira nello stesso workflow dello scout (`scout.yml` con `judge=yes`), così legge anche le pagine trovate
+solo da Brave, e segue i riferimenti delle pagine buone per giri successivi (il setaccio). Esiti, dettagli e misure in
+`docs/acquisizione-a-z.md`, sezione 8. In breve: Brave porta tra il 13% e il 29% dei contributi; il setaccio si satura al
+secondo giro; contro le scelte a mano il MIT regge (16 su 23), fair use e 20 febbraio no (2 su 13), per il taglio della
+classifica, i siti che rifiutano i programmi e la severità sulla stampa. Correzioni dello stesso giorno: riferimenti presi
+solo dal corpo del testo, primo livello più largo (coppie di parole, plurali, data del caso, via di ricerca, post del
+fediverso esclusi), fascia «copertura» per le pagine pertinenti senza contributo nuovo, rimbalzo sulle pagine
+dell'archivio delle ancore. Prova di profondità su un tema storico (il primo inverno dell'IA, Wikipedia spenta): 9 delle
+20 fonti d'oro raggiunte, più 20 contributi che la lista non aveva; mancano le storie divulgative e le fonti citate solo
+nei PDF.

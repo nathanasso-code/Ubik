@@ -1,4 +1,6 @@
-# Acquisizione per i nodi — metodo (6 novembre 2026)
+# Acquisizione per i nodi — metodo e diario delle prove (6-8 novembre 2026)
+
+Quadro completo e aggiornato: `docs/acquisizione-a-z.md`. Questo file conserva il metodo e le misure, giro per giro.
 
 Il limite principale di ogni nodo è trovare i contributi di qualità. I feed portano solo ciò che le fonti approvate
 pubblicano; la ricerca a mano non si replica. Il metodo parte da un'osservazione: i contributi buoni si trovano seguendo
@@ -36,7 +38,7 @@ percorsi, di fonti e di voci. Il punteggio ordina, non decide.
 
 ## Selezione e raccolta
 
-La selezione dei candidati la fa oggi Claude in conversazione, con criteri espliciti: porta prove o dati propri
+Fino al 7 novembre la selezione dei candidati l'ha fatta Claude in conversazione; dall'8 novembre c'è la selezione automatica a tre livelli (`docs/nodi-spec.md`, `docs/acquisizione-a-z.md`). I criteri sono gli stessi: porta prove o dati propri
 (documenti, cifre, riproduzioni)? l'autore è identificabile e competente sul punto? discute la posizione opposta? cita
 le fonti primarie? I candidati scelti vanno in `reports/scout/<nodo>/pick.json` e `scout.py fetch` li raccoglie nel
 corpus privato con le regole del raccoglitore. Le fonti nuove restano soggette all'approvazione della redazione.
@@ -326,6 +328,22 @@ Matrici «solo grazie alle fonti nuove» non dipende da questa variazione: togli
 conta quelle che restano con meno di due testate. Una Matrice fatta solo di fonti in prova (una era passata) ora si
 scioglie: le fonti in prova non si confermano tra loro.
 
+## Brave nel giudizio, setaccio, scarti e profondità (8 novembre)
+
+Riassunto qui; tabelle e giudizio in `docs/acquisizione-a-z.md`, sezione 8.
+
+| | MIT | Fair use | 20 febbraio |
+| --- | --- | --- | --- |
+| Contributi, primo giro (di cui solo da Brave) | 94 (12) | 52 (15) | 16 (4) |
+| Secondo e terzo giro del setaccio | +43, +11 | +8, +6 | +9, 0 |
+| Scelte a mano promosse | 16 su 23 | 2 su 13 | 2 su 13 |
+| Pagine solo da Brave non scelte (contate, non conservate) | 33 | 50 | 64 |
+| Costo | 0,39 $ | 0,26 $ | 0,16 $ |
+
+Prova di profondità sul primo inverno dell'IA (scheda `reports/nodi/inverno-ia/scout.json`, venti fonti d'oro, Wikipedia
+spenta): 9 raggiunte su 20, 20 contributi in più, 0,18 dollari. Il registro di entrambe le esecuzioni, che conteneva i
+risultati di Brave, è stato cancellato.
+
 ## Programma di sviluppo (indicativo)
 
 Ogni fase si misura prima della successiva; una misura deludente può cambiare l'ordine o togliere una fase.
@@ -336,7 +354,7 @@ Ogni fase si misura prima della successiva; una misura deludente può cambiare l
 | 2 | Bacino aggiornato da scout, lista dei link, selezioni e catene; proposte settimanali per il registro (primo giro sull'IA il 7 novembre: semi, Bluesky, link delle voci, canali, misura) | Fase 1 | Proposte approvate; articoli pertinenti dei feed in prova |
 | 3 | Brave per le lacune; Bluesky autenticato (attivi dal 7 novembre) | `BRAVE_API_KEY`, `BLUESKY_HANDLE`, `BLUESKY_APP_PASSWORD` nei segreti di `ubik-corpus`; conferma del supporto Brave | Rifare la prova sui tre nodi |
 | 4 | Indice a testo pieno sul corpus (attivo dal 7 novembre, `tools/corpus_index.py`); poi esteso ai feed in prova e ai link delle antenne | Nulla | Quota di ricerche risolte in casa rispetto a Brave |
-| 5 | Selezione automatica a due livelli | Fase 1 | Accordo con la selezione del 6 novembre; costo per nodo |
+| 5 | Selezione automatica (tre livelli e setaccio, in prova dall'8 novembre) | Fase 1 | Accordo con le scelte a mano; costo per nodo |
 | 6 | Sorveglianza dei nodi e stato «da aggiornare» | Fasi 3 e 5 | Aggiornamenti segnalati e confermati |
 
 Modelli locali: un modello piccolo che gira su un computer della redazione può filtrare e classificare i testi del corpus senza che escano dalle nostre macchine, e con strumenti come Soup (addestramento su portatile con poca memoria video) si può addestrare sulle selezioni registrate per la prima scrematura della fase 5. Serve prima qualche centinaio di selezioni con i motivi, e un computer con scheda grafica: i server di GitHub non ne hanno.

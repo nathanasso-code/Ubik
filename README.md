@@ -25,6 +25,8 @@ Modello in esercizio: DeepSeek V4.1 Flash, circa 0,74 dollari per una settimana 
 | `ingestion/ubik_daily2.py`, `ubik_daily3.py` | Resa delle card e della pagina (usate dalla v5) | Corrente |
 | `ingestion/ubik_cost_guard.py` | Costi unitari e controllo preventivo di spesa | Corrente |
 | `prompts/daily-v5/`, `prompts/daily-v4/` | Prompt correnti | Correnti |
+| `docs/acquisizione-a-z.md` | **Il sistema dalla A alla Z: raccolta, Matrici, nodi, costi, misure, da fare. Punto di partenza per una nuova conversazione** | Corrente |
+| `docs/acquisizione-nodi.md` | Metodo dello scout e diario delle prove sull'acquisizione | Corrente |
 | `docs/daily-spec.md` | Specifica delle Matrici della settimana | Corrente |
 | `docs/nodi-spec.md` | Specifica dei nodi di dibattito | Prototipo |
 | `ingestion/ubik_matrix.py`, `prompts/matrix-v1/` | Matrice lunga su un nucleo (`docs/history/matrix-spec.md`) | Messa da parte |
