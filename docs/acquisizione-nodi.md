@@ -288,6 +288,21 @@ Punti chiusi la stessa notte:
 La prima raccolta delle fonti primarie e delle testate nuove funziona: OpenAI, DeepMind, Hugging Face e Anthropic al
 limite di 40 voci nuove per giro, le testate a pagamento con titolo e sommario. Microsoft AI non ha portato voci.
 
+## GNews (8 novembre)
+
+Piano a pagamento Essential (49,99 euro al mese, 1.000 richieste al giorno, testo integrale). Prova su un campione (22
+richieste): New York Times e Financial Times non ci sono; Bloomberg arriva attraverso le testate che ne ripubblicano gli
+articoli su licenza; il Washington Post a volte con il testo completo; Nikkei senza testo. Il valore è l'ampiezza: delle
+ultime 25 notizie sull'IA in inglese, 23 non erano nel corpus; in italiano nessuna su 25 (Repubblica, ANSA, Sky TG24,
+Corriere, Il Fatto Quotidiano, RSI).
+
+Nel raccoglitore (`registry/gnews-ai.json`, in prova): quattro ricerche per giro (IA ed energia, in inglese e in
+italiano), fino a otto pagine, finestra di 30 ore perché GNews indicizza in ritardo; circa 32 richieste al giorno. Ogni
+articolo conserva la testata vera come origine, così l'indipendenza si conta sulla testata e non su GNews; gli
+aggregatori sono esclusi; la pagina dell'editore si apre con le regole di sempre, e il testo di GNews serve solo se la
+pagina non è leggibile e non vieta l'uso (robots.txt, riserva TDM). Una ricerca sulla sola sigla «IA» porta sport e
+videogiochi: è stata tolta. Primo giro: 64 articoli da oltre 40 testate, 60 sull'IA, 2 scartati per la riserva TDM.
+
 ## Programma di sviluppo (indicativo)
 
 Ogni fase si misura prima della successiva; una misura deludente può cambiare l'ordine o togliere una fase.
