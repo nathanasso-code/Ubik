@@ -303,6 +303,29 @@ aggregatori sono esclusi; la pagina dell'editore si apre con le regole di sempre
 pagina non è leggibile e non vieta l'uso (robots.txt, riserva TDM). Una ricerca sulla sola sigla «IA» porta sport e
 videogiochi: è stata tolta. Primo giro: 64 articoli da oltre 40 testate, 60 sull'IA, 2 scartati per la riserva TDM.
 
+## Effetto sulle Matrici: la settimana del 2 novembre (8 novembre)
+
+Stessa settimana, stesse note per articolo, due selezioni: solo le fonti approvate (993 articoli) e tutte (1.419). Costo:
+1,32 dollari di DeepSeek.
+
+| | Solo approvate | Tutte |
+| --- | --- | --- |
+| Matrici | 27 | 42 |
+| Articoli nelle Matrici | 207 | 292 |
+| Matrici che esistono solo grazie alle fonti nuove | — | 7 |
+| Matrici rafforzate da testate nuove | — | 10 |
+
+La Matrice sulle elezioni di metà mandato e i data center passa da 23 a 35 testate. Le sette Matrici nuove sono fatti
+veri (Microsoft e i fornitori di calcolo, l'indagine del Congresso sulle società gestite da agenti, Moonshot e i chip
+Blackwell). Il rumore delle fonti in prova resta quasi tutto nelle card singole (238 su 974).
+
+Il confronto è disturbato da due difetti emersi con la settimana più grande, corretti lo stesso giorno: la fusione delle
+Matrici si troncava (risposta oltre il limite, da 4.000 a 12.000 token), e il raggruppamento varia tra un'esecuzione e
+l'altra (nella versione con le sole approvate ha proposto 6 Matrici sulle regole invece di decine). Il conteggio delle
+Matrici «solo grazie alle fonti nuove» non dipende da questa variazione: toglie da ogni Matrice gli articoli in prova e
+conta quelle che restano con meno di due testate. Una Matrice fatta solo di fonti in prova (una era passata) ora si
+scioglie: le fonti in prova non si confermano tra loro.
+
 ## Programma di sviluppo (indicativo)
 
 Ogni fase si misura prima della successiva; una misura deludente può cambiare l'ordine o togliere una fase.
