@@ -344,6 +344,21 @@ Prova di profondità sul primo inverno dell'IA (scheda `reports/nodi/inverno-ia/
 spenta): 9 raggiunte su 20, 20 contributi in più, 0,18 dollari. Il registro di entrambe le esecuzioni, che conteneva i
 risultati di Brave, è stato cancellato.
 
+## Rimisura dopo le correzioni (8 novembre, sera)
+
+Scout e giudizio nello stesso giro sui tre nodi, `k=600`, due giri del setaccio. Tabelle in `docs/acquisizione-a-z.md`,
+sezione 8.
+
+| | MIT | Fair use | 20 febbraio |
+| --- | --- | --- | --- |
+| Contributi in tutto (prima, con tre giri) | 153 (148) | 120 (66) | 22 (25) |
+| Scelte a mano promosse (prima) | 16 su 23 (16) | 3 su 13 (2) | 2 su 13 (2) |
+| Costo | 0,37 $ | 0,41 $ | 0,13 $ |
+
+CourtListener attraverso l'API porta 35 contributi al fair use e raggiunge il limite di 40 chiamate. Le scelte a mano
+mancanti si perdono a monte: 13 non sono mai diventate candidate, 5 sono bloccate dal sito, una sola cade al primo
+livello. Il registro dell'esecuzione, che conteneva i risultati di Brave, è stato cancellato.
+
 ## Programma di sviluppo (indicativo)
 
 Ogni fase si misura prima della successiva; una misura deludente può cambiare l'ordine o togliere una fase.

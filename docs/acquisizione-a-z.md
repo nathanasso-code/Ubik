@@ -190,7 +190,7 @@ costruisce il modello che l'esploratore mostra, con la regola delle citazioni. L
 | GNews | 49,99 euro al mese | Fisso |
 | Brave | Dentro il credito mensile gratuito (sette ricerche per nodo; `resolve` ne ha usate 286 una volta) | Nodi e giri del bacino |
 | Matrici | 0,7-1,3 dollari a settimana per Topic | Articoli della settimana (le note sono il grosso) |
-| Giudizio | 0,16-0,39 dollari per nodo, tre giri (circa 0,0007 dollari a pagina) | Candidati × nodi × giri |
+| Giudizio | 0,13-0,41 dollari per nodo, due giri (circa 0,0007 dollari a pagina; il controllo preventivo ne stima 0,0015) | Candidati × nodi × giri |
 | Proposte | Circa 0,02-0,03 dollari per nodo | Contributi |
 | Costruzione del nodo | Lavoro di Claude in conversazione, non misurato in dollari | È il passo che non scala |
 
@@ -207,6 +207,34 @@ contributi, il terzo 11, 6 e 0; tra un quinto e un terzo dei contributi arriva p
 fatte a mano: nel MIT 16 su 23 promosse; nel fair use e nel 20 febbraio solo 2 su 13. Le cause: il taglio della classifica
 (CCIA era al 479° posto), l'accesso (CourtListener vieta i programmi: 131 pagine; perma.cc e doi.org rifiutano), la
 severità sulla stampa, e la variabilità di Brave e Bluesky tra un giorno e l'altro.
+
+**Rimisura dopo le correzioni** (8 novembre, sera; scout e giudizio nello stesso giro, `k=600`, due giri, 0,90 dollari,
+circa due ore).
+
+| | MIT | Fair use | 20 febbraio |
+| --- | --- | --- | --- |
+| Pagine giudicate al primo giro | 373 | 600 | 378 |
+| Contributi, primo giro (di cui solo da Brave) | 94 (15) | 105 (14) | 16 (6) |
+| Secondo giro del setaccio | +59 | +15 | +6 |
+| Contributi in tutto (prima, con tre giri) | 153 (148) | 120 (66) | 22 (25) |
+| Fascia copertura | 5 | 69 | 1 |
+| Scelte a mano promosse (prima) | 16 su 23 (16) | 3 su 13 (2) | 2 su 13 (2) |
+| Scelte a mano in copertura | 2 | 3 | 0 |
+| Costo (prima) | 0,37 $ (0,39) | 0,41 $ (0,26) | 0,13 $ (0,16) |
+
+Che cosa è cambiato. Nel fair use i contributi quasi raddoppiano, soprattutto grazie a CourtListener: 40 chiamate (il
+limite per esecuzione, raggiunto), 35 contributi tra atti RECAP e PDF; restano 97 pagine di CourtListener oltre il limite,
+vietate da robots.txt. CCIA ora è promossa (il taglio della classifica era la causa). Due giri del setaccio rendono quanto
+tre giri il giorno prima. Il rimbalzo sull'archivio dell'ancora ha dato 3 pagine nel 20 febbraio, tutte scartate.
+
+Dove si perdono ora le scelte a mano: non più nel giudizio ma a monte. Non diventano candidate 2 nel MIT, 4 nel fair use
+(tre memorie amicus e la Texas Law Review) e 7 nel 20 febbraio (le fonti ucraine lb.ua, texty.org.ua, Radio Svoboda, e
+openDemocracy, Nonzero, Econ Journal Watch, ICCT). Altre sono bloccate dal sito: doi.org e due testate ucraine (403, 429),
+TorrentFreak (riserva TDM). Una sola scelta cade al primo livello (il blog di Stanford sulla memorizzazione, al 579° posto).
+
+Contributi del primo giro trovati da una sola via: GitHub 31, Brave 15, Bluesky 14 nel MIT; Bluesky 36, Brave 14, pagine
+citate dal corpus 14, Wikipedia 11 nel fair use; Brave 6 e Wikipedia 6 nel 20 febbraio. Semantic Scholar 2 in tutto,
+OpenAlex 10, le antenne nessuno.
 
 **Verifica degli scarti** (a campione). Sotto 5 si perde circa un contributo su dieci, quasi sempre articoli pertinenti
 senza prove proprie: ora sono la fascia «copertura». Al primo livello si perdevano pagine pertinenti con titoli espliciti
@@ -262,10 +290,9 @@ fermato al secondo giro (90 pagine): i contributi buoni erano quasi tutti PDF.
 
 In ordine (riordinato l'8 novembre, sera):
 
-1. **Rilanciare il giudizio sui tre nodi** e misurare di nuovo contro le scelte a mano. Mette alla prova, in
-   un'esecuzione vera, le correzioni dell'8 novembre: primo livello più largo, `k` più alto, riferimenti presi dal corpo
-   del testo, fascia «copertura», rimbalzo sull'archivio dell'ancora, CourtListener. Circa un dollaro. È anche il
-   confronto che conta oggi: pipeline automatica contro il lavoro fatto in conversazione.
+1. ~~Rilanciare il giudizio sui tre nodi~~: fatto l'8 novembre sera, 0,90 dollari (sezione 8). Il giudizio non è più
+   il collo di bottiglia: le scelte a mano si perdono a monte (lo scout non le trova, soprattutto le fonti ucraine) o
+   per l'accesso.
 2. **Potare le vie che rendono poco** (sezione 9): Semantic Scholar, le antenne dentro lo scout, la ricerca per parole
    chiave su OpenAlex, `resolve` (la ricerca dei siti con Brave), il terzo giro del setaccio. Decisione della redazione.
 3. **Un quarto nodo d'attualità** costruito con la pipeline dall'inizio: il banco di prova del metodo e delle proposte.
