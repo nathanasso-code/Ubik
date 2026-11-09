@@ -350,6 +350,10 @@ L'elenco unico di Ubik: ciò che è fatto, in corso e da fare. Aggiornato il 9 n
    - un sotto-topic Economia dell'IA per gli articoli senza sotto-topic (168 nella settimana di prova);
    - un modello locale per la prima scrematura, addestrato sulle decisioni registrate (serve qualche centinaio di
      decisioni con il motivo e un computer con scheda grafica);
+   - registri e raccolta, ancora aperti dalla prima scheda del documento: EUR-Lex e le pagine di elenco di Commissione e
+     Parlamento; le newsletter per le fonti bloccate (ILO, Eurofound, ETUI) e la redazione registrata come mittente delle
+     segnalazioni; i feed di EurekAlert, ANSA e SINC per il registro Scienza;
+   - prima del lancio pubblico: il diritto degli editori sugli estratti;
    - feed fermi di ANSA, Corriere e Wired; variabilità del raggruppamento delle Matrici; simulazione della conservazione
      dei testi (rinviata dalla redazione);
    - da valutare alle stesse regole: Common Crawl, Wikidata, le raccomandazioni di Substack; GDELT accantonato finché
