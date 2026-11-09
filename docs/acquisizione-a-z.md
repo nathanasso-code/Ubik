@@ -273,6 +273,17 @@ stena.ee, ruskline.ru, Global Research, Canadian Dimension) e da una copia pirat
 `registry/excluded-hosts.json`); entrano testate statali russe (Rossijskaja Gazeta, RIA). Le traduzioni sono corrette ma a
 volte calcate dall'inglese («масові вбивства на Майдані» invece di «розстріли на Майдані»): si possono correggere nel file.
 
+**Nodo leggero, prima prova** (9 novembre, fair use, dai 15 contributi migliori del giudizio; `tools/light_node.py`,
+risultato in `reports/nodi/fair-use/light.md`). Tre versioni, da 1,3 a 1,8 centesimi ciascuna. Nelle prime due il modello
+riceveva i 15 testi insieme: ha ignorato cinque documenti primari, tra cui le sentenze Bartz e Getty, e nella seconda la
+riga di stato sbagliava su Bartz. La terza lavora in due passi (prima un estratto per fonte, con la frase verificata,
+poi la sintesi dagli estratti): 7 punti, 15 citazioni su 15 ritrovate, esiti corretti per Bartz (addestramento sui libri
+comprati: fair use; biblioteca di copie piratate: no), Kadrey, Thomson Reuters contro Ross, Monaco e Getty. Rispetto al
+nodo pieno coglie bene tre catene su cinque (l'addestramento in sé, la provenienza dei dati, il modello contiene le opere)
+e in parte le altre due: manca la diluizione del mercato, che le prime due versioni avevano. Difetti: il codice verifica
+che la frase esista, non che sostenga l'esito (per la biblioteca piratata la frase descrive la biblioteca, non la
+decisione); i punti cambiano da un'esecuzione all'altra e possono perdere una controversia centrale.
+
 **Verifica degli scarti** (a campione). Sotto 5 si perde circa un contributo su dieci, quasi sempre articoli pertinenti
 senza prove proprie: ora sono la fascia «copertura». Al primo livello si perdevano pagine pertinenti con titoli espliciti
 («Third Circuit affirms… rejects fair use») per termini troppo stretti, e le cronache datate 20 febbraio 2014: corretto
@@ -345,7 +356,11 @@ L'elenco unico di Ubik: ciò che è fatto, in corso e da fare. Aggiornato il 9 n
    (sezione 8): i contributi raddoppiano, ma moltiplicano anche le ristampe di una stessa tesi e le testate statali; da
    rifare con le correzioni del punto 4, già nel codice. Insieme: il limite di CourtListener, dando la precedenza agli atti dei casi (le memorie amicus del
    fair use); le seconde copie decise il 9 novembre (sezione 3), nel codice dal 9 novembre e da misurare al prossimo giro.
-2. **La bozza automatica del nodo, in forma leggera.** È il passo che manca: oggi le proposte aggiungono anelli a catene
+2. **La bozza automatica del nodo, in forma leggera.** Prova fatta il 9 novembre sul fair use (sezione 8): la versione in due passi
+   regge, a meno di 2 centesimi per la bozza. Da fare prima del quarto nodo: un controllo che la frase citata sostenga
+   davvero l'esito (una domanda sì/no al modello per punto, pochi decimi di centesimo) e la stabilità dei punti tra
+   un'esecuzione e l'altra (almeno un punto per ogni gruppo di fonti che si contraddicono). La prova del costo della ricerca
+   con `k` 200-300 non è ancora fatta. È il passo che manca: oggi le proposte aggiungono anelli a catene
    esistenti, ma nessuno passo genera catene, sintesi, testo di partenza ed elenchi di ciò che è aperto. Senza questo il
    punto 3 non si può fare. Il nodo leggero è la forma più semplice del passo e il formato per la maggior parte dei nodi:
    - la domanda e lo stato in una riga;
