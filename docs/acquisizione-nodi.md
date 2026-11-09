@@ -359,20 +359,10 @@ CourtListener attraverso l'API porta 35 contributi al fair use e raggiunge il li
 mancanti si perdono a monte: 13 non sono mai diventate candidate, 5 sono bloccate dal sito, una sola cade al primo
 livello. Il registro dell'esecuzione, che conteneva i risultati di Brave, è stato cancellato.
 
-## Programma di sviluppo (indicativo)
+## Programma di sviluppo
 
-Ogni fase si misura prima della successiva; una misura deludente può cambiare l'ordine o togliere una fase.
+Le fasi previste fino all'8 novembre sono fatte: motivi della selezione registrati, bacino aggiornato, Brave e Bluesky
+autenticato, indice a testo pieno sul corpus, selezione automatica a tre livelli con il setaccio. Ciò che resta, compresi
+la sorveglianza dei nodi, i modelli locali e le fonti da valutare, è nell'elenco unico: `docs/acquisizione-a-z.md`,
+sezione 10.
 
-| Fase | Cosa | Serve | Misura |
-| --- | --- | --- | --- |
-| 1 | Motivi della selezione registrati criterio per criterio; primo record nelle catene dai tre nodi | Nulla | Ogni scelta ha i suoi motivi |
-| 2 | Bacino aggiornato da scout, lista dei link, selezioni e catene; proposte settimanali per il registro (primo giro sull'IA il 7 novembre: semi, Bluesky, link delle voci, canali, misura) | Fase 1 | Proposte approvate; articoli pertinenti dei feed in prova |
-| 3 | Brave per le lacune; Bluesky autenticato (attivi dal 7 novembre) | `BRAVE_API_KEY`, `BLUESKY_HANDLE`, `BLUESKY_APP_PASSWORD` nei segreti di `ubik-corpus`; conferma del supporto Brave | Rifare la prova sui tre nodi |
-| 4 | Indice a testo pieno sul corpus (attivo dal 7 novembre, `tools/corpus_index.py`); poi esteso ai feed in prova e ai link delle antenne | Nulla | Quota di ricerche risolte in casa rispetto a Brave |
-| 5 | Selezione automatica (tre livelli e setaccio, in prova dall'8 novembre) | Fase 1 | Accordo con le scelte a mano; costo per nodo |
-| 6 | Sorveglianza dei nodi e stato «da aggiornare» | Fasi 3 e 5 | Aggiornamenti segnalati e confermati |
-
-Modelli locali: un modello piccolo che gira su un computer della redazione può filtrare e classificare i testi del corpus senza che escano dalle nostre macchine, e con strumenti come Soup (addestramento su portatile con poca memoria video) si può addestrare sulle selezioni registrate per la prima scrematura della fase 5. Serve prima qualche centinaio di selezioni con i motivi, e un computer con scheda grafica: i server di GitHub non ne hanno.
-
-Da valutare alle stesse regole: Common Crawl, Internet Archive (anche per i collegamenti morti), Wikidata, le
-raccomandazioni di Substack. GDELT resta accantonato finché rifiuta i server di GitHub.

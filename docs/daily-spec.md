@@ -92,4 +92,4 @@ un quarto.
 
 ## Da fare
 
-- Valutare un sotto-topic Economia dell'IA per gli articoli senza sotto-topic (168 nella settimana di prova).
+Nell'elenco unico: `docs/acquisizione-a-z.md`, sezione 10.

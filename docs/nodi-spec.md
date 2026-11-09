@@ -64,15 +64,9 @@ esterna, dichiarato come tale; tiene il posto della comunità).
 
 ## Prossimi passi
 
-L'ordine completo è in `docs/acquisizione-a-z.md`, sezione 10. Per i nodi:
-
-1. Rilanciare il giudizio sui tre nodi con le correzioni dell'8 novembre e misurare contro le scelte a mano. È il
-   confronto che sostituisce quello previsto il 6 novembre (il 20 febbraio ricostruito da un modello forte contro la
-   versione cieca): oggi si confronta la pipeline automatica con il lavoro fatto in conversazione.
-2. Un quarto nodo d'attualità costruito con la pipeline dall'inizio, per provare il metodo; i difetti delle proposte
-   si correggono su quello.
-3. Il nodo «Il presunto coinvolgimento americano» (`reports/nodi/usaid-maidan/`, semi e affermazione di partenza già
-   pronti): lavoro di contenuto su un tema storico, separato dalla prova del metodo.
+Sono nell'elenco unico, `docs/acquisizione-a-z.md`, sezione 10: per i nodi contano la bozza automatica in forma leggera
+(punto 4), il quarto nodo d'attualità (punto 5) e i difetti delle proposte (punto 6). Il nodo «Il presunto coinvolgimento
+americano» (`reports/nodi/usaid-maidan/`) è un lavoro di contenuto storico, separato dalla prova del metodo.
 
 ## Costi stimati (4 novembre 2026)
 

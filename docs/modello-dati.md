@@ -72,6 +72,5 @@ L'esploratore ne ricava la vista d'insieme: cosa c'è, in che stato, quanto è c
 2. Esploratore privato generato dall'esportazione: Topic → Matrici → nodi, con la vista del cantiere. Fatto
    (`ingestion/ubik_explorer.py`). Le card mostrano una sintesi comune e l'elenco delle fonti; il dettaglio per
    fonte resta come controllo.
-3. Far scrivere il formato direttamente alle pipeline (daily-v5 e nodi), al posto dei JSON di oggi.
-4. Acquisizione per i nodi con lo scout (`docs/acquisizione-nodi.md`): i candidati e la loro provenienza entrano nel
-   cantiere del nodo.
+Il resto (le pipeline che scrivono direttamente il formato al posto dei JSON di oggi) è
+nell'elenco unico: `docs/acquisizione-a-z.md`, sezione 10.

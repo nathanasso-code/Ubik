@@ -46,6 +46,11 @@ a pagamento parte solo da un file `runs/<nome>.request` scritto e spinto nel rep
   dell'esecuzione, che le stampa, si cancella dopo la lettura
   (`gh api -X DELETE repos/nathanasso-code/ubik-corpus/actions/runs/<id>`). Le pagine scelte portano «trovata con Brave».
 - **Costi**: tetto di 20 dollari per l'ambito IA sulle chiamate ai modelli; ogni esecuzione dichiara il suo budget.
+- **Si conserva fin da ora ciò che non si ricostruisce a ritroso**: le decisioni editoriali con il loro motivo (scelte,
+  scarti, proposte accettate o rifiutate) e le affermazioni con la loro provenienza. Sono la base per un giudice
+  addestrato sui criteri di Ubik e per un archivio delle affermazioni.
+- **Un solo elenco delle cose da fare**: la sezione 10 di questo documento. Le specifiche rimandano lì; un'idea nuova
+  entra nell'elenco al suo posto o non entra, e si corregge l'elenco invece di scrivere documenti nuovi.
 
 ## 4. Il corpus: la raccolta continua
 
@@ -288,28 +293,66 @@ fermato al secondo giro (90 pagine): i contributi buoni erano quasi tutti PDF.
 
 ## 10. Da fare
 
-In ordine (riordinato l'8 novembre, sera):
+L'elenco unico di Ubik: ciò che è fatto, in corso e da fare. Aggiornato il 9 novembre.
 
-1. ~~Rilanciare il giudizio sui tre nodi~~: fatto l'8 novembre sera, 0,90 dollari (sezione 8). Il giudizio non è più
-   il collo di bottiglia: le scelte a mano si perdono a monte (lo scout non le trova, soprattutto le fonti ucraine) o
-   per l'accesso.
-2. **Potare le vie che rendono poco** (sezione 9): Semantic Scholar, le antenne dentro lo scout, la ricerca per parole
-   chiave su OpenAlex, `resolve` (la ricerca dei siti con Brave), il terzo giro del setaccio. Decisione della redazione.
-3. **Un quarto nodo d'attualità** costruito con la pipeline dall'inizio: il banco di prova del metodo e delle proposte.
-4. **Difetti delle proposte** emersi lì e nei tre nodi: doppioni dello stesso documento, un limite di proposte per catena,
+**Fatto di recente**
+
+- 8 novembre sera: giudizio rilanciato sui tre nodi, 0,90 dollari (sezione 8). Il giudizio non è più il collo di
+  bottiglia: le scelte a mano si perdono a monte (lo scout non le trova) o per l'accesso.
+
+**In ordine**
+
+1. **Precisione dei contributi** (in corso, senza costi): lettura a campione dei contributi e della fascia copertura del
+   fair use, per sapere quanti sono davvero utili. Finora si era controllata solo la parte scartata.
+2. **Ricerca nelle lingue del nodo** (in corso), come parte stabile dello scout: ogni nodo dichiara le lingue originali
+   della vicenda, e lo scout cerca in automatico anche in quelle. Prima prova: il 20 febbraio, in ucraino e russo (7 scelte
+   a mano mai trovate). Insieme: il limite di CourtListener, dando la precedenza agli atti dei casi (le memorie amicus del
+   fair use); per doi.org, la copia ad accesso aperto indicata da OpenAlex o Crossref. Le copie dell'Internet Archive per i
+   siti che rifiutano solo con una decisione della redazione, perché la regola dice che un rifiuto non si aggira.
+3. **Potare le vie che rendono poco** (sezione 9). Le misure dell'8 sera confermano Semantic Scholar (2 contributi unici
+   in tutto) e le antenne dentro lo scout (nessuno; restano per la copertura delle Matrici). Da separare prima di
+   decidere: la ricerca per parole chiave su OpenAlex dalle citazioni degli studi d'ancora (10 contributi unici in
+   tutto). Poi `resolve` (la ricerca dei siti con Brave) e il terzo giro del setaccio (due giri rendono quanto tre).
+   Decisione della redazione.
+4. **La bozza automatica del nodo, in forma leggera.** È il passo che manca: oggi le proposte aggiungono anelli a catene
+   esistenti, ma nessuno passo genera catene, sintesi, testo di partenza ed elenchi di ciò che è aperto. Senza questo il
+   punto 5 non si può fare. Il nodo leggero è la forma più semplice del passo e il formato per la maggior parte dei nodi:
+   - la domanda e lo stato in una riga;
+   - da tre a sei punti del contendere, ciascuno con l'affermazione, la fonte migliore a favore e quella contro con una
+     citazione verificata dal codice, l'esito (accertato, smentito, conteso, aperto) e che cosa deciderebbe la questione;
+   - da due a quattro documenti cardine (sentenze, rapporti, studi che contengono già la controversia);
+   - la verifica di Ubik solo sui punti decidibili con un documento primario del corpus;
+   - «Per approfondire»: i contributi non usati.
+   Si perdono il dialogo tra le fonti, i passaggi di provenienza e la coda lunga; l'esito dichiarato evita il falso
+   equilibrio. Costo stimato: circa 0,10 dollari di ricerca (un giro di setaccio, `k` 200-300) e una bozza di DeepSeek dai
+   15 contributi migliori, rivista solo sui punti contesi; aggiornamento con lo scout settimanale sui soli candidati nuovi.
+   Prova: la versione leggera del fair use contro quella piena (quanti punti principali coglie, con quale esito, a che
+   costo), sotto 0,30 dollari. Come si scelgono i nodi: le Matrici segnalano gratis le controversie che tornano ogni
+   settimana con fonti di parti diverse; lì si apre un nodo leggero, che diventa pieno solo se resta caldo e ha punti
+   verificabili.
+5. **Un quarto nodo d'attualità** costruito con la pipeline dall'inizio, scelto dalle Matrici come al punto 4: il banco
+   di prova del metodo e delle proposte.
+6. **Difetti delle proposte** emersi lì e nei tre nodi: doppioni dello stesso documento, un limite di proposte per catena,
    l'etichetta per la propaganda di Stato (lavoro di codice); il confronto delle affermazioni con i documenti primari del
    corpus (il pezzo più difficile, quasi certamente con il modello). Poi le proposte nell'esploratore, da accettare o
-   rifiutare.
-5. **I riferimenti dei PDF e il grafo delle citazioni** nel setaccio; poi di nuovo la prova di profondità con Wikipedia
-   accesa e spenta.
-6. Il resto:
+   rifiutare con il motivo registrato (sezione 3).
+7. **I riferimenti dei PDF e il grafo delle citazioni** (OpenAlex o Crossref, gratuiti) nel setaccio; Wikipedia accesa
+   sui temi storici; poi di nuovo la prova di profondità con Wikipedia accesa e spenta.
+8. Il resto:
    - 9 novembre (promemoria già fissato, nella conversazione da cui è partito): il giro delle Matrici sulla settimana
-     intera, dal 2 al 9 novembre, e la ripubblicazione della pagina; la misura dell'8 novembre si fermava al 7;
+     intera, dal 2 al 9 novembre, e la ripubblicazione della pagina; le correzioni che chiedeva sono già fatte;
    - 21 novembre (promemoria già fissato): bilancio delle fonti in prova e nuova misura di Brave;
    - il nodo «Il presunto coinvolgimento americano» (Euromaidan): lavoro di contenuto su un tema storico, con semi e
      affermazione di partenza già pronti; da non confondere con il quarto nodo d'attualità;
+   - i canali pubblici di Telegram, ucraini e russi: fonte nuova, da approvare;
+   - le pipeline che scrivono direttamente il formato comune (`docs/modello-dati.md`) al posto dei JSON di oggi;
+   - un sotto-topic Economia dell'IA per gli articoli senza sotto-topic (168 nella settimana di prova);
+   - un modello locale per la prima scrematura, addestrato sulle decisioni registrate (serve qualche centinaio di
+     decisioni con il motivo e un computer con scheda grafica);
    - feed fermi di ANSA, Corriere e Wired; variabilità del raggruppamento delle Matrici; simulazione della conservazione
-     dei testi (rinviata dalla redazione).
+     dei testi (rinviata dalla redazione);
+   - da valutare alle stesse regole: Common Crawl, Wikidata, le raccomandazioni di Substack; GDELT accantonato finché
+     rifiuta i server di GitHub.
 
 ## 11. Come si lancia un'esecuzione
 
