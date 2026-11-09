@@ -241,6 +241,18 @@ Contributi del primo giro trovati da una sola via: GitHub 31, Brave 15, Bluesky 
 citate dal corpus 14, Wikipedia 11 nel fair use; Brave 6 e Wikipedia 6 nel 20 febbraio. Semantic Scholar 2 in tutto,
 OpenAlex 10, le antenne nessuno.
 
+**Precisione dei contributi** (9 novembre, fair use, campione casuale letto a mano: 30 contributi e 15 pagine della fascia
+copertura). Dei 30 contributi, 18 sono davvero utili al nodo, 9 marginali (procedure, il riparto dell'accordo Bartz, una
+guida del 2023 sulla registrazione), 3 sono riscritture di siti aggregatori (briefly.co, anythingengineoptimization.com,
+paktechstan.com) al posto dell'originale. Stima: dei 120 contributi, circa 70 utili. La fascia copertura non è rumore:
+10 pagine su 15 sono utili come copertura. Difetti trovati:
+- lo stesso documento giudicato in due modi: la sentenza Bartz nella copia dell'Authors Guild prende 9,5, la stessa su
+  CourtListener 4,0;
+- la sentenza di Monaco su GEMA, documento primario in tedesco, finisce in copertura senza criteri compilati: nel nodo c'è
+  solo un commento di Taylor Wessing;
+- una sintesi rovescia l'esito: per Kadrey contro Meta scrive «nega il fair use», mentre la sentenza dà ragione a Meta. Il
+  codice verifica la frase citata, non la sintesi che il modello ne ricava.
+
 **Verifica degli scarti** (a campione). Sotto 5 si perde circa un contributo su dieci, quasi sempre articoli pertinenti
 senza prove proprie: ora sono la fascia «copertura». Al primo livello si perdevano pagine pertinenti con titoli espliciti
 («Third Circuit affirms… rejects fair use») per termini troppo stretti, e le cronache datate 20 febbraio 2014: corretto
@@ -297,26 +309,28 @@ L'elenco unico di Ubik: ciò che è fatto, in corso e da fare. Aggiornato il 9 n
 
 **Fatto di recente**
 
+- 9 novembre: controllo a campione della precisione dei contributi del fair use (sezione 8): circa 70 utili su 120,
+  e i difetti del giudizio passati al punto 5.
 - 8 novembre sera: giudizio rilanciato sui tre nodi, 0,90 dollari (sezione 8). Il giudizio non è più il collo di
   bottiglia: le scelte a mano si perdono a monte (lo scout non le trova) o per l'accesso.
 
 **In ordine**
 
-1. **Precisione dei contributi** (in corso, senza costi): lettura a campione dei contributi e della fascia copertura del
-   fair use, per sapere quanti sono davvero utili. Finora si era controllata solo la parte scartata.
-2. **Ricerca nelle lingue del nodo** (in corso), come parte stabile dello scout: ogni nodo dichiara le lingue originali
-   della vicenda, e lo scout cerca in automatico anche in quelle. Prima prova: il 20 febbraio, in ucraino e russo (7 scelte
-   a mano mai trovate). Insieme: il limite di CourtListener, dando la precedenza agli atti dei casi (le memorie amicus del
+1. **Ricerca nelle lingue del nodo** (in corso), come parte stabile dello scout: ogni nodo dichiara le lingue originali
+   della vicenda (`languages` in `scout.json`; quelle dei domini delle ancore si aggiungono da sole) e lo scout cerca anche
+   in quelle, con termini e domande tradotti una volta dal modello e conservati in `reports/scout/NODE/languages.json`, e
+   con le pagine di Wikipedia nelle stesse lingue (`tools/node_languages.py`, 9 novembre). Prima prova in corso: il 20
+   febbraio, in ucraino e russo (7 scelte a mano mai trovate). Insieme: il limite di CourtListener, dando la precedenza agli atti dei casi (le memorie amicus del
    fair use); per doi.org, la copia ad accesso aperto indicata da OpenAlex o Crossref. Le copie dell'Internet Archive per i
    siti che rifiutano solo con una decisione della redazione, perché la regola dice che un rifiuto non si aggira.
-3. **Potare le vie che rendono poco** (sezione 9). Le misure dell'8 sera confermano Semantic Scholar (2 contributi unici
+2. **Potare le vie che rendono poco** (sezione 9). Le misure dell'8 sera confermano Semantic Scholar (2 contributi unici
    in tutto) e le antenne dentro lo scout (nessuno; restano per la copertura delle Matrici). Da separare prima di
    decidere: la ricerca per parole chiave su OpenAlex dalle citazioni degli studi d'ancora (10 contributi unici in
    tutto). Poi `resolve` (la ricerca dei siti con Brave) e il terzo giro del setaccio (due giri rendono quanto tre).
    Decisione della redazione.
-4. **La bozza automatica del nodo, in forma leggera.** È il passo che manca: oggi le proposte aggiungono anelli a catene
+3. **La bozza automatica del nodo, in forma leggera.** È il passo che manca: oggi le proposte aggiungono anelli a catene
    esistenti, ma nessuno passo genera catene, sintesi, testo di partenza ed elenchi di ciò che è aperto. Senza questo il
-   punto 5 non si può fare. Il nodo leggero è la forma più semplice del passo e il formato per la maggior parte dei nodi:
+   punto 4 non si può fare. Il nodo leggero è la forma più semplice del passo e il formato per la maggior parte dei nodi:
    - la domanda e lo stato in una riga;
    - da tre a sei punti del contendere, ciascuno con l'affermazione, la fonte migliore a favore e quella contro con una
      citazione verificata dal codice, l'esito (accertato, smentito, conteso, aperto) e che cosa deciderebbe la questione;
@@ -331,15 +345,19 @@ L'elenco unico di Ubik: ciò che è fatto, in corso e da fare. Aggiornato il 9 n
    costo), sotto 0,30 dollari. Come si scelgono i nodi: le Matrici segnalano gratis le controversie che tornano ogni
    settimana con fonti di parti diverse; lì si apre un nodo leggero, che diventa pieno solo se resta caldo e ha punti
    verificabili.
-5. **Un quarto nodo d'attualità** costruito con la pipeline dall'inizio, scelto dalle Matrici come al punto 4: il banco
+4. **Un quarto nodo d'attualità** costruito con la pipeline dall'inizio, scelto dalle Matrici come al punto 3: il banco
    di prova del metodo e delle proposte.
-6. **Difetti delle proposte** emersi lì e nei tre nodi: doppioni dello stesso documento, un limite di proposte per catena,
-   l'etichetta per la propaganda di Stato (lavoro di codice); il confronto delle affermazioni con i documenti primari del
+5. **Difetti del giudizio e delle proposte** emersi lì e nei tre nodi e nel controllo del 9 novembre
+   (sezione 8): doppioni dello stesso documento, giudicati anche in modo diverso; le riscritture dei siti aggregatori al
+   posto dell'originale; i documenti primari lunghi o in altre lingue sottovalutati; un limite di proposte per catena;
+   l'etichetta per la propaganda di Stato (lavoro di codice); le sintesi del modello, che possono rovesciare l'esito di
+   una sentenza e vanno controllate prima di mostrarle (nel nodo leggero l'esito di ogni punto si appoggia alla frase
+   verificata); il confronto delle affermazioni con i documenti primari del
    corpus (il pezzo più difficile, quasi certamente con il modello). Poi le proposte nell'esploratore, da accettare o
    rifiutare con il motivo registrato (sezione 3).
-7. **I riferimenti dei PDF e il grafo delle citazioni** (OpenAlex o Crossref, gratuiti) nel setaccio; Wikipedia accesa
+6. **I riferimenti dei PDF e il grafo delle citazioni** (OpenAlex o Crossref, gratuiti) nel setaccio; Wikipedia accesa
    sui temi storici; poi di nuovo la prova di profondità con Wikipedia accesa e spenta.
-8. Il resto:
+7. Il resto:
    - 9 novembre (promemoria già fissato, nella conversazione da cui è partito): il giro delle Matrici sulla settimana
      intera, dal 2 al 9 novembre, e la ripubblicazione della pagina; le correzioni che chiedeva sono già fatte;
    - 21 novembre (promemoria già fissato): bilancio delle fonti in prova e nuova misura di Brave;

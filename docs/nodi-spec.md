@@ -64,8 +64,8 @@ esterna, dichiarato come tale; tiene il posto della comunità).
 
 ## Prossimi passi
 
-Sono nell'elenco unico, `docs/acquisizione-a-z.md`, sezione 10: per i nodi contano la bozza automatica in forma leggera
-(punto 4), il quarto nodo d'attualità (punto 5) e i difetti delle proposte (punto 6). Il nodo «Il presunto coinvolgimento
+Sono nell'elenco unico, `docs/acquisizione-a-z.md`, sezione 10: per i nodi contano la bozza automatica in forma leggera,
+il quarto nodo d'attualità e i difetti del giudizio e delle proposte. Il nodo «Il presunto coinvolgimento
 americano» (`reports/nodi/usaid-maidan/`) è un lavoro di contenuto storico, separato dalla prova del metodo.
 
 ## Costi stimati (4 novembre 2026)
