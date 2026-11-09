@@ -121,6 +121,7 @@ details > summary { cursor: pointer; font-weight: 600; padding: 4px 0 }
 .decide button { font: 500 13px var(--body); padding: 6px 12px; border-radius: 999px; border: 1px solid var(--line); background: var(--panel); color: var(--ink); cursor: pointer }
 .decide button[data-act="accettata"] { border-color: var(--st-ok); color: var(--st-ok) }
 .decide button[data-act="rifiutata"] { border-color: var(--st-off); color: var(--st-off) }
+.decide button[data-act="conferma"] { border-color: var(--ink); font-weight: 600 }
 .decide button:disabled { opacity: .45; cursor: default }
 .decided-accettata { color: var(--st-ok); background: var(--st-ok-bg) }
 .decided-rifiutata { color: var(--st-off); background: var(--st-off-bg) }
@@ -161,19 +162,28 @@ function decisionOf(nodo, item) {
 function decideBox(nodo, item, tipo) {
   const d = decisionOf(nodo, item);
   const k = decKey(nodo, item.id);
-  const state = d ? `<span class="pill decided-${esc(d.decisione)}">${esc(d.decisione)}</span><span class="muted" style="font-size:13px">${esc(d.motivo || "")}${d.quando ? " · " + esc(d.quando.slice(0, 10)) : ""}${d.registrata ? " · registrata nel nodo" : ""}</span>` : "";
-  if (d?.registrata && !DEC[k]) return `<div class="decide"><div class="btns">${state}</div></div>`;
   const off = !CAN_DECIDE ? "disabled" : "";
   const note = DB_STATE === "absent" ? "Le decisioni si registrano aprendo l'esploratore su claude.ai." : DB_STATE === "loading" ? "Collegamento al registro delle decisioni…" : !CAN_DECIDE ? "Solo chi modifica l'esploratore registra le decisioni." : "";
-  return `<div class="decide" data-k="${esc(k)}" data-nodo="${esc(nodo)}" data-id="${esc(item.id)}" data-tipo="${esc(tipo)}">
-    ${d ? `<div class="btns">${state}${CAN_DECIDE ? `<button type="button" data-act="annulla">Annulla</button>` : ""}</div>` : `
+  const head = `<div class="decide" data-k="${esc(k)}" data-nodo="${esc(nodo)}" data-id="${esc(item.id)}" data-tipo="${esc(tipo)}">`;
+  const corr = d?.correzioni ? [d.correzioni.catena ? "nella catena " + d.correzioni.catena : "", d.correzioni.dopo != null ? (d.correzioni.dopo === "end" ? "in fondo" : "dopo l'anello " + d.correzioni.dopo) : "", d.correzioni.afferma ? "con il testo: «" + d.correzioni.afferma + "»" : ""].filter(Boolean).join(", ") : "";
+  const corrLine = corr ? `<div class="muted" style="font-size:13px">Correzione: ${esc(corr)}</div>` : "";
+  if (d && d.da === "claude" && d.stato === "da confermare") {
+    return `${head}<div class="btns"><span class="pill decided-${esc(d.decisione)}">Claude: ${esc(d.decisione)}</span><span class="muted" style="font-size:13px">${esc(d.motivo || "")}</span></div>${corrLine}
+      <textarea aria-label="Motivo per ribaltare" placeholder="Per ribaltare: il tuo motivo" ${off}>${esc(DRAFT[k] || "")}</textarea>
+      <div class="btns"><button type="button" data-act="conferma" ${off}>Conferma</button><button type="button" data-act="ribalta" ${off}>Ribalta</button>${note ? `<span class="muted" style="font-size:13px">${esc(note)}</span>` : ""}</div></div>`;
+  }
+  const who = d?.stato === "confermata" ? " · di Claude, confermata" : d?.stato === "ribaltata" ? " · ribaltata (Claude: " + (d.motivo_claude || "") + ")" : "";
+  const state = d ? `<span class="pill decided-${esc(d.decisione)}">${esc(d.decisione)}</span><span class="muted" style="font-size:13px">${esc(d.motivo || "")}${esc(who)}${d.quando ? " · " + esc(d.quando.slice(0, 10)) : ""}${d.registrata ? " · registrata nel nodo" : ""}</span>` : "";
+  if (d?.registrata && !DEC[k]) return `<div class="decide"><div class="btns">${state}</div></div>`;
+  return `${head}
+    ${d ? `<div class="btns">${state}${CAN_DECIDE ? `<button type="button" data-act="annulla">Annulla</button>` : ""}</div>${corrLine}` : `
     <textarea aria-label="Motivo della decisione" placeholder="Motivo (obbligatorio)" ${off}>${esc(DRAFT[k] || "")}</textarea>
     <div class="btns"><button type="button" data-act="accettata" ${off}>Accetta</button><button type="button" data-act="rifiutata" ${off}>Rifiuta</button>
       ${note ? `<span class="muted" style="font-size:13px">${esc(note)}</span>` : ""}</div>`}</div>`;
 }
 function pendingCount(n) {
   const items = [...(n.proposte || []), ...(n.novita || [])];
-  return items.filter(x => !decisionOf(n.id, x)).length;
+  return items.filter(x => { const d = decisionOf(n.id, x); return !d || d.stato === "da confermare"; }).length;
 }
 async function startDecisions() {
   try {
@@ -204,19 +214,35 @@ function rerenderKeep() {
   window.scrollTo(0, y);
 }
 async function onDecide(box, act) {
-  const k = box.dataset.k;
-  if (act === "annulla") { try { await DB.doc("decisioni/" + k).delete(); } catch (e) { alertBox(box, "Non salvata: " + (e.code || "errore")); } return; }
+  const k = box.dataset.k, cur = DEC[k];
+  const write = async data => {
+    box.querySelectorAll("button, textarea").forEach(x => x.disabled = true);
+    try { await DB.doc("decisioni/" + k).set(data); delete DRAFT[k]; }
+    catch (e) {
+      if (e.code === "invalid_argument") CAN_DECIDE = false;
+      box.querySelectorAll("button, textarea").forEach(x => x.disabled = false);
+      alertBox(box, "Non salvata: " + (e.code === "invalid_argument" ? "non hai il permesso di registrare decisioni" : (e.code || "errore")));
+    }
+  };
+  const now = new Date().toISOString();
   const motivo = (box.querySelector("textarea")?.value || "").trim();
-  if (!motivo) { alertBox(box, "Scrivi il motivo: la decisione si registra con il suo perché."); return; }
-  box.querySelectorAll("button, textarea").forEach(x => x.disabled = true);
-  try {
-    await DB.doc("decisioni/" + k).set({nodo: box.dataset.nodo, id: box.dataset.id, tipo: box.dataset.tipo, decisione: act, motivo, quando: new Date().toISOString()});
-    delete DRAFT[k];
-  } catch (e) {
-    if (e.code === "invalid_argument") CAN_DECIDE = false;
-    box.querySelectorAll("button, textarea").forEach(x => x.disabled = false);
-    alertBox(box, "Non salvata: " + (e.code === "invalid_argument" ? "non hai il permesso di registrare decisioni" : (e.code || "errore")));
+  if (act === "annulla") {
+    if (cur?.da === "claude" || cur?.motivo_claude) {  // back to Claude's provisional decision
+      const back = {...cur, stato: "da confermare", da: "claude"};
+      if (cur.stato === "ribaltata") Object.assign(back, {decisione: cur.decisione === "accettata" ? "rifiutata" : "accettata", motivo: cur.motivo_claude, quando: cur.quando_claude || cur.quando});
+      delete back.motivo_claude; delete back.quando_claude; delete back.confermata_quando;
+      return write(back);
+    }
+    try { await DB.doc("decisioni/" + k).delete(); } catch (e) { alertBox(box, "Non salvata: " + (e.code || "errore")); }
+    return;
   }
+  if (act === "conferma") return write({...cur, stato: "confermata", confermata_quando: now});
+  if (act === "ribalta") {
+    if (!motivo) { alertBox(box, "Scrivi il motivo per ribaltare la decisione di Claude."); return; }
+    return write({...cur, decisione: cur.decisione === "accettata" ? "rifiutata" : "accettata", motivo, motivo_claude: cur.motivo, quando_claude: cur.quando, quando: now, da: "redazione", stato: "ribaltata"});
+  }
+  if (!motivo) { alertBox(box, "Scrivi il motivo: la decisione si registra con il suo perché."); return; }
+  return write({nodo: box.dataset.nodo, id: box.dataset.id, tipo: box.dataset.tipo, decisione: act, motivo, quando: now, da: "redazione"});
 }
 function alertBox(box, msg) {
   let m = box.querySelector(".msg");
@@ -229,7 +255,7 @@ function proposalsSection(n) {
   n.proposte.forEach(p => (byChain[p.catena] ||= []).push(p));
   const open = pendingCount(n);
   return `<section><div class="row"><h2>Proposte da decidere</h2><span class="num muted">${open} aperte su ${n.proposte.length}</span></div>
-    <p class="muted" style="margin:0;max-width:72ch">Anelli proposti dalla pipeline per le catene del nodo, con la citazione ritrovata dal codice. Ogni decisione si registra con il motivo; quelle accettate entrano nel nodo.</p>
+    <p class="muted" style="margin:0;max-width:72ch">Anelli proposti dalla pipeline per le catene del nodo, con la citazione ritrovata dal codice. Ogni decisione si registra con il motivo; quelle accettate entrano nel nodo. Le decisioni proposte da Claude si confermano o si ribaltano con il proprio motivo.</p>
     ${Object.entries(byChain).map(([cid, ps]) => `<details class="panel" ${ps.some(p => !decisionOf(n.id, p)) ? "open" : ""}><summary>${esc(ps[0].titolo_catena)} <span class="num muted">(${ps.length})</span></summary>
       ${ps.map(p => `<div class="card" style="margin-top:10px">
         <div class="row"><strong>${srcShort(p.pezzo)}</strong>${p.relazione ? relChip(p.relazione.tipo, p.relazione.verbo) : ""}<span class="muted num">${p.dopo === "end" ? "in fondo alla catena" : "dopo l'anello " + esc(p.dopo)}</span>${p.punteggio != null ? `<span class="muted num">giudizio ${esc(p.punteggio)}</span>` : ""}</div>
