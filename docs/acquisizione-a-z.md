@@ -36,6 +36,15 @@ a pagamento parte solo da un file `runs/<nome>.request` scritto e spinto nel rep
 - **Fonti nuove solo con l'approvazione della redazione.** Dal 7 novembre ogni gruppo proposto entra «in prova» con i
   suoi motivi, e la redazione toglie quello che non vuole. Le fonti in prova non bastano da sole a fare una Matrice.
 - **robots.txt e riserva TDM rispettati**, sempre: un sito che vieta o rifiuta (403) non si aggira, si registra.
+- **Seconde copie** (decise il 9 novembre, `tools/second_copy.py`):
+  - *copia ad accesso aperto*: quando l'editore di un DOI rifiuta, si usa la copia indicata da OpenAlex
+    (`best_oa_location`) o da Crossref, di solito un archivio istituzionale o un preprint, cioè un sito che quella copia la
+    pubblica apposta. Nel record: dove si trova e se è la versione pubblicata o il preprint;
+  - *copia d'archivio* (Internet Archive): solo per le pagine che non esistono più (404, 410, dominio inesistente), e solo se
+    il sito originale, quando è ancora raggiungibile, non vieta i programmi in robots.txt e non ha la riserva TDM. Anche
+    web.archive.org passa il controllo di robots.txt. Nel record: «copia d'archivio» con la data della copia;
+  - mai per le pagine che rifiutano (403, 401, robots.txt, riserva TDM): per quelle Ubik può mostrare al lettore il link
+    alla copia dell'Internet Archive, senza raccoglierla né citarla.
 - **I testi integrali restano nel repository privato.** Si mostrano sintesi di Ubik e citazioni brevi: per la stampa al
   massimo una citazione di circa 150 caratteri per articolo, per gli altri testi entro 300 (`build_model.py`,
   `shown_quote`).
@@ -301,7 +310,7 @@ fermato al secondo giro (90 pagine): i contributi buoni erano quasi tutti PDF.
   Quando il giudizio o la raccolta mirata incontrano una pagina di docket con il numero della voce, o una sentenza, la
   sostituiscono con il documento RECAP (testo estratto o PDF) o con il testo della sentenza. Piano gratuito: 5 richieste al
   minuto, 50 l'ora, 125 al giorno; al massimo 40 chiamate per esecuzione, ci si ferma al primo rifiuto. Token verificato l'8
-  novembre (risposta 200). Da valutare: le copie dell'Internet Archive per le pagine rifiutate.
+  novembre (risposta 200). Le seconde copie (accesso aperto, archivio) seguono le regole della sezione 3.
 
 ## 10. Da fare
 
@@ -321,8 +330,7 @@ L'elenco unico di Ubik: ciò che è fatto, in corso e da fare. Aggiornato il 9 n
    in quelle, con termini e domande tradotti una volta dal modello e conservati in `reports/scout/NODE/languages.json`, e
    con le pagine di Wikipedia nelle stesse lingue (`tools/node_languages.py`, 9 novembre). Prima prova in corso: il 20
    febbraio, in ucraino e russo (7 scelte a mano mai trovate). Insieme: il limite di CourtListener, dando la precedenza agli atti dei casi (le memorie amicus del
-   fair use); per doi.org, la copia ad accesso aperto indicata da OpenAlex o Crossref. Le copie dell'Internet Archive per i
-   siti che rifiutano solo con una decisione della redazione, perché la regola dice che un rifiuto non si aggira.
+   fair use); le seconde copie decise il 9 novembre (sezione 3), nel codice dal 9 novembre e da misurare al prossimo giro.
 2. **Potare le vie che rendono poco** (sezione 9). Le misure dell'8 sera confermano Semantic Scholar (2 contributi unici
    in tutto) e le antenne dentro lo scout (nessuno; restano per la copertura delle Matrici). Da separare prima di
    decidere: la ricerca per parole chiave su OpenAlex dalle citazioni degli studi d'ancora (10 contributi unici in
