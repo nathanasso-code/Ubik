@@ -284,6 +284,18 @@ e in parte le altre due: manca la diluizione del mercato, che le prime due versi
 che la frase esista, non che sostenga l'esito (per la biblioteca piratata la frase descrive la biblioteca, non la
 decisione); i punti cambiano da un'esecuzione all'altra e possono perdere una controversia centrale.
 
+**Quarto nodo d'attualità, leggero** (9 novembre: «I data center dell'IA danneggiano le comunità in cui vengono
+costruiti?», dalle Matrici di due settimane; cinque sotto-domande: bollette, acqua, lavoro e tasse, trasparenza, voto e
+proteste; lingue de, es, nl; `reports/nodi/data-center-comunita/light.md`). Ricerca e giudizio a `k=250`, un giro: 0,17
+dollari, 59 contributi, quasi tutti documenti pubblici e studi (gli ordini esecutivi di Pennsylvania e Texas, il Congressional
+Research Service, il gruppo di lavoro dello Stato di Washington, la commissione dell'Assemblea di Londra, lo studio di E3 sulle
+tariffe, Good Jobs First, Brookings, il Laboratorio di Berkeley, lo studio della provincia di Noord-Holland sull'acqua, il
+ministero tedesco dell'Economia); 7 copie dello stesso documento riconosciute; 3 copie d'archivio di pagine scomparse. Bozza:
+1,7 centesimi, 6 punti, 15 citazioni su 15 ritrovate; i 2 punti del completamento con citazioni inventate sono stati
+scartati dal codice. Tre punti reggono (benefici fiscali, posti di lavoro, bollette: le due parti verificate), tre sono da
+rivedere (due «contesi» senza la parte contraria, uno «aperto» su un'affermazione di parte). Manca il voto, che resta
+contesto più che punto del contendere. Totale del nodo: circa 0,19 dollari.
+
 **Verifica degli scarti** (a campione). Sotto 5 si perde circa un contributo su dieci, quasi sempre articoli pertinenti
 senza prove proprie: ora sono la fascia «copertura». Al primo livello si perdevano pagine pertinenti con titoli espliciti
 («Third Circuit affirms… rejects fair use») per termini troppo stretti, e le cronache datate 20 febbraio 2014: corretto
@@ -340,6 +352,7 @@ L'elenco unico di Ubik: ciò che è fatto, in corso e da fare. Aggiornato il 9 n
 
 **Fatto di recente**
 
+- 9 novembre: quarto nodo d'attualità, leggero, sui data center e le comunità: 0,19 dollari in tutto (sezione 8).
 - 9 novembre: potatura reversibile (Semantic Scholar, antenne e via web spente nello scout, setaccio a due giri; OpenAlex
   per parole chiave resta: 10 contributi unici); seconde copie nel codice; prima prova delle lingue del nodo.
 - 9 novembre: controllo a campione della precisione dei contributi del fair use (sezione 8): circa 70 utili su 120,
@@ -378,7 +391,8 @@ L'elenco unico di Ubik: ciò che è fatto, in corso e da fare. Aggiornato il 9 n
    settimana con fonti di parti diverse; lì si apre un nodo leggero, che diventa pieno solo se resta caldo e ha punti
    verificabili.
 3. **Un quarto nodo d'attualità** costruito con la pipeline dall'inizio, scelto dalle Matrici come al punto 2: il banco
-   di prova del metodo e delle proposte.
+   di prova del metodo e delle proposte. Bozza leggera fatta il 9 novembre sui data center e le comunità (sezione 8): da
+   rivedere dalla redazione sui tre punti segnati, poi da pubblicare nell'esploratore.
 4. **Difetti del giudizio e delle proposte** emersi lì e nei tre nodi e nel controllo del 9 novembre
    (sezione 8). Nel codice dal 9 novembre, da misurare al prossimo giro: le copie dello stesso documento (impronta del
    testo, una sola tiene la fascia), i siti che riscrivono (`registry/rewriters.json`), i siti esclusi come le copie pirata
