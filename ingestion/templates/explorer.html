@@ -136,7 +136,8 @@ const money = v => v == null ? "non misurato" : (v < 0.01 ? "< 0,01 $" : v.toFix
 const SUB = Object.fromEntries((D.topic.ia.sottotopic || []).map(s => [s.id, s.nome]));
 const KIND = {cronaca: "cronaca", reazione: "reazione", analisi: "analisi", commento: "commento", documento: "documento", rassegna: "rassegna", rilancio: "rilancio", altro: "altro"};
 const LANG = {it: "IT", en: "EN", fr: "FR", de: "DE", es: "ES"};
-const NODE_KIND = {fatto: "Nodo di fatto", analisi: "Nodo d'analisi", affermazione: "Affermazione in circolazione"};
+const NODE_KIND = {fatto: "Nodo di fatto", analisi: "Nodo d'analisi", affermazione: "Affermazione in circolazione", leggero: "Nodo leggero"};
+const OUTCOME = {accertato: "Accertato", smentito: "Smentito", conteso: "Conteso", aperto: "Aperto"};
 
 function pill(stato) {
   const s = stato || "bozza";
@@ -300,11 +301,12 @@ function viewNode(id) {
   if (!n) return notFound();
   const topic = D.topic[n.topic];
   let body = "";
-  if (n.forma === "catene e anelli" || n.tipo === "fatto") body = nodeFact(n);  // the architecture of every node since 6 November
+  if (n.forma === "nodo leggero") body = nodeLight(n);
+  else if (n.forma === "catene e anelli" || n.tipo === "fatto") body = nodeFact(n);  // the architecture of every node since 6 November
   else if (n.tipo === "affermazione") body = nodeClaim(n);
   else if (n.tipo === "analisi") body = nodePositions(n);
   else body = nodeClaim(n);
-  return `<div><div class="crumb"><a href="#topic-${esc(topic.id)}">${esc(topic.nome)}</a> · ${esc(NODE_KIND[n.tipo] || "Nodo")} · ${esc(n.forma || "")}</div>
+  return `<div><div class="crumb"><a href="#topic-${esc(topic.id)}">${esc(topic.nome)}</a> · ${esc(NODE_KIND[n.tipo] || "Nodo")}${n.forma && n.forma !== (NODE_KIND[n.tipo] || "").toLowerCase() ? " · " + esc(n.forma) : ""}</div>
     <h1>${esc(n.titolo)}</h1>${n.domanda !== n.titolo ? `<p class="lead">${esc(n.domanda)}</p>` : ""}
     ${n.artefatto ? `<p class="muted" style="margin:6px 0 0;font-size:13px">Pagina del prototipo: <a href="${esc(n.artefatto)}" target="_blank" rel="noopener">apri</a></p>` : ""}</div>
     ${body}
@@ -326,6 +328,25 @@ function nodeFact(n) {
       <div><span class="label">Sintesi</span><div>${esc(c.sintesi)}</div></div>
       ${c.scioglie ? `<div><span class="label">Cosa la scioglierebbe</span><div>${esc(c.scioglie)}</div></div>` : ""}</div>`).join("")}</section>
     ${n.aperte?.length ? `<section><h2>Domande aperte</h2><div class="panel"><ul style="margin:0;padding-left:18px">${n.aperte.map(x => `<li>${esc(x)}</li>`).join("")}</ul></div></section>` : ""}`;
+}
+function nodeLight(n) {
+  // the light node: the state in one line, the points in dispute (for, against, what the outcome rests on), the key
+  // documents, the rest for further reading. Every quote shown was found word for word by the code.
+  const side = (label, s) => s ? `<div><span class="label">${esc(label)}</span><div class="muted" style="font-size:13px">${srcShort(s.pezzo)}</div>${s.citazione ? quote(s.citazione) : `<div class="muted" style="font-size:13px">citazione non mostrata</div>`}</div>` : "";
+  return `<div class="panel" style="display:grid;gap:10px"><span class="label">Stato della questione</span><div>${esc(n.stato_testo)}</div>
+      ${(n.stato_fonti || []).filter(Boolean).map(s => `<div><div class="muted" style="font-size:13px">${srcShort(s.pezzo)}</div>${s.citazione ? quote(s.citazione) : ""}</div>`).join("")}</div>
+    <section><h2>Punti del contendere</h2>${n.punti.map((p, i) => `<div class="panel" style="display:grid;gap:10px">
+      <div class="row"><h3>${i + 1}. ${esc(p.affermazione)}</h3><span class="chip ${p.esito === "accertato" || p.esito === "smentito" ? "rel-dichiarata" : ""}">${esc(OUTCOME[p.esito] || p.esito)}</span>
+        ${p.verifica === "da rivedere" ? `<span class="chip rel-simulata">da rivedere</span>` : ""}${p.rivisto ? `<span class="chip">rivisto</span>` : ""}</div>
+      ${side("A favore", p.a_favore)}${side("Contro", p.contro)}
+      ${p.poggia && p.poggia.pezzo !== p.a_favore?.pezzo && p.poggia.pezzo !== p.contro?.pezzo ? side("Su che cosa poggia l'esito", p.poggia) : (p.poggia ? `<div class="muted" style="font-size:13px">L'esito poggia su: ${srcShort(p.poggia.pezzo)}</div>` : "")}
+      ${p.deciderebbe ? `<div><span class="label">Che cosa deciderebbe</span><div>${esc(p.deciderebbe)}</div></div>` : ""}
+      ${p.problemi?.length ? `<div class="muted" style="font-size:13px">${p.problemi.map(esc).join(" · ")}</div>` : ""}</div>`).join("")}</section>
+    <section><h2>Documenti cardine</h2><div class="panel" style="display:grid;gap:8px">${n.documenti.map(d => `<div><strong>${srcShort(d.pezzo)}</strong><div class="muted" style="font-size:14px">${esc(d.perche)}</div></div>`).join("")}</div></section>
+    ${n.sotto_domande?.length ? `<details class="panel"><summary>Le sotto-domande da cui è partita la ricerca (${n.sotto_domande.length})</summary><ul>${n.sotto_domande.map(s => `<li><strong>${esc(s.titolo)}</strong>: ${esc(s.domanda)}</li>`).join("")}</ul></details>` : ""}
+    <details class="panel"><summary>Per approfondire (${n.approfondire.length}${n.approfondire_totale > n.approfondire.length ? " dei " + n.approfondire_totale : ""})</summary>${n.approfondire.map(p => srcLine(p)).join("")}</details>
+    ${n.decisioni?.length ? `<details class="panel"><summary>Decisioni della redazione (${n.decisioni.length})</summary><ul>${n.decisioni.map(d => `<li><strong>${esc(d.point)}</strong>: ${esc(d.decision)}. <span class="muted">${esc(d.why)}</span></li>`).join("")}</ul></details>` : ""}
+    ${n.origine ? `<p class="muted" style="font-size:13px;margin:0">Origine: ${esc(n.origine)}</p>` : ""}`;
 }
 function nodePositions(n) {
   const sec = {acquisito: "Acquisito", conteso: "Conteso", "in attesa": "In attesa"};

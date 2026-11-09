@@ -38,6 +38,7 @@ Ogni oggetto ha `id` stabile, `asof` (data dell'ultimo aggiornamento) e un blocc
 | `anello` | pezzo, cosa afferma, citazione verificata, relazione con l'anello sopra | dentro la catena |
 | `relazione` | da, a, verbo (conferma, contesta, smentisce, estende, risponde a…), tipo (dichiarata, ricostruita, verifica di Ubik, simulata), nota | `relations`, `rel` |
 | `affermazione` | chi, testo, diffusione, anelli toccati, dove regge e dove no | `claim.json` |
+| `nodo leggero` | domanda, stato in una riga con le sue fonti, punti del contendere (affermazione, fonte a favore e contro con citazione verificata, esito: accertato, smentito, conteso, aperto; che cosa deciderebbe), documenti cardine, per approfondire, decisioni della redazione con il motivo, ancore che lo legano alle Matrici (9 novembre) | `reports/nodi/<nodo>/light.json` |
 
 Le fonti dei nodi oggi sono descritte dentro ciascun nodo (`who`, `kind`, `url`): diventano `pezzo` con un id
 comune, così la stessa fonte compare in Matrici, nodi e voci senza doppioni.

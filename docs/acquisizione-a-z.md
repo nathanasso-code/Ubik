@@ -352,7 +352,9 @@ L'elenco unico di Ubik: ciò che è fatto, in corso e da fare. Aggiornato il 9 n
 
 **Fatto di recente**
 
-- 9 novembre: quarto nodo d'attualità, leggero, sui data center e le comunità: 0,19 dollari in tutto (sezione 8).
+- 9 novembre: quarto nodo d'attualità, leggero, sui data center e le comunità: 0,19 dollari in tutto (sezione 8); rivisto
+  (rete e accordi di riservatezza accertati, acqua divisa in due punti, voto nella riga di stato) e pubblicato
+  nell'esploratore.
 - 9 novembre: potatura reversibile (Semantic Scholar, antenne e via web spente nello scout, setaccio a due giri; OpenAlex
   per parole chiave resta: 10 contributi unici); seconde copie nel codice; prima prova delle lingue del nodo.
 - 9 novembre: controllo a campione della precisione dei contributi del fair use (sezione 8): circa 70 utili su 120,
@@ -391,8 +393,9 @@ L'elenco unico di Ubik: ciò che è fatto, in corso e da fare. Aggiornato il 9 n
    settimana con fonti di parti diverse; lì si apre un nodo leggero, che diventa pieno solo se resta caldo e ha punti
    verificabili.
 3. **Un quarto nodo d'attualità** costruito con la pipeline dall'inizio, scelto dalle Matrici come al punto 2: il banco
-   di prova del metodo e delle proposte. Bozza leggera fatta il 9 novembre sui data center e le comunità (sezione 8): da
-   rivedere dalla redazione sui tre punti segnati, poi da pubblicare nell'esploratore.
+   di prova del metodo e delle proposte. Fatto il 9 novembre sui data center e le comunità (sezione 8): bozza leggera,
+   revisione di Claude con le decisioni registrate nel file, nodo nell'esploratore. Prossimo passo del nodo: l'aggiornamento
+   settimanale con lo scout sui soli candidati nuovi.
 4. **Difetti del giudizio e delle proposte** emersi lì e nei tre nodi e nel controllo del 9 novembre
    (sezione 8). Nel codice dal 9 novembre, da misurare al prossimo giro: le copie dello stesso documento (impronta del
    testo, una sola tiene la fascia), i siti che riscrivono (`registry/rewriters.json`), i siti esclusi come le copie pirata
