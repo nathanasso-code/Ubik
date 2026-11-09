@@ -273,6 +273,21 @@ stena.ee, ruskline.ru, Global Research, Canadian Dimension) e da una copia pirat
 `registry/excluded-hosts.json`); entrano testate statali russe (Rossijskaja Gazeta, RIA). Le traduzioni sono corrette ma a
 volte calcate dall'inglese («масові вбивства на Майдані» invece di «розстріли на Майдані»): si possono correggere nel file.
 
+**Lingue del nodo, seconda prova** (9 novembre, 20 febbraio, con le traduzioni corrette a mano). Si è fermata per il
+credito OpenRouter esaurito: 121 pagine giudicate, 147 rifiutate con HTTP 402 (0,13 dollari). I giudizi riusciti sono
+uniti a quelli della prima prova. Le regole nuove sono applicate senza nuove chiamate (`judge_candidates.py reband`):
+- **Contributi:** 48 in tutto, 3 nuovi (Lutsenko su patrioty.org.ua, Antydot, Butusov su Glavcom), 23 in cirillico.
+- **Stessa voce:** la regola funziona. Nove testi della tesi di Katchanovski diventano «ripresa», tra cui Global
+  Research due volte, Canadian Dimension due volte, ruskline.ru, stena.ee, l'intervento su Umoloda e Rossijskaja Gazeta.
+  Restano contributi il libro e l'articolo migliore. La recensione critica di Oylupinar resta contributo, perché ha un
+  altro autore.
+- **Testate di Stato:** RIA e Rossijskaja Gazeta portano l'etichetta.
+- **Scelte a mano:** promosse sempre 2 su 9, cioè il rapporto del Consiglio d'Europa e Hromadske. Gli articoli di Radio
+  Svoboda, lb.ua e texty.org.ua non entrano nei candidati nemmeno con i termini corretti. Il limite resta a monte: le
+  ricerche gratuite in ucraino non arrivano a quegli archivi.
+
+Il giudice ora si ferma alla prima risposta 402, e una pagina fallita per errore del modello non conta come già vista.
+
 **Nodo leggero, prima prova** (9 novembre, fair use, dai 15 contributi migliori del giudizio; `tools/light_node.py`,
 risultato in `reports/nodi/fair-use/light.md`). Tre versioni, da 1,3 a 1,8 centesimi ciascuna. Nelle prime due il modello
 riceveva i 15 testi insieme: ha ignorato cinque documenti primari, tra cui le sentenze Bartz e Getty, e nella seconda la
@@ -352,6 +367,14 @@ L'elenco unico di Ubik: ciò che è fatto, in corso e da fare. Aggiornato il 9 n
 
 **Fatto di recente**
 
+- 9 novembre pomeriggio: la regola della stessa voce (oltre due testi di analisi o d'opinione dello stesso autore, in
+  qualunque lingua, diventano «ripresa»; gli studi no) e il ricalcolo delle fasce senza chiamate (`reband`);
+  l'aggiornamento sui soli candidati nuovi (`only_new` nella richiesta; le impronte delle pagine già giudicate restano,
+  gli indirizzi dei risultati di Brave no); le «novità da rivedere» del nodo leggero (`light.request` con `mode=update`:
+  la bozza rivista non si riscrive); i DOI della bibliografia dei PDF e il grafo delle citazioni degli studi promossi
+  (OpenAlex, al massimo 25 consultazioni per esecuzione) nel setaccio. Seconda prova delle lingue (sezione 8).
+- 9 novembre: **credito OpenRouter esaurito.** Il giudice, i nodi leggeri e le traduzioni sono fermi finché non viene
+  ricaricato; scout, regole e ricalcoli non costano e vanno avanti.
 - 9 novembre: quarto nodo d'attualità, leggero, sui data center e le comunità: 0,19 dollari in tutto (sezione 8); rivisto
   (rete e accordi di riservatezza accertati, acqua divisa in due punti, voto nella riga di stato) e pubblicato
   nell'esploratore.
@@ -368,8 +391,10 @@ L'elenco unico di Ubik: ciò che è fatto, in corso e da fare. Aggiornato il 9 n
    della vicenda (`languages` in `scout.json`; quelle dei domini delle ancore si aggiungono da sole) e lo scout cerca anche
    in quelle, con termini e domande tradotti una volta dal modello e conservati in `reports/scout/NODE/languages.json`, e
    con le pagine di Wikipedia nelle stesse lingue (`tools/node_languages.py`, 9 novembre). Prima prova sul 20 febbraio
-   (sezione 8): i contributi raddoppiano, ma moltiplicano anche le ristampe di una stessa tesi e le testate statali; da
-   rifare con le correzioni del punto 4, già nel codice. Insieme: il limite di CourtListener, dando la precedenza agli atti dei casi (le memorie amicus del
+   (sezione 8): i contributi raddoppiano, ma moltiplicano anche le ristampe di una stessa tesi e le testate statali.
+   Seconda prova il 9 novembre, fermata dal credito: con la stessa voce e l'etichetta di Stato le ristampe e le testate
+   statali non pesano più. Resta il limite a monte: gli archivi della stampa ucraina scelti a mano non entrano nei
+   candidati. Da provare: una ricerca sui siti di quelle testate (`site:` in Brave) per le lingue del nodo. Insieme: il limite di CourtListener, dando la precedenza agli atti dei casi (le memorie amicus del
    fair use); le seconde copie decise il 9 novembre (sezione 3), nel codice dal 9 novembre e da misurare al prossimo giro.
 2. **La bozza automatica del nodo, in forma leggera.** Prova fatta il 9 novembre sul fair use (sezione 8): la versione in due passi
    regge, a meno di 2 centesimi per la bozza. Da fare prima del quarto nodo: un controllo che la frase citata sostenga
@@ -395,19 +420,25 @@ L'elenco unico di Ubik: ciò che è fatto, in corso e da fare. Aggiornato il 9 n
 3. **Un quarto nodo d'attualità** costruito con la pipeline dall'inizio, scelto dalle Matrici come al punto 2: il banco
    di prova del metodo e delle proposte. Fatto il 9 novembre sui data center e le comunità (sezione 8): bozza leggera,
    revisione di Claude con le decisioni registrate nel file, nodo nell'esploratore. Prossimo passo del nodo: l'aggiornamento
-   settimanale con lo scout sui soli candidati nuovi.
+   settimanale con lo scout sui soli candidati nuovi: nel codice dal 9 novembre (`only_new`, poi `light.request` con
+   `mode=update`). Prima prova lo stesso giorno: le 242 pagine già giudicate vengono saltate e lo scout ne sceglie 250
+   nuove su 2232 candidati, a costo zero; il giudizio è fallito per il credito esaurito, e le pagine rifiutate restano
+   da giudicare. Decisione: non si
+   programma da solo. Ogni esecuzione a pagamento parte da una richiesta (sezione 11), quindi l'aggiornamento settimanale
+   si lancia con una riga, non con un calendario.
 4. **Difetti del giudizio e delle proposte** emersi lì e nei tre nodi e nel controllo del 9 novembre
    (sezione 8). Nel codice dal 9 novembre, da misurare al prossimo giro: le copie dello stesso documento (impronta del
    testo, una sola tiene la fascia), i siti che riscrivono (`registry/rewriters.json`), i siti esclusi come le copie pirata
    (`registry/excluded-hosts.json`), la seconda lettura dei documenti primari, l'etichetta per le testate di Stato
-   (`registry/state-media.json`: dichiarate, non escluse). Restano: le ristampe di una stessa tesi in testi diversi, un
-   limite di proposte per catena, le sintesi del modello, che possono rovesciare l'esito di
+   (`registry/state-media.json`: dichiarate, non escluse); la stessa voce (le ristampe di una tesi in testi e lingue
+   diverse: misurata sul 20 febbraio, 9 riprese). Restano: un limite di proposte per catena, le sintesi del modello, che possono rovesciare l'esito di
    una sentenza e vanno controllate prima di mostrarle (nel nodo leggero l'esito di ogni punto si appoggia alla frase
    verificata); il confronto delle affermazioni con i documenti primari del
    corpus (il pezzo più difficile, quasi certamente con il modello). Poi le proposte nell'esploratore, da accettare o
    rifiutare con il motivo registrato (sezione 3).
-5. **I riferimenti dei PDF e il grafo delle citazioni** (OpenAlex o Crossref, gratuiti) nel setaccio; Wikipedia accesa
-   sui temi storici; poi di nuovo la prova di profondità con Wikipedia accesa e spenta.
+5. **I riferimenti dei PDF e il grafo delle citazioni** (OpenAlex o Crossref, gratuiti) nel setaccio: nel codice dal 9
+   novembre. Da fare, alla ricarica del credito: di nuovo la prova di profondità sul primo inverno dell'IA, a due giri,
+   con Wikipedia accesa (circa 0,2 dollari).
 6. Il resto:
    - 9 novembre (promemoria già fissato, nella conversazione da cui è partito): il giro delle Matrici sulla settimana
      intera, dal 2 al 9 novembre, e la ripubblicazione della pagina; le correzioni che chiedeva sono già fatte;
