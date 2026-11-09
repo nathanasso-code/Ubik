@@ -115,6 +115,15 @@ details > summary { cursor: pointer; font-weight: 600; padding: 4px 0 }
 .map .ix { font: 600 15px/34px var(--display); width: 34px; height: 34px; text-align: center; border-radius: 50%; border: 1.5px solid var(--line); color: var(--muted) }
 .map .stop.built .ix { border-color: var(--accent); color: var(--panel); background: var(--accent) }
 .empty { color: var(--muted); font-style: italic }
+.decide { display: grid; gap: 8px; border-top: 1px dashed var(--line); padding-top: 10px; margin-top: 4px }
+.decide textarea { font: 400 14px/1.4 var(--body); color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 7px 9px; min-height: 38px; resize: vertical; width: 100% }
+.decide .btns { display: flex; flex-wrap: wrap; gap: 8px; align-items: center }
+.decide button { font: 500 13px var(--body); padding: 6px 12px; border-radius: 999px; border: 1px solid var(--line); background: var(--panel); color: var(--ink); cursor: pointer }
+.decide button[data-act="accettata"] { border-color: var(--st-ok); color: var(--st-ok) }
+.decide button[data-act="rifiutata"] { border-color: var(--st-off); color: var(--st-off) }
+.decide button:disabled { opacity: .45; cursor: default }
+.decided-accettata { color: var(--st-ok); background: var(--st-ok-bg) }
+.decided-rifiutata { color: var(--st-off); background: var(--st-off-bg) }
 @media (max-width: 820px) {
   .shell { grid-template-columns: minmax(0, 1fr); gap: 20px }
   nav.index { position: static; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)) }
@@ -138,6 +147,97 @@ const KIND = {cronaca: "cronaca", reazione: "reazione", analisi: "analisi", comm
 const LANG = {it: "IT", en: "EN", fr: "FR", de: "DE", es: "ES"};
 const NODE_KIND = {fatto: "Nodo di fatto", analisi: "Nodo d'analisi", affermazione: "Affermazione in circolazione", leggero: "Nodo leggero"};
 const OUTCOME = {accertato: "Accertato", smentito: "Smentito", conteso: "Conteso", aperto: "Aperto"};
+
+// ---------- editorial decisions on proposals and novelties (db capability: shared, read back by Claude)
+// Each decision is a document decisioni/<node>--<id> with the reason; Claude records it in the node's files
+// (reports/nodi/NODE/decisioni.json), and a decision already recorded there comes with the data.
+const DEC = {};          // live decisions from the page's database
+const DRAFT = {};        // reasons being typed, kept across re-renders
+let DB = null, CAN_DECIDE = false, DB_STATE = "loading";
+const decKey = (nodo, id) => `${nodo}--${id}`;
+function decisionOf(nodo, item) {
+  return DEC[decKey(nodo, item.id)] || (item.decisione ? {decisione: item.decisione.decisione, motivo: item.decisione.motivo, quando: item.decisione.quando, registrata: true} : null);
+}
+function decideBox(nodo, item, tipo) {
+  const d = decisionOf(nodo, item);
+  const k = decKey(nodo, item.id);
+  const state = d ? `<span class="pill decided-${esc(d.decisione)}">${esc(d.decisione)}</span><span class="muted" style="font-size:13px">${esc(d.motivo || "")}${d.quando ? " · " + esc(d.quando.slice(0, 10)) : ""}${d.registrata ? " · registrata nel nodo" : ""}</span>` : "";
+  if (d?.registrata && !DEC[k]) return `<div class="decide"><div class="btns">${state}</div></div>`;
+  const off = !CAN_DECIDE ? "disabled" : "";
+  const note = DB_STATE === "absent" ? "Le decisioni si registrano aprendo l'esploratore su claude.ai." : DB_STATE === "loading" ? "Collegamento al registro delle decisioni…" : !CAN_DECIDE ? "Solo chi modifica l'esploratore registra le decisioni." : "";
+  return `<div class="decide" data-k="${esc(k)}" data-nodo="${esc(nodo)}" data-id="${esc(item.id)}" data-tipo="${esc(tipo)}">
+    ${d ? `<div class="btns">${state}${CAN_DECIDE ? `<button type="button" data-act="annulla">Annulla</button>` : ""}</div>` : `
+    <textarea aria-label="Motivo della decisione" placeholder="Motivo (obbligatorio)" ${off}>${esc(DRAFT[k] || "")}</textarea>
+    <div class="btns"><button type="button" data-act="accettata" ${off}>Accetta</button><button type="button" data-act="rifiutata" ${off}>Rifiuta</button>
+      ${note ? `<span class="muted" style="font-size:13px">${esc(note)}</span>` : ""}</div>`}</div>`;
+}
+function pendingCount(n) {
+  const items = [...(n.proposte || []), ...(n.novita || [])];
+  return items.filter(x => !decisionOf(n.id, x)).length;
+}
+async function startDecisions() {
+  try {
+    const timer = setTimeout(() => { if (DB_STATE === "loading") { DB_STATE = "absent"; rerenderKeep(); } }, 10000);
+    for (let i = 0; i < 40 && !window.claude?.use; i++) await new Promise(r => setTimeout(r, 250));
+    if (!window.claude?.use) { clearTimeout(timer); DB_STATE = "absent"; rerenderKeep(); return; }
+    const [db, user] = await Promise.all([window.claude.use("db"), window.claude.use("user")]);
+    if (!db) { clearTimeout(timer); DB_STATE = "absent"; rerenderKeep(); return; }
+    DB = db;
+    let w = null, edit = false;
+    try { w = user ? await user.can("data.write") : null; edit = user ? await user.canEdit() : false; } catch (e) {}
+    CAN_DECIDE = edit === true || w === true || (w == null && !user);
+    db.collection("decisioni").onSnapshot(snap => {
+      clearTimeout(timer);
+      DB_STATE = "ok";
+      for (const k of Object.keys(DEC)) delete DEC[k];
+      snap.docs.forEach(d => { DEC[d.id] = d.data(); });
+      rerenderKeep();
+    }, () => { clearTimeout(timer); DB_STATE = "absent"; rerenderKeep(); });
+  } catch (e) { DB_STATE = "absent"; rerenderKeep(); }
+}
+function rerenderKeep() {
+  buildIndex();
+  const h = location.hash.slice(1);
+  if (!h.startsWith("n-")) { document.querySelectorAll("#index a").forEach(a => a.classList.toggle("on", a.getAttribute("href") === "#" + (h || "cantiere"))); return; }
+  const y = window.scrollY;
+  render();
+  window.scrollTo(0, y);
+}
+async function onDecide(box, act) {
+  const k = box.dataset.k;
+  if (act === "annulla") { try { await DB.doc("decisioni/" + k).delete(); } catch (e) { alertBox(box, "Non salvata: " + (e.code || "errore")); } return; }
+  const motivo = (box.querySelector("textarea")?.value || "").trim();
+  if (!motivo) { alertBox(box, "Scrivi il motivo: la decisione si registra con il suo perché."); return; }
+  box.querySelectorAll("button, textarea").forEach(x => x.disabled = true);
+  try {
+    await DB.doc("decisioni/" + k).set({nodo: box.dataset.nodo, id: box.dataset.id, tipo: box.dataset.tipo, decisione: act, motivo, quando: new Date().toISOString()});
+    delete DRAFT[k];
+  } catch (e) {
+    if (e.code === "invalid_argument") CAN_DECIDE = false;
+    box.querySelectorAll("button, textarea").forEach(x => x.disabled = false);
+    alertBox(box, "Non salvata: " + (e.code === "invalid_argument" ? "non hai il permesso di registrare decisioni" : (e.code || "errore")));
+  }
+}
+function alertBox(box, msg) {
+  let m = box.querySelector(".msg");
+  if (!m) { m = document.createElement("span"); m.className = "msg muted"; m.style.fontSize = "13px"; box.querySelector(".btns").appendChild(m); }
+  m.textContent = msg;
+}
+function proposalsSection(n) {
+  if (!n.proposte?.length) return "";
+  const byChain = {};
+  n.proposte.forEach(p => (byChain[p.catena] ||= []).push(p));
+  const open = pendingCount(n);
+  return `<section><div class="row"><h2>Proposte da decidere</h2><span class="num muted">${open} aperte su ${n.proposte.length}</span></div>
+    <p class="muted" style="margin:0;max-width:72ch">Anelli proposti dalla pipeline per le catene del nodo, con la citazione ritrovata dal codice. Ogni decisione si registra con il motivo; quelle accettate entrano nel nodo.</p>
+    ${Object.entries(byChain).map(([cid, ps]) => `<details class="panel" ${ps.some(p => !decisionOf(n.id, p)) ? "open" : ""}><summary>${esc(ps[0].titolo_catena)} <span class="num muted">(${ps.length})</span></summary>
+      ${ps.map(p => `<div class="card" style="margin-top:10px">
+        <div class="row"><strong>${srcShort(p.pezzo)}</strong>${p.relazione ? relChip(p.relazione.tipo, p.relazione.verbo) : ""}<span class="muted num">${p.dopo === "end" ? "in fondo alla catena" : "dopo l'anello " + esc(p.dopo)}</span>${p.punteggio != null ? `<span class="muted num">giudizio ${esc(p.punteggio)}</span>` : ""}</div>
+        <div>${esc(p.afferma)}</div>${p.citazione ? quote(p.citazione.testo, p.citazione.it) : ""}
+        ${p.relazione?.nota ? `<div class="muted" style="font-size:13px">${esc(p.relazione.nota)}</div>` : ""}
+        ${p.nuovo ? `<div style="font-size:14px"><span class="label">Che cosa aggiunge</span> ${esc(p.nuovo)}</div>` : ""}
+        ${decideBox(n.id, p, "proposta")}</div>`).join("")}</details>`).join("")}</section>`;
+}
 
 function pill(stato) {
   const s = stato || "bozza";
@@ -200,7 +300,7 @@ function buildIndex() {
     <div><h4>Topic</h4><ul>
       <li><a href="#topic-ia">${esc(ia.nome)} <span class="k">attualità</span></a></li>
       <li><a href="#topic-euromaidan">${esc(em.nome)} <span class="k">conoscenza</span></a></li></ul></div>
-    <div><h4>Nodi</h4><ul>${nodes.map(n => `<li><a href="#n-${esc(n.id)}">${esc(n.titolo.length > 42 ? n.titolo.slice(0, 40) + "…" : n.titolo)}</a></li>`).join("")}</ul></div>`;
+    <div><h4>Nodi</h4><ul>${nodes.map(n => `<li><a href="#n-${esc(n.id)}">${esc(n.titolo.length > 42 ? n.titolo.slice(0, 40) + "…" : n.titolo)}${pendingCount(n) ? ` <span class="k">${pendingCount(n)} da decidere</span>` : ""}</a></li>`).join("")}</ul></div>`;
 }
 
 // ---------- views
@@ -327,6 +427,7 @@ function nodeFact(n) {
         ${a.relazione?.nota ? `<div class="muted" style="font-size:13px">${esc(a.relazione.nota)}</div>` : ""}</div></div>`).join("")}</div>
       <div><span class="label">Sintesi</span><div>${esc(c.sintesi)}</div></div>
       ${c.scioglie ? `<div><span class="label">Cosa la scioglierebbe</span><div>${esc(c.scioglie)}</div></div>` : ""}</div>`).join("")}</section>
+    ${proposalsSection(n)}
     ${n.aperte?.length ? `<section><h2>Domande aperte</h2><div class="panel"><ul style="margin:0;padding-left:18px">${n.aperte.map(x => `<li>${esc(x)}</li>`).join("")}</ul></div></section>` : ""}`;
 }
 function nodeLight(n) {
@@ -342,7 +443,7 @@ function nodeLight(n) {
       ${p.poggia && p.poggia.pezzo !== p.a_favore?.pezzo && p.poggia.pezzo !== p.contro?.pezzo ? side("Su che cosa poggia l'esito", p.poggia) : (p.poggia ? `<div class="muted" style="font-size:13px">L'esito poggia su: ${srcShort(p.poggia.pezzo)}</div>` : "")}
       ${p.deciderebbe ? `<div><span class="label">Che cosa deciderebbe</span><div>${esc(p.deciderebbe)}</div></div>` : ""}
       ${p.problemi?.length ? `<div class="muted" style="font-size:13px">${p.problemi.map(esc).join(" · ")}</div>` : ""}</div>`).join("")}</section>
-    ${n.novita?.length ? `<section><h2>Novità da rivedere</h2><div class="panel" style="display:grid;gap:10px">${n.novita.map(x => `<div><div class="row"><strong>${srcShort(x.pezzo)}</strong><span class="chip">${esc(x.lato || "")}</span><span class="muted">${esc(x.trovata || "")}</span>${x.stato === "da rivedere" ? `<span class="chip rel-simulata">da rivedere</span>` : ""}</div><div>${esc(x.contributo)}</div>${x.citazione ? quote(x.citazione) : ""}</div>`).join("")}</div></section>` : ""}
+    ${n.novita?.length ? `<section><h2>Novità da rivedere</h2><div class="panel" style="display:grid;gap:10px">${n.novita.map(x => `<div><div class="row"><strong>${srcShort(x.pezzo)}</strong><span class="chip">${esc(x.lato || "")}</span><span class="muted">${esc(x.trovata || "")}</span>${x.stato === "da rivedere" ? `<span class="chip rel-simulata">da rivedere</span>` : ""}</div><div>${esc(x.contributo)}</div>${x.citazione ? quote(x.citazione) : ""}${x.id ? decideBox(n.id, x, "novita") : ""}</div>`).join("")}</div></section>` : ""}
     <section><h2>Documenti cardine</h2><div class="panel" style="display:grid;gap:8px">${n.documenti.map(d => `<div><strong>${srcShort(d.pezzo)}</strong><div class="muted" style="font-size:14px">${esc(d.perche)}</div></div>`).join("")}</div></section>
     ${n.sotto_domande?.length ? `<details class="panel"><summary>Le sotto-domande da cui è partita la ricerca (${n.sotto_domande.length})</summary><ul>${n.sotto_domande.map(s => `<li><strong>${esc(s.titolo)}</strong>: ${esc(s.domanda)}</li>`).join("")}</ul></details>` : ""}
     <details class="panel"><summary>Per approfondire (${n.approfondire.length}${n.approfondire_totale > n.approfondire.length ? " dei " + n.approfondire_totale : ""})</summary>${n.approfondire.map(p => srcLine(p)).join("")}</details>
@@ -405,7 +506,13 @@ function render() {
   $("#view").innerHTML = html;
   document.querySelectorAll("#index a").forEach(a => a.classList.toggle("on", a.getAttribute("href") === "#" + h));
 }
+document.addEventListener("input", e => {
+  const box = e.target.closest(".decide");
+  if (box && e.target.tagName === "TEXTAREA") DRAFT[box.dataset.k] = e.target.value;
+});
 document.addEventListener("click", e => {
+  const d = e.target.closest(".decide button[data-act]");
+  if (d) { if (DB && CAN_DECIDE) onDecide(d.closest(".decide"), d.dataset.act); return; }
   const b = e.target.closest("button[data-sub], button[data-voice]");
   if (!b) return;
   if (b.dataset.sub) currentSub = b.dataset.sub; else voiceFilter = b.dataset.voice;
@@ -414,4 +521,5 @@ document.addEventListener("click", e => {
 window.addEventListener("hashchange", () => { render(); window.scrollTo(0, 0); });
 buildIndex();
 render();
+startDecisions();
 </script>
