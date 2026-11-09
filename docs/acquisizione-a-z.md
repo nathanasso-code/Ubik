@@ -323,6 +323,7 @@ L'elenco unico di Ubik: ciò che è fatto, in corso e da fare. Aggiornato il 9 n
    - da due a quattro documenti cardine (sentenze, rapporti, studi che contengono già la controversia);
    - la verifica di Ubik solo sui punti decidibili con un documento primario del corpus;
    - «Per approfondire»: i contributi non usati.
+
    Si perdono il dialogo tra le fonti, i passaggi di provenienza e la coda lunga; l'esito dichiarato evita il falso
    equilibrio. Costo stimato: circa 0,10 dollari di ricerca (un giro di setaccio, `k` 200-300) e una bozza di DeepSeek dai
    15 contributi migliori, rivista solo sui punti contesi; aggiornamento con lo scout settimanale sui soli candidati nuovi.
