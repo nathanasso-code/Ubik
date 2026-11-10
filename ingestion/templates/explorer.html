@@ -162,7 +162,8 @@ function decisionOf(nodo, item) {
 function decideBox(nodo, item, tipo) {
   const d = decisionOf(nodo, item);
   const k = decKey(nodo, item.id);
-  const word = x => tipo === "anello" || tipo === "punto" ? ({accettata: tipo === "punto" ? "tenere il punto" : "tenere nel nodo", rifiutata: tipo === "punto" ? "togliere il punto" : "togliere dal nodo"}[x] || x) : x;
+  const WORDS = {anello: ["tenere nel nodo", "togliere dal nodo"], punto: ["tenere il punto", "togliere il punto"], "nodo-proposto": ["aprire il nodo", "non aprire"]};
+  const word = x => WORDS[tipo] ? ({accettata: WORDS[tipo][0], rifiutata: WORDS[tipo][1]}[x] || x) : x;
   const off = !CAN_DECIDE ? "disabled" : "";
   const note = DB_STATE === "absent" ? "Le decisioni si registrano aprendo l'esploratore su claude.ai." : DB_STATE === "loading" ? "Collegamento al registro delle decisioni…" : !CAN_DECIDE ? "Solo chi modifica l'esploratore registra le decisioni." : "";
   const head = `<div class="decide" data-k="${esc(k)}" data-nodo="${esc(nodo)}" data-id="${esc(item.id)}" data-tipo="${esc(tipo)}">`;
@@ -210,7 +211,7 @@ async function startDecisions() {
 function rerenderKeep() {
   buildIndex();
   const h = location.hash.slice(1);
-  if (!h.startsWith("n-")) { document.querySelectorAll("#index a").forEach(a => a.classList.toggle("on", a.getAttribute("href") === "#" + (h || "cantiere"))); return; }
+  if (!(h.startsWith("n-") || h.startsWith("m-") || h === "topic-ia")) { document.querySelectorAll("#index a").forEach(a => a.classList.toggle("on", a.getAttribute("href") === "#" + (h || "cantiere"))); return; }
   const y = window.scrollY;
   render();
   window.scrollTo(0, y);
@@ -382,6 +383,19 @@ function viewCantiere() {
 }
 
 let currentSub = null;
+function disagreement(g, withBox) {
+  // a Matrice whose sources disagree: the question, the sides with the verified quotes, what would decide it
+  const where = g.matrici.filter(id => "#m-" + id !== location.hash).map(id => `<a href="#m-${esc(id)}">${esc(D.matrici[id]?.titolo || id)}</a>`);
+  return `<div class="panel" style="display:grid;gap:10px">
+    <div class="row">${g.proposta ? `<span class="chip rel-dichiarata">nodo proposto</span>` : `<span class="chip">le fonti divergono</span>`}<span class="chip">${esc(g.tipo === "fatto" ? "di fatto" : "d'analisi")}</span><span class="muted num" style="font-size:13px">forza ${esc(g.forza)}/5</span>
+      ${g.nodo_esistente ? `<span class="muted" style="font-size:13px">già nel nodo <a href="#n-${esc(g.nodo_esistente.nodo)}">${esc(D.nodi[g.nodo_esistente.nodo]?.titolo || g.nodo_esistente.nodo)}</a></span>` : ""}</div>
+    <h3>${esc(g.domanda)}</h3>
+    ${g.lati.map(l => `<div><div>${esc(l.posizione)}</div>${l.pezzi.map(k => `<div class="muted" style="font-size:13px">${srcShort(k)}</div>${quote(l.citazioni[k])}`).join("")}</div>`).join("")}
+    ${g.deciderebbe ? `<div class="muted" style="font-size:14px"><span class="label">Che cosa lo deciderebbe</span> ${esc(g.deciderebbe)}</div>` : ""}
+    ${g.dura ? `<div class="muted" style="font-size:14px"><span class="label">Perché dura</span> ${esc(g.dura)}</div>` : ""}
+    ${where.length ? `<div class="muted" style="font-size:13px">Anche in: ${where.join(" · ")}</div>` : ""}
+    ${withBox && g.proposta ? decideBox("matrici", g, "nodo-proposto") : ""}</div>`;
+}
 function viewTopicIA() {
   const t = D.topic.ia;
   const weeks = weeksOf("ia");
@@ -397,6 +411,9 @@ function viewTopicIA() {
       <div class="stat"><b class="num">${nodes.length}</b><span>${nodes.length === 1 ? "nodo collegato" : "nodi collegati"}</span></div>
     </div>
     ${nodes.length ? `<section><h2>Nodi</h2><div class="grid">${nodes.map(nodeCard).join("")}</div></section>` : ""}
+    ${(t.nodi_proposti || []).length ? `<section><h2>Nodi proposti dalle Matrici</h2><p class="muted" style="margin:0;max-width:72ch">Matrici in cui le fonti si dividono su qualcosa che un nodo potrebbe decidere o mappare. Le citazioni sono ritrovate parola per parola; la decisione di aprire il nodo è della redazione.</p>
+      ${t.nodi_proposti.filter(g => g.proposta).map(g => disagreement(g, true)).join("")}
+      <details class="panel"><summary>Altre divergenze tra le fonti (${t.nodi_proposti.filter(g => !g.proposta).length}): già in un nodo, o di una settimana sola</summary><div style="display:grid;gap:10px;margin-top:10px">${t.nodi_proposti.filter(g => !g.proposta).map(g => disagreement(g, false)).join("")}</div></details></section>` : ""}
     <section><h2>Sotto-topic, settimana dal ${esc(w.settimana)}</h2>
       <div class="tabs" role="group" aria-label="Sotto-topic">${subs.map(id => `<button type="button" data-sub="${id}" aria-pressed="${id === currentSub}">${esc(SUB[id] || id)}</button>`).join("")}</div>
       <p class="muted" style="margin:0;max-width:72ch">${esc(s.perimetro || "")}</p>
@@ -409,7 +426,7 @@ function viewTopicIA() {
 }
 function matrixCard(m) {
   return `<a class="panel" href="#m-${esc(m.id)}" style="text-decoration:none;color:inherit;display:grid;gap:8px">
-    <div class="row">${pill(m.cantiere?.stato)}<span class="label">${m.pezzi.length} fonti · ${m.origini.length} testate</span>${m.nodi.length ? `<span class="chip rel-dichiarata">nodo collegato</span>` : ""}</div>
+    <div class="row">${pill(m.cantiere?.stato)}<span class="label">${m.pezzi.length} fonti · ${m.origini.length} testate</span>${m.nodi.length ? `<span class="chip rel-dichiarata">nodo collegato</span>` : ""}${(m.disaccordi || []).length ? `<span class="chip">le fonti si dividono</span>` : ""}</div>
     <h3>${esc(m.titolo)}</h3><div class="muted" style="font-size:14px">${esc(m.essenza)}</div></a>`;
 }
 function nodeCard(n) {
@@ -436,6 +453,7 @@ function viewMatrix(id) {
     <h1>${esc(m.titolo)}</h1><p class="lead">${esc(m.essenza)}</p>
     <div class="row muted" style="margin-top:8px;font-size:13px"><span>${m.pezzi.length} fonti da ${m.origini.length} testate</span><span>ultima fonte ${esc(m.data)}</span></div></div>
     ${m.nodi.length ? `<div class="panel"><span class="label">Nodi collegati</span>${m.nodi.map(x => `<div class="row" style="margin-top:6px"><a href="#n-${esc(x.nodo)}">${esc(D.nodi[x.nodo].titolo)}</a><span class="muted">${x.fonti_comuni.length} fonti in comune</span></div>`).join("")}</div>` : ""}
+    ${(m.disaccordi || []).length ? `<section><h2>Le fonti si dividono</h2>${m.disaccordi.map(id => (D.topic.ia.nodi_proposti || []).find(g => g.id === id)).filter(Boolean).map(g => disagreement(g, true)).join("")}</section>` : ""}
     <section><h2>Card</h2>${m.card.map(c => `<div class="card">
       ${c.motivo ? `<div class="row"><span class="chip">${esc({fact: "Fatto distinto", contradicts: "Contraddice"}[c.motivo] || c.motivo)}</span></div>` : ""}
       ${c.titolo ? `<h3>${esc(c.titolo)}</h3>` : ""}
