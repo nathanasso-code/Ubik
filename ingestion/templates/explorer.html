@@ -290,6 +290,17 @@ function quote(q, it) {
   if (!q) return "";
   return `<blockquote>«${esc(q)}»${it ? `<span class="it">${esc(it)}</span>` : ""}</blockquote>`;
 }
+function elsewhere(p) {
+  // the other places of the same document (one pezzo for all its copies): nodes first, then Matrici, not the page shown
+  const here = location.hash;
+  const at = (p.usato_in || []).filter(u => "#" + (u.tipo === "nodo" ? "n-" : "m-") + u.id !== here)
+    .filter(u => (u.tipo === "nodo" ? D.nodi : D.matrici)[u.id]).sort((a, b) => (a.tipo === "nodo" ? 0 : 1) - (b.tipo === "nodo" ? 0 : 1));
+  const links = at.slice(0, 4).map(u => `<a href="#${u.tipo === "nodo" ? "n-" : "m-"}${esc(u.id)}">${esc((u.tipo === "nodo" ? "nodo «" : "") + (u.tipo === "nodo" ? D.nodi : D.matrici)[u.id].titolo + (u.tipo === "nodo" ? "»" : ""))}</a>`);
+  const more = at.length > 4 ? ` e altri ${at.length - 4}` : "";
+  const copies = (p.copie || []).map((u, i) => `<a href="${esc(u)}" target="_blank" rel="noopener">copia ${i + 1}</a>`);
+  if (!links.length && !copies.length) return "";
+  return `<div class="muted" style="font-size:12px">${links.length ? "Anche in: " + links.join(" · ") + more : ""}${links.length && copies.length ? " — " : ""}${copies.length ? "Stesso documento: " + copies.join(" · ") : ""}</div>`;
+}
 function srcLine(pid, extra = "") {
   const p = D.pezzi[pid] || {};
   const n = D.note[pid];
@@ -301,6 +312,7 @@ function srcLine(pid, extra = "") {
     ${title ? `<div class="title">${p.url ? `<a href="${esc(p.url)}" target="_blank" rel="noopener">${esc(title)}</a>` : esc(title)}</div>` : (p.url ? `<a href="${esc(p.url)}" target="_blank" rel="noopener">${esc(p.url.replace(/^https?:\/\//, "").slice(0, 70))}</a>` : "")}
     ${n?.sintesi ? `<div>${esc(n.sintesi)}</div>` : ""}
     ${n ? quote(n.citazione, n.citazione_it) : ""}
+    ${elsewhere(p)}
     ${extra}
   </div>`;
 }
@@ -309,12 +321,22 @@ function cite(pid) {
   const p = D.pezzi[pid] || {};
   const t = p.titolo ? (p.url ? `<a href="${esc(p.url)}" target="_blank" rel="noopener">${esc(p.titolo)}</a>` : esc(p.titolo)) : srcShort(pid);
   const meta = [p.testata, p.data, LANG[p.lingua] || p.lingua, p.testo_parziale ? "testo parziale" : null].filter(Boolean).map(esc).join(" · ");
-  return `<div class="cite"><span class="meta">${meta}</span><span>${t}</span></div>`;
+  return `<div class="cite"><span class="meta">${meta}</span><span>${t}</span>${elsewhere(p)}</div>`;
 }
 function srcShort(pid) {
   const p = D.pezzi[pid] || {};
   const lbl = esc(p.testata || "fonte") + (p.data ? ` <span class="num muted">${esc(p.data)}</span>` : "");
-  return p.url ? `<a href="${esc(p.url)}" target="_blank" rel="noopener">${lbl}</a>` : lbl;
+  return (p.url ? `<a href="${esc(p.url)}" target="_blank" rel="noopener">${lbl}</a>` : lbl) + alsoShort(p);
+}
+function alsoShort(p) {
+  // compact: the other nodes of the same document by name, the Matrici by number
+  const here = location.hash;
+  const u = (p.usato_in || []).filter(x => "#" + (x.tipo === "nodo" ? "n-" : "m-") + x.id !== here);
+  const nodes = u.filter(x => x.tipo === "nodo" && D.nodi[x.id]), mats = u.filter(x => x.tipo === "matrice" && D.matrici[x.id]);
+  if (!nodes.length && !mats.length) return "";
+  const parts = nodes.map(x => `<a href="#n-${esc(x.id)}">${esc(D.nodi[x.id].titolo)}</a>`);
+  if (mats.length) parts.push(mats.length === 1 ? `<a href="#m-${esc(mats[0].id)}">una Matrice</a>` : `<a href="#m-${esc(mats[0].id)}">${mats.length} Matrici</a>`);
+  return ` <span class="muted" style="font-size:12px;font-weight:400">· anche in ${parts.join(", ")}</span>`;
 }
 
 // ---------- index
@@ -438,6 +460,7 @@ function viewNode(id) {
     <h1>${esc(n.titolo)}</h1>${n.domanda !== n.titolo ? `<p class="lead">${esc(n.domanda)}</p>` : ""}
     ${n.artefatto ? `<p class="muted" style="margin:6px 0 0;font-size:13px">Pagina del prototipo: <a href="${esc(n.artefatto)}" target="_blank" rel="noopener">apri</a></p>` : ""}</div>
     ${body}
+    ${n.nodi_collegati?.length ? `<div class="panel"><span class="label">Nodi collegati</span>${n.nodi_collegati.map(x => `<div class="row" style="margin-top:6px"><a href="#n-${esc(x.nodo)}">${esc(D.nodi[x.nodo].titolo)}</a><span class="muted">${x.fonti_comuni.length} ${x.fonti_comuni.length === 1 ? "fonte" : "fonti"} in comune</span></div>`).join("")}</div>` : ""}
     ${n.matrici?.length ? `<div class="panel"><span class="label">Matrici collegate</span>${n.matrici.map(x => `<div class="row" style="margin-top:6px"><a href="#m-${esc(x.matrice)}">${esc(D.matrici[x.matrice].titolo)}</a><span class="muted">${x.fonti_comuni.length} fonti in comune</span></div>`).join("")}</div>` : ""}
     <div class="panel"><span class="label">Scheda di lavoro</span>${site(n.cantiere)}</div>`;
 }
