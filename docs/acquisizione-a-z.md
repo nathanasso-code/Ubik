@@ -415,8 +415,12 @@ L'elenco unico di Ubik: ciò che è fatto, in corso e da fare. Aggiornato il 10 
 4. **Difetti ancora aperti del giudizio e delle proposte**: le sintesi che leggono troppo (restano da controllare a mano);
    il confronto delle affermazioni con i documenti primari del corpus; il giudice che dà voti diversi allo stesso
    documento in due lingue.
-5. **Il primo inverno dell'IA**: rifare il giudizio con la nuova graduatoria e `k` 500; il grafo delle citazioni ha fatto
-   una sola consultazione e va controllato.
+5. **Il primo inverno dell'IA**: rifatto il 10 novembre con la nuova graduatoria, solo sulle pagine mai viste (358, 0,08
+   dollari): le fonti di riferimento giudicate contributo passano da 4 a 6 su 20, ma le pagine nuove rendono poco (6
+   contributi su 184 giudicate). I riferimenti di Wikipedia servono ai nodi storici, non vanno messi davanti negli altri.
+   Il grafo delle citazioni non ha fatto consultazioni: da controllare. Lo scaricamento una pagina alla volta prendeva
+   quasi tutto il tempo (3,2 secondi a pagina con molti siti diversi): dal 10 novembre anche lo scaricamento va in
+   parallelo (`JUDGE_PARALLEL=all`, mai due pagine dello stesso sito o servizio).
 6. Il resto:
    - 21 novembre (promemoria già fissato): bilancio delle fonti in prova e nuova misura di Brave;
    - i canali pubblici di Telegram, ucraini e russi: fonte nuova, da approvare;
