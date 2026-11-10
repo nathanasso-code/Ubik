@@ -368,6 +368,18 @@ L'elenco unico di Ubik: ciò che è fatto, in corso e da fare. Aggiornato il 10 
 
 **Fatto di recente**
 
+- 10 novembre: **segnalazioni** (`tools/segnalazione.py`, workflow `segnalazione.yml`: un testo in
+  `runs/segnalazioni/`). Il testo non diventa una fonte (se ne tiene l'impronta): il modello elenca i riferimenti che
+  descrive, il codice li cerca nell'indice del corpus e dice dove sono usati, poi in OpenAlex e arXiv. «Trovato» solo con
+  un segno forte (cifra, titolo, nome inventato), altrimenti «possibile». Prima prova (un post su Facebook): 3 trovati, 4
+  possibili, 0,2 centesimi; l'«epistemia» (Quattrociocchi e altri, arXiv 2512.19466) non arriva: serve lo scout. Il cuore
+  (`analyze`) è separato dall'ingresso, per il riquadro dell'esploratore e poi del sito.
+- 10 novembre: **studi discussi** (gratuito, nel modello): uno studio del corpus della ricerca, o una pagina di studio tra
+  le pagine citate, linkato, citato per numero arXiv o per titolo dagli articoli, newsletter, post e canali della
+  settimana; nell'esploratore per settimana e nelle Matrici che lo citano. Resa: 8 e 23 studi nelle due settimane, quasi
+  tutti con una sola fonte e fuori dalle Matrici. Gli articoli citano gli studi descrivendoli più che linkandoli: il passo
+  vero è chiedere alla nota di ogni articolo i riferimenti descritti (come le segnalazioni), da decidere (circa 0,6
+  dollari per rifare le note di una settimana, poi quasi nulla).
 - 10 novembre: **dalle Matrici ai nodi** (`tools/matrix_nodes.py`, workflow `matrix-nodes.yml`, su richiesta). Una
   chiamata per Matrice (almeno tre pezzi da due testate) chiede se le fonti si dividono su qualcosa che un nodo
   deciderebbe o mapperebbe; il codice tiene un lato solo se le sue citazioni sono quelle verificate dei pezzi. Prime due
