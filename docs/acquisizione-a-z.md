@@ -538,6 +538,11 @@ L'elenco unico di Ubik: ciò che è fatto, in corso e da fare. Aggiornato il 10 
      per testo) da valutare;
    - un modello locale per la prima scrematura, addestrato sulle decisioni registrate (serve qualche centinaio di
      decisioni con il motivo e un computer con scheda grafica): rinviato dalla redazione a molto più avanti;
+   - le strade verso le fonti provate l'11 novembre, da decidere con la redazione: le decisioni provvisoriamente prese
+     da Claude sui documenti dei cinque nodi (21 da far entrare, 22 da lasciare fuori) e la loro integrazione nelle catene
+     e nei punti; gli originali che mancano (Bloomberg, Reuters, Wall Street Journal: a pagamento, titolo e data); gli
+     autori dei documenti trovati come voci candidate (bacino); lo stesso passo sulle newsletter e sui canali;
+     l'automazione della catena dopo ogni giornale (oggi `mode=tutto` su richiesta);
    - registri e raccolta, ancora aperti dalla prima scheda del documento: le newsletter per le fonti bloccate (ILO, Eurofound, ETUI) e la redazione registrata come mittente delle
      segnalazioni; i feed di EurekAlert, ANSA e SINC per il registro Scienza;
    - prima del lancio pubblico: il diritto degli editori sugli estratti;
@@ -557,6 +562,9 @@ Scrivere una riga nel file di richiesta e spingerla su `main` di `ubik-corpus`:
 | `runs/daily.request` | `version=5 label=… tiers=… notes=…` |
 | `runs/bacino.request` | `ambito=ia steps=seed,expand,channels,clean,measure` |
 | `runs/coverage.request` | `fetch=yes` per raccogliere anche le pagine citate |
+| `runs/week-refs.request` | `mode=tutto weeks=2026-11-02` (riferimenti descritti, scout dei riferimenti, originali, bibliografia); `nodes=fair-use` (documenti delle fonti dei nodi); `mode=originals`, `mode=biblio`, `resolve` per un passo solo |
+| `runs/matrix-nodes.request` | `weeks=… budget=0.10` (proposte di nodo dalle Matrici) |
+| `runs/segnalazioni/NOME.txt` | un testo segnalato dalla redazione: i suoi riferimenti, nel corpus e fuori |
 
 Dopo uno scout con Brave: leggere i risultati, poi cancellare l'esecuzione. Ogni commit di Claude termina con le righe
 `Co-Authored-By` e `Claude-Session`.
