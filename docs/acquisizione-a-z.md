@@ -377,9 +377,17 @@ L'elenco unico di Ubik: ciò che è fatto, in corso e da fare. Aggiornato il 10 
 - 10 novembre: **studi discussi** (gratuito, nel modello): uno studio del corpus della ricerca, o una pagina di studio tra
   le pagine citate, linkato, citato per numero arXiv o per titolo dagli articoli, newsletter, post e canali della
   settimana; nell'esploratore per settimana e nelle Matrici che lo citano. Resa: 8 e 23 studi nelle due settimane, quasi
-  tutti con una sola fonte e fuori dalle Matrici. Gli articoli citano gli studi descrivendoli più che linkandoli: il passo
-  vero è chiedere alla nota di ogni articolo i riferimenti descritti (come le segnalazioni), da decidere (circa 0,6
-  dollari per rifare le note di una settimana, poi quasi nulla).
+  tutti con una sola fonte e fuori dalle Matrici. Gli articoli citano gli studi descrivendoli più che linkandoli: da qui
+  i **riferimenti descritti** (`tools/week_refs.py`, workflow `week-refs.yml`), un passo a parte per non toccare le note
+  e le Matrici già fatte. Si leggono solo gli articoli che nominano uno studio, un rapporto, un sondaggio (417 e 721
+  nelle due settimane); il modello elenca i riferimenti (814 e 1.311), il codice cerca il documento tra gli studi e le
+  fonti primarie del corpus (non tra gli altri articoli, che lo riprendono), un secondo passo del modello conferma che
+  il candidato è proprio quel documento. Senza la conferma, la gran parte dei «trovati» erano pagine con la stessa cifra o
+  lo stesso benchmark. Risultato: 33 e 57 documenti confermati; gli studi discussi passano da 8 e 23 a 26 e 55, quelli
+  nelle Matrici da 2 a 4 e 7 (le conclusioni dell'avvocato generale della Corte di giustizia, citate da cinque fonti; la
+  citazione dei quotidiani contro OpenAI). Costo: 0,71 dollari per leggere, 0,15 per confermare, più 0,5 persi in un
+  primo giro fermato prima di salvare (corretto: ora si salva prima). D'ora in poi, circa 0,3-0,5 dollari a settimana.
+  Restano «solo riprese» i riferimenti il cui documento non è nel corpus: candidati per la raccolta delle pagine citate.
 - 10 novembre: **dalle Matrici ai nodi** (`tools/matrix_nodes.py`, workflow `matrix-nodes.yml`, su richiesta). Una
   chiamata per Matrice (almeno tre pezzi da due testate) chiede se le fonti si dividono su qualcosa che un nodo
   deciderebbe o mapperebbe; il codice tiene un lato solo se le sue citazioni sono quelle verificate dei pezzi. Prime due
