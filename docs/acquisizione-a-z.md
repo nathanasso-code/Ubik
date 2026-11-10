@@ -72,8 +72,9 @@ a pagamento parte solo da un file `runs/<nome>.request` scritto e spinto nel rep
 | `ai-voices.json` | Le 42 voci (persone) approvate il 4 novembre, con i loro canali | approvato |
 | `ai-probation.json` | 65 fonti in prova: blog e autori dal bacino, testate dalla verifica della copertura, sette testate italiane, Terence Tao | prova |
 | `research-ai-probation.json` | 16 raccoglitori di studi: cinque categorie di arXiv, NBER, riviste via OpenAlex, i 24 studiosi trovati dalle citazioni dei nodi | prova |
-| `primary-ai-probation.json` | 14 fonti primarie: notiziari di aziende (sempre «parte in causa»), AI Security Institute, GOV.UK, l'avviso EUR-Lex della redazione | prova |
+| `primary-ai-probation.json` | 15 fonti primarie: notiziari di aziende (sempre «parte in causa»), AI Security Institute, GOV.UK, l'avviso EUR-Lex della redazione, il Press corner della Commissione | prova |
 | `gnews-ai.json` | Quattro ricerche GNews (IA ed energia, inglese e italiano) | prova |
+| `telegram-probation.json` | 12 canali pubblici di Telegram, ucraini e russi; solo i post su Euromaidan e IA (10 novembre) | prova |
 | `*-candidates.json`, `bacino-ia.json` | Candidati non ancora approvati, con la storia di come sono stati trovati | — |
 
 ### 4.2 Raccolta (`tools/collect.py`, workflow `collect.yml`, ogni 12 ore dal 10 novembre)
@@ -367,6 +368,22 @@ L'elenco unico di Ubik: ciò che è fatto, in corso e da fare. Aggiornato il 10 
 
 **Fatto di recente**
 
+- 10 novembre: **un documento, un pezzo** (primo passo del formato comune). Il modello unisce le copie dello stesso
+  documento a indirizzi diversi (14: stesso articolo con un titolo nuovo nell'indirizzo, la stessa pagina in un'altra
+  lingua, arXiv v1); ogni pezzo sa dove è usato (`usato_in`) e l'esploratore lo mostra accanto a ogni fonte («anche in»
+  un nodo o una Matrice, «stesso documento»), con i nodi collegati tra loro (il 20 febbraio e il coinvolgimento
+  americano condividono la nota dell'ONU, l'USAID e il coinvolgimento tre fonti). La selezione settimanale prende un
+  articolo per documento (15 copie nella settimana del 2 novembre, quasi tutte di t3n). `tools/doc_ids.py` è comune a
+  giudizio, proposte, modello e selezione.
+- 10 novembre: **Telegram**, approvato dalla redazione: 12 canali pubblici ucraini e russi in prova
+  (`registry/telegram-probation.json`), letti dall'anteprima pubblica `t.me/s/` (robots.txt assente, nessuna riserva TDM),
+  fino a 160 post per canale a giro; si tengono solo i post dei gruppi Euromaidan e IA, cercati in ucraino e russo.
+  Prima raccolta: 1.650 post letti, 22 tenuti. «майдан» è anche il nome comune della piazza: il gruppo Euromaidan chiede
+  il contesto (2013-2014, nomi propri, Nuland, Janukovyč). RT in russo non ha l'anteprima pubblica: esclusa.
+- 10 novembre: **Press corner della Commissione**, approvato con EUR-Lex: il feed (50 voci) filtrato su IA e digitale; il
+  testo intero viene dal servizio che la pagina stessa legge. La sala stampa del Parlamento risponde con un controllo
+  anti-robot: esclusa, non si aggira; i testi approvati arrivano già dall'avviso EUR-Lex (101 documenti).
+- 10 novembre: le **12 decisioni sui punti** dei nodi leggeri confermate dalla redazione e registrate.
 - 10 novembre: **sotto-topic Economia dell'IA** nel giornale (investimenti, ricavi, valutazioni, chip, concorrenza,
   produttività; non il singolo round o il singolo prodotto). Cambia il prompt della nota: al giro successivo le note si
   rifanno (circa 0,6 dollari per una settimana).
@@ -417,8 +434,7 @@ L'elenco unico di Ubik: ciò che è fatto, in corso e da fare. Aggiornato il 10 
    accettate dei data center collocate nei punti come altre fonti. Anelli già nei nodi: 109 decisioni con il motivo di
    Claude, confermate dalla redazione (106 tenuti, 3 tolti). Ogni anello, proposta o novità ha ora la sua decisione
    registrata in `reports/nodi/NODO/decisioni.json`, con chi l'ha presa. Nodi leggeri: anche i punti hanno la loro
-   decisione nell'esploratore (con le altre fonti del punto); **12 decisioni di Claude sui punti dei data center e del
-   coinvolgimento americano attendono la conferma della redazione**, poi si registrano come le altre.
+   decisione nell'esploratore (con le altre fonti del punto); le 12 decisioni sui punti sono confermate e registrate.
 3. **Il nodo «Il presunto coinvolgimento americano»**: bozza leggera (2 centesimi) e revisione fatte il 10 novembre, nell'esploratore.
    Seconda revisione il 10 novembre: aggiunto l'estratto di Texty contro il punto 5; la ripresa della Berliner Zeitung
    ha ora l'originale. Le sovvenzioni del NED 2013 non si trovano: la pagina dell'anno dà 404, l'archivio non ne ha
@@ -436,12 +452,16 @@ L'elenco unico di Ubik: ciò che è fatto, in corso e da fare. Aggiornato il 10 
    parallelo (`JUDGE_PARALLEL=all`, mai due pagine dello stesso sito o servizio).
 6. Il resto:
    - 21 novembre (promemoria già fissato): bilancio delle fonti in prova e nuova misura di Brave;
-   - i canali pubblici di Telegram, ucraini e russi: fonte nuova, da approvare;
-   - le pipeline che scrivono direttamente il formato comune (`docs/modello-dati.md`) al posto dei JSON di oggi;
+   - **il formato comune** (`docs/modello-dati.md`), dopo il primo passo del 10 novembre: le pipeline che scrivono
+     direttamente gli oggetti, una alla volta, a partire dai nodi (le fonti descritte dentro ogni nodo diventano pezzi
+     con l'id comune); poi le card e le Matrici che propongono un nodo quando le fonti si dividono, e i nodi che
+     ricevono come novità i pezzi delle Matrici;
+   - Telegram e Press corner: bilancio dopo due settimane (quanti post tenuti servono ai nodi e alle Matrici);
+     Novaya Gazeta Europe da ritrovare; l'API dei dati aperti del Parlamento (solo identificativi, un'interrogazione
+     per testo) da valutare;
    - un modello locale per la prima scrematura, addestrato sulle decisioni registrate (serve qualche centinaio di
-     decisioni con il motivo e un computer con scheda grafica);
-   - registri e raccolta, ancora aperti dalla prima scheda del documento: EUR-Lex e le pagine di elenco di Commissione e
-     Parlamento; le newsletter per le fonti bloccate (ILO, Eurofound, ETUI) e la redazione registrata come mittente delle
+     decisioni con il motivo e un computer con scheda grafica): rinviato dalla redazione a molto più avanti;
+   - registri e raccolta, ancora aperti dalla prima scheda del documento: le newsletter per le fonti bloccate (ILO, Eurofound, ETUI) e la redazione registrata come mittente delle
      segnalazioni; i feed di EurekAlert, ANSA e SINC per il registro Scienza;
    - prima del lancio pubblico: il diritto degli editori sugli estratti;
    - feed fermi di ANSA, Corriere e Wired; variabilità del raggruppamento delle Matrici; simulazione della conservazione
