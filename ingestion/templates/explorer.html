@@ -466,6 +466,7 @@ function nodeLight(n) {
       <div class="row"><h3>${i + 1}. ${esc(p.affermazione)}</h3><span class="chip ${p.esito === "accertato" || p.esito === "smentito" ? "rel-dichiarata" : ""}">${esc(OUTCOME[p.esito] || p.esito)}</span>
         ${p.verifica === "da rivedere" ? `<span class="chip rel-simulata">da rivedere</span>` : ""}${p.rivisto ? `<span class="chip">rivisto</span>` : ""}</div>
       ${side("A favore", p.a_favore)}${side("Contro", p.contro)}
+      ${(p.anche || []).length ? `<details><summary>Altre fonti nel punto (${p.anche.length})</summary><div style="display:grid;gap:8px;margin-top:8px">${p.anche.map(a => side({favore: "Anche a favore", contro: "Anche contro"}[a.lato] || "Contesto", a) + (a.perche ? `<div class="muted" style="font-size:13px">${esc(a.perche)}</div>` : "")).join("")}</div></details>` : ""}
       ${p.poggia && p.poggia.pezzo !== p.a_favore?.pezzo && p.poggia.pezzo !== p.contro?.pezzo ? side("Su che cosa poggia l'esito", p.poggia) : (p.poggia ? `<div class="muted" style="font-size:13px">L'esito poggia su: ${srcShort(p.poggia.pezzo)}</div>` : "")}
       ${p.deciderebbe ? `<div><span class="label">Che cosa deciderebbe</span><div>${esc(p.deciderebbe)}</div></div>` : ""}
       ${p.problemi?.length ? `<div class="muted" style="font-size:13px">${p.problemi.map(esc).join(" · ")}</div>` : ""}</div>`).join("")}</section>
