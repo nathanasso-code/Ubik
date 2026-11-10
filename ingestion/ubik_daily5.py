@@ -35,6 +35,12 @@ TOPICS = {
     "copyright": ("Diritto d'autore, editori e dati di addestramento", "AI, copyright and training data: lawsuits and rulings "
                   "on training and on outputs, licensing deals between AI companies and publishers, authors, musicians and "
                   "artists, opt-outs and scraping, and the effects of AI on journalism and publishing."),
+    # added 10 November 2026 for the articles about AI that fell in no sub-topic (168 in the test week)
+    "economia": ("Economia dell'IA", "The economics of AI: investment and spending by AI companies and their customers, "
+                 "revenues, prices and business models, valuations and talk of a bubble, the chip supply chain and export "
+                 "controls as economic policy, market concentration and competition cases, and measured effects of AI on "
+                 "productivity and growth. Not a single funding round, a product launch or a stock move with no figure or "
+                 "argument about the economy of AI."),
 }
 TEXT_CHARS = 8000
 BUDGET = float(os.getenv("DAILY_BUDGET", "1.20"))

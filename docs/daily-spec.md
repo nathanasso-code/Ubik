@@ -71,8 +71,9 @@ Ogni collegamento registra la prova usata; il registro della pagina conserva pro
 | `lavoro` | Lavoro e IA | Effetti dell'IA su posti, salari, assunzioni, professioni, sorveglianza dei lavoratori, sindacati, cause |
 | `energia` | Data center, energia e territorio | Data center, reti, energia, acqua, emissioni, permessi, conflitti locali, lavoratori dei cantieri |
 | `copyright` | Diritto d'autore, editori e dati di addestramento | Cause, licenze, opt-out e scraping, effetti dell'IA sul giornalismo e l'editoria |
+| `economia` | Economia dell'IA | Investimenti e spese, ricavi e prezzi, valutazioni e bolla, catena dei chip e controlli all'export come politica economica, concentrazione e concorrenza, effetti misurati su produttività e crescita (dal 10 novembre; non il singolo round o il singolo prodotto) |
 
-Un sotto-topic nuovo = una voce in `TOPICS` con nome e perimetro; nota e selezione restano condivise.
+Un sotto-topic nuovo = una voce in `TOPICS` con nome e perimetro; nota e selezione restano condivise. Aggiungerlo cambia il prompt della nota: al giro successivo le note si rifanno (circa 0,6 dollari per una settimana).
 
 ## Esecuzione e costi
 
