@@ -368,6 +368,15 @@ L'elenco unico di Ubik: ciò che è fatto, in corso e da fare. Aggiornato il 10 
 
 **Fatto di recente**
 
+- 10 novembre: **dalle Matrici ai nodi** (`tools/matrix_nodes.py`, workflow `matrix-nodes.yml`, su richiesta). Una
+  chiamata per Matrice (almeno tre pezzi da due testate) chiede se le fonti si dividono su qualcosa che un nodo
+  deciderebbe o mapperebbe; il codice tiene un lato solo se le sue citazioni sono quelle verificate dei pezzi. Prime due
+  settimane: 41 Matrici lette, 3 centesimi, 17 divergenze, raggruppate per domanda in 15; 6 proposte di nodo (forza 4-5,
+  non già un nodo), con la decisione provvisoria di Claude nell'esploratore (aprire il nodo o no): un punto per il nodo
+  dei data center (i conti discordi delle misure locali alle midterm), un nodo unico sui licenziamenti attribuiti all'IA
+  (Proton, Microsoft, Canva), un nodo sull'opt-out dall'addestramento (il token, robots.txt, il codice dell'UE); no al
+  rinvio dei termini di Meta. Le altre divergenze restano sulla loro Matrice (spesso cifre riportate in modo diverso:
+  utili anche a correggere le card).
 - 10 novembre: **un documento, un pezzo** (primo passo del formato comune). Il modello unisce le copie dello stesso
   documento a indirizzi diversi (14: stesso articolo con un titolo nuovo nell'indirizzo, la stessa pagina in un'altra
   lingua, arXiv v1); ogni pezzo sa dove è usato (`usato_in`) e l'esploratore lo mostra accanto a ogni fonte («anche in»
@@ -459,8 +468,8 @@ L'elenco unico di Ubik: ciò che è fatto, in corso e da fare. Aggiornato il 10 
    - 21 novembre (promemoria già fissato): bilancio delle fonti in prova e nuova misura di Brave;
    - **il formato comune** (`docs/modello-dati.md`), dopo il primo passo del 10 novembre: le pipeline che scrivono
      direttamente gli oggetti, una alla volta, a partire dai nodi (le fonti descritte dentro ogni nodo diventano pezzi
-     con l'id comune); poi le card e le Matrici che propongono un nodo quando le fonti si dividono, e i nodi che
-     ricevono come novità i pezzi delle Matrici;
+     con l'id comune, una sola scheda per fonte); i nodi che ricevono come novità i pezzi delle Matrici; le proposte di
+     nodo dalle Matrici a ogni settimana nuova, e la costruzione dei nodi accettati;
    - Telegram e Press corner: bilancio dopo due settimane (quanti post tenuti servono ai nodi e alle Matrici);
      Novaya Gazeta Europe da ritrovare; l'API dei dati aperti del Parlamento (solo identificativi, un'interrogazione
      per testo) da valutare;
