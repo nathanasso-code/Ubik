@@ -405,13 +405,15 @@ L'elenco unico di Ubik: ciò che è fatto, in corso e da fare. Aggiornato il 10 
    (se poche, la fascia «contributo» è troppo larga e va stretta prima di spendere in ricerca); misurare il tempo di ogni
    fase dello scout (il giudizio di 100 pagine dura 5 minuti, il passo intero 145: il resto sono seconde copie,
    CourtListener, riferimenti dei PDF, secondo giro).
-2. **Le decisioni della redazione** sulle 75 proposte e novità di Claude nell'esploratore, poi la registrazione nei nodi
-   con `record_decisions.py` e il modello ricostruito. Poi gli anelli già nei nodi (109) con lo stesso percorso: ciascuno
-   con il motivo per cui è entrato, da confermare o togliere. Metodo deciso il 9 novembre: Claude decide con il motivo, la
-   redazione conferma o ribalta; i punti politicamente contesi o che toccano persone sono segnalati.
-3. **Il nodo «Il presunto coinvolgimento americano»**: la bozza leggera dai 26 contributi (circa 3 centesimi), la revisione
-   (da verificare: la tesi di CovertAction sulla cancellazione dei dati del NED, conflictmanagement.ru senza motivazione),
-   poi l'esploratore.
+2. **Le decisioni della redazione**: fatto il 10 novembre. Proposte e novità: 98 decisioni (40 accettate, 58 rifiutate;
+   44 confermate dalla redazione, una ribaltata, 53 confermate da Claude su incarico), registrate nei nodi; le novità
+   accettate dei data center collocate nei punti come altre fonti. Anelli già nei nodi: 109 decisioni con il motivo di
+   Claude, confermate dalla redazione (106 tenuti, 3 tolti). Ogni anello, proposta o novità ha ora la sua decisione
+   registrata in `reports/nodi/NODO/decisioni.json`, con chi l'ha presa. Restano da fare con lo stesso percorso i nodi
+   leggeri (punti e fonti dei data center e del coinvolgimento americano).
+3. **Il nodo «Il presunto coinvolgimento americano»**: bozza leggera (2 centesimi) e revisione fatte il 10 novembre, nell'esploratore.
+   Da fare: le sovvenzioni del NED 2013-2014 dalla copia d'archivio (decidono il punto sul finanziamento delle proteste);
+   sostituire le ripubblicazioni (InoSMI, conflictmanagement.ru) con gli originali.
 4. **Difetti ancora aperti del giudizio e delle proposte**: le sintesi che leggono troppo (restano da controllare a mano);
    il confronto delle affermazioni con i documenti primari del corpus; il giudice che dà voti diversi allo stesso
    documento in due lingue.
