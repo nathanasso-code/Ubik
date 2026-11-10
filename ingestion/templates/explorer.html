@@ -162,7 +162,7 @@ function decisionOf(nodo, item) {
 function decideBox(nodo, item, tipo) {
   const d = decisionOf(nodo, item);
   const k = decKey(nodo, item.id);
-  const word = x => tipo === "anello" ? ({accettata: "tenere nel nodo", rifiutata: "togliere dal nodo"}[x] || x) : x;
+  const word = x => tipo === "anello" || tipo === "punto" ? ({accettata: tipo === "punto" ? "tenere il punto" : "tenere nel nodo", rifiutata: tipo === "punto" ? "togliere il punto" : "togliere dal nodo"}[x] || x) : x;
   const off = !CAN_DECIDE ? "disabled" : "";
   const note = DB_STATE === "absent" ? "Le decisioni si registrano aprendo l'esploratore su claude.ai." : DB_STATE === "loading" ? "Collegamento al registro delle decisioni…" : !CAN_DECIDE ? "Solo chi modifica l'esploratore registra le decisioni." : "";
   const head = `<div class="decide" data-k="${esc(k)}" data-nodo="${esc(nodo)}" data-id="${esc(item.id)}" data-tipo="${esc(tipo)}">`;
@@ -184,7 +184,7 @@ function decideBox(nodo, item, tipo) {
 }
 function pendingCount(n) {
   const items = [...(n.proposte || []), ...(n.novita || [])];
-  const links = (n.catene || []).flatMap(c => c.anelli || []).filter(a => a.id && decisionOf(n.id, a)?.stato === "da confermare");
+  const links = [...(n.catene || []).flatMap(c => c.anelli || []), ...(n.punti || [])].filter(a => a.id && decisionOf(n.id, a)?.stato === "da confermare");
   return items.filter(x => { const d = decisionOf(n.id, x); return !d || d.stato === "da confermare"; }).length + links.length;
 }
 async function startDecisions() {
@@ -473,6 +473,8 @@ function nodeLight(n) {
       ${(p.anche || []).length ? `<details><summary>Altre fonti nel punto (${p.anche.length})</summary><div style="display:grid;gap:8px;margin-top:8px">${p.anche.map(a => side({favore: "Anche a favore", contro: "Anche contro"}[a.lato] || "Contesto", a) + (a.perche ? `<div class="muted" style="font-size:13px">${esc(a.perche)}</div>` : "")).join("")}</div></details>` : ""}
       ${p.poggia && p.poggia.pezzo !== p.a_favore?.pezzo && p.poggia.pezzo !== p.contro?.pezzo ? side("Su che cosa poggia l'esito", p.poggia) : (p.poggia ? `<div class="muted" style="font-size:13px">L'esito poggia su: ${srcShort(p.poggia.pezzo)}</div>` : "")}
       ${p.deciderebbe ? `<div><span class="label">Che cosa deciderebbe</span><div>${esc(p.deciderebbe)}</div></div>` : ""}
+      ${p.nota ? `<div class="muted" style="font-size:13px">${esc(p.nota)}</div>` : ""}
+      ${p.id && decisionOf(n.id, p) ? decideBox(n.id, p, "punto") : ""}
       ${p.problemi?.length ? `<div class="muted" style="font-size:13px">${p.problemi.map(esc).join(" · ")}</div>` : ""}</div>`).join("")}</section>
     ${n.novita?.length ? `<section><h2>Novità da rivedere</h2><div class="panel" style="display:grid;gap:10px">${n.novita.map(x => `<div><div class="row"><strong>${srcShort(x.pezzo)}</strong><span class="chip">${esc(x.lato || "")}</span><span class="muted">${esc(x.trovata || "")}</span>${x.stato === "da rivedere" ? `<span class="chip rel-simulata">da rivedere</span>` : ""}</div><div>${esc(x.contributo)}</div>${x.citazione ? quote(x.citazione) : ""}${x.id ? decideBox(n.id, x, "novita") : ""}</div>`).join("")}</div></section>` : ""}
     <section><h2>Documenti cardine</h2><div class="panel" style="display:grid;gap:8px">${n.documenti.map(d => `<div><strong>${srcShort(d.pezzo)}</strong><div class="muted" style="font-size:14px">${esc(d.perche)}</div></div>`).join("")}</div></section>
