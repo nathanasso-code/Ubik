@@ -396,6 +396,14 @@ function disagreement(g, withBox) {
     ${where.length ? `<div class="muted" style="font-size:13px">Anche in: ${where.join(" · ")}</div>` : ""}
     ${withBox && g.proposta ? decideBox("matrici", g, "nodo-proposto") : ""}</div>`;
 }
+function studyLine(x) {
+  const p = D.pezzi[x.pezzo] || {};
+  const by = x.citato_da.map(b => `${esc(b.testata || b.origine)} <span class="muted">(${esc(b.come)})</span>`).join(", ");
+  return `<div class="src"><div class="title">${p.url ? `<a href="${esc(p.url)}" target="_blank" rel="noopener">${esc(p.titolo || p.url.replace(/^https?:\/\//, "").slice(0, 80))}</a>` : esc(p.titolo || "")}</div>
+    <div class="meta">${[p.testata, p.data].filter(Boolean).map(esc).join(" · ")}</div>
+    <div style="font-size:14px">Citato da ${by}${x.matrici.length ? ` · nelle Matrici: ${x.matrici.map(id => `<a href="#m-${esc(id)}">${esc(D.matrici[id]?.titolo || id)}</a>`).join(", ")}` : ""}</div>
+    ${x.estratto ? `<div class="muted" style="font-size:13px">${esc(x.estratto)}…</div>` : ""}</div>`;
+}
 function viewTopicIA() {
   const t = D.topic.ia;
   const weeks = weeksOf("ia");
@@ -419,6 +427,7 @@ function viewTopicIA() {
       <p class="muted" style="margin:0;max-width:72ch">${esc(s.perimetro || "")}</p>
       <div class="row muted num" style="font-size:13px">${w.conteggi.items_in} pezzi nel sotto-topic · ${w.matrici.length} Matrici · ${w.card_singole.length} card singole centrali · ${w.collegate.length} collegate · costo ${money(w.costo_usd)}</div>
       <div class="grid">${w.matrici.map(id => matrixCard(D.matrici[id])).join("")}</div>
+      ${(t.studi?.[w.settimana] || []).length ? `<details class="panel"><summary>Studi discussi nella settimana (${t.studi[w.settimana].length}): citati con un link, il numero arXiv o il titolo da articoli, newsletter, post e canali</summary>${t.studi[w.settimana].map(studyLine).join("")}</details>` : ""}
       <details class="panel"><summary>Card singole centrali (${w.card_singole.length})</summary>${w.card_singole.slice(0, 80).map(p => srcLine(p)).join("")}${w.card_singole.length > 80 ? `<p class="muted">… e altre ${w.card_singole.length - 80}</p>` : ""}</details>
       <details class="panel"><summary>Collegate al tema (${w.collegate.length})</summary>${w.collegate.slice(0, 60).map(p => srcLine(p)).join("")}${w.collegate.length > 60 ? `<p class="muted">… e altre ${w.collegate.length - 60}</p>` : ""}</details>
     </section>
@@ -454,6 +463,7 @@ function viewMatrix(id) {
     <div class="row muted" style="margin-top:8px;font-size:13px"><span>${m.pezzi.length} fonti da ${m.origini.length} testate</span><span>ultima fonte ${esc(m.data)}</span></div></div>
     ${m.nodi.length ? `<div class="panel"><span class="label">Nodi collegati</span>${m.nodi.map(x => `<div class="row" style="margin-top:6px"><a href="#n-${esc(x.nodo)}">${esc(D.nodi[x.nodo].titolo)}</a><span class="muted">${x.fonti_comuni.length} fonti in comune</span></div>`).join("")}</div>` : ""}
     ${(m.disaccordi || []).length ? `<section><h2>Le fonti si dividono</h2>${m.disaccordi.map(id => (D.topic.ia.nodi_proposti || []).find(g => g.id === id)).filter(Boolean).map(g => disagreement(g, true)).join("")}</section>` : ""}
+    ${(m.studi || []).length ? `<section><h2>Studi citati</h2><div class="panel">${(D.topic.ia.studi?.[m.settimana] || []).filter(x => m.studi.includes(x.pezzo)).map(studyLine).join("")}</div></section>` : ""}
     <section><h2>Card</h2>${m.card.map(c => `<div class="card">
       ${c.motivo ? `<div class="row"><span class="chip">${esc({fact: "Fatto distinto", contradicts: "Contraddice"}[c.motivo] || c.motivo)}</span></div>` : ""}
       ${c.titolo ? `<h3>${esc(c.titolo)}</h3>` : ""}
