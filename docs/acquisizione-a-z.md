@@ -208,11 +208,28 @@ costruisce il modello che l'esploratore mostra, con la regola delle citazioni. L
 | Giudizio | 0,13-0,41 dollari per nodo, due giri (circa 0,0007 dollari a pagina; il controllo preventivo ne stima 0,0015) | Candidati × nodi × giri |
 | Proposte | Circa 0,02-0,03 dollari per nodo | Contributi |
 | Costruzione del nodo | Lavoro di Claude in conversazione, non misurato in dollari | È il passo che non scala |
+| Proposte di nodo dalle Matrici | Circa 2 centesimi a settimana (41 Matrici, 3 centesimi per due settimane) | Matrici |
+| Riferimenti descritti dagli articoli | 0,3-0,5 dollari a settimana: lettura 0,28-0,43, conferma 0,06-0,09 | Articoli che nominano uno studio, un rapporto, un sondaggio |
+| Scout dei riferimenti (link degli articoli, OpenAlex, arXiv) | Circa 6 centesimi a settimana (la conferma; le ricerche sono gratuite) | Riferimenti senza documento nel corpus |
+| Originali delle riprese | Circa 2 centesimi a settimana | Attribuzioni ad altre testate |
+| Bibliografia dei documenti trovati (OpenAlex) | Zero | — |
+| Documenti su cui poggiano le fonti di un nodo | 3-10 centesimi per nodo (16-29 fonti lette) | Fonti del nodo |
+| Segnalazioni | Circa 0,2 centesimi a testo | Testi segnalati |
+| Telegram nello scout | Gratuito cercare; il giudizio dei post costava circa 0,15 dollari per nodo, ora entrano solo gli articoli linkati | Nodi nelle lingue dei canali |
+| GitHub Actions (repository privato) | Budget di 10 dollari al mese oltre i minuti inclusi | Esecuzioni |
 
 Sui grandi numeri: un Topic di otto nodi costa circa 2-3 dollari al primo passaggio di giudizio e proposte, poi pochi
 centesimi a nodo per gli aggiornamenti se si giudicano solo i candidati nuovi; le Matrici crescono con gli articoli. Le
 leve per contenere il costo: due giri di setaccio invece di tre, il prefiltro, il riuso delle note, il giudizio solo sul
 nuovo, e più avanti un modello locale per la prima scrematura.
+
+Il conto per settimana, dall'11 novembre (un Topic, due settimane misurate): note e Matrici 0,7-1,3 dollari; riferimenti
+descritti, scout dei riferimenti, originali e proposte di nodo circa 0,4-0,6 in più. Le leve già individuate, da provare
+dopo aver scelto che cosa tenere: chiedere i riferimenti descritti nella stessa chiamata della nota (una chiamata invece
+di due per gli articoli che nominano uno studio: circa 0,3 dollari a settimana in meno, ma le note si rifanno una
+volta); confermare in una sola chiamata tutti i candidati di un articolo (lo fa già la verifica dei riferimenti); un
+prefiltro più stretto per i riferimenti (oggi si legge un articolo su due); il modello locale per le conferme, che sono
+domande sì o no.
 
 ## 8. Che cosa dicono le misure (8 novembre)
 
@@ -368,6 +385,27 @@ L'elenco unico di Ubik: ciò che è fatto, in corso e da fare. Aggiornato il 10 
 
 **Fatto di recente**
 
+- 11 novembre, notte: **altre strade verso le fonti**, ciascuna provata su una settimana o su due nodi.
+  - **Originali delle riprese** (`tools/originals.py`): un articolo che attribuisce la storia a un'altra testata
+    («secondo Bloomberg», «laut The Verge»), l'originale cercato tra le pagine di quella testata nei quattro giorni
+    prima, confermato dal modello. Settimana del 2 novembre: 273 attribuzioni, 79 con candidati, 22 originali trovati (anche
+    tra lingue: un articolo tedesco che riprende The Verge, uno italiano la BBC), 2 centesimi; nell'esploratore
+    «Riprende:», e 7 Matrici dicono quante loro fonti riprendono un'altra fonte della stessa Matrice. Gli originali che
+    mancano sono soprattutto di Bloomberg, New York Times, Reuters, Wall Street Journal, Financial Times.
+  - **Documenti su cui poggiano le fonti dei nodi** (`tools/node_refs.py`). Fair use: 143 documenti
+    descritti dalle sue fonti, 8 già nel nodo, 23 trovati e confermati (sentenze e atti delle cause, amicus di EFF e
+    Wikimedia, i paper di Creative Commons e Open Future); 20 febbraio: 92 descritti, 23 già nel nodo (un buon controllo
+    del nodo), 4 trovati (tre versioni accademiche di Katchanovski e un lavoro su Odesa). 13 centesimi per i tre nodi. Le
+    proposte sono nella pagina del nodo, con la decisione provvisoria di Claude (12 da far entrare, 9 da lasciare fuori).
+    Il coinvolgimento americano ha solo 3 fonti con il testo nel corpus: da raccogliere prima.
+  - **Bibliografia dei documenti trovati** (`tools/biblio.py`, OpenAlex, gratuito): settimana del 2 novembre, 75
+    documenti, 28 in OpenAlex, 746 riferimenti, 32 lavori citati da almeno due documenti (co-citati: agenti, rischi,
+    benchmark), 19 documenti con citanti recenti. Da decidere come usarla: le co-citazioni come fonti di sfondo dei nodi,
+    i citanti come repliche.
+  - **Istituzioni e siti citati dalle fonti** (`reports/fonti/istituzioni-candidate.md`): i siti dei documenti
+    confermati non ancora nei registri e le istituzioni nominate da almeno tre testate (Goldman Sachs, Gartner, Apollo,
+    McKinsey, Wood Mackenzie, Öko-Institut, Tech Oversight Project…). Nessuna fonte aggiunta: l'elenco va alla redazione,
+    con il bilancio delle fonti in prova del 21 novembre.
 - 10 novembre: **segnalazioni** (`tools/segnalazione.py`, workflow `segnalazione.yml`: un testo in
   `runs/segnalazioni/`). Il testo non diventa una fonte (se ne tiene l'impronta): il modello elenca i riferimenti che
   descrive, il codice li cerca nell'indice del corpus e dice dove sono usati, poi in OpenAlex e arXiv. «Trovato» solo con
