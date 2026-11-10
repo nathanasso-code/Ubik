@@ -162,18 +162,19 @@ function decisionOf(nodo, item) {
 function decideBox(nodo, item, tipo) {
   const d = decisionOf(nodo, item);
   const k = decKey(nodo, item.id);
+  const word = x => tipo === "anello" ? ({accettata: "tenere nel nodo", rifiutata: "togliere dal nodo"}[x] || x) : x;
   const off = !CAN_DECIDE ? "disabled" : "";
   const note = DB_STATE === "absent" ? "Le decisioni si registrano aprendo l'esploratore su claude.ai." : DB_STATE === "loading" ? "Collegamento al registro delle decisioni…" : !CAN_DECIDE ? "Solo chi modifica l'esploratore registra le decisioni." : "";
   const head = `<div class="decide" data-k="${esc(k)}" data-nodo="${esc(nodo)}" data-id="${esc(item.id)}" data-tipo="${esc(tipo)}">`;
   const corr = d?.correzioni ? [d.correzioni.catena ? "nella catena " + d.correzioni.catena : "", d.correzioni.dopo != null ? (d.correzioni.dopo === "end" ? "in fondo" : "dopo l'anello " + d.correzioni.dopo) : "", d.correzioni.afferma ? "con il testo: «" + d.correzioni.afferma + "»" : ""].filter(Boolean).join(", ") : "";
   const corrLine = corr ? `<div class="muted" style="font-size:13px">Correzione: ${esc(corr)}</div>` : "";
   if (d && d.da === "claude" && d.stato === "da confermare") {
-    return `${head}<div class="btns"><span class="pill decided-${esc(d.decisione)}">Claude: ${esc(d.decisione)}</span><span class="muted" style="font-size:13px">${esc(d.motivo || "")}</span></div>${corrLine}
+    return `${head}<div class="btns"><span class="pill decided-${esc(d.decisione)}">Claude: ${esc(word(d.decisione))}</span><span class="muted" style="font-size:13px">${esc(d.motivo || "")}</span></div>${corrLine}
       <textarea aria-label="Motivo per ribaltare" placeholder="Per ribaltare: il tuo motivo" ${off}>${esc(DRAFT[k] || "")}</textarea>
       <div class="btns"><button type="button" data-act="conferma" ${off}>Conferma</button><button type="button" data-act="ribalta" ${off}>Ribalta</button>${note ? `<span class="muted" style="font-size:13px">${esc(note)}</span>` : ""}</div></div>`;
   }
   const who = d?.stato === "confermata" ? " · di Claude, confermata" : d?.stato === "ribaltata" ? " · ribaltata (Claude: " + (d.motivo_claude || "") + ")" : "";
-  const state = d ? `<span class="pill decided-${esc(d.decisione)}">${esc(d.decisione)}</span><span class="muted" style="font-size:13px">${esc(d.motivo || "")}${esc(who)}${d.quando ? " · " + esc(d.quando.slice(0, 10)) : ""}${d.registrata ? " · registrata nel nodo" : ""}</span>` : "";
+  const state = d ? `<span class="pill decided-${esc(d.decisione)}">${esc(word(d.decisione))}</span><span class="muted" style="font-size:13px">${esc(d.motivo || "")}${esc(who)}${d.quando ? " · " + esc(d.quando.slice(0, 10)) : ""}${d.registrata ? " · registrata nel nodo" : ""}</span>` : "";
   if (d?.registrata && !DEC[k]) return `<div class="decide"><div class="btns">${state}</div></div>`;
   return `${head}
     ${d ? `<div class="btns">${state}${CAN_DECIDE ? `<button type="button" data-act="annulla">Annulla</button>` : ""}</div>${corrLine}` : `
@@ -183,7 +184,8 @@ function decideBox(nodo, item, tipo) {
 }
 function pendingCount(n) {
   const items = [...(n.proposte || []), ...(n.novita || [])];
-  return items.filter(x => { const d = decisionOf(n.id, x); return !d || d.stato === "da confermare"; }).length;
+  const links = (n.catene || []).flatMap(c => c.anelli || []).filter(a => a.id && decisionOf(n.id, a)?.stato === "da confermare");
+  return items.filter(x => { const d = decisionOf(n.id, x); return !d || d.stato === "da confermare"; }).length + links.length;
 }
 async function startDecisions() {
   try {
@@ -450,7 +452,9 @@ function nodeFact(n) {
       <div class="chain">${c.anelli.map(a => `<div class="ring"><div class="dot"></div><div>
         <div class="row"><strong>${srcShort(a.pezzo)}</strong>${a.relazione ? relChip(a.relazione.tipo, a.relazione.verbo) : ""}</div>
         <div>${esc(a.afferma)}</div>${a.citazione ? quote(a.citazione.testo, a.citazione.it) : ""}
-        ${a.relazione?.nota ? `<div class="muted" style="font-size:13px">${esc(a.relazione.nota)}</div>` : ""}</div></div>`).join("")}</div>
+        ${a.relazione?.nota ? `<div class="muted" style="font-size:13px">${esc(a.relazione.nota)}</div>` : ""}
+        ${a.entrato ? `<div class="muted" style="font-size:13px">Entrato da una proposta della pipeline: ${esc(a.entrato)}</div>` : ""}
+        ${a.id && decisionOf(n.id, a) ? decideBox(n.id, a, "anello") : ""}</div></div>`).join("")}</div>
       <div><span class="label">Sintesi</span><div>${esc(c.sintesi)}</div></div>
       ${c.scioglie ? `<div><span class="label">Cosa la scioglierebbe</span><div>${esc(c.scioglie)}</div></div>` : ""}</div>`).join("")}</section>
     ${proposalsSection(n)}
