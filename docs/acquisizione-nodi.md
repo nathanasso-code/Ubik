@@ -21,6 +21,7 @@ gira su GitHub come la raccolta.
 | `wikipedia` | Lingua e ricerca della voce di Wikipedia sul tema (i suoi riferimenti sono una mappa già fatta) |
 | `gap_queries` | Ricerche web mirate, una per lacuna del nodo (una posizione senza fonti, una replica mancante) |
 | `known` | Le fonti scelte a mano: servono a misurare il metodo |
+| `telegram_terms` | Le parole da cercare nei canali Telegram approvati, per lingua (`{"uk": […], "ru": […]}`): brevi, come si scriverebbero nella casella di ricerca del canale (dal 10 novembre) |
 
 ## Percorsi
 
@@ -32,6 +33,11 @@ gira su GitHub come la raccolta.
 5. **OpenAlex e Semantic Scholar**: letteratura sul tema e chi cita i DOI delle ancore.
 6. **Wikipedia**: i link esterni delle voci sul tema.
 7. **Web**: ricerca Bing (RSS) solo per le lacune dichiarate.
+8. **Telegram** (dal 10 novembre): i canali pubblici approvati (`registry/telegram-probation.json`) nelle lingue del
+   nodo, cercati con la ricerca interna del canale (`t.me/s/NOME?q=…`, due pagine da 20 post per parola) con le
+   `telegram_terms` del nodo. Ogni post è un candidato (`t.me/NOME/ID`, letto dalla sua pagina incorporabile), e lo
+   sono le pagine che linka; i canali di Stato lo dichiarano. Un nodo senza `telegram_terms`, o senza canali approvati
+   nelle sue lingue, salta il percorso e lo registra.
 
 Ogni candidato registra tutti i percorsi che l'hanno trovato e chi lo cita; il punteggio cresce con il numero di
 percorsi, di fonti e di voci. Il punteggio ordina, non decide.

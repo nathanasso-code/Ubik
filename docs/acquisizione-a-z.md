@@ -380,6 +380,9 @@ L'elenco unico di Ubik: ciò che è fatto, in corso e da fare. Aggiornato il 10 
   fino a 160 post per canale a giro; si tengono solo i post dei gruppi Euromaidan e IA, cercati in ucraino e russo.
   Prima raccolta: 1.650 post letti, 22 tenuti. «майдан» è anche il nome comune della piazza: il gruppo Euromaidan chiede
   il contesto (2013-2014, nomi propri, Nuland, Janukovyč). RT in russo non ha l'anteprima pubblica: esclusa.
+  Telegram è anche un **percorso dello scout** per ogni nodo: i canali approvati nelle lingue del nodo, cercati con la
+  ricerca interna del canale e le parole del nodo (`telegram_terms`, scritte per il 20 febbraio e il coinvolgimento
+  americano); i post trovati passano dal giudizio come le altre pagine, anche quelli di anni fa.
 - 10 novembre: **Press corner della Commissione**, approvato con EUR-Lex: il feed (50 voci) filtrato su IA e digitale; il
   testo intero viene dal servizio che la pagina stessa legge. La sala stampa del Parlamento risponde con un controllo
   anti-robot: esclusa, non si aggira; i testi approvati arrivano già dall'avviso EUR-Lex (101 documenti).
