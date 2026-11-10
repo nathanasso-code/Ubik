@@ -393,10 +393,10 @@ L'elenco unico di Ubik: ciò che è fatto, in corso e da fare. Aggiornato il 10 
     «Riprende:», e 7 Matrici dicono quante loro fonti riprendono un'altra fonte della stessa Matrice. Gli originali che
     mancano sono soprattutto di Bloomberg, New York Times, Reuters, Wall Street Journal, Financial Times.
   - **Documenti su cui poggiano le fonti dei nodi** (`tools/node_refs.py`). Fair use: 143 documenti
-    descritti dalle sue fonti, 8 già nel nodo, 23 trovati e confermati (sentenze e atti delle cause, amicus di EFF e
+    descritti dalle sue fonti, 8 già nel nodo, 17 documenti nuovi trovati e confermati (sentenze e atti delle cause, amicus di EFF e
     Wikimedia, i paper di Creative Commons e Open Future); 20 febbraio: 92 descritti, 23 già nel nodo (un buon controllo
     del nodo), 4 trovati (tre versioni accademiche di Katchanovski e un lavoro su Odesa). 13 centesimi per i tre nodi. Le
-    proposte sono nella pagina del nodo, con la decisione provvisoria di Claude (12 da far entrare, 9 da lasciare fuori).
+    proposte sono nella pagina del nodo, con la decisione provvisoria di Claude (10 da far entrare, 11 da lasciare fuori).
     Il coinvolgimento americano ha solo 3 fonti con il testo nel corpus: da raccogliere prima.
   - **Bibliografia dei documenti trovati** (`tools/biblio.py`, OpenAlex, gratuito): settimana del 2 novembre, 75
     documenti, 28 in OpenAlex, 746 riferimenti, 32 lavori citati da almeno due documenti (co-citati: agenti, rischi,
