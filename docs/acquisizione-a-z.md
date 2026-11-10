@@ -382,7 +382,9 @@ L'elenco unico di Ubik: ciò che è fatto, in corso e da fare. Aggiornato il 10 
   il contesto (2013-2014, nomi propri, Nuland, Janukovyč). RT in russo non ha l'anteprima pubblica: esclusa.
   Telegram è anche un **percorso dello scout** per ogni nodo: i canali approvati nelle lingue del nodo, cercati con la
   ricerca interna del canale e le parole del nodo (`telegram_terms`, scritte per il 20 febbraio e il coinvolgimento
-  americano); i post trovati passano dal giudizio come le altre pagine, anche quelli di anni fa.
+  americano). Due giri (circa 0,7 dollari): i post sono quasi tutti notizie brevi (271 giudicati, un contributo), gli
+  articoli che linkano rendono di più (5 contributi, tra cui l'inchiesta di hromadske «Кулі»). Di norma entrano solo gli
+  articoli linkati; i post dove il nodo li chiede (`telegram_posts`, per i nodi d'affermazione come l'USAID).
 - 10 novembre: **Press corner della Commissione**, approvato con EUR-Lex: il feed (50 voci) filtrato su IA e digitale; il
   testo intero viene dal servizio che la pagina stessa legge. La sala stampa del Parlamento risponde con un controllo
   anti-robot: esclusa, non si aggira; i testi approvati arrivano già dall'avviso EUR-Lex (101 documenti).

@@ -35,8 +35,11 @@ gira su GitHub come la raccolta.
 7. **Web**: ricerca Bing (RSS) solo per le lacune dichiarate.
 8. **Telegram** (dal 10 novembre): i canali pubblici approvati (`registry/telegram-probation.json`) nelle lingue del
    nodo, cercati con la ricerca interna del canale (`t.me/s/NOME?q=…`, due pagine da 20 post per parola) con le
-   `telegram_terms` del nodo. Ogni post è un candidato (`t.me/NOME/ID`, letto dalla sua pagina incorporabile), e lo
-   sono le pagine che linka; i canali di Stato lo dichiarano. Un nodo senza `telegram_terms`, o senza canali approvati
+   `telegram_terms` del nodo. Sono candidati gli articoli che i post linkano; i post stessi (`t.me/NOME/ID`, letti
+   dalla pagina incorporabile, giudicati da 30 parole) solo se il nodo lo chiede con `telegram_posts`, come un nodo
+   d'affermazione, dove conta ciò che circola. I canali di Stato lo dichiarano. Misura del 10 novembre sui due nodi di
+   Euromaidan: 271 post giudicati, un solo contributo (un riepilogo settimanale); gli articoli linkati, 5 contributi su
+   circa 100 (tra cui il ciclo d'inchiesta di hromadske «Кулі»). Un nodo senza `telegram_terms`, o senza canali approvati
    nelle sue lingue, salta il percorso e lo registra.
 
 Ogni candidato registra tutti i percorsi che l'hanno trovato e chi lo cita; il punteggio cresce con il numero di
