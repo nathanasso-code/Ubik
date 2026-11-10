@@ -387,7 +387,12 @@ L'elenco unico di Ubik: ciò che è fatto, in corso e da fare. Aggiornato il 10 
   nelle Matrici da 2 a 4 e 7 (le conclusioni dell'avvocato generale della Corte di giustizia, citate da cinque fonti; la
   citazione dei quotidiani contro OpenAI). Costo: 0,71 dollari per leggere, 0,15 per confermare, più 0,5 persi in un
   primo giro fermato prima di salvare (corretto: ora si salva prima). D'ora in poi, circa 0,3-0,5 dollari a settimana.
-  Restano «solo riprese» i riferimenti il cui documento non è nel corpus: candidati per la raccolta delle pagine citate.
+  Restano «solo riprese» i riferimenti il cui documento non è nel corpus. Lo **scout dei riferimenti**
+  (`tools/ref_scout.py`, workflow `ref-scout.yml`) li cerca dal gratuito al più caro: i link dell'articolo che li
+  descrive, poi OpenAlex e arXiv per studi e benchmark; il modello conferma il candidato. Prova sulla settimana del 2
+  novembre: 528 riferimenti presi in esame, 304 senza alcun candidato, 224 confermati o respinti, 43 trovati (34 dai link
+  degli articoli, 9 da OpenAlex), 6 centesimi. Il terzo passo, Brave per i rapporti senza titolo né link degli
+  articoli nelle Matrici, è da decidere dopo il bilancio di Brave del 21 novembre.
 - 10 novembre: **dalle Matrici ai nodi** (`tools/matrix_nodes.py`, workflow `matrix-nodes.yml`, su richiesta). Una
   chiamata per Matrice (almeno tre pezzi da due testate) chiede se le fonti si dividono su qualcosa che un nodo
   deciderebbe o mapperebbe; il codice tiene un lato solo se le sue citazioni sono quelle verificate dei pezzi. Prime due
