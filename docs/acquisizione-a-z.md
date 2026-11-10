@@ -367,6 +367,13 @@ L'elenco unico di Ubik: ciò che è fatto, in corso e da fare. Aggiornato il 10 
 
 **Fatto di recente**
 
+- 10 novembre: **sotto-topic Economia dell'IA** nel giornale (investimenti, ricavi, valutazioni, chip, concorrenza,
+  produttività; non il singolo round o il singolo prodotto). Cambia il prompt della nota: al giro successivo le note si
+  rifanno (circa 0,6 dollari per una settimana).
+- 10 novembre: le **seconde copie** (pagine sparite cercate nell'Internet Archive) anche nello scaricamento dello scout,
+  non solo nel giudizio; il **grafo delle citazioni** cerca per titolo quando la pagina non ha DOI (sul primo inverno
+  non aveva fatto consultazioni perché nessuna pagina aveva DOI): da verificare alla prossima esecuzione.
+- 10 novembre: **feed fermi**: nessuno rotto. La raccolta riesce; i blog personali pubblicano di rado.
 - 10 novembre: **minuti di GitHub.** Il repository privato aveva usato il 90% dei 2.000 minuti mensili; la redazione ha
   messo un budget di 10 dollari con lo stop. Tagli: raccolta ogni 12 ore invece di 6; il controllo delle fonti in prova
   parte solo quando cambiano i file dei candidati; il giudizio fa le chiamate al modello in parallelo (4 alla volta, una
@@ -401,33 +408,36 @@ L'elenco unico di Ubik: ciò che è fatto, in corso e da fare. Aggiornato il 10 
    - l'aggiornamento del nodo leggero legge una pagina nuova su cinque (da 8 a 25; prima sempre 8: sui data center 8 su
      126) e salta prima le copie delle fonti già nel nodo e le pagine già decise.
 
-   Da fare: misurare con l'aggiornamento in corso quante delle pagine contributo nuove dei data center valgono per il nodo
-   (se poche, la fascia «contributo» è troppo larga e va stretta prima di spendere in ricerca); misurare il tempo di ogni
-   fase dello scout (il giudizio di 100 pagine dura 5 minuti, il passo intero 145: il resto sono seconde copie,
-   CourtListener, riferimenti dei PDF, secondo giro).
+   - misurato: delle 31 pagine contributo nuove dei data center, 15 valgono per il nodo; le altre ripetono punti già
+     coperti. La fascia non è troppo larga: lo spreco viene dalle ripetizioni, che l'aggiornamento ora salta prima;
+   - ogni esecuzione registra il tempo di ogni fase (`timing` nel registro del giudizio): sul primo inverno lo
+     scaricamento una pagina alla volta prendeva 1.161 secondi su 1.218.
 2. **Le decisioni della redazione**: fatto il 10 novembre. Proposte e novità: 98 decisioni (40 accettate, 58 rifiutate;
    44 confermate dalla redazione, una ribaltata, 53 confermate da Claude su incarico), registrate nei nodi; le novità
    accettate dei data center collocate nei punti come altre fonti. Anelli già nei nodi: 109 decisioni con il motivo di
    Claude, confermate dalla redazione (106 tenuti, 3 tolti). Ogni anello, proposta o novità ha ora la sua decisione
-   registrata in `reports/nodi/NODO/decisioni.json`, con chi l'ha presa. Restano da fare con lo stesso percorso i nodi
-   leggeri (punti e fonti dei data center e del coinvolgimento americano).
+   registrata in `reports/nodi/NODO/decisioni.json`, con chi l'ha presa. Nodi leggeri: anche i punti hanno la loro
+   decisione nell'esploratore (con le altre fonti del punto); **12 decisioni di Claude sui punti dei data center e del
+   coinvolgimento americano attendono la conferma della redazione**, poi si registrano come le altre.
 3. **Il nodo «Il presunto coinvolgimento americano»**: bozza leggera (2 centesimi) e revisione fatte il 10 novembre, nell'esploratore.
-   Da fare: le sovvenzioni del NED 2013-2014 dalla copia d'archivio (decidono il punto sul finanziamento delle proteste);
-   sostituire le ripubblicazioni (InoSMI, conflictmanagement.ru) con gli originali.
+   Seconda revisione il 10 novembre: aggiunto l'estratto di Texty contro il punto 5; la ripresa della Berliner Zeitung
+   ha ora l'originale. Le sovvenzioni del NED 2013 non si trovano: la pagina dell'anno dà 404, l'archivio non ne ha
+   copia, la ricerca delle sovvenzioni non dà testo leggibile; la copia d'archivio trovata dallo scout parte dal 2014
+   (334 sovvenzioni, 22,4 milioni di dollari). Il punto sul finanziamento resta aperto. Da fare: l'originale di
+   conflictmanagement.ru, se esiste.
 4. **Difetti ancora aperti del giudizio e delle proposte**: le sintesi che leggono troppo (restano da controllare a mano);
    il confronto delle affermazioni con i documenti primari del corpus; il giudice che dà voti diversi allo stesso
    documento in due lingue.
 5. **Il primo inverno dell'IA**: rifatto il 10 novembre con la nuova graduatoria, solo sulle pagine mai viste (358, 0,08
    dollari): le fonti di riferimento giudicate contributo passano da 4 a 6 su 20, ma le pagine nuove rendono poco (6
    contributi su 184 giudicate). I riferimenti di Wikipedia servono ai nodi storici, non vanno messi davanti negli altri.
-   Il grafo delle citazioni non ha fatto consultazioni: da controllare. Lo scaricamento una pagina alla volta prendeva
+   Il grafo delle citazioni non aveva fatto consultazioni (nessun DOI): ora cerca anche per titolo. Lo scaricamento una pagina alla volta prendeva
    quasi tutto il tempo (3,2 secondi a pagina con molti siti diversi): dal 10 novembre anche lo scaricamento va in
    parallelo (`JUDGE_PARALLEL=all`, mai due pagine dello stesso sito o servizio).
 6. Il resto:
    - 21 novembre (promemoria già fissato): bilancio delle fonti in prova e nuova misura di Brave;
    - i canali pubblici di Telegram, ucraini e russi: fonte nuova, da approvare;
    - le pipeline che scrivono direttamente il formato comune (`docs/modello-dati.md`) al posto dei JSON di oggi;
-   - un sotto-topic Economia dell'IA per gli articoli senza sotto-topic (168 nella settimana di prova);
    - un modello locale per la prima scrematura, addestrato sulle decisioni registrate (serve qualche centinaio di
      decisioni con il motivo e un computer con scheda grafica);
    - registri e raccolta, ancora aperti dalla prima scheda del documento: EUR-Lex e le pagine di elenco di Commissione e
