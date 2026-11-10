@@ -76,7 +76,7 @@ a pagamento parte solo da un file `runs/<nome>.request` scritto e spinto nel rep
 | `gnews-ai.json` | Quattro ricerche GNews (IA ed energia, inglese e italiano) | prova |
 | `*-candidates.json`, `bacino-ia.json` | Candidati non ancora approvati, con la storia di come sono stati trovati | — |
 
-### 4.2 Raccolta (`tools/collect.py`, workflow `collect.yml`, ogni sei ore)
+### 4.2 Raccolta (`tools/collect.py`, workflow `collect.yml`, ogni 12 ore dal 10 novembre)
 
 Per ogni fonte il raccoglitore legge il canale dichiarato: feed RSS o Atom, sitemap con filtro sui percorsi
 (`sitemap_filter`, per i siti senza feed: Anthropic, Artificial Analysis), filtro di OpenAlex (`openalex`: una rivista
@@ -363,88 +363,62 @@ fermato al secondo giro (90 pagine): i contributi buoni erano quasi tutti PDF.
 
 ## 10. Da fare
 
-L'elenco unico di Ubik: ciò che è fatto, in corso e da fare. Aggiornato il 9 novembre.
+L'elenco unico di Ubik: ciò che è fatto, in corso e da fare. Aggiornato il 10 novembre.
 
 **Fatto di recente**
 
-- 9 novembre pomeriggio: la regola della stessa voce (oltre due testi di analisi o d'opinione dello stesso autore, in
-  qualunque lingua, diventano «ripresa»; gli studi no) e il ricalcolo delle fasce senza chiamate (`reband`);
-  l'aggiornamento sui soli candidati nuovi (`only_new` nella richiesta; le impronte delle pagine già giudicate restano,
-  gli indirizzi dei risultati di Brave no); le «novità da rivedere» del nodo leggero (`light.request` con `mode=update`:
-  la bozza rivista non si riscrive); i DOI della bibliografia dei PDF e il grafo delle citazioni degli studi promossi
-  (OpenAlex, al massimo 25 consultazioni per esecuzione) nel setaccio. Seconda prova delle lingue (sezione 8).
-- 9 novembre: **credito OpenRouter esaurito.** Il giudice, i nodi leggeri e le traduzioni sono fermi finché non viene
-  ricaricato; scout, regole e ricalcoli non costano e vanno avanti.
-- 9 novembre: quarto nodo d'attualità, leggero, sui data center e le comunità: 0,19 dollari in tutto (sezione 8); rivisto
-  (rete e accordi di riservatezza accertati, acqua divisa in due punti, voto nella riga di stato) e pubblicato
-  nell'esploratore.
-- 9 novembre: potatura reversibile (Semantic Scholar, antenne e via web spente nello scout, setaccio a due giri; OpenAlex
-  per parole chiave resta: 10 contributi unici); seconde copie nel codice; prima prova delle lingue del nodo.
-- 9 novembre: controllo a campione della precisione dei contributi del fair use (sezione 8): circa 70 utili su 120,
-  e i difetti del giudizio passati al punto 4.
-- 8 novembre sera: giudizio rilanciato sui tre nodi, 0,90 dollari (sezione 8). Il giudizio non è più il collo di
-  bottiglia: le scelte a mano si perdono a monte (lo scout non le trova) o per l'accesso.
+- 10 novembre: **minuti di GitHub.** Il repository privato aveva usato il 90% dei 2.000 minuti mensili; la redazione ha
+  messo un budget di 10 dollari con lo stop. Tagli: raccolta ogni 12 ore invece di 6; il controllo delle fonti in prova
+  parte solo quando cambiano i file dei candidati; il giudizio fa le chiamate al modello in parallelo (4 alla volta, una
+  pagina scaricata alla volta: `JUDGE_PARALLEL=calls`). Prova sulle stesse 100 pagine: 145 secondi contro 319-339 in
+  sequenza, voti entro il rumore del giudizio ripetuto, nessun blocco in più dai siti; scaricare in parallelo guadagna
+  solo un altro 8% e resta spento.
+- 10 novembre: **le decisioni nell'esploratore.** Ogni proposta e ogni novità si accetta o si rifiuta con il motivo
+  (registro condiviso della pagina, scrive solo chi la modifica); Claude propone una decisione provvisoria, anche con
+  correzioni (catena, posto, testo, autore, data), e la redazione la conferma o la ribalta con il proprio motivo; nel nodo
+  entrano solo quelle confermate o ribaltate (`tools/record_decisions.py`, che le scrive in `decisioni.json` e nel nodo).
+  Primo passaggio sui quattro nodi: 75 proposte e novità, 28 da accettare (lette le pagine prima), 47 da rifiutare. La
+  lettura ha corretto 4 delle 28 sintesi (una su sette): il codice verifica che la citazione esista, non che dica ciò che
+  la sintesi le fa dire.
+- 10 novembre: copie a indirizzi diversi (lo stesso documento in un'altra lingua, con lo stesso DOI, arXiv o numero
+  d'articolo, o lo stesso percorso senza la lingua): 48 copie in più sui quattro nodi; le proposte saltano i documenti già
+  nel nodo, anche per ISBN. Al massimo 6 proposte per catena, solo dalla fascia contributo.
+- 9-10 novembre: le testate del nodo nelle sue lingue, cercate con `site:` (fino a 6: due nominate nella scheda, le altre
+  dal punteggio degli autori distinti pesato sul voto del giudice, due a rotazione; escluse le testate di una sola voce
+  ripresa altrove). Sul 20 febbraio: scelte a mano trovate da 2 a 7 su 9, contributi da 48 a 61 (18 da quei siti).
+- 9-10 novembre: nodo leggero con i gruppi di fonti che si contraddicono (ogni gruppo coperto da un punto) e la misura di
+  stabilità (fair use: 4-5 punti su 6 uguali tra due esecuzioni, 5 esiti uguali); CourtListener dà la precedenza ai
+  fascicoli del nodo (da misurare); InoSMI tra i media di Stato.
+- 9 novembre: il nodo dei data center e le comunità (leggero, rivisto, nell'esploratore); credito OpenRouter esaurito e
+  ricaricato; il nuovo nodo «Il presunto coinvolgimento americano» (Euromaidan), primo scout: 26 contributi, 0,19 dollari.
 
 **In ordine**
 
-1. **Ricerca nelle lingue del nodo** (in corso), come parte stabile dello scout: ogni nodo dichiara le lingue originali
-   della vicenda (`languages` in `scout.json`; quelle dei domini delle ancore si aggiungono da sole) e lo scout cerca anche
-   in quelle, con termini e domande tradotti una volta dal modello e conservati in `reports/scout/NODE/languages.json`, e
-   con le pagine di Wikipedia nelle stesse lingue (`tools/node_languages.py`, 9 novembre). Prima prova sul 20 febbraio
-   (sezione 8): i contributi raddoppiano, ma moltiplicano anche le ristampe di una stessa tesi e le testate statali.
-   Seconda prova il 9 novembre, fermata dal credito: con la stessa voce e l'etichetta di Stato le ristampe e le testate
-   statali non pesano più. Resta il limite a monte: gli archivi della stampa ucraina scelti a mano non entrano nei
-   candidati. Da provare: una ricerca sui siti di quelle testate (`site:` in Brave) per le lingue del nodo. Insieme: il limite di CourtListener, dando la precedenza agli atti dei casi (le memorie amicus del
-   fair use); le seconde copie decise il 9 novembre (sezione 3), nel codice dal 9 novembre e da misurare al prossimo giro.
-2. **La bozza automatica del nodo, in forma leggera.** Prova fatta il 9 novembre sul fair use (sezione 8): la versione in due passi
-   regge, a meno di 2 centesimi per la bozza. Da fare prima del quarto nodo: un controllo che la frase citata sostenga
-   davvero l'esito (una domanda sì/no al modello per punto, pochi decimi di centesimo) e la stabilità dei punti tra
-   un'esecuzione e l'altra (almeno un punto per ogni gruppo di fonti che si contraddicono). La prova del costo della ricerca
-   con `k` 200-300 non è ancora fatta. È il passo che manca: oggi le proposte aggiungono anelli a catene
-   esistenti, ma nessuno passo genera catene, sintesi, testo di partenza ed elenchi di ciò che è aperto. Senza questo il
-   punto 3 non si può fare. Il nodo leggero è la forma più semplice del passo e il formato per la maggior parte dei nodi:
-   - la domanda e lo stato in una riga;
-   - da tre a sei punti del contendere, ciascuno con l'affermazione, la fonte migliore a favore e quella contro con una
-     citazione verificata dal codice, l'esito (accertato, smentito, conteso, aperto) e che cosa deciderebbe la questione;
-   - da due a quattro documenti cardine (sentenze, rapporti, studi che contengono già la controversia);
-   - la verifica di Ubik solo sui punti decidibili con un documento primario del corpus;
-   - «Per approfondire»: i contributi non usati.
+1. **Dalla ricerca al nodo.** Lo scout trova di più, ma il guadagno si perde nei passi dopo. Fatto il 10 novembre:
+   - la graduatoria: i riferimenti delle voci di Wikipedia senza altri segni passano il filtro, dopo tutte le altre pagine
+     (primo inverno dell'IA: fonti di riferimento in graduatoria da 9 a 14 su 20; nessuna pagina già buona spinta fuori
+     dalle prime 400 negli altri nodi). Un nodo storico le raggiunge con `k` più alto;
+   - l'aggiornamento del nodo leggero legge una pagina nuova su cinque (da 8 a 25; prima sempre 8: sui data center 8 su
+     126) e salta prima le copie delle fonti già nel nodo e le pagine già decise.
 
-   Si perdono il dialogo tra le fonti, i passaggi di provenienza e la coda lunga; l'esito dichiarato evita il falso
-   equilibrio. Costo stimato: circa 0,10 dollari di ricerca (un giro di setaccio, `k` 200-300) e una bozza di DeepSeek dai
-   15 contributi migliori, rivista solo sui punti contesi; aggiornamento con lo scout settimanale sui soli candidati nuovi.
-   Prova: la versione leggera del fair use contro quella piena (quanti punti principali coglie, con quale esito, a che
-   costo), sotto 0,30 dollari. Come si scelgono i nodi: le Matrici segnalano gratis le controversie che tornano ogni
-   settimana con fonti di parti diverse; lì si apre un nodo leggero, che diventa pieno solo se resta caldo e ha punti
-   verificabili.
-3. **Un quarto nodo d'attualità** costruito con la pipeline dall'inizio, scelto dalle Matrici come al punto 2: il banco
-   di prova del metodo e delle proposte. Fatto il 9 novembre sui data center e le comunità (sezione 8): bozza leggera,
-   revisione di Claude con le decisioni registrate nel file, nodo nell'esploratore. Prossimo passo del nodo: l'aggiornamento
-   settimanale con lo scout sui soli candidati nuovi: nel codice dal 9 novembre (`only_new`, poi `light.request` con
-   `mode=update`). Prima prova lo stesso giorno: le 242 pagine già giudicate vengono saltate e lo scout ne sceglie 250
-   nuove su 2232 candidati, a costo zero; il giudizio è fallito per il credito esaurito, e le pagine rifiutate restano
-   da giudicare. Decisione: non si
-   programma da solo. Ogni esecuzione a pagamento parte da una richiesta (sezione 11), quindi l'aggiornamento settimanale
-   si lancia con una riga, non con un calendario.
-4. **Difetti del giudizio e delle proposte** emersi lì e nei tre nodi e nel controllo del 9 novembre
-   (sezione 8). Nel codice dal 9 novembre, da misurare al prossimo giro: le copie dello stesso documento (impronta del
-   testo, una sola tiene la fascia), i siti che riscrivono (`registry/rewriters.json`), i siti esclusi come le copie pirata
-   (`registry/excluded-hosts.json`), la seconda lettura dei documenti primari, l'etichetta per le testate di Stato
-   (`registry/state-media.json`: dichiarate, non escluse); la stessa voce (le ristampe di una tesi in testi e lingue
-   diverse: misurata sul 20 febbraio, 9 riprese). Restano: un limite di proposte per catena, le sintesi del modello, che possono rovesciare l'esito di
-   una sentenza e vanno controllate prima di mostrarle (nel nodo leggero l'esito di ogni punto si appoggia alla frase
-   verificata); il confronto delle affermazioni con i documenti primari del
-   corpus (il pezzo più difficile, quasi certamente con il modello). Poi le proposte nell'esploratore, da accettare o
-   rifiutare con il motivo registrato (sezione 3).
-5. **I riferimenti dei PDF e il grafo delle citazioni** (OpenAlex o Crossref, gratuiti) nel setaccio: nel codice dal 9
-   novembre. Da fare, alla ricarica del credito: di nuovo la prova di profondità sul primo inverno dell'IA, a due giri,
-   con Wikipedia accesa (circa 0,2 dollari).
+   Da fare: misurare con l'aggiornamento in corso quante delle pagine contributo nuove dei data center valgono per il nodo
+   (se poche, la fascia «contributo» è troppo larga e va stretta prima di spendere in ricerca); misurare il tempo di ogni
+   fase dello scout (il giudizio di 100 pagine dura 5 minuti, il passo intero 145: il resto sono seconde copie,
+   CourtListener, riferimenti dei PDF, secondo giro).
+2. **Le decisioni della redazione** sulle 75 proposte e novità di Claude nell'esploratore, poi la registrazione nei nodi
+   con `record_decisions.py` e il modello ricostruito. Poi gli anelli già nei nodi (109) con lo stesso percorso: ciascuno
+   con il motivo per cui è entrato, da confermare o togliere. Metodo deciso il 9 novembre: Claude decide con il motivo, la
+   redazione conferma o ribalta; i punti politicamente contesi o che toccano persone sono segnalati.
+3. **Il nodo «Il presunto coinvolgimento americano»**: la bozza leggera dai 26 contributi (circa 3 centesimi), la revisione
+   (da verificare: la tesi di CovertAction sulla cancellazione dei dati del NED, conflictmanagement.ru senza motivazione),
+   poi l'esploratore.
+4. **Difetti ancora aperti del giudizio e delle proposte**: le sintesi che leggono troppo (restano da controllare a mano);
+   il confronto delle affermazioni con i documenti primari del corpus; il giudice che dà voti diversi allo stesso
+   documento in due lingue.
+5. **Il primo inverno dell'IA**: rifare il giudizio con la nuova graduatoria e `k` 500; il grafo delle citazioni ha fatto
+   una sola consultazione e va controllato.
 6. Il resto:
-   - 9 novembre (promemoria già fissato, nella conversazione da cui è partito): il giro delle Matrici sulla settimana
-     intera, dal 2 al 9 novembre, e la ripubblicazione della pagina; le correzioni che chiedeva sono già fatte;
    - 21 novembre (promemoria già fissato): bilancio delle fonti in prova e nuova misura di Brave;
-   - il nodo «Il presunto coinvolgimento americano» (Euromaidan): lavoro di contenuto su un tema storico, con semi e
-     affermazione di partenza già pronti; da non confondere con il quarto nodo d'attualità;
    - i canali pubblici di Telegram, ucraini e russi: fonte nuova, da approvare;
    - le pipeline che scrivono direttamente il formato comune (`docs/modello-dati.md`) al posto dei JSON di oggi;
    - un sotto-topic Economia dell'IA per gli articoli senza sotto-topic (168 nella settimana di prova);
