@@ -291,6 +291,10 @@ function quote(q, it) {
   if (!q) return "";
   return `<blockquote>«${esc(q)}»${it ? `<span class="it">${esc(it)}</span>` : ""}</blockquote>`;
 }
+function retells(p) {
+  // a story retold from another outlet: its original, found and confirmed (tools/originals.py)
+  return p.riprende ? `<div class="muted" style="font-size:12px">Riprende: ${srcShort(p.riprende.pezzo)}</div>` : "";
+}
 function elsewhere(p) {
   // the other places of the same document (one pezzo for all its copies): nodes first, then Matrici, not the page shown
   const here = location.hash;
@@ -313,7 +317,7 @@ function srcLine(pid, extra = "") {
     ${title ? `<div class="title">${p.url ? `<a href="${esc(p.url)}" target="_blank" rel="noopener">${esc(title)}</a>` : esc(title)}</div>` : (p.url ? `<a href="${esc(p.url)}" target="_blank" rel="noopener">${esc(p.url.replace(/^https?:\/\//, "").slice(0, 70))}</a>` : "")}
     ${n?.sintesi ? `<div>${esc(n.sintesi)}</div>` : ""}
     ${n ? quote(n.citazione, n.citazione_it) : ""}
-    ${elsewhere(p)}
+    ${retells(p)}${elsewhere(p)}
     ${extra}
   </div>`;
 }
@@ -322,7 +326,7 @@ function cite(pid) {
   const p = D.pezzi[pid] || {};
   const t = p.titolo ? (p.url ? `<a href="${esc(p.url)}" target="_blank" rel="noopener">${esc(p.titolo)}</a>` : esc(p.titolo)) : srcShort(pid);
   const meta = [p.testata, p.data, LANG[p.lingua] || p.lingua, p.testo_parziale ? "testo parziale" : null].filter(Boolean).map(esc).join(" · ");
-  return `<div class="cite"><span class="meta">${meta}</span><span>${t}</span>${elsewhere(p)}</div>`;
+  return `<div class="cite"><span class="meta">${meta}</span><span>${t}</span>${retells(p)}${elsewhere(p)}</div>`;
 }
 function srcShort(pid) {
   const p = D.pezzi[pid] || {};
@@ -460,7 +464,7 @@ function viewMatrix(id) {
   if (!m) return notFound();
   return `<div><div class="crumb"><a href="#topic-ia">Intelligenza artificiale</a> · ${esc(SUB[m.sottotopic] || m.sottotopic)} · settimana dal ${esc(m.settimana)}</div>
     <h1>${esc(m.titolo)}</h1><p class="lead">${esc(m.essenza)}</p>
-    <div class="row muted" style="margin-top:8px;font-size:13px"><span>${m.pezzi.length} fonti da ${m.origini.length} testate</span><span>ultima fonte ${esc(m.data)}</span></div></div>
+    <div class="row muted" style="margin-top:8px;font-size:13px"><span>${m.pezzi.length} fonti da ${m.origini.length} testate${(m.riprese_interne || []).length ? `, di cui ${m.riprese_interne.length} riprendono un'altra fonte della Matrice` : ""}</span><span>ultima fonte ${esc(m.data)}</span></div></div>
     ${m.nodi.length ? `<div class="panel"><span class="label">Nodi collegati</span>${m.nodi.map(x => `<div class="row" style="margin-top:6px"><a href="#n-${esc(x.nodo)}">${esc(D.nodi[x.nodo].titolo)}</a><span class="muted">${x.fonti_comuni.length} fonti in comune</span></div>`).join("")}</div>` : ""}
     ${(m.disaccordi || []).length ? `<section><h2>Le fonti si dividono</h2>${m.disaccordi.map(id => (D.topic.ia.nodi_proposti || []).find(g => g.id === id)).filter(Boolean).map(g => disagreement(g, true)).join("")}</section>` : ""}
     ${(m.studi || []).length ? `<section><h2>Studi citati</h2><div class="panel">${(D.topic.ia.studi?.[m.settimana] || []).filter(x => m.studi.includes(x.pezzo)).map(studyLine).join("")}</div></section>` : ""}
