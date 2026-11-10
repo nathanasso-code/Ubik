@@ -397,7 +397,14 @@ L'elenco unico di Ubik: ciò che è fatto, in corso e da fare. Aggiornato il 10 
     Wikimedia, i paper di Creative Commons e Open Future); 20 febbraio: 92 descritti, 23 già nel nodo (un buon controllo
     del nodo), 4 trovati (tre versioni accademiche di Katchanovski e un lavoro su Odesa). 13 centesimi per i tre nodi. Le
     proposte sono nella pagina del nodo, con la decisione provvisoria di Claude (10 da far entrare, 11 da lasciare fuori).
-    Il coinvolgimento americano ha solo 3 fonti con il testo nel corpus: da raccogliere prima.
+    Poi altri tre nodi, leggendo prima le fonti senza testo nel corpus (restano in `corpus/targeted/NODO/fonti/`): data
+    center 16 documenti nuovi (i due rapporti del Lawrence Berkeley National Laboratory, l'atlante del Dipartimento
+    dell'Energia, i sondaggi Gallup e Heatmap, il rapporto E3, il tracker dei referendum, il white paper di Koomey
+    sull'acqua), spazio dei pesi 4 (i log degli autori, uno studio su arXiv), coinvolgimento americano 2 fuori tema. In
+    tutto 43 decisioni provvisorie di Claude (21 da far entrare, 22 da lasciare fuori), circa 0,35 dollari.
+  - **La catena intera** per una settimana con una richiesta (`mode=tutto`): sulla settimana del 26 ottobre, 7 centesimi
+    (i riferimenti erano già letti): 44 documenti in più dallo scout dei riferimenti, 5 originali, 8 lavori di sfondo; gli
+    studi e documenti discussi passano da 26 a 71, quelli nelle Matrici da 4 a 8.
   - **Bibliografia dei documenti trovati** (`tools/biblio.py`, OpenAlex, gratuito): settimana del 2 novembre, 75
     documenti, 28 in OpenAlex, 746 riferimenti, 32 lavori citati da almeno due documenti (co-citati: agenti, rischi,
     benchmark), 19 documenti con citanti recenti. Da decidere come usarla: le co-citazioni come fonti di sfondo dei nodi,
