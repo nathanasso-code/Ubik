@@ -385,6 +385,23 @@ L'elenco unico di Ubik: ciò che è fatto, in corso e da fare. Aggiornato il 10 
 
 **Fatto di recente**
 
+- 11 novembre: **graduatoria delle storie candidate a nodo** (`tools/node_ranking.py`, `mode=graduatoria` in
+  `runs/matrix-nodes.request`): le Matrici delle settimane raggruppate in 55 storie, ciascuna misurata gratis
+  (persistenza, testate indipendenti tolte le riprese, documenti, voci, lingue, divergenza) e, per le prime 15, giudicata
+  dal modello (posta in gioco, valore aggiunto di un nodo; 0,6 centesimi). Pesi modificabili nel file. Nell'esploratore,
+  pagina del Topic, con la decisione provvisoria di Claude per le 11 che non sono già un nodo: aprire al livello 1 le
+  regole sull'IA negli Stati Uniti dopo le midterm, le conclusioni Szpunar sugli editori, l'opt-out dall'addestramento
+  (con dentro il caso dei termini di Meta), i licenziamenti attribuiti all'IA (Microsoft, Canva); non ora le altre.
+- 11 novembre: **schede discordi**: 14, di due tipi. Strutturale (11): il nodo nomina chi parla (l'autore, l'ente, la
+  parte), il feed chi pubblica; ora la scheda ha `autore` e `testata` distinti, e le date diverse di un giorno o meno
+  precise e le sezioni della stessa testata non contano come discordanze. Descrizioni diverse dello stesso autore (5):
+  corrette con `tools/schede.py`. Restano 0. La nota catalogata è adottata dalle settimane dal 9 novembre.
+- 11 novembre: **newsletter nei riferimenti descritti**: tutte quelle della settimana, anche fuori dalla selezione,
+  lette più a fondo. Rendono poco: 26 newsletter nelle due settimane, 23 riferimenti, uno trovato; i testi raccolti
+  dalla casella sono brevi (mediana 380 parole): da controllare se la raccolta li taglia.
+- 11 novembre: **audizioni** (`tools/hearings.py`): trascrizioni e testimonianze da GovInfo per i riferimenti ad
+  audizioni del Congresso; salta finché manca la chiave gratuita (api.data.gov, segreto `GOVINFO_API_KEY`). Pochi casi
+  nelle due settimane (16 riferimenti che nominano commissioni o audizioni, non tutti audizioni).
 - 11 novembre: **nota catalogata** (in prova, `NOTE_EXTRA=1`, `prompts/daily-v5/nota-extra.txt`): nella stessa chiamata
   della nota, i riferimenti descritti, le cifre chiave, i nomi di persone e organizzazioni e le testate a cui l'articolo
   attribuisce la notizia, ciascuno con il segno «nel testo» messo dal codice. Due prove su 50 articoli della settimana
