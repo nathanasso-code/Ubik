@@ -135,6 +135,8 @@ def verify_extra(n, text):
     for r in n.get("rif") or []:
         if isinstance(r, dict):
             r["n_nel_testo"] = [found(x) for x in r.get("n") or []]
+    if n.get("natura") not in (None, "primaria", "secondaria", "mista"):  # the model's own reading, not checkable in the text
+        n["natura"] = None
 
 
 def make_notes(items, out_dir):

@@ -385,6 +385,14 @@ L'elenco unico di Ubik: ciò che è fatto, in corso e da fare. Aggiornato il 10 
 
 **Fatto di recente**
 
+- 11 novembre: **sentenze citate e riferimenti di passaggio.** Le sentenze citate dalle fonti si cercano anche in
+  CourtListener (per numero di citazione, altrimenti per nome delle parti) e, trovate, si leggono per intero: prima
+  passavano solo dagli indici accademici, che non le contengono (Google v. Oracle, citata da due fonti del fair use, non
+  era stata trovata; 29 sentenze su 34 «non trovate»). Nella stessa chiamata che conferma il documento, il modello dice
+  se la fonte lo usa sulla questione del nodo o lo nomina di passaggio (esempio, sfondo, altro tema): quelli di passaggio
+  restano registrati ma non diventano proposte. La redazione: un articolo divulgativo non si esclude in quanto tale;
+  si esclude ciò che è fuori tema. Nella nota catalogata, `natura`: primaria, secondaria o mista (lettura del modello,
+  non verificabile nel testo).
 - 11 novembre: **atti scelti dai fascicoli delle cause** (`tools/dockets.py`, `dockets=NODO` in
   `runs/week-refs.request`): per ogni fascicolo citato nel nodo, una ricerca RECAP per tipo d'atto (pareri e sentenze,
   ordinanze, dichiarazioni e perizie di esperti, trascrizioni, memorie di terzi, citazioni, giudizio sommario); tenuti
