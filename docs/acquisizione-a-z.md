@@ -385,6 +385,15 @@ L'elenco unico di Ubik: ciò che è fatto, in corso e da fare. Aggiornato il 10 
 
 **Fatto di recente**
 
+- 11 novembre: **i link dentro le fonti e la ricerca web come ultima strada.** Il registro teneva solo i link del
+  riassunto del feed: metà degli articoli recenti, e tutte le pagine prese dalle citazioni, ne erano senza. Ora ogni
+  pagina scaricata tiene i link del testo con le parole su cui stanno (`tools/body_links.py`), e un riferimento descritto
+  prova prima il link che gli corrisponde (autore, ente, titolo, cifre nelle parole o nell'indirizzo), qualunque sito sia.
+  Ultima strada, solo con indizi forti (chi l'ha pubblicato più un titolo o una cifra): una ricerca Brave, di cui si
+  tiene solo il documento scelto (`web=N` nella richiesta). Prova su data center e fair use, fonti rilette: proposte da
+  20 a 92 e da 32 a 93; 102 ricerche web (circa mezzo centesimo l'una) hanno trovato il documento in 70 casi. Restano
+  errori da decidere: pagine che riassumono l'originale prese per l'originale (il sondaggio NBC, alcuni articoli di
+  giornale) e lo stesso documento proposto per più riferimenti.
 - 11 novembre: **sentenze citate e riferimenti di passaggio.** Le sentenze citate dalle fonti si cercano anche in
   CourtListener (per numero di citazione, altrimenti per nome delle parti) e, trovate, si leggono per intero: prima
   passavano solo dagli indici accademici, che non le contengono (Google v. Oracle, citata da due fonti del fair use, non
