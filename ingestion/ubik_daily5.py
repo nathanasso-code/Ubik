@@ -120,27 +120,21 @@ def render(out, keep, items, name):
 
 
 def verify_extra(n, text):
-    """The catalogued fields are kept with a mark: found word for word in the item's text (a figure, a name, a credit
-    phrase), or not. Nothing is dropped: a mark is what later steps rely on."""
+    """The catalogued fields keep a mark: found word for word in the item's text (a figure, a name, an outlet), or not.
+    Nothing is dropped: the mark is what later steps rely on."""
     t = norm(text)
-    num = lambda v: re.sub(r"[^0-9]", "", v or "")  # noqa: E731  figures are compared by their digits
     digits = re.sub(r"[^0-9]", "", text)
-    for c in n.get("cifre") or []:
-        if isinstance(c, dict):
-            v = str(c.get("valore") or "")
-            c["nel_testo"] = bool(v) and (norm(v) in t or (len(num(v)) >= 2 and num(v) in digits))
-    nom = n.get("nominati") or {}
-    if isinstance(nom, dict):
-        for p_ in nom.get("persone") or []:
-            if isinstance(p_, dict):
-                p_["nel_testo"] = bool(p_.get("nome")) and norm(p_["nome"]) in t
-        nom["organizzazioni_nel_testo"] = [bool(o) and norm(str(o)) in t for o in nom.get("organizzazioni") or []]
-    for a in n.get("attribuzioni") or []:
-        if isinstance(a, dict):
-            a["nel_testo"] = bool(a.get("frase")) and norm(a["frase"]) in t
-    for r in n.get("riferimenti") or []:
-        if isinstance(r, dict) and isinstance(r.get("indizi"), dict):
-            r["numeri_nel_testo"] = [bool(x) and (norm(str(x)) in t or num(str(x)) in digits) for x in r["indizi"].get("numeri") or []]
+    num = lambda v: re.sub(r"[^0-9]", "", v or "")  # noqa: E731  figures are compared by their digits
+
+    def found(v):
+        v = str(v or "").split(" — ")[0].strip()
+        return bool(v) and (norm(v) in t or (len(num(v)) >= 2 and num(v) in digits))
+    n["cifre_nel_testo"] = [found(c) for c in n.get("cifre") or []]
+    n["nomi_nel_testo"] = [bool(x) and norm(str(x)) in t for x in n.get("nomi") or []]
+    n["fonti_nel_testo"] = [bool(x) and norm(str(x)) in t for x in n.get("fonti") or []]
+    for r in n.get("rif") or []:
+        if isinstance(r, dict):
+            r["n_nel_testo"] = [found(x) for x in r.get("n") or []]
 
 
 def make_notes(items, out_dir):

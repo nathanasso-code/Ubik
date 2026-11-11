@@ -54,23 +54,19 @@ def main(sel_path, out_path, n=50, refs_path=None):
         rows = list(ex.map(one, sample))
     ok = [r for r in rows if r.get("base", {}).get("ok") and r.get("ricca", {}).get("ok")]
     tot = lambda k: sum(r[k]["costo"] for r in ok)  # noqa: E731
-    cifre = [c for r in ok for c in r["nota_ricca"].get("cifre") or [] if isinstance(c, dict)]
-    pers = [p for r in ok for p in (r["nota_ricca"].get("nominati") or {}).get("persone") or [] if isinstance(p, dict)]
-    orgs = [x for r in ok for x in (r["nota_ricca"].get("nominati") or {}).get("organizzazioni_nel_testo") or []]
-    attr = [a for r in ok for a in r["nota_ricca"].get("attribuzioni") or [] if isinstance(a, dict)]
-    rif = [x for r in ok for x in r["nota_ricca"].get("riferimenti") or [] if isinstance(x, dict)]
+    def count(key):
+        vals = [v for r in ok for v in r["nota_ricca"].get(key + "_nel_testo") or []]
+        return len(vals), sum(1 for v in vals if v)
+    rif = [x for r in ok for x in r["nota_ricca"].get("rif") or [] if isinstance(x, dict)]
     sep = [r for r in ok if r.get("riferimenti_separati")]
     summary = {
         "articoli": len(rows), "letti_entrambi": len(ok),
         "costo_base": round(tot("base"), 5), "costo_ricca": round(tot("ricca"), 5),
         "costo_in_piu_per_articolo": round((tot("ricca") - tot("base")) / max(1, len(ok)), 6),
         "aumento_percentuale": round(100 * (tot("ricca") - tot("base")) / max(1e-9, tot("base")), 1),
-        "cifre": len(cifre), "cifre_nel_testo": sum(1 for c in cifre if c.get("nel_testo")),
-        "persone": len(pers), "persone_nel_testo": sum(1 for p in pers if p.get("nel_testo")),
-        "organizzazioni": len(orgs), "organizzazioni_nel_testo": sum(orgs),
-        "attribuzioni": len(attr), "attribuzioni_nel_testo": sum(1 for a in attr if a.get("nel_testo")),
+        "cifre (tot, nel testo)": count("cifre"), "nomi (tot, nel testo)": count("nomi"), "fonti (tot, nel testo)": count("fonti"),
         "riferimenti_nota": len(rif),
-        "confronto_chiamata_separata": {"articoli": len(sep), "riferimenti_nota": sum(len(r["nota_ricca"].get("riferimenti") or []) for r in sep),
+        "confronto_chiamata_separata": {"articoli": len(sep), "riferimenti_nota": sum(len(r["nota_ricca"].get("rif") or []) for r in sep),
                                         "riferimenti_separati": sum(r["riferimenti_separati"]["n"] for r in sep),
                                         "costo_separato": round(sum(r["riferimenti_separati"]["costo"] or 0 for r in sep), 5),
                                         "costo_in_piu_della_nota": round(sum(r["ricca"]["costo"] - r["base"]["costo"] for r in sep), 5)},
