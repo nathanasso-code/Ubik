@@ -315,7 +315,8 @@ function srcLine(pid, extra = "") {
   const p = D.pezzi[pid] || {};
   const n = D.note[pid];
   const meta = [p.testata, p.data, LANG[p.lingua] || p.lingua, n?.tipo && KIND[n.tipo], p.tipo_fonte && !n ? p.tipo_fonte : null,
-    p.testo_parziale ? "testo parziale" : null, p.simulato ? "contributo simulato" : null, p.via ? "via " + p.via : null].filter(Boolean);
+    p.testo_parziale ? "testo parziale" : null, p.simulato ? "contributo simulato" : null, p.via ? "via " + p.via : null,
+    p.media_di_stato ? "media di Stato: " + p.media_di_stato : null, p.corretto ? "scheda corretta (" + p.corretto.join(", ") + ")" : null].filter(Boolean);
   const title = p.titolo || (n ? "" : p.testata);
   return `<div class="src">
     <div class="meta">${meta.map(esc).join(" · ")}</div>
@@ -335,7 +336,7 @@ function cite(pid) {
 }
 function srcShort(pid) {
   const p = D.pezzi[pid] || {};
-  const lbl = esc(p.testata || "fonte") + (p.data ? ` <span class="num muted">${esc(p.data)}</span>` : "");
+  const lbl = esc(p.testata || "fonte") + (p.data ? ` <span class="num muted">${esc(p.data)}</span>` : "") + (p.media_di_stato ? ` <span class="chip">media di Stato: ${esc(p.media_di_stato)}</span>` : "");
   return (p.url ? `<a href="${esc(p.url)}" target="_blank" rel="noopener">${lbl}</a>` : lbl) + alsoShort(p);
 }
 function alsoShort(p) {

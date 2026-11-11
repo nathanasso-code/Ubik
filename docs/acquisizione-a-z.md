@@ -536,9 +536,9 @@ L'elenco unico di Ubik: ciò che è fatto, in corso e da fare. Aggiornato il 10 
    parallelo (`JUDGE_PARALLEL=all`, mai due pagine dello stesso sito o servizio).
 6. Il resto:
    - 21 novembre (promemoria già fissato): bilancio delle fonti in prova e nuova misura di Brave;
-   - **il formato comune** (`docs/modello-dati.md`), dopo il primo passo del 10 novembre: le pipeline che scrivono
-     direttamente gli oggetti, una alla volta, a partire dai nodi (le fonti descritte dentro ogni nodo diventano pezzi
-     con l'id comune, una sola scheda per fonte); i nodi che ricevono come novità i pezzi delle Matrici; le proposte di
+   - **il formato comune** (`docs/modello-dati.md`): fatti un documento-un pezzo (10 novembre) e il catalogo comune
+     delle fonti (11 novembre, `data/schede.json`, correzioni con `tools/schede.py`; 14 schede con valori discordi da
+     rivedere). Resta che le pipeline scrivano gli oggetti direttamente: si fa quando si prepara il sito; i nodi che ricevono come novità i pezzi delle Matrici; le proposte di
      nodo dalle Matrici a ogni settimana nuova, e la costruzione dei nodi accettati;
    - Telegram e Press corner: bilancio dopo due settimane (quanti post tenuti servono ai nodi e alle Matrici);
      Novaya Gazeta Europe da ritrovare; l'API dei dati aperti del Parlamento (solo identificativi, un'interrogazione

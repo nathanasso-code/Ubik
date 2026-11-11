@@ -73,5 +73,17 @@ L'esploratore ne ricava la vista d'insieme: cosa c'è, in che stato, quanto è c
 2. Esploratore privato generato dall'esportazione: Topic → Matrici → nodi, con la vista del cantiere. Fatto
    (`ingestion/ubik_explorer.py`). Le card mostrano una sintesi comune e l'elenco delle fonti; il dettaglio per
    fonte resta come controllo.
-Il resto (le pipeline che scrivono direttamente il formato al posto dei JSON di oggi) è
-nell'elenco unico: `docs/acquisizione-a-z.md`, sezione 10.
+3. Un documento, un pezzo (10 novembre): le copie dello stesso documento a indirizzi diversi sono un pezzo solo
+   (`tools/doc_ids.py`), ogni pezzo sa dove è usato (`usato_in`), i nodi sanno quali fonti hanno in comune.
+4. Il catalogo comune delle fonti (11 novembre): `ubik-corpus/data/schede.json`, una scheda per documento con testata,
+   titolo, data, lingua, copie e l'etichetta di media di Stato. Un valore, una volta nella scheda, resta: lo stesso
+   documento è descritto allo stesso modo in ogni nodo e Matrice. Una correzione (`tools/schede.py correggi ID CAMPO
+   VALORE MOTIVO`) vale ovunque al giro successivo, con chi l'ha fatta e perché. Quando due posti descrivono il documento
+   in modo diverso, gli altri valori restano come `alternative` da rivedere (`tools/schede.py discordi`: 14 all'11
+   novembre, quasi tutti nodi che indicano la voce citata dentro l'articolo al posto della testata). Le fonti dei nodi
+   portano l'identificativo della scheda (`pezzo`); il ruolo di una fonte in un nodo (parte in causa, memoria di terzi)
+   resta nel nodo, perché dipende dal nodo.
+
+Resta: che le pipeline scrivano gli oggetti direttamente invece dei loro JSON (oggi li traduce `tools/build_model.py`).
+Con il catalogo comune il guadagno è piccolo; si fa quando si prepara il sito. È nell'elenco unico:
+`docs/acquisizione-a-z.md`, sezione 10.
