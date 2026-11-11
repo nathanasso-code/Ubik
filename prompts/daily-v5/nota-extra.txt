@@ -1,0 +1,7 @@
+
+Also catalogue, in the same JSON, what the item contains, for later use. Only what is written in the item; copy figures,
+names and phrases exactly as written. Empty lists when there is nothing.
+ "riferimenti": [up to 6 documents the item DESCRIBES or links as the source of a claim: studies, papers, reports, surveys, datasets, benchmarks, official documents, filings, rulings; not other news articles; each {"descrizione": "one Italian sentence", "tipo": "studio | rapporto | sondaggio | dato | documento | sentenza", "indizi": {"chi": ["authors"], "istituzione": "", "rivista": "", "titolo": "only if given or clearly implied", "numeri": ["distinctive figures as written"], "data": ""}, "cerca": ["2 or 3 short English search phrases"]}],
+ "cifre": [up to 6 figures that carry the item's facts, each {"valore": "as written in the item", "unita": "unit or currency, or \"\"", "che_cosa": "what it measures, a few Italian words", "fonte": "who gives the figure if the item says, else \"\""}],
+ "nominati": {"persone": [up to 8 {"nome": "as written", "ruolo": "role if stated, else \"\""}], "organizzazioni": [up to 8 names as written]},
+ "attribuzioni": [other news outlets the item credits for its information, each {"testata": "outlet name", "frase": "the verbatim span (at most 200 characters) where it credits it"}]
