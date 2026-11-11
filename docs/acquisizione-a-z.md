@@ -385,6 +385,13 @@ L'elenco unico di Ubik: ciò che è fatto, in corso e da fare. Aggiornato il 10 
 
 **Fatto di recente**
 
+- 11 novembre: **atti scelti dai fascicoli delle cause** (`tools/dockets.py`, `dockets=NODO` in
+  `runs/week-refs.request`): per ogni fascicolo citato nel nodo, una ricerca RECAP per tipo d'atto (pareri e sentenze,
+  ordinanze, dichiarazioni e perizie di esperti, trascrizioni, memorie di terzi, citazioni, giudizio sommario); tenuti
+  solo i testi di almeno 80 parole che non sono atti di procedura (sigilli, ammissioni, proroghe, cause collegate...).
+  Fair use, due fascicoli: 51 chiamate, 37 documenti, 13 sostanziali (il parere sulla deposizione, le dichiarazioni di
+  Feamster, Waehrer, Malhotra, Gratz, memorie e risposte alle citazioni). Gratis, ma lento: una chiamata ogni 12,5
+  secondi, 125 al giorno. Solo cause americane; nell'esploratore, pagina del nodo, «Atti delle cause del nodo».
 - 11 novembre: **graduatoria delle storie candidate a nodo** (`tools/node_ranking.py`, `mode=graduatoria` in
   `runs/matrix-nodes.request`): le Matrici delle settimane raggruppate in 55 storie, ciascuna misurata gratis
   (persistenza, testate indipendenti tolte le riprese, documenti, voci, lingue, divergenza) e, per le prime 15, giudicata
