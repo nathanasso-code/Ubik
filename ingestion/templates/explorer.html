@@ -162,7 +162,7 @@ function decisionOf(nodo, item) {
 function decideBox(nodo, item, tipo) {
   const d = decisionOf(nodo, item);
   const k = decKey(nodo, item.id);
-  const WORDS = {anello: ["tenere nel nodo", "togliere dal nodo"], punto: ["tenere il punto", "togliere il punto"], "nodo-proposto": ["aprire il nodo", "non aprire"], documento: ["far entrare nel nodo", "lasciare fuori"]};
+  const WORDS = {anello: ["tenere nel nodo", "togliere dal nodo"], punto: ["tenere il punto", "togliere il punto"], "nodo-proposto": ["aprire il nodo", "non aprire"], documento: ["far entrare nel nodo", "lasciare fuori"], "nodo-candidato": ["aprire al livello 1", "non ora"]};
   const word = x => WORDS[tipo] ? ({accettata: WORDS[tipo][0], rifiutata: WORDS[tipo][1]}[x] || x) : x;
   const off = !CAN_DECIDE ? "disabled" : "";
   const note = DB_STATE === "absent" ? "Le decisioni si registrano aprendo l'esploratore su claude.ai." : DB_STATE === "loading" ? "Collegamento al registro delle decisioni…" : !CAN_DECIDE ? "Solo chi modifica l'esploratore registra le decisioni." : "";
@@ -393,6 +393,18 @@ function viewCantiere() {
 }
 
 let currentSub = null;
+function storyCard(x) {
+  const chips = [["settimane", x.persistenza], ["testate", x.ampiezza], ["documenti", x.ancoraggio], ["voci", x.voci], ["lingue", x.lingue], ["divergenza", x.divergenza]]
+    .map(([k, v]) => `<span class="chip">${esc(k)} ${esc(v)}</span>`).join("");
+  return `<div class="panel" style="display:grid;gap:8px">
+    <div class="row"><span class="num">${esc(x.posto)}.</span><strong>${esc(x.titolo)}</strong><span class="muted num">punteggio ${esc(x.punteggio)}</span>${x.gia_nodo?.length ? x.gia_nodo.map(n => `<a class="chip rel-dichiarata" href="#n-${esc(n)}">nodo: ${esc(D.nodi[n]?.titolo || n)}</a>`).join("") : ""}</div>
+    <div class="row">${chips}</div>
+    ${x.domanda ? `<div><span class="label">Domanda</span> ${esc(x.domanda)}</div>` : ""}
+    ${x.posta ? `<div class="muted" style="font-size:14px">Posta in gioco ${esc(x.posta)}/5: ${esc(x.posta_perche || "")}</div>` : ""}
+    ${x.valore_aggiunto ? `<div class="muted" style="font-size:14px">Valore aggiunto ${esc(x.valore_aggiunto)}/5: ${esc(x.valore_perche || "")}</div>` : ""}
+    <div class="muted" style="font-size:13px">Matrici: ${x.matrici.map(id => `<a href="#m-${esc(id)}">${esc(D.matrici[id]?.titolo || id)}</a>`).join(" · ")}</div>
+    ${x.gia_nodo?.length ? "" : decideBox("matrici", x, "nodo-candidato")}</div>`;
+}
 function disagreement(g, withBox) {
   // a Matrice whose sources disagree: the question, the sides with the verified quotes, what would decide it
   const where = g.matrici.filter(id => "#m-" + id !== location.hash).map(id => `<a href="#m-${esc(id)}">${esc(D.matrici[id]?.titolo || id)}</a>`);
@@ -429,6 +441,9 @@ function viewTopicIA() {
       <div class="stat"><b class="num">${nodes.length}</b><span>${nodes.length === 1 ? "nodo collegato" : "nodi collegati"}</span></div>
     </div>
     ${nodes.length ? `<section><h2>Nodi</h2><div class="grid">${nodes.map(nodeCard).join("")}</div></section>` : ""}
+    ${t.graduatoria?.storie?.length ? `<section><h2>Storie candidate a nodo</h2><p class="muted" style="margin:0;max-width:72ch">Le storie delle settimane ${t.graduatoria.settimane.map(esc).join(" e ")}, ordinate per persistenza, testate indipendenti (tolte le riprese), documenti, voci, lingue e divergenza tra le fonti; per le prime, la posta in gioco e il valore aggiunto di un nodo secondo il modello. I pesi si possono cambiare.</p>
+      ${t.graduatoria.storie.slice(0, 10).map(storyCard).join("")}
+      <details class="panel"><summary>Le altre storie (${t.graduatoria.storie.length - 10})</summary><div style="display:grid;gap:8px;margin-top:8px">${t.graduatoria.storie.slice(10).map(x => `<div class="row"><span class="num muted">${esc(x.posto)} · ${esc(x.punteggio)}</span><span>${esc(x.titolo)}</span></div>`).join("")}</div></details></section>` : ""}
     ${(t.nodi_proposti || []).length ? `<section><h2>Nodi proposti dalle Matrici</h2><p class="muted" style="margin:0;max-width:72ch">Matrici in cui le fonti si dividono su qualcosa che un nodo potrebbe decidere o mappare. Le citazioni sono ritrovate parola per parola; la decisione di aprire il nodo è della redazione.</p>
       ${t.nodi_proposti.filter(g => g.proposta).map(g => disagreement(g, true)).join("")}
       <details class="panel"><summary>Altre divergenze tra le fonti (${t.nodi_proposti.filter(g => !g.proposta).length}): già in un nodo, o di una settimana sola</summary><div style="display:grid;gap:10px;margin-top:10px">${t.nodi_proposti.filter(g => !g.proposta).map(g => disagreement(g, false)).join("")}</div></details></section>` : ""}
