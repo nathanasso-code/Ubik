@@ -385,6 +385,15 @@ L'elenco unico di Ubik: ciò che è fatto, in corso e da fare. Aggiornato il 10 
 
 **Fatto di recente**
 
+- 11 novembre: **nota catalogata** (in prova, `NOTE_EXTRA=1`, `prompts/daily-v5/nota-extra.txt`): nella stessa chiamata
+  della nota, i riferimenti descritti, le cifre chiave, i nomi di persone e organizzazioni e le testate a cui l'articolo
+  attribuisce la notizia, ciascuno con il segno «nel testo» messo dal codice. Due prove su 50 articoli della settimana
+  del 2 novembre (11 centesimi in tutto): la versione estesa costava il 70% in più della nota; quella asciutta il 31%
+  (0,02 centesimi ad articolo, circa 0,30 dollari a settimana), con cifre ritrovate nel testo 124 su 134, nomi 364 su
+  367, testate 30 su 31, riferimenti 37 contro i 46 della lettura separata. Sostituisce la lettura separata dei
+  riferimenti (circa 0,43 dollari a settimana): il saldo è un piccolo risparmio, con cifre, nomi e testate in più per ogni
+  articolo. `tools/week_refs.py` prende i riferimenti dalla nota quando ci sono. Da adottare per le settimane nuove
+  (non si rifanno le vecchie): si lancia con `nota-ricca` nella richiesta del giornale.
 - 11 novembre, notte: **altre strade verso le fonti**, ciascuna provata su una settimana o su due nodi.
   - **Originali delle riprese** (`tools/originals.py`): un articolo che attribuisce la storia a un'altra testata
     («secondo Bloomberg», «laut The Verge»), l'originale cercato tra le pagine di quella testata nei quattro giorni
