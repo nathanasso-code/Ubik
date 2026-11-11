@@ -398,7 +398,7 @@ L'elenco unico di Ubik: ciò che è fatto, in corso e da fare. Aggiornato il 10 
   corrette con `tools/schede.py`. Restano 0. La nota catalogata è adottata dalle settimane dal 9 novembre.
 - 11 novembre: **newsletter nei riferimenti descritti**: tutte quelle della settimana, anche fuori dalla selezione,
   lette più a fondo. Rendono poco: 26 newsletter nelle due settimane, 23 riferimenti, uno trovato; i testi raccolti
-  dalla casella sono brevi (mediana 380 parole): da controllare se la raccolta li taglia.
+  dalla casella non sono tagliati, ma molte sono anteprime brevi (mediana 380 parole, sette su 32 sono di Politico).
 - 11 novembre: **audizioni** (`tools/hearings.py`): trascrizioni e testimonianze da GovInfo per i riferimenti ad
   audizioni del Congresso; salta finché manca la chiave gratuita (api.data.gov, segreto `GOVINFO_API_KEY`). Pochi casi
   nelle due settimane (16 riferimenti che nominano commissioni o audizioni, non tutti audizioni).
