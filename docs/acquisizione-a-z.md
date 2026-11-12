@@ -425,6 +425,11 @@ L'elenco unico di Ubik: ciò che è fatto, in corso e da fare. Aggiornato il 10 
   leggibili): 454 contributi, conseguenze da 40 a 67, saturazione al terzo giro. Copertura delle 93 affermazioni: 65
   dopo Exa e Tavily, 64 dopo la catena (la misura perde precisione con quasi 600 documenti: dà per assenti cose che il
   nodo ha, come le chiusure delle indagini svedese e danese); Fable 44; insieme 72. Delle 90 di Fable ne copriamo 50.
+  **Misura più precisa** (`tools/wiki_claims.py`): parole pesate per rarità, copie offerte una volta, 16 passaggi
+  letti prima di dire «assente», campione di 150 scoperte per la direzione inversa; e il **richiamo della misura**: 40
+  frasi che sappiamo nel nodo ritrovate 40 su 40 (prova facile: frasi originali, non parafrasi). Con la misura nuova,
+  stesse 93 affermazioni: noi 68 (73%), Fable 51, insieme 74 (80%); delle 90 di Fable noi 53, Wikipedia 35, 32 solo sue.
+  I numeri delle misure precedenti non si confrontano con questi (la misura nuova alza tutti).
 - 11 novembre: **i link dentro le fonti e la ricerca web come ultima strada.** Il registro teneva solo i link del
   riassunto del feed: metà degli articoli recenti, e tutte le pagine prese dalle citazioni, ne erano senza. Ora ogni
   pagina scaricata tiene i link del testo con le parole su cui stanno (`tools/body_links.py`), e un riferimento descritto
