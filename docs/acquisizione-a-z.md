@@ -393,6 +393,12 @@ L'elenco unico di Ubik: ciò che è fatto, in corso e da fare. Aggiornato il 10 
   documenti dell'ONU, della NATO e del Bundestag. Noi abbiamo gli studi (18 contro 2: sismica, metano, infrasuoni) e i
   comunicati di chiusura delle indagini svedese e danese del 2024, che le voci non linkano. Costo circa 1,6 dollari
   (204 ricerche Brave, di cui 85 sprecate da un giro fallito). Limite del confronto: conta i documenti, non le risposte.
+  Poi il **confronto per risposte** (`tools/wiki_claims.py`, `claims=NODO`; 15 centesimi): delle 93 affermazioni delle
+  voci inglese, tedesca e italiana, i nostri documenti ne sostengono 35, in parte 18, ne contraddicono 1, non ne
+  coprono 39 (stima per eccesso: la ricerca dei passaggi tra otto lingue manca ancora alcune cose che abbiamo).
+  Mancano soprattutto le inchieste giornalistiche sulle tesi (navi russe e americane, Červins'kyj, CIA, Hersh dopo il
+  2023), le prese di posizione istituzionali (NATO, ONU, Putin) e le conseguenze (riparazioni, forza maggiore).
+  Al contrario, 59 delle nostre 89 scoperte verificate non sono nelle voci: 20 da studi, 13 da analisi, 21 da stampa.
 - 11 novembre: **i link dentro le fonti e la ricerca web come ultima strada.** Il registro teneva solo i link del
   riassunto del feed: metà degli articoli recenti, e tutte le pagine prese dalle citazioni, ne erano senza. Ora ogni
   pagina scaricata tiene i link del testo con le parole su cui stanno (`tools/body_links.py`), e un riferimento descritto
