@@ -416,6 +416,15 @@ L'elenco unico di Ubik: ciò che è fatto, in corso e da fare. Aggiornato il 10 
   (davvero fisse): copertura da 53 a 62; Fable 45; insieme 69 su 93. Delle 90 di Fable ne copriamo 46 (prima 40).
   Ancora mia la partenza del nodo (domanda, sotto-domande, primo piano di ricerca) e gli esempi nelle istruzioni del
   giro: da rendere neutri e automatici prima di una prova pulita.
+  Brave esaurito (402) il 12 novembre: 10 dollari in due giorni, quasi tutti per un errore (a ogni giro si aggiungevano
+  le traduzioni dei vecchi piani, circa 280 ricerche in più). Corretto (`SCOUT_OWN_GAPS`, `SCOUT_OUTLETS`), e un
+  contatore mensile con tetto per motore (`data/search-usage.json`). Motori nuovi: **Exa** (ricerca per significato) e
+  **Tavily**, scelti con `engines=` nella richiesta della catena, anche insieme. Confronto sulle stesse 118 ricerche:
+  contributi nuovi Exa 101 (77 solo suoi), Tavily 64 (40), in comune 24; ritrovati dei 212 già nel nodo: 78 e 61.
+  Catena migliorata (istruzioni neutre, metà delle ricerche alle sotto-domande povere, riprese delle pagine non
+  leggibili): 454 contributi, conseguenze da 40 a 67, saturazione al terzo giro. Copertura delle 93 affermazioni: 65
+  dopo Exa e Tavily, 64 dopo la catena (la misura perde precisione con quasi 600 documenti: dà per assenti cose che il
+  nodo ha, come le chiusure delle indagini svedese e danese); Fable 44; insieme 72. Delle 90 di Fable ne copriamo 50.
 - 11 novembre: **i link dentro le fonti e la ricerca web come ultima strada.** Il registro teneva solo i link del
   riassunto del feed: metà degli articoli recenti, e tutte le pagine prese dalle citazioni, ne erano senza. Ora ogni
   pagina scaricata tiene i link del testo con le parole su cui stanno (`tools/body_links.py`), e un riferimento descritto
