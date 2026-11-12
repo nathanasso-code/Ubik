@@ -399,6 +399,13 @@ L'elenco unico di Ubik: ciò che è fatto, in corso e da fare. Aggiornato il 10 
   Mancano soprattutto le inchieste giornalistiche sulle tesi (navi russe e americane, Červins'kyj, CIA, Hersh dopo il
   2023), le prese di posizione istituzionali (NATO, ONU, Putin) e le conseguenze (riparazioni, forza maggiore).
   Al contrario, 59 delle nostre 89 scoperte verificate non sono nelle voci: 20 da studi, 13 da analisi, 21 da stampa.
+  Lacune viste dal nodo da solo (`tools/node_gaps.py`: attori senza voce, affermazioni senza fonte propria,
+  sotto-domande povere; 38 lacune, 76 ricerche): 31 contributi in più, ma copertura delle stesse 93 affermazioni
+  invariata (50 contro 53: dentro il rumore della misura, che con più documenti in gara cambia i passaggi scelti).
+  Terzo termine, il dossier di Fable (modello avanzato con ricerca, stesso prompt di domande;
+  `tools/text_bench.py`): copre 48 affermazioni di Wikipedia contro le nostre 50, insieme 66 su 93; delle sue 90
+  affermazioni noi ne copriamo 40, Wikipedia 33, 39 sono solo sue (soprattutto il processo di Amburgo e la parte
+  giudiziaria); dei suoi 97 link, 7 sono anche nostri e 8 di Wikipedia. Tre strade quasi indipendenti.
 - 11 novembre: **i link dentro le fonti e la ricerca web come ultima strada.** Il registro teneva solo i link del
   riassunto del feed: metà degli articoli recenti, e tutte le pagine prese dalle citazioni, ne erano senza. Ora ogni
   pagina scaricata tiene i link del testo con le parole su cui stanno (`tools/body_links.py`), e un riferimento descritto
