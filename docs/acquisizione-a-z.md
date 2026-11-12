@@ -385,6 +385,21 @@ L'elenco unico di Ubik: ciò che è fatto, in corso e da fare. Aggiornato il 10 
 
 **Fatto di recente**
 
+- 12-13 novembre: **un nodo scelto dalle Matrici e avviato senza intervento** (`tools/node_pick.py`, `nodepick` in
+  `runs/week-refs.request`): per le prime 10 storie della graduatoria che non sono già nodi, il modello giudica se
+  dietro l'evento c'è un dibattito che i documenti possono decidere, e ne scrive la domanda a quel livello; si sceglie
+  profondità × punteggio. Scelta: i termini di Meta sull'uso dei contenuti per l'IA, riportati alla domanda sulla
+  liceità dell'addestramento senza consenso (GDPR, autorità, tribunali). Domanda, sotto-domande, lingue e prime
+  ricerche scritte dal modello; scout senza Wikipedia, catena con il solo Tavily: 51, poi 207 contributi in tre giri;
+  bozza leggera su fonti primarie (EDPB, noyb, DPC, ANPD, tribunale tedesco).
+- 13 novembre: **le pagine e i siti raggiunti dalle ricerche si tengono** (`tools/archive_node.py`, `tools/sites.py`,
+  `.github/workflows/sites.yml`). Ogni pagina giudicata contributo o copertura è archiviata con il testo (recuperate
+  1.273 pagine degli otto nodi, 54 non più leggibili). Approvazione automatica dei siti (criterio della redazione:
+  almeno un fatto nuovo verificato per un nodo; rimozione più avanti, un sito rimosso non torna): 628 approvati, 92
+  candidati; 372 con un feed, 122 con la sola sitemap. Le voci dei feed (11.976 alla prima raccolta, poi ogni giorno)
+  vanno nell'indice del corpus che lo scout interroga per primo; nel giornale entrano con un criterio rigido e
+  provvisorio (sito con almeno due fatti verificati, termine dell'IA nel titolo, al più 40 a settimana), mai escluse
+  per sempre. Exa e Tavily al posto di Brave; tetti mensili 3.000 e 900.
 - 12 novembre: **confronto con Wikipedia** (`tools/wiki_bench.py`, `bench=NODO` in `runs/week-refs.request`). Nodo
   nuovo sul sabotaggio Nord Stream costruito da zero, senza Wikipedia, senza ancore scelte a mano; solo alla fine letti i
   riferimenti delle voci in cinque lingue (en, it, de, sv, da: 429 distinti). Noi: 197 documenti, 20 in comune per
