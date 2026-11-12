@@ -385,6 +385,14 @@ L'elenco unico di Ubik: ciò che è fatto, in corso e da fare. Aggiornato il 10 
 
 **Fatto di recente**
 
+- 12 novembre: **confronto con Wikipedia** (`tools/wiki_bench.py`, `bench=NODO` in `runs/week-refs.request`). Nodo
+  nuovo sul sabotaggio Nord Stream costruito da zero, senza Wikipedia, senza ancore scelte a mano; solo alla fine letti i
+  riferimenti delle voci in cinque lingue (en, it, de, sv, da: 429 distinti). Noi: 197 documenti, 20 in comune per
+  indirizzo o titolo, 45 testate in comune. Wikipedia ha molta più stampa (401 contro 163) e le inchieste che hanno
+  aperto la pista ucraina (Zeit, WSJ, Spiegel), che noi troviamo ma non possiamo leggere (robots.txt, 403), più i
+  documenti dell'ONU, della NATO e del Bundestag. Noi abbiamo gli studi (18 contro 2: sismica, metano, infrasuoni) e i
+  comunicati di chiusura delle indagini svedese e danese del 2024, che le voci non linkano. Costo circa 1,6 dollari
+  (204 ricerche Brave, di cui 85 sprecate da un giro fallito). Limite del confronto: conta i documenti, non le risposte.
 - 11 novembre: **i link dentro le fonti e la ricerca web come ultima strada.** Il registro teneva solo i link del
   riassunto del feed: metà degli articoli recenti, e tutte le pagine prese dalle citazioni, ne erano senza. Ora ogni
   pagina scaricata tiene i link del testo con le parole su cui stanno (`tools/body_links.py`), e un riferimento descritto
