@@ -617,7 +617,9 @@ L'elenco unico di Ubik: ciò che è fatto, in corso e da fare. Aggiornato il 10 
    - un modello locale per la prima scrematura, addestrato sulle decisioni registrate (serve qualche centinaio di
      decisioni con il motivo e un computer con scheda grafica): rinviato dalla redazione a molto più avanti;
    - le strade verso le fonti provate l'11 novembre, da decidere con la redazione: le decisioni provvisoriamente prese
-     da Claude sui documenti dei cinque nodi (21 da far entrare, 22 da lasciare fuori) e la loro integrazione nelle catene
+     da Claude sui documenti dei cinque nodi (21 da far entrare, 22 da lasciare fuori; 16 già confermate dalla redazione,
+     registrate il 12 novembre; altre 113 provvisorie sui documenti nuovi di data center e fair use: 66 dentro, 47 fuori,
+     soprattutto riprese prese per originali, doppioni, banche dati generali, temi di passaggio) e la loro integrazione nelle catene
      e nei punti; gli originali che mancano (Bloomberg, Reuters, Wall Street Journal: a pagamento, titolo e data); gli
      autori dei documenti trovati come voci candidate (bacino); lo stesso passo sulle newsletter e sui canali;
      l'automazione della catena dopo ogni giornale (oggi `mode=tutto` su richiesta);
