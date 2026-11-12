@@ -406,6 +406,16 @@ L'elenco unico di Ubik: ciò che è fatto, in corso e da fare. Aggiornato il 10 
   `tools/text_bench.py`): copre 48 affermazioni di Wikipedia contro le nostre 50, insieme 66 su 93; delle sue 90
   affermazioni noi ne copriamo 40, Wikipedia 33, 39 sono solo sue (soprattutto il processo di Amburgo e la parte
   giudiziaria); dei suoi 97 link, 7 sono anche nostri e 8 di Wikipedia. Tre strade quasi indipendenti.
+  Correzione: i confronti «a affermazioni fisse» del mattino riestraevano l'elenco (il percorso del file era tagliato
+  nel comando); i numeri dentro lo stesso giro restano validi, quelli tra giri no. Diagnosi delle fonti di Fable: 90
+  delle sue 97 non erano mai arrivate tra i nostri candidati (61 da siti mai visti). Da qui la **ricerca a catena per
+  nomi e numeri** (`tools/entity_rounds.py`, `runs/catena.request`): a ogni giro il modello legge i contributi e scrive
+  le ricerche successive (persone, tribunali, numeri di causa, atti, nella lingua dei documenti); scout su Brave e web,
+  giudizio delle sole pagine nuove, stop sotto 5 contributi nuovi. Nord Stream, quattro giri da 30 ricerche: contributi
+  da 120 a 212 (13, 30, 30, 19 a giro; non ancora a saturazione), circa 1,2 dollari. Sulle stesse 93 affermazioni
+  (davvero fisse): copertura da 53 a 62; Fable 45; insieme 69 su 93. Delle 90 di Fable ne copriamo 46 (prima 40).
+  Ancora mia la partenza del nodo (domanda, sotto-domande, primo piano di ricerca) e gli esempi nelle istruzioni del
+  giro: da rendere neutri e automatici prima di una prova pulita.
 - 11 novembre: **i link dentro le fonti e la ricerca web come ultima strada.** Il registro teneva solo i link del
   riassunto del feed: metà degli articoli recenti, e tutte le pagine prese dalle citazioni, ne erano senza. Ora ogni
   pagina scaricata tiene i link del testo con le parole su cui stanno (`tools/body_links.py`), e un riferimento descritto
