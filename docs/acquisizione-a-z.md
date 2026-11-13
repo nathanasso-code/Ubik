@@ -418,8 +418,14 @@ L'elenco unico di Ubik: ciò che è fatto, in corso e da fare. Aggiornato il 13 
   candidati essi stessi (il giudice li legge; dei video il sistema legge solo il testo intorno). I canali approvati
   entrano nella raccolta ogni 12 ore e nella ricerca dei nodi. Prima Telegram cercava solo nel primo scout di un nodo:
   ora anche nei giri della catena e in quelli settimanali (Nord Stream, primo scout: 330 candidati, 9 contributi, tra
-  cui il comunicato della Procura federale tedesca). Da fare: voci da Telegram con visualizzazioni e reazioni, come
-  per Bluesky.
+  cui il comunicato della Procura federale tedesca). Primo giro: 112 canali citati dai 12 seguiti, 14 sopra la soglia,
+  12 in prova (ministero della Difesa russo, Comitato investigativo, amministrazione di Volgograd, polizia della regione
+  di Kyiv, 1° corpo «Azov» della Guardia nazionale, Zakharova, Astra, Baza, Shot, Rybar, Milinfolive), 2 aggregatori
+  anonimi esclusi; 0,7 centesimi. «Primario» solo quando l'istituzione garantisce il canale: un sito governativo lo cita,
+  la descrizione nomina un dominio governativo, o il sito dell'istituzione rimanda al canale (non basta dirsi
+  «ufficiale»; il link al registro di Roskomnadzor non conta): per ora la sola polizia di Kyiv. Squilibrio da seguire:
+  i canali seguiti sono per un quarto russi di Stato, e inoltrano soprattutto canali russi. Da fare: voci da Telegram
+  con visualizzazioni e reazioni, come per Bluesky.
 - 13 novembre: **controllo dell'acquisizione automatica, tre difetti corretti**. (1) Lo scout non leggeva i feed dei
   siti e degli autori approvati (circa 14.000 voci, salvate una per riga, che la strada del corpus saltava): la raccolta
   funzionava ma nessuno la usava; ora le legge (fair use: voci dal corpus da 44 a 284, 17 dai feed; uso dei contenuti
