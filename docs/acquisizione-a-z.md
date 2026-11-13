@@ -409,6 +409,17 @@ L'elenco unico di Ubik: ciò che è fatto, in corso e da fare. Aggiornato il 10 
   `reports/fonti/autori-da-aggiungere.md` con il link esatto (3 voci). X e LinkedIn annotati, non chiesti: non li
   possiamo leggere. Da rivedere: autori storici (Lighthill) e qualche canale vero perso per prudenza (Schrems su
   Bluesky).
+- 13 novembre: **canali quasi trovati rivisti a mano** (`reports/fonti/canali-da-rivedere.md`, 8 alla volta, da Claude
+  nelle sessioni: accettati Schrems, Atkinson, Michal; scartati gli omonimi) e **voci dai social da qualsiasi account**
+  (`tools/social_voices.py`, `voci=NODO` in `runs/sites.request`): ricerche brevi su Bluesky (termini del nodo, ricerche
+  della catena tagliate a quattro parole, altre lingue), poi quattro filtri: almeno 25 parole proprie (un post ne tiene
+  circa 50), seguito di almeno 20 (mi piace + 2×condivisioni + 2×citazioni), account con nome, biografia, 6 mesi, 50 post,
+  100 follower e follower almeno metà dei seguiti, e il giudice (aggiunge una posizione, un argomento o una competenza?).
+  Primo giro utile: Nord Stream 641 post, 5 voci (CORRECTIV, Brian Finucane di Crisis Group, David Puente di Open, Notes
+  from Poland); nodo delle Matrici 476 post, 11 voci (Johnny Ryan di ICCL, Abeba Birhane, Nitasha Tiku del Washington
+  Post, Simon McGarr, Nieman Lab); 6 centesimi. Per i post degli autori approvati il seguito si misura sulla media
+  dell'autore. Da fare: ricomporre le catene di post (oggi escluse come risposte) e mostrare le voci nell'esploratore,
+  separate dai resoconti.
 - 12 novembre: **confronto con Wikipedia** (`tools/wiki_bench.py`, `bench=NODO` in `runs/week-refs.request`). Nodo
   nuovo sul sabotaggio Nord Stream costruito da zero, senza Wikipedia, senza ancore scelte a mano; solo alla fine letti i
   riferimenti delle voci in cinque lingue (en, it, de, sv, da: 429 distinti). Noi: 197 documenti, 20 in comune per
