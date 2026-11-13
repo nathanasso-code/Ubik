@@ -406,6 +406,20 @@ L'elenco unico di Ubik: ciò che è fatto, in corso e da fare. Aggiornato il 13 
 
 **Fatto di recente**
 
+- 13 novembre: **canali Telegram approvati in automatico** (`tools/telegram_channels.py`, `registry/telegram-canali.json`),
+  istituzionali e non (decisione della redazione: su una guerra video, testimonianze e geolocalizzazioni stanno spesso
+  solo lì; il rumore è alto, quindi soglie strette e etichette, non esclusioni). Candidati: i canali che i canali seguiti
+  inoltrano o citano (letti a ogni raccolta e a ogni ricerca, `registry/telegram-candidati.json`), i link t.me delle
+  pagine del corpus, i post giudicati contributo. Si esamina un canale citato da almeno 2 fonti distinte: anteprima
+  pubblica (robots.txt e riserva TDM), almeno 1.000 iscritti e 10 post, poi una chiamata sul titolo, la descrizione e
+  gli ultimi post (istituzione, testata, giornalista, analista, osint, testimone, aggregatore, propaganda, spam; di chi;
+  Stato; se porta materiale verificabile): spam e aggregatori fuori, il resto «in prova» con le etichette. «Primario»:
+  un'istituzione il cui canale è citato da un sito governativo; i post dei canali primari, osint e testimoni diventano
+  candidati essi stessi (il giudice li legge; dei video il sistema legge solo il testo intorno). I canali approvati
+  entrano nella raccolta ogni 12 ore e nella ricerca dei nodi. Prima Telegram cercava solo nel primo scout di un nodo:
+  ora anche nei giri della catena e in quelli settimanali (Nord Stream, primo scout: 330 candidati, 9 contributi, tra
+  cui il comunicato della Procura federale tedesca). Da fare: voci da Telegram con visualizzazioni e reazioni, come
+  per Bluesky.
 - 13 novembre: **controllo dell'acquisizione automatica, tre difetti corretti**. (1) Lo scout non leggeva i feed dei
   siti e degli autori approvati (circa 14.000 voci, salvate una per riga, che la strada del corpus saltava): la raccolta
   funzionava ma nessuno la usava; ora le legge (fair use: voci dal corpus da 44 a 284, 17 dai feed; uso dei contenuti
