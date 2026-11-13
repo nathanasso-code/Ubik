@@ -203,7 +203,11 @@ costruisce il modello che l'esploratore mostra, con la regola delle citazioni. L
 | --- | --- | --- |
 | Raccolta, pagine citate, bacino, scout, primo livello | Zero (Actions gratuite) | — |
 | GNews | 49,99 euro al mese | Fisso |
-| Brave | Dentro il credito mensile gratuito (sette ricerche per nodo; `resolve` ne ha usate 286 una volta) | Nodi e giri del bacino |
+| Brave | Accantonato il 13 novembre: niente più credito gratuito (5 dollari ogni 1.000 ricerche, con l'obbligo di citarlo) | — |
+| Exa (motore principale dal 12 novembre) | Da verificare nel pannello: il listino dice 7 dollari ogni 1.000 ricerche con 10 risultati più 1 per ogni risultato oltre il decimo (17 con i nostri 20); il consumo osservato sembrava molto più basso. I risultati dall'11° al 20° portano circa il 30% dei contributi | Ricerche dei nodi |
+| Tavily (secondo motore) | Gratuito fino a 1.000 ricerche al mese (tetto nostro 900), poi 8 dollari ogni 1.000 | Ricerche dei nodi |
+| Aggiornamento settimanale dei nodi | Circa 0,17 dollari a nodo per giro (piano, giudizio, voci) più 20-25 ricerche; prima settimana 0,66 dollari per quattro nodi | Nodi attivi × giri |
+| Voci dai social, autori, revisione dei canali | 2-6 centesimi a nodo; meno di un centesimo per il resto | Nodi e autori nuovi |
 | Matrici | 0,7-1,3 dollari a settimana per Topic | Articoli della settimana (le note sono il grosso) |
 | Giudizio | 0,13-0,41 dollari per nodo, due giri (circa 0,0007 dollari a pagina; il controllo preventivo ne stima 0,0015) | Candidati × nodi × giri |
 | Proposte | Circa 0,02-0,03 dollari per nodo | Contributi |
@@ -230,6 +234,23 @@ di due per gli articoli che nominano uno studio: circa 0,3 dollari a settimana i
 volta); confermare in una sola chiamata tutti i candidati di un articolo (lo fa già la verifica dei riferimenti); un
 prefiltro più stretto per i riferimenti (oggi si legge un articolo su due); il modello locale per le conferme, che sono
 domande sì o no.
+
+**Confronto dei motori** (13 novembre, Nord Stream, stesse ricerche; contati con gli identificativi dei risultati, senza
+conservare le liste). Exa ha tra i suoi risultati 313 contributi del nodo, 201 che Tavily non trova; Tavily 176, 64 che
+Exa non trova. Dei 166 contributi trovati con Brave prima del 12 novembre, Exa e Tavily rifacendo le stesse ricerche ne
+ritrovano 105 (Exa 88, Tavily 67): circa 61 erano solo di Brave, ma sono già nel nodo. Decisione provvisoria di Claude:
+Exa principale, Tavily dentro la quota gratuita, Brave accantonato.
+
+**Proiezione** (13 novembre, stime dai costi misurati, da rifare a ogni tappa). Un nodo nuovo costa circa 1 dollaro di
+modello più 120-150 ricerche Exa (0,5-2,5 dollari secondo il prezzo vero): 1,5-3,5 dollari. Prima fase, privata
+(acquisizione e costruzione, circa 300 nodi, Matrici e card per alcuni mesi): circa 650-1.250 dollari in tutto, nodi
+storici costruiti con un modello avanzato esclusi. Seconda fase (20 nodi nuovi al giorno, aggiornamento dei nodi attivi
+finché portano contributi, acquisizione e Matrici continue): 1.700-3.500 dollari al mese con 10 topic, 2.000-4.500 con
+100 (Matrici e card crescono con gli articoli, non con i topic: un articolo si legge una volta). Le leve: il prezzo di
+Exa (10 risultati invece di 20), nodi nuovi più leggeri, nodi attivi solo finché rendono. Con 100 topic l'archivio esce
+da git (server, database, archivio a oggetti) e la redazione diventa il collo di bottiglia. Ipotesi della redazione, non
+decisa: abbonamento a 4,99 euro al mese, obiettivo minimo 1.000 abbonati (netti circa 3,7-3,8 euro l'uno dopo IVA e
+commissioni: copre la fascia bassa della seconda fase); un piano annuale accanto.
 
 ## 8. Che cosa dicono le misure (8 novembre)
 
@@ -381,10 +402,12 @@ fermato al secondo giro (90 pagine): i contributi buoni erano quasi tutti PDF.
 
 ## 10. Da fare
 
-L'elenco unico di Ubik: ciò che è fatto, in corso e da fare. Aggiornato il 10 novembre.
+L'elenco unico di Ubik: ciò che è fatto, in corso e da fare. Aggiornato il 13 novembre.
 
 **Fatto di recente**
 
+- 13 novembre: **confronto dei motori e proiezione dei costi** (sezione 7): Exa principale, Tavily nella quota gratuita,
+  Brave accantonato; stima delle due fasi, anche con 100 topic.
 - 13 novembre: **l'aggiornamento settimanale dei nodi d'attualità, senza mano** (`tools/weekly.py`,
   `.github/workflows/settimana.yml`, `registry/nodi-attivi.json`). Le ricerche che Claude lanciava nelle sessioni le
   lancia il sistema, con gli stessi strumenti. Per ogni nodo attivo (fair use, data center, uso dei contenuti, Nord
@@ -688,7 +711,18 @@ L'elenco unico di Ubik: ciò che è fatto, in corso e da fare. Aggiornato il 10 
    quasi tutto il tempo (3,2 secondi a pagina con molti siti diversi): dal 10 novembre anche lo scaricamento va in
    parallelo (`JUDGE_PARALLEL=all`, mai due pagine dello stesso sito o servizio).
 6. Il resto:
-   - 21 novembre (promemoria già fissato): bilancio delle fonti in prova e nuova misura di Brave;
+   - 21 novembre (promemoria già fissato): bilancio delle fonti in prova (la nuova misura di Brave non serve più);
+   - **motori e aggiornamento settimanale**: verificare nel pannello di Exa il costo vero per ricerca (decide metà della
+     proiezione) e provare 10 risultati contro 20; accendere il calendario del sabato (`automatico: true` in
+     `registry/nodi-attivi.json`, decisione della redazione); rifare la bozza leggera di un nodo quando la settimana porta
+     molti contributi (oggi entrano nel giudizio, non nel testo); quando un nodo esce dai nodi attivi;
+   - **crescita verso molti topic**, a tappe (10, 30, 100), misurando a ogni tappa il costo per 1.000 articoli e per nodo
+     e il lavoro della redazione; prima: archivio fuori da git, un server sempre acceso, un database;
+   - **visibilità e parte gratuita** (da ragionare con la redazione): pagine dei nodi pubbliche, con data
+     d'aggiornamento, dati strutturati (`ClaimReview` per le verifiche: Fact Check Explorer di Google, chiave rinviata),
+     sitemap, crawler dei modelli ammessi; a pagamento il servizio (giornale completo, seguire un nodo, archivio,
+     avvisi). Dubbio aperto della redazione: se il nodo è una sintesi di fonti trovabili, un motore o un modello possono
+     rifarla da sé, e pubblicarlo cede le fonti trovate con fatica; da pesare contro il traffico e le citazioni;
    - **il formato comune** (`docs/modello-dati.md`): fatti un documento-un pezzo (10 novembre) e il catalogo comune
      delle fonti (11 novembre, `data/schede.json`, correzioni con `tools/schede.py`; 14 schede con valori discordi da
      rivedere). Resta che le pipeline scrivano gli oggetti direttamente: si fa quando si prepara il sito; i nodi che ricevono come novità i pezzi delle Matrici; le proposte di
