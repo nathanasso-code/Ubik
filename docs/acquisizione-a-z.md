@@ -406,6 +406,23 @@ L'elenco unico di Ubik: ciò che è fatto, in corso e da fare. Aggiornato il 13 
 
 **Fatto di recente**
 
+- 13 novembre: **controllo dell'acquisizione automatica, tre difetti corretti**. (1) Lo scout non leggeva i feed dei
+  siti e degli autori approvati (circa 14.000 voci, salvate una per riga, che la strada del corpus saltava): la raccolta
+  funzionava ma nessuno la usava; ora le legge (fair use: voci dal corpus da 44 a 284, 17 dai feed; uso dei contenuti
+  da 0 a 31). (2) Nei nodi avviati in automatico i termini sono frasi lunghe che non comparivano mai alla lettera: ora
+  una frase di tre o più parole vale quando tutte le parole sono nel testo. (3) Il confronto con Fable cercava le sue
+  affermazioni nei nostri documenti con le sole parole italiane (quelle di Wikipedia avevano le parole in più lingue):
+  rifatto alla pari, le affermazioni di Fable coperte dal nodo passano da 53 a 70 su 90 (20 assenti; 17 solo sue,
+  prima 32); su Wikipedia noi 69, Fable 52, almeno uno dei due 74 su 93. La decisione del BGH era nel nodo per intero
+  (testo tedesco e traduzione inglese), la misura non la trovava. Le assenze vere: i primi mesi (2022-2023: procura
+  svedese, Säpo, lettera all'ONU, accuse russe al Regno Unito), le udienze di Amburgo, le conseguenze (sanzioni UE,
+  ricorsi di Nord Stream 2 AG, governo tedesco). Per queste: il piano della catena ha due doveri nuovi (coprire tutta la
+  storia della questione, fase per fase; cercare il testo integrale dei documenti che il nodo ha solo come comunicato o
+  riassunto) e lo scout una strada nuova, `atti`: i numeri di causa nei documenti del nodo, risolti nelle banche dati
+  ufficiali (Corte di giustizia UE: EUR-Lex dal numero CELEX; tribunali federali tedeschi: rechtsinformationen.bund.de).
+  Voci dai social: ora serve una competenza dichiarata e una voce non può ripetere una posizione già tenuta. Da fare:
+  l'equilibrio delle voci (sui data center quasi tutte contrarie: il pubblico di Bluesky pende da una parte; cercare con
+  i termini e gli attori dell'altra parte).
 - 13 novembre: **confronto dei motori e proiezione dei costi** (sezione 7): Exa principale, Tavily nella quota gratuita,
   Brave accantonato; stima delle due fasi, anche con 100 topic.
 - 13 novembre: **l'aggiornamento settimanale dei nodi d'attualità, senza mano** (`tools/weekly.py`,
