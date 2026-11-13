@@ -419,7 +419,11 @@ L'elenco unico di Ubik: ciò che è fatto, in corso e da fare. Aggiornato il 13 
   con gli stessi filtri di Bluesky (seguito più basso: 10, 30 senza competenza dichiarata): prima prova 5 voci
   sull'uso dei contenuti e 6 sul fair use (Peter Suber, heise online…), 3 centesimi. Lo scout legge i post raccolti;
   nell'esploratore ogni voce dice la sua rete. Gira ogni giorno con siti e autori e ogni settimana con i nodi. Con un
-  account Mastodon nostro si potrebbe usare anche la ricerca nei post che gli autori hanno reso ricercabili.
+  account Mastodon nostro si potrebbe usare anche la ricerca nei post che gli autori hanno reso ricercabili (pronta:
+  parte quando esistono i segreti MASTODON_TOKEN e MASTODON_INSTANCE). Decisione della redazione, stesso giorno: le
+  testate tra le voci contano come fonti (il giudice dice chi parla: persona, testata, istituzione; il post di una
+  testata manda il suo articolo allo scout, strada `segnalati`, `reports/scout/NODO/segnalati.json`); tolta una voce
+  fuori tema (i termini d'uso di X nel nodo sul fair use) e detto al giudice che un argomento vicino non basta.
 - 13 novembre: **canali Telegram approvati in automatico** (`tools/telegram_channels.py`, `registry/telegram-canali.json`),
   istituzionali e non (decisione della redazione: su una guerra video, testimonianze e geolocalizzazioni stanno spesso
   solo lì; il rumore è alto, quindi soglie strette e etichette, non esclusioni). Candidati: i canali che i canali seguiti
