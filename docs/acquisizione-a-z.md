@@ -401,6 +401,14 @@ L'elenco unico di Ubik: ciò che è fatto, in corso e da fare. Aggiornato il 10 
   alla redazione accendere: finora le esecuzioni a pagamento partivano solo da una richiesta. Le voci dai social sono
   nell'esploratore, sezione separata da resoconti e documenti; entrano anche i due nodi sperimentali (uso dei contenuti,
   Nord Stream, quest'ultimo come «banco di prova»).
+  Prima settimana (13 novembre, a mano, un giro per nodo, solo Exa perché Tavily è quasi al tetto di novembre):
+  contributi nuovi 36 fair use, 46 data center, 37 uso dei contenuti, 13 Nord Stream; voci dai social 11, 32, 10, 4,
+  di cui 37 su 57 sono fili di più post; 68 siti approvati; Lighthill passato a «storico»; costo circa 0,66 $. La
+  revisione dei canali fatta dal modello, provata sulle 18 voci già riviste da Claude: 16 uguali, 2 «incerte» (restano
+  a Claude), nessun canale scartato da Claude accettato dal modello. La prima esecuzione aveva perso tutto al
+  salvataggio (una cartella mancante): corretto, e le ricerche perse aggiunte al contatore dei motori. Le voci ora si
+  sommano di settimana in settimana. Da fare: rifare la bozza leggera dei nodi quando la settimana porta molti
+  contributi (oggi i contributi entrano nell'archivio e nel giudizio, non nel testo del nodo); accendere il calendario.
 - 12-13 novembre: **un nodo scelto dalle Matrici e avviato senza intervento** (`tools/node_pick.py`, `nodepick` in
   `runs/week-refs.request`): per le prime 10 storie della graduatoria che non sono già nodi, il modello giudica se
   dietro l'evento c'è un dibattito che i documenti possono decidere, e ne scrive la domanda a quel livello; si sceglie
