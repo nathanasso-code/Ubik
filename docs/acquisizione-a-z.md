@@ -406,6 +406,20 @@ L'elenco unico di Ubik: ciò che è fatto, in corso e da fare. Aggiornato il 13 
 
 **Fatto di recente**
 
+- 13 novembre: **Mastodon, strutturale** (`tools/mastodon.py`, `tools/mastodon_voices.py`, `registry/mastodon-istanze.json`,
+  `registry/mastodon-canali.json`). Niente ricerca centrale e niente ricerca libera senza account: si usano le interfacce
+  pubbliche (profili, feed RSS, hashtag, elenco degli account di un'istanza, contesto di un filo), con robots.txt e con
+  la scelta degli utenti (un account `noindex` o non ricercabile resta fuori). Tre parti, automatiche: (1) istituzioni:
+  gli account delle istanze governative (social.bund.de, social.overheid.nl), garantiti dall'istanza e quindi
+  primari; attivi negli ultimi 90 giorni e con almeno 20 post: 81 in prova (Bundesgerichtshof, ministero del digitale,
+  Bundesverwaltungsgericht, garante di Berlino, CBS, Logius…), 1.614 post alla prima raccolta, ogni giorno dopo;
+  (2) autori: l'account Mastodon di un autore approvato, dalla biografia di Bluesky, da un ponte Bluesky-Mastodon o
+  cercandolo per nome (stesse regole di Bluesky; i casi dubbi alla revisione del modello): Schrems, Koomey, Radsch;
+  (3) voci per hashtag scelti dal modello dalla domanda del nodo (salvati nella scheda del nodo), letti su 12 istanze,
+  con gli stessi filtri di Bluesky (seguito più basso: 10, 30 senza competenza dichiarata): prima prova 5 voci
+  sull'uso dei contenuti e 6 sul fair use (Peter Suber, heise online…), 3 centesimi. Lo scout legge i post raccolti;
+  nell'esploratore ogni voce dice la sua rete. Gira ogni giorno con siti e autori e ogni settimana con i nodi. Con un
+  account Mastodon nostro si potrebbe usare anche la ricerca nei post che gli autori hanno reso ricercabili.
 - 13 novembre: **canali Telegram approvati in automatico** (`tools/telegram_channels.py`, `registry/telegram-canali.json`),
   istituzionali e non (decisione della redazione: su una guerra video, testimonianze e geolocalizzazioni stanno spesso
   solo lì; il rumore è alto, quindi soglie strette e etichette, non esclusioni). Candidati: i canali che i canali seguiti
