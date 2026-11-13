@@ -781,6 +781,16 @@ L'elenco unico di Ubik: ciò che è fatto, in corso e da fare. Aggiornato il 13 
      molti contributi (oggi entrano nel giudizio, non nel testo); quando un nodo esce dai nodi attivi;
    - **crescita verso molti topic**, a tappe (10, 30, 100), misurando a ogni tappa il costo per 1.000 articoli e per nodo
      e il lavoro della redazione; prima: archivio fuori da git, un server sempre acceso, un database;
+   - **nodi: scelta e linguaggio** (13 novembre, indicazioni della redazione). Le proposte di nodo dalle Matrici non
+     convincono: sono discrepanze di una settimana («quante TPU…», «quanti fermati…»), lontane dal lettore, scritte con
+     la voce media di un modello. Indicazioni: (1) un nodo è una controversia che dura e su cui si prende posizione; le
+     storie settimanali ne sono episodi, le discrepanze fatti da verificare dentro; (2) pochi nodi approfonditi, luoghi
+     scelti dove concentrare la partecipazione di una comunità ancora piccola; (3) la scelta pesa quanto un evento è
+     rilanciato (temperatura sui social, durata, vicinanza al lettore italiano), ma non dipende tutta dal trend: Ubik
+     deve anche creare eventi che meritano di essere rilanciati, e arrivare prima; (4) titolo e sintesi devono
+     agganciare: uno studio dedicato del linguaggio, capacità narrativa ed evocativa del marketing più raffinato, senza
+     falso allarmismo né clickbait; la domanda nel titolo non è obbligatoria; (5) nessuna redazione umana per ora: il
+     gusto della redazione entra attraverso le sue scelte (esempi, preferenze tra alternative) e le revisioni di Claude;
    - **visibilità e parte gratuita** (da ragionare con la redazione): pagine dei nodi pubbliche, con data
      d'aggiornamento, dati strutturati (`ClaimReview` per le verifiche: Fact Check Explorer di Google, chiave rinviata),
      sitemap, crawler dei modelli ammessi; a pagamento il servizio (giornale completo, seguire un nodo, archivio,
