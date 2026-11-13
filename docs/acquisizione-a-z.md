@@ -385,6 +385,22 @@ L'elenco unico di Ubik: ciò che è fatto, in corso e da fare. Aggiornato il 10 
 
 **Fatto di recente**
 
+- 13 novembre: **l'aggiornamento settimanale dei nodi d'attualità, senza mano** (`tools/weekly.py`,
+  `.github/workflows/settimana.yml`, `registry/nodi-attivi.json`). Le ricerche che Claude lanciava nelle sessioni le
+  lancia il sistema, con gli stessi strumenti. Per ogni nodo attivo (fair use, data center, uso dei contenuti, Nord
+  Stream; i nodi storici restano fuori, si costruiscono meglio con un modello avanzato): la catena in modalità
+  settimanale (il piano cerca prima ciò che è successo dall'ultimo giro, poi ciò che è ancora scarno; Exa e Tavily nei
+  tetti mensili; si ferma quando un giro porta meno di 5 contributi), le voci dai social, l'archivio delle pagine buone.
+  Poi una volta: siti e autori approvati per criterio, canali dei nuovi autori, revisione dei canali quasi trovati fatta
+  dal modello come la facevo io (sì: seguito; no: scartato; incerto: resta per Claude, 8 alla volta), feed dei nuovi
+  siti. Regola nuova sugli autori: un controllo per autore approvato, ancora vivo e attivo? «no» lo rende «storico»,
+  tenuto ma non seguito (Lighthill). Le voci dai social ricompongono i fili: un post seguito da risposte dello stesso
+  autore diventa un testo solo, e i filtri si applicano al filo intero. Spesa: prima di partire si confronta il massimo
+  possibile della settimana con un tetto (3 $; oggi al più 2,6 $ per quattro nodi a due giri); se non ci sta, resta fuori
+  il nodo aggiornato più di recente. Il calendario (sabato) parte solo con `automatico: true` nel registro, che spetta
+  alla redazione accendere: finora le esecuzioni a pagamento partivano solo da una richiesta. Le voci dai social sono
+  nell'esploratore, sezione separata da resoconti e documenti; entrano anche i due nodi sperimentali (uso dei contenuti,
+  Nord Stream, quest'ultimo come «banco di prova»).
 - 12-13 novembre: **un nodo scelto dalle Matrici e avviato senza intervento** (`tools/node_pick.py`, `nodepick` in
   `runs/week-refs.request`): per le prime 10 storie della graduatoria che non sono già nodi, il modello giudica se
   dietro l'evento c'è un dibattito che i documenti possono decidere, e ne scrive la domanda a quel livello; si sceglie
@@ -418,8 +434,7 @@ L'elenco unico di Ubik: ciò che è fatto, in corso e da fare. Aggiornato il 10 
   Primo giro utile: Nord Stream 641 post, 5 voci (CORRECTIV, Brian Finucane di Crisis Group, David Puente di Open, Notes
   from Poland); nodo delle Matrici 476 post, 11 voci (Johnny Ryan di ICCL, Abeba Birhane, Nitasha Tiku del Washington
   Post, Simon McGarr, Nieman Lab); 6 centesimi. Per i post degli autori approvati il seguito si misura sulla media
-  dell'autore. Da fare: ricomporre le catene di post (oggi escluse come risposte) e mostrare le voci nell'esploratore,
-  separate dai resoconti.
+  dell'autore. Fili di post e voci nell'esploratore: fatti (sopra).
 - 12 novembre: **confronto con Wikipedia** (`tools/wiki_bench.py`, `bench=NODO` in `runs/week-refs.request`). Nodo
   nuovo sul sabotaggio Nord Stream costruito da zero, senza Wikipedia, senza ancore scelte a mano; solo alla fine letti i
   riferimenti delle voci in cinque lingue (en, it, de, sv, da: 429 distinti). Noi: 197 documenti, 20 in comune per
