@@ -420,7 +420,10 @@ L'elenco unico di Ubik: ciò che è fatto, in corso e da fare. Aggiornato il 13 
   storia della questione, fase per fase; cercare il testo integrale dei documenti che il nodo ha solo come comunicato o
   riassunto) e lo scout una strada nuova, `atti`: i numeri di causa nei documenti del nodo, risolti nelle banche dati
   ufficiali (Corte di giustizia UE: EUR-Lex dal numero CELEX; tribunali federali tedeschi: rechtsinformationen.bund.de).
-  Voci dai social: ora serve una competenza dichiarata e una voce non può ripetere una posizione già tenuta. Da fare:
+  Voci dai social: una voce non può ripetere una posizione già tenuta; chi non dichiara una competenza entra con criteri
+  più stretti (decisione della redazione: deve dimostrare di più): il post deve portare qualcosa di verificabile (un
+  documento, cifre, date, nomi, un racconto di prima mano con dettagli) e avere un seguito almeno triplo (60);
+  nell'esploratore è segnato «senza competenza dichiarata». Da fare:
   l'equilibrio delle voci (sui data center quasi tutte contrarie: il pubblico di Bluesky pende da una parte; cercare con
   i termini e gli attori dell'altra parte).
 - 13 novembre: **confronto dei motori e proiezione dei costi** (sezione 7): Exa principale, Tavily nella quota gratuita,
