@@ -419,7 +419,12 @@ L'elenco unico di Ubik: ciò che è fatto, in corso e da fare. Aggiornato il 13 
   ricorsi di Nord Stream 2 AG, governo tedesco). Per queste: il piano della catena ha due doveri nuovi (coprire tutta la
   storia della questione, fase per fase; cercare il testo integrale dei documenti che il nodo ha solo come comunicato o
   riassunto) e lo scout una strada nuova, `atti`: i numeri di causa nei documenti del nodo, risolti nelle banche dati
-  ufficiali (Corte di giustizia UE: EUR-Lex dal numero CELEX; tribunali federali tedeschi: rechtsinformationen.bund.de).
+  ufficiali (Corte di giustizia UE: EUR-Lex dal numero CELEX; tribunali federali tedeschi: rechtsinformationen.bund.de,
+  spento perché il suo robots.txt rifiuta i programmi). Prova su Nord Stream con i doveri nuovi (un giro, solo Exa):
+  24 contributi nuovi (il giro settimanale ne aveva dati 13), quasi tutti nelle lacune: la chiusura dell'indagine
+  svedese, il rapporto di Nord Stream AG sui crateri, gli studi sismici, il voto ONU sulla bozza russa, la sentenza
+  inglese sull'assicurazione, le risposte del governo tedesco al Bundestag, le testimonianze al processo di Amburgo
+  (BKA, sommozzatore della Bundeswehr), le foto della marina danese.
   Voci dai social: una voce non può ripetere una posizione già tenuta; chi non dichiara una competenza entra con criteri
   più stretti (decisione della redazione: deve dimostrare di più): il post deve portare qualcosa di verificabile (un
   documento, cifre, date, nomi, un racconto di prima mano con dettagli) e avere un seguito almeno triplo (60);
