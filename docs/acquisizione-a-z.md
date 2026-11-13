@@ -722,7 +722,11 @@ L'elenco unico di Ubik: ciò che è fatto, in corso e da fare. Aggiornato il 13 
      d'aggiornamento, dati strutturati (`ClaimReview` per le verifiche: Fact Check Explorer di Google, chiave rinviata),
      sitemap, crawler dei modelli ammessi; a pagamento il servizio (giornale completo, seguire un nodo, archivio,
      avvisi). Dubbio aperto della redazione: se il nodo è una sintesi di fonti trovabili, un motore o un modello possono
-     rifarla da sé, e pubblicarlo cede le fonti trovate con fatica; da pesare contro il traffico e le citazioni;
+     rifarla da sé, e pubblicarlo cede le fonti trovate con fatica; da pesare contro il traffico e le citazioni. Leva:
+     i crawler che raccolgono per l'addestramento sono distinti da quelli che cercano per rispondere (OpenAI GPTBot e
+     OAI-SearchBot, Anthropic ClaudeBot e Claude-SearchBot, Google-Extended per Gemini senza toccare la ricerca): si può
+     chiudere l'addestramento e restare citabili; e pubblicare il nodo con le fonti principali tenendo riservati
+     l'archivio completo, i documenti estratti e lo storico;
    - **il formato comune** (`docs/modello-dati.md`): fatti un documento-un pezzo (10 novembre) e il catalogo comune
      delle fonti (11 novembre, `data/schede.json`, correzioni con `tools/schede.py`; 14 schede con valori discordi da
      rivedere). Resta che le pipeline scrivano gli oggetti direttamente: si fa quando si prepara il sito; i nodi che ricevono come novità i pezzi delle Matrici; le proposte di
