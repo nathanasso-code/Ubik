@@ -400,6 +400,15 @@ L'elenco unico di Ubik: ciò che è fatto, in corso e da fare. Aggiornato il 10 
   vanno nell'indice del corpus che lo scout interroga per primo; nel giornale entrano con un criterio rigido e
   provvisorio (sito con almeno due fatti verificati, termine dell'IA nel titolo, al più 40 a settimana), mai escluse
   per sempre. Exa e Tavily al posto di Brave; tetti mensili 3.000 e 900.
+- 13 novembre: **autori approvati in automatico e i loro canali** (`tools/authors.py`, `tools/author_channels.py`).
+  Criterio stretto e modificabile: una persona (nome e cognome) con almeno 2 pagine che portano un fatto nuovo
+  verificato, su 2 nodi o in 3 pagine, entra «in prova» (23 al primo giro); istituzioni e redazioni passano dai siti.
+  Canali cercati da soli: OpenAlex per gli studiosi, Bluesky (cognome nel nome del profilo, ente nella biografia per i
+  nomi comuni), pagine d'autore con feed, Substack con il cognome nell'indirizzo (una ricerca Tavily per autore): 17
+  canali seguiti in automatico. Quello che serve una mano (newsletter solo email, pagine senza feed) va in
+  `reports/fonti/autori-da-aggiungere.md` con il link esatto (3 voci). X e LinkedIn annotati, non chiesti: non li
+  possiamo leggere. Da rivedere: autori storici (Lighthill) e qualche canale vero perso per prudenza (Schrems su
+  Bluesky).
 - 12 novembre: **confronto con Wikipedia** (`tools/wiki_bench.py`, `bench=NODO` in `runs/week-refs.request`). Nodo
   nuovo sul sabotaggio Nord Stream costruito da zero, senza Wikipedia, senza ancore scelte a mano; solo alla fine letti i
   riferimenti delle voci in cinque lingue (en, it, de, sv, da: 429 distinti). Noi: 197 documenti, 20 in comune per
