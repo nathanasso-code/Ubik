@@ -406,6 +406,18 @@ L'elenco unico di Ubik: ciò che è fatto, in corso e da fare. Aggiornato il 13 
 
 **Fatto di recente**
 
+- 14 novembre: **voci più equilibrate, voci da Telegram, novità nei nodi**. (1) Le voci dai social cercano l'altra
+  parte: dopo il primo passaggio una chiamata legge le posizioni tenute, nomina le parti non ancora sentite e scrive le
+  ricerche brevi per trovarle; i loro post passano dagli stessi filtri, il giudice sa quale parte si cerca (40% del
+  budget riservato; le stesse ricerche vanno alla ricerca a testo di Mastodon). Data center: 5 voci nuove da economisti,
+  legislatori e proponenti (Hicks, Newsom, Dingell, Samaras, Zandi), prima quasi tutte contrarie. (2) Voci da Telegram
+  (`tools/telegram_voices.py`): solo canali approvati di giornalisti, analisti, OSINT e testimoni; testate come fonti,
+  istituzioni e canali di Stato come documenti di parte, propaganda fuori; almeno 40 parole, 5.000 visualizzazioni e 50
+  reazioni dall'anteprima pubblica. Su Nord Stream ancora nessuna: i due canali adatti non ne parlano. (3) Errore
+  corretto: la classificazione dei canali scambiava il paese per un legame di Stato, e le testate russe in esilio o di
+  opposizione (Astra, The Insider, Glasnaya, Agentstvo) risultavano media di Stato; ora il legame vale solo per enti
+  ufficiali, media di Stato e propaganda statale; 33 canali riclassificati (2 centesimi). (4) Bozze aggiornate con le
+  novità da rivedere: data center 40, fair use, uso dei contenuti e Nord Stream 8 ciascuno.
 - 13 novembre: **Mastodon, strutturale** (`tools/mastodon.py`, `tools/mastodon_voices.py`, `registry/mastodon-istanze.json`,
   `registry/mastodon-canali.json`). Niente ricerca centrale e niente ricerca libera senza account: si usano le interfacce
   pubbliche (profili, feed RSS, hashtag, elenco degli account di un'istanza, contesto di un filo), con robots.txt e con
