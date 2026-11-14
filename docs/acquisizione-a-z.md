@@ -406,6 +406,12 @@ L'elenco unico di Ubik: ciò che è fatto, in corso e da fare. Aggiornato il 13 
 
 **Fatto di recente**
 
+- 14 novembre: **delega della redazione a Claude**. Le fonti da esaminare sono troppe per la redazione: Claude decide
+  in autonomia su fonti, documenti, novità dei nodi, canali e voci, e porta alla redazione solo i casi più dubbi.
+  Confermate e registrate nei nodi le 140 decisioni provvisorie di Claude sui documenti (fair use, data center,
+  Maidan, coinvolgimento americano, weight space); restano alla redazione le 17 proposte di nodo dalle Matrici, perché
+  la scelta dei nodi è rinviata allo studio sui criteri e sul linguaggio. La redazione può ribaltare ogni decisione
+  nell'esploratore.
 - 14 novembre: **voci più equilibrate, voci da Telegram, novità nei nodi**. (1) Le voci dai social cercano l'altra
   parte: dopo il primo passaggio una chiamata legge le posizioni tenute, nomina le parti non ancora sentite e scrive le
   ricerche brevi per trovarle; i loro post passano dagli stessi filtri, il giudice sa quale parte si cerca (40% del
