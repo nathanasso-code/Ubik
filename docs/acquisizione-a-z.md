@@ -902,16 +902,22 @@ forma definitiva e automatica)
    - nodi di prova in archivio (`archivio` in `registry/nodi-attivi.json`): weight space, USAID, il nodo nato dalla
      domanda; nell'esploratore in un gruppo a parte.
    Resta: il rapporto preliminare di Nord Stream AG sui crateri, oggi solo da un sito bielorusso (proposta alla redazione).
-2. **Il ciclo automatico completo**, con una settimana di rodaggio sorvegliata:
-   - il giornale in calendario ogni lunedì sulla settimana chiusa (solo fonti approvate);
-   - l'aggiornamento dei nodi il sabato (`automatico: true`, decisione della redazione dopo il rodaggio), con quello che
-     le prove del 15 novembre hanno dimostrato: le parti con le loro parole, nessuna ricerca ripetuta, i link e i
-     documenti citati dalle fonti (con due budget, lettura e ricerca), le ricerche Telegram per i nodi nuovi;
-   - le decisioni sulle novità e sui documenti prese da un passaggio automatico con i criteri delle decisioni già
-     registrate; a Claude, e da Claude alla redazione, solo le incerte;
-   - le novità accettate scritte nel testo del nodo, non lasciate in coda;
-   - l'esploratore ricostruito e ripubblicato da un'attività programmata dopo il giornale;
-   - i workflow degli esperimenti chiusi in archivio.
+2. **Il ciclo automatico completo.** Fatto il 15 novembre, resta il rodaggio:
+   - il giornale in calendario ogni lunedì alle 5:23 sulla settimana chiusa (`daily.yml`, solo fonti approvate);
+   - nell'aggiornamento del sabato (`settimana.yml`), a ogni giro, i link e i documenti citati dalle fonti (strade
+     `fonti` e `riferimenti`, `node_refs.py` con due budget, lettura e ricerca);
+   - dopo i giri, per ogni nodo: le novità della settimana (`light_node.py update`), le decisioni automatiche
+     (`tools/auto_decide.py`: novità e documenti decisi con i criteri delle decisioni registrate, le dubbie in
+     `reports/nodi/NODO/da-decidere.json` per Claude) e l'integrazione nel testo (`tools/integrate.py`: ogni novità
+     accettata collocata in un punto, o in un punto nuovo; i documenti accettati tra i documenti cardine; lo stato della
+     questione riscritto quando cambia). Prima prova sulla coda: 28 novità collocate, un punto nuovo (moratoria sui data
+     center), 95 documenti cardine, quattro stati riscritti, meno di un centesimo;
+   - budget per nodo nel registro (`budget_riferimenti_usd`, `budget_ricerca_riferimenti_usd`, `budget_decisioni_usd`,
+     `budget_integrazione_usd`); il massimo teorico di quattro nodi a due giri resta sotto il tetto di 4 dollari;
+   - l'esploratore ripubblicato ogni lunedì alle 9:41 da un'attività programmata di Claude, dopo il giornale;
+   - 15 workflow di esperimenti chiusi in `.github/workflows-archivio/` (ne restano 16).
+   Resta: il rodaggio, cioè un sabato sorvegliato con il ciclo intero, e poi l'accensione del calendario
+   (`automatico: true`, decisione della redazione).
 3. **L'esploratore nella forma finale**: un solo formato di nodo (stato, punti con le due parti, documenti cardine,
    voci, cosa è cambiato; le catene come approfondimento); «cosa è cambiato questa settimana» con la data; i legami tra
    Matrici e nodi nei due sensi; sopra ciò che vede un lettore, sotto, chiuso, il cantiere; una ricerca testuale.
