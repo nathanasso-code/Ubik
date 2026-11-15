@@ -456,6 +456,16 @@ sull'ALPAC, la critica coeva di Michie. Trova bene i documenti primari; non trov
 citate solo nei PDF, perché il setaccio legge i link delle pagine web e non i riferimenti bibliografici. Il setaccio si è
 fermato al secondo giro (90 pagine): i contributi buoni erano quasi tutti PDF.
 
+### 8.x Il banco di prova di Nord Stream (12-15 novembre)
+
+Un nodo costruito da zero senza Wikipedia, misurato sulle 93 affermazioni fisse della voce inglese e confrontato con un
+dossier scritto da un modello avanzato (Fable) con le sue ricerche. Con la misura alla pari (parole chiave nelle lingue
+del nodo, corretta il 13 novembre): delle 93 affermazioni di Wikipedia il nodo ne copre 69, Fable 52, almeno uno dei due
+74; delle 90 affermazioni di Fable il nodo ne copre 70. Le assenze vere stavano nei primi mesi del caso, nelle udienze di
+Amburgo e nelle conseguenze: i doveri nuovi della catena (6.7) le hanno colmate in buona parte in un giro (24 contributi,
+quasi tutti lì). Sui motori, sulle stesse ricerche: Exa 313 contributi tra i risultati (201 solo suoi), Tavily 176 (64).
+Da fare: la prova pulita dalla sola domanda (15 novembre, in corso).
+
 ## 9. Giudizio e indicazioni
 
 - **Che cosa vale**: la raccolta allargata (GNews e le fonti in prova: 42 Matrici invece di 27), le pagine citate (la
