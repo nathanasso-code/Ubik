@@ -1,4 +1,4 @@
-# Ubik dalla A alla Z: acquisizione, selezione, nodi (8 novembre 2026)
+# Ubik dalla A alla Z: acquisizione, selezione, nodi (aggiornato al 15 novembre 2026)
 
 Questo documento descrive il sistema com'è oggi, dall'inizio alla fine, ed è il punto di partenza per chi riprende il
 lavoro in una nuova conversazione. I documenti di dettaglio restano: `docs/daily-spec.md` (Matrici),
@@ -14,9 +14,11 @@ Ubik raccoglie e ordina le notizie e il dibattito su un tema. Ha due modalità, 
 | Conoscenza | Su che cosa ci si divide, e chi ha ragione dove si può dire? | **Nodi**: una domanda, un testo di poche affermazioni, **catene** di **anelli** (ogni anello è una fonte che risponde a un'affermazione precisa dell'anello sopra), con citazioni verificate |
 
 Un **Topic** (per ora Intelligenza artificiale, con quattro sotto-topic: regole, lavoro, data center ed energia, diritto
-d'autore; ed Euromaidan come prova storica) è il perimetro. I nodi di oggi: `weight-space` (il rapporto del MIT sulla
-lettura e scrittura dei pesi), `fair-use` (addestramento e diritto d'autore), `maidan-20-febbraio`, e `inverno-ia` (solo
-prova di profondità).
+d'autore; ed Euromaidan come prova storica) è il perimetro. I nodi di oggi: d'attualità, aggiornati ogni settimana
+(`registry/nodi-attivi.json`): `fair-use` (addestramento e diritto d'autore), `data-center-comunita`,
+`uso-dei-contenuti-pubblicati` (avviato dalle Matrici senza intervento), `nord-stream` (banco di prova contro Wikipedia
+e un dossier di Fable); storici o di prova: `weight-space`, `maidan-20-febbraio`, `coinvolgimento-americano`,
+`inverno-ia`.
 
 ## 2. Dove sta ogni cosa
 
@@ -24,7 +26,7 @@ prova di profondità).
 | --- | --- |
 | `nathanasso-code/Ubik` (pubblico) | Codice della pipeline delle Matrici (`ingestion/`), prompt delle Matrici (`prompts/`), documentazione (`docs/`) |
 | `nathanasso-code/ubik-corpus` (privato) | Registri delle fonti (`registry/`), corpus dei testi (`corpus/`), strumenti (`tools/`), prompt dei nodi (`prompts/`), workflow (`.github/workflows/`), richieste di esecuzione (`runs/`), risultati (`reports/`) |
-| Segreti di `ubik-corpus` (solo i nomi) | `OPENROUTER_API_KEY`, `BRAVE_API_KEY`, `BLUESKY_HANDLE`, `BLUESKY_APP_PASSWORD`, `GNEWS_API_KEY`, `UBIK_GMAIL_*`, `COURTLISTENER_API_KEY` |
+| Segreti di `ubik-corpus` (solo i nomi) | `OPENROUTER_API_KEY`, `EXA_API_KEY`, `TAVILY_API_KEY`, `BRAVE_API_KEY` (credito finito), `BLUESKY_HANDLE`, `BLUESKY_APP_PASSWORD`, `MASTODON_TOKEN`, `MASTODON_INSTANCE`, `GNEWS_API_KEY`, `UBIK_GMAIL_*`, `COURTLISTENER_API_KEY`, `GOVINFO_API_KEY` |
 | Documento «Ubik — Acquisizione delle fonti» (Claude Docs) | La versione da leggere per la redazione |
 | Esploratore (artefatto) | Le Matrici e i nodi visti come pagina |
 
@@ -33,8 +35,13 @@ a pagamento parte solo da un file `runs/<nome>.request` scritto e spinto nel rep
 
 ## 3. Le regole che valgono ovunque
 
-- **Fonti nuove solo con l'approvazione della redazione.** Dal 7 novembre ogni gruppo proposto entra «in prova» con i
-  suoi motivi, e la redazione toglie quello che non vuole. Le fonti in prova non bastano da sole a fare una Matrice.
+- **Fonti nuove approvate per criterio, in automatico** (dal 13 novembre; prima solo con la redazione): siti, autori,
+  canali degli autori, canali Telegram e account Mastodon entrano «in prova» quando passano un criterio stretto e
+  modificabile; si tolgono dopo (stato «rimosso», mai riapprovato). Nessuna fonte si esclude per sempre: un criterio
+  rigido è sempre momentaneo. Le fonti in prova non bastano da sole a fare una Matrice.
+- **Delega a Claude** (14 novembre): Claude decide su fonti, documenti, novità dei nodi, canali e voci, e porta alla
+  redazione solo i casi dubbi; ogni decisione resta ribaltabile nell'esploratore. Restano alla redazione la scelta dei
+  nodi da aprire e le spese nuove.
 - **robots.txt e riserva TDM rispettati**, sempre: un sito che vieta o rifiuta (403) non si aggira, si registra.
 - **Seconde copie** (decise il 9 novembre, `tools/second_copy.py`):
   - *copia ad accesso aperto*: quando l'editore di un DOI rifiuta, si usa la copia indicata da OpenAlex
@@ -50,11 +57,14 @@ a pagamento parte solo da un file `runs/<nome>.request` scritto e spinto nel rep
   `shown_quote`).
 - **Una citazione si mostra solo se il codice la ritrova parola per parola nel testo raccolto.** Lo stesso vale per i
   giudizi del modello: contano solo se indicano una frase che il codice ritrova.
-- **Brave**: non si conservano le liste dei risultati, solo la nostra selezione. Le pagine trovate solo da Brave vivono
+- **Motori di ricerca** (Exa principale, Tavily nella quota gratuita, Brave accantonato dal 13 novembre; tetti mensili in
+  `data/search-usage.json`): non si conservano le liste dei risultati, solo la nostra selezione e gli identificativi
+  cifrati dei risultati per confrontare i motori. Per Brave, finché si usava: Le pagine trovate solo da Brave vivono
   nella cartella temporanea dell'esecuzione (`scout-transient/`); se non vengono scelte si contano e basta; il registro
   dell'esecuzione, che le stampa, si cancella dopo la lettura
   (`gh api -X DELETE repos/nathanasso-code/ubik-corpus/actions/runs/<id>`). Le pagine scelte portano «trovata con Brave».
-- **Costi**: tetto di 20 dollari per l'ambito IA sulle chiamate ai modelli; ogni esecuzione dichiara il suo budget.
+- **Costi**: tetto di 20 dollari per l'ambito IA sulle chiamate ai modelli; ogni esecuzione dichiara il suo budget;
+  l'aggiornamento settimanale dei nodi ha un tetto suo (4 dollari) controllato prima di partire.
 - **Si conserva fin da ora ciò che non si ricostruisce a ritroso**: le decisioni editoriali con il loro motivo (scelte,
   scarti, proposte accettate o rifiutate) e le affermazioni con la loro provenienza. Sono la base per un giudice
   addestrato sui criteri di Ubik e per un archivio delle affermazioni.
@@ -109,6 +119,50 @@ OpenAlex), `measure` (che cosa avrebbe portato un feed in due settimane). Le **a
 Mastodon seguiti da molte voci: non sono fonti, i loro link servono a scoprire pagine. Il bacino propone; la redazione
 approva.
 
+### 4.5 I siti approvati e i loro feed (`tools/sites.py`, ogni giorno in `sites.yml`)
+
+Ogni sito che ha dato a un nodo un contributo con un fatto nuovo verificato nel testo è approvato in automatico
+(`registry/siti.json`, circa 700 siti). Del sito si cerca il feed (dichiarato nella home, gli indirizzi usuali, le
+sitemap di robots.txt; mai per gli archivi generali come GitHub o arXiv) e ogni giorno se ne raccolgono le voci nuove
+(`corpus/siti/HOST/MESE.jsonl`: titolo, sintesi, indirizzo, data). Lo scout le interroga per ogni nodo; nel giornale
+entrano solo le voci di siti con almeno due fatti verificati e un termine dell'IA nel titolo, fino a 40 a settimana.
+Le pagine buone di ogni nodo sono conservate in `corpus/targeted/NODO/pagine/` (`tools/archive_node.py`).
+
+### 4.6 Autori e loro canali (`tools/authors.py`, `tools/author_channels.py`, ogni giorno)
+
+Il giudice nomina per ogni contributo l'autore competente. I nomi si normalizzano una volta (persona, istituzione o
+redazione); una persona con almeno 2 pagine con un fatto nuovo verificato, e 2 nodi o 3 pagine, entra «in prova»
+(`registry/autori.json`); un controllo sull'attività rende «storico» chi non è più attivo (Lighthill). Per ogni autore
+si cercano i canali: OpenAlex, la pagina personale, Bluesky, Mastodon, Substack (X e LinkedIn solo annotati). I casi
+incerti (un omonimo) li rivede un modello come li rivedeva Claude (17 su 18 uguali alla prova); quelli che restano
+incerti vanno a Claude, 8 alla volta (`reports/fonti/canali-da-rivedere.md`).
+
+### 4.7 Telegram e Mastodon
+
+**Telegram** (`registry/telegram-probation.json`, 12 canali fissi; `registry/telegram-canali.json`, approvati in
+automatico): i canali inoltrati o citati da quelli seguiti, dalle pagine del corpus o dal giudice; esame se citati da
+almeno 2 fonti, di cui una non di Stato né di propaganda; anteprima pubblica, 1.000 iscritti, 5 post; il modello dice
+che cosa sono (istituzione, testata, giornalista, analista, OSINT, testimone, aggregatore, propaganda, spam) e se un
+canale serve uno Stato (il paese da solo non basta). Spam e aggregatori fuori, il resto in prova con le etichette.
+«Primario» solo se l'istituzione garantisce il canale (un sito governativo lo cita, o il suo sito rimanda al canale):
+i suoi post sono documenti. Raccolta ogni 12 ore.
+
+**Mastodon** (`tools/mastodon.py`, `registry/mastodon-istanze.json`, `registry/mastodon-canali.json`): gli account
+delle istanze governative (social.bund.de, social.overheid.nl: 81 in prova, primari per costruzione), raccolti per RSS
+ogni giorno; l'account Mastodon degli autori approvati; robots.txt e la scelta di chi chiede di non essere indicizzato.
+
+### 4.8 Le voci dai social (opinioni, separate da resoconti e documenti)
+
+Per ogni nodo attivo, ogni settimana: Bluesky (`tools/social_voices.py`: ricerche brevi dai termini e dalla catena; i
+fili dello stesso autore ricomposti), Mastodon (`tools/mastodon_voices.py`: hashtag scelti dal modello su 12 istanze e
+la ricerca a testo col nostro account), Telegram (`tools/telegram_voices.py`: solo canali di giornalisti, analisti,
+OSINT e testimoni, con visualizzazioni e reazioni). Filtri in ordine: lunghezza, seguito (contro bot, spam e uscite
+estemporanee), account (età, post, follower), giudice (aggiunge una posizione o una competenza che le fonti non
+danno?). Chi non dichiara una competenza entra solo con qualcosa di verificabile e un seguito triplo; una voce non
+ripete una posizione già tenuta; le testate tra le voci diventano fonti (strada `segnalati`); un secondo passaggio
+cerca le parti non ancora sentite. Le voci si sommano di settimana in settimana (`reports/nodi/NODO/voci-social.json`)
+e si vedono nell'esploratore con la loro rete.
+
 ## 5. Le Matrici della settimana
 
 `ubik-corpus/tools/select_ai_week.py` sceglie gli articoli della finestra (corpus `ai-regulation`, `ai`, `cited`),
@@ -130,17 +184,22 @@ prompt non cambia.
 ## 6. I nodi: dalla domanda alle catene
 
 Il lavoro su un nodo ha sei passi. I primi quattro sono automatici; gli ultimi due li fa oggi Claude in conversazione.
+Dal 12-13 novembre c'è anche la **catena di ricerche** (6.7) e l'**aggiornamento settimanale** (6.8), che girano da
+soli per i nodi d'attualità; i nodi «leggeri» (una bozza di poche affermazioni con le novità da rivedere,
+`tools/light_node.py`) sostituiscono per ora la costruzione a mano delle catene.
 
 ### 6.1 La scheda del nodo (`reports/nodi/<nodo>/scout.json`)
 
-Scritta a mano una volta: la domanda, le **ancore** (i documenti d'origine), i **termini** con cui il caso circola (in
+Scritta a mano una volta, oppure dal modello partendo dalla sola domanda (`tools/node_pick.py ask` o `bootstrap`,
+dal 12 novembre: sotto-domande, lingue, termini, ricerche per le lacune): la domanda, le **ancore** (i documenti d'origine), i **termini** con cui il caso circola (in
 più lingue), le ricerche per GitHub e per la letteratura, i DOI, la voce di Wikipedia, sette **ricerche per le lacune**
 (`gap_queries`: una per posizione senza fonti o replica mancante), le **date** del caso quando servono (`dates`) e le
 fonti già note (`known`) per misurare.
 
 ### 6.2 Lo scout (`tools/scout.py discover`, `scout.yml`, da `runs/scout.request`)
 
-Cerca i candidati per dodici vie, tutte gratuite tranne Brave (credito mensile gratuito, sette ricerche per nodo):
+Cerca i candidati per più vie, tutte gratuite tranne i motori di ricerca (Exa e Tavily dal 12 novembre, al posto di
+Brave; ogni ricerca su ogni motore indicato, nei tetti mensili):
 
 | Via | Che cosa porta |
 | --- | --- |
@@ -152,7 +211,11 @@ Cerca i candidati per dodici vie, tutte gratuite tranne Brave (credito mensile g
 | GitHub | Repository e issue che citano le ancore: le riproduzioni |
 | OpenAlex, Semantic Scholar | Letteratura sul tema e chi cita i DOI |
 | Wikipedia | I riferimenti delle voci sul tema (spento nella prova di profondità) |
-| Brave | Le ricerche per le lacune |
+| Motori (Exa, Tavily; la via si chiama ancora `brave`) | Le ricerche per le lacune e quelle della catena |
+| Atti (`atti`) | I numeri di causa della Corte di giustizia UE nei documenti del nodo, risolti su EUR-Lex |
+| Segnalati (`segnalati`) | Gli articoli che le testate hanno postato sui social, trovati tra le voci |
+| Telegram | Le ricerche del nodo nei canali approvati: le pagine che linkano, e i post dei canali primari, OSINT e testimoni |
+| Corpus (feed) | Anche le voci dei feed dei siti, degli autori e di Mastodon (dal 13 novembre) |
 | Web | Spento: Bing vieta l'uso automatico |
 | Rimbalzo (`snowball`) | Apre i 40 candidati migliori e le ancore e raccoglie i link che citano; un link citato da due pagine è forte. Dall'8 novembre legge solo il corpo del testo e, per le ancore, anche le altre pagine dello stesso archivio |
 
@@ -196,6 +259,23 @@ Le pagine scelte vanno in `reports/scout/<nodo>/pick.json`; `scout.py fetch` le 
 verifica sui documenti primari (le sentenze, i paper) e aggiorna `reports/nodi/<nodo>/node.json`. `tools/build_model.py`
 costruisce il modello che l'esploratore mostra, con la regola delle citazioni. Le segnalazioni della redazione entrano come
 `segnalazione` in `corpus/targeted/<nodo>/`.
+
+### 6.7 La catena di ricerche (`tools/entity_rounds.py`, `catena.yml`)
+
+A ogni giro un modello legge ciò che le fonti trovate dicono e scrive fino a 30 ricerche nuove: gli attori, le
+decisioni, i documenti citati ma non ancora trovati, le sotto-domande scarne, le pagine chiuse da cercare nei resoconti
+di altre testate. Doveri fissi: coprire tutta la storia della questione, fase per fase (le prime reazioni, le
+interrogazioni, gli organismi internazionali, le cause, le conseguenze), e cercare il testo integrale dei documenti che il
+nodo ha solo come comunicato o riassunto. Si ferma quando un giro porta meno del minimo. Su Nord Stream 11 giri, 284
+ricerche, 491 contributi; nessuna ricerca dopo la prima scritta a mano.
+
+### 6.8 L'aggiornamento settimanale (`tools/weekly.py`, `settimana.yml`, `registry/nodi-attivi.json`)
+
+Per ogni nodo attivo: la catena in modalità settimanale (prima ciò che è successo dall'ultimo giro), le voci dai social,
+l'archivio delle pagine buone, i documenti su cui poggiano le fonti (`node_refs.py`), le novità nella bozza. Poi una
+volta: siti, autori, canali, Telegram, revisione dei canali dubbi. Prima di partire il massimo possibile si confronta con
+il tetto; se non ci sta, resta fuori il nodo aggiornato più di recente. Il calendario (sabato) parte solo con
+`automatico: true`, che spetta alla redazione accendere.
 
 ## 7. Quanto costa
 
