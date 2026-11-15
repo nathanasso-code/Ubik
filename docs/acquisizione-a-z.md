@@ -485,7 +485,11 @@ polacco, russo, ucraino), le stesse per i due nodi, perché fatti che il nodo av
 contati assenti. Con la misura corretta: nodo a mano 75 affermazioni di Wikipedia su 93, nodo nato dalla sola domanda
 68 (Fable 52). La distanza scende da 15 a 7; ognuno ha affermazioni che l'altro non ha (il nodo a mano 14, quello dalla
 domanda 7). Il passaggio sui documenti citati ha elencato circa 1.000 riferimenti ma ne ha cercati pochi (budget speso
-nella lettura): da separare.
+nella lettura). Separati i due budget (lettura e ricerca, i documenti decisivi per primi) e rifatto: dei 1.306
+riferimenti 388 erano già nel nodo, 241 trovati e confermati (149 passati al giudice nel giro dopo), 642 non trovati
+e passati al piano; un giro solo ha portato 65 contributi. Il nodo nato dalla sola domanda arriva a 72 affermazioni di
+Wikipedia su 93 (il nodo fatto a mano 75), circa 1,15 dollari in tutto per la prova. Seguire le fonti è il passo che ha
+reso di più: da adottare nell'aggiornamento settimanale.
 
 ## 9. Giudizio e indicazioni
 
