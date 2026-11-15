@@ -916,6 +916,12 @@ forma definitiva e automatica)
      `budget_integrazione_usd`); il massimo teorico di quattro nodi a due giri resta sotto il tetto di 4 dollari;
    - l'esploratore ripubblicato ogni lunedì alle 9:41 da un'attività programmata di Claude, dopo il giornale;
    - 15 workflow di esperimenti chiusi in `.github/workflows-archivio/` (ne restano 16).
+   - (sera del 15 novembre) le testate seguite per sezione ora anche con il feed di tutto il sito, filtrato con le
+     parole dei Topic (`tools/feed_wide.py`, `registry/parole-topic.json`, ogni giorno con i siti; 15 testate su 22,
+     mancano The Verge, MIT Technology Review, Politico Europe, New York Times, Financial Times, senza un feed generale
+     raggiungibile); il giornale tiene le grandi storie (almeno 10 testate) nel sotto-topic dove almeno un quarto degli
+     articoli è principalmente a tema, e mostra negli altri sotto-topic i rimandi alle Matrici che li riguardano;
+     un sotto-topic fallito non sovrascrive più quello buono.
    Resta: il rodaggio, cioè un sabato sorvegliato con il ciclo intero, e poi l'accensione del calendario
    (`automatico: true`, decisione della redazione).
 3. **L'esploratore nella forma finale.** Fatto il 15 novembre:
