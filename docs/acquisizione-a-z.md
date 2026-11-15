@@ -464,7 +464,15 @@ del nodo, corretta il 13 novembre): delle 93 affermazioni di Wikipedia il nodo n
 74; delle 90 affermazioni di Fable il nodo ne copre 70. Le assenze vere stavano nei primi mesi del caso, nelle udienze di
 Amburgo e nelle conseguenze: i doveri nuovi della catena (6.7) le hanno colmate in buona parte in un giro (24 contributi,
 quasi tutti lì). Sui motori, sulle stesse ricerche: Exa 313 contributi tra i risultati (201 solo suoi), Tavily 176 (64).
-Da fare: la prova pulita dalla sola domanda (15 novembre, in corso).
+**La prova pulita** (15 novembre): lo stesso caso avviato dalla sola domanda («Chi ha fatto saltare i gasdotti…»), con il
+modello che scrive sotto-domande, lingue e prime ricerche, senza le fonti del nodo fatto a mano e senza Wikipedia;
+quattro giri di catena, solo Exa. Risultato: 190 documenti (il nodo fatto a mano 602, in 11 giri); delle 93 affermazioni
+di Wikipedia ne copre 54 (a mano 69, Fable 52, almeno uno dei due 68); delle 90 di Fable 62 (a mano 70). Le due versioni
+coincidono su 53 affermazioni; quelle che solo il nodo a mano ha sono le dichiarazioni di parte (Cremlino, Zelens'kyj,
+Casa Bianca su Hersh), le indagini e gli arresti in Germania e Polonia, i dettagli tecnici dei crateri e delle cariche,
+l'ONU. Costo: 0,62 dollari la catena, 0,70 le due misure. In sostanza: un nodo nato da solo arriva in quattro giri al
+livello del dossier di Fable; servono più giri, o una catena che chieda esplicitamente le posizioni delle parti, per
+arrivare al nodo seguito a mano. Mancava la strada Telegram (l'avvio non scriveva le ricerche per Telegram): aggiunta.
 
 ## 9. Giudizio e indicazioni
 
@@ -492,10 +500,15 @@ Da fare: la prova pulita dalla sola domanda (15 novembre, in corso).
 
 ## 10. Da fare
 
-L'elenco unico di Ubik: ciò che è fatto, in corso e da fare. Aggiornato il 13 novembre.
+L'elenco unico di Ubik: ciò che è fatto, in corso e da fare. Aggiornato il 15 novembre.
 
 **Fatto di recente**
 
+- 15 novembre: **giornale della settimana dal 9 novembre** (936 articoli, 23 Matrici, 1,09 dollari: regole 7, data
+  center ed energia 9, economia 5, lavoro e diritto d'autore 1 ciascuno) e **prova pulita di Nord Stream** (sezione 8):
+  dalla sola domanda, in quattro giri, 54 affermazioni di Wikipedia su 93 (a mano 69, Fable 52). Correzioni: il primo
+  giudizio di un nodo nuovo ha un tetto suo (`first=`, 0,50 dollari: il primo lancio era stato rifiutato a 0,37 su
+  0,30); un nodo avviato dalla domanda riceve anche le ricerche per Telegram.
 - 15 novembre: **quello che si è fatto a mano su Nord Stream, ora per ogni nodo attivo, ogni settimana**. Già
   automatici: la catena con i doveri nuovi (tutta la storia, testo integrale), le strade verso i tribunali UE, Telegram
   e gli articoli segnalati dalle testate, le voci da Bluesky, Mastodon e Telegram con l'altra parte, l'archivio. Aggiunti
