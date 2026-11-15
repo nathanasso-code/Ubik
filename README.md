@@ -16,6 +16,13 @@ smentita agganciate ad affermazioni precise e citazioni verificate. Specifica: `
 
 Modello in esercizio: DeepSeek V4.1 Flash, circa 0,74 dollari per una settimana di 919 articoli e quattro sotto-topic.
 
+Al 15 novembre: l'acquisizione gira da sola (siti con i loro feed, autori e loro canali, canali Telegram e account
+Mastodon approvati per criterio, in prova); i nodi d'attualità (fair use, data center, uso dei contenuti pubblicati,
+Nord Stream) si aggiornano ogni settimana con una catena di ricerche scritta dal modello, le voci dai social e le
+novità nella bozza; Nord Stream è il banco di prova contro Wikipedia (69 affermazioni su 93 senza usarla). Il codice
+dei nodi e dell'acquisizione sta nel repository privato (`tools/`); il quadro completo e l'elenco unico delle cose da
+fare sono in `docs/acquisizione-a-z.md`.
+
 ## Struttura
 
 | Percorso | Contenuto | Stato |
