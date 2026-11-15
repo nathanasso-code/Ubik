@@ -886,90 +886,46 @@ L'elenco unico di Ubik: ciò che è fatto, in corso e da fare. Aggiornato il 15 
 - 9 novembre: il nodo dei data center e le comunità (leggero, rivisto, nell'esploratore); credito OpenRouter esaurito e
   ricaricato; il nuovo nodo «Il presunto coinvolgimento americano» (Euromaidan), primo scout: 26 contributi, 0,19 dollari.
 
-**In ordine**
+**In ordine** (piano di consolidamento deciso il 15 novembre: niente strade nuove, portare quello che c'è alla
+forma definitiva e automatica)
 
-1. **Dalla ricerca al nodo.** Lo scout trova di più, ma il guadagno si perde nei passi dopo. Fatto il 10 novembre:
-   - la graduatoria: i riferimenti delle voci di Wikipedia senza altri segni passano il filtro, dopo tutte le altre pagine
-     (primo inverno dell'IA: fonti di riferimento in graduatoria da 9 a 14 su 20; nessuna pagina già buona spinta fuori
-     dalle prime 400 negli altri nodi). Un nodo storico le raggiunge con `k` più alto;
-   - l'aggiornamento del nodo leggero legge una pagina nuova su cinque (da 8 a 25; prima sempre 8: sui data center 8 su
-     126) e salta prima le copie delle fonti già nel nodo e le pagine già decise.
+1. **Chiudere i sospesi.** Fatto il 15 novembre:
+   - decisioni nei nodi: i 23 documenti di Nord Stream decisi (11 dentro: atti della Procura federale, chiusure delle
+     indagini svedese e danese, studi sismici e sul metano, sentenza assicurativa di Londra, resoconto ONU; fuori copie,
+     articoli, Wikipedia); le 5 affermazioni trovate solo dal nodo nato dalla domanda entrate come novità nel nodo; negli
+     altri nodi non restava nulla di aperto;
+   - fonti: 5 canali rivisti (2 seguiti, 3 omonimi scartati), 8 azioni sugli autori chiuse con il motivo, l'elenco delle
+     istituzioni candidate chiuso (Öko-Institut e SEC approvati come siti); i candidati restanti (90 siti, 420 autori)
+     non aspettano una decisione: entrano quando passano il criterio;
+   - anagrafe unica delle fonti (`tools/anagrafe.py`, `registry/anagrafe.json`, `reports/fonti/anagrafe.md`): 1.869
+     fonti di tutti i registri, una volta ciascuna con uno stato, rifatta ogni giorno con i siti;
+   - nodi di prova in archivio (`archivio` in `registry/nodi-attivi.json`): weight space, USAID, il nodo nato dalla
+     domanda; nell'esploratore in un gruppo a parte.
+   Resta: il rapporto preliminare di Nord Stream AG sui crateri, oggi solo da un sito bielorusso (proposta alla redazione).
+2. **Il ciclo automatico completo**, con una settimana di rodaggio sorvegliata:
+   - il giornale in calendario ogni lunedì sulla settimana chiusa (solo fonti approvate);
+   - l'aggiornamento dei nodi il sabato (`automatico: true`, decisione della redazione dopo il rodaggio), con quello che
+     le prove del 15 novembre hanno dimostrato: le parti con le loro parole, nessuna ricerca ripetuta, i link e i
+     documenti citati dalle fonti (con due budget, lettura e ricerca), le ricerche Telegram per i nodi nuovi;
+   - le decisioni sulle novità e sui documenti prese da un passaggio automatico con i criteri delle decisioni già
+     registrate; a Claude, e da Claude alla redazione, solo le incerte;
+   - le novità accettate scritte nel testo del nodo, non lasciate in coda;
+   - l'esploratore ricostruito e ripubblicato da un'attività programmata dopo il giornale;
+   - i workflow degli esperimenti chiusi in archivio.
+3. **L'esploratore nella forma finale**: un solo formato di nodo (stato, punti con le due parti, documenti cardine,
+   voci, cosa è cambiato; le catene come approfondimento); «cosa è cambiato questa settimana» con la data; i legami tra
+   Matrici e nodi nei due sensi; sopra ciò che vede un lettore, sotto, chiuso, il cantiere; una ricerca testuale.
+4. **Lo studio sul linguaggio** (indicazioni della redazione del 13 novembre): un banco di 30 titoli e sintesi reali con
+   varianti in registri diversi, le scelte a coppie della redazione salvate, una guida di stile ricavata dalle scelte e
+   messa nei prompt; lo stesso metodo per i criteri di scelta dei nodi, sulle 17 proposte delle Matrici.
+5. **I costi**, tarati su due settimane vere: il prefiltro del giornale (158 articoli su 936 senza sotto-topic annotati
+   lo stesso) e il riuso delle note; il prezzo vero di Exa e la prova 10 contro 20 risultati; i minuti di GitHub (raccolta
+   in parallelo e controllo di copertura settimanale già fatti il 15 novembre; resta l'indice del corpus in cache); un
+   riepilogo settimanale dei costi.
 
-   - misurato: delle 31 pagine contributo nuove dei data center, 15 valgono per il nodo; le altre ripetono punti già
-     coperti. La fascia non è troppo larga: lo spreco viene dalle ripetizioni, che l'aggiornamento ora salta prima;
-   - ogni esecuzione registra il tempo di ogni fase (`timing` nel registro del giudizio): sul primo inverno lo
-     scaricamento una pagina alla volta prendeva 1.161 secondi su 1.218.
-2. **Le decisioni della redazione**: fatto il 10 novembre. Proposte e novità: 98 decisioni (40 accettate, 58 rifiutate;
-   44 confermate dalla redazione, una ribaltata, 53 confermate da Claude su incarico), registrate nei nodi; le novità
-   accettate dei data center collocate nei punti come altre fonti. Anelli già nei nodi: 109 decisioni con il motivo di
-   Claude, confermate dalla redazione (106 tenuti, 3 tolti). Ogni anello, proposta o novità ha ora la sua decisione
-   registrata in `reports/nodi/NODO/decisioni.json`, con chi l'ha presa. Nodi leggeri: anche i punti hanno la loro
-   decisione nell'esploratore (con le altre fonti del punto); le 12 decisioni sui punti sono confermate e registrate.
-3. **Il nodo «Il presunto coinvolgimento americano»**: bozza leggera (2 centesimi) e revisione fatte il 10 novembre, nell'esploratore.
-   Seconda revisione il 10 novembre: aggiunto l'estratto di Texty contro il punto 5; la ripresa della Berliner Zeitung
-   ha ora l'originale. Le sovvenzioni del NED 2013 non si trovano: la pagina dell'anno dà 404, l'archivio non ne ha
-   copia, la ricerca delle sovvenzioni non dà testo leggibile; la copia d'archivio trovata dallo scout parte dal 2014
-   (334 sovvenzioni, 22,4 milioni di dollari). Il punto sul finanziamento resta aperto. Da fare: l'originale di
-   conflictmanagement.ru, se esiste.
-4. **Difetti ancora aperti del giudizio e delle proposte**: le sintesi che leggono troppo (restano da controllare a mano);
-   il confronto delle affermazioni con i documenti primari del corpus; il giudice che dà voti diversi allo stesso
-   documento in due lingue.
-5. **Il primo inverno dell'IA**: rifatto il 10 novembre con la nuova graduatoria, solo sulle pagine mai viste (358, 0,08
-   dollari): le fonti di riferimento giudicate contributo passano da 4 a 6 su 20, ma le pagine nuove rendono poco (6
-   contributi su 184 giudicate). I riferimenti di Wikipedia servono ai nodi storici, non vanno messi davanti negli altri.
-   Il grafo delle citazioni non aveva fatto consultazioni (nessun DOI): ora cerca anche per titolo. Lo scaricamento una pagina alla volta prendeva
-   quasi tutto il tempo (3,2 secondi a pagina con molti siti diversi): dal 10 novembre anche lo scaricamento va in
-   parallelo (`JUDGE_PARALLEL=all`, mai due pagine dello stesso sito o servizio).
-6. Il resto:
-   - 21 novembre (promemoria già fissato): bilancio delle fonti in prova (la nuova misura di Brave non serve più);
-   - **motori e aggiornamento settimanale**: verificare nel pannello di Exa il costo vero per ricerca (decide metà della
-     proiezione) e provare 10 risultati contro 20; accendere il calendario del sabato (`automatico: true` in
-     `registry/nodi-attivi.json`, decisione della redazione); rifare la bozza leggera di un nodo quando la settimana porta
-     molti contributi (oggi entrano nel giudizio, non nel testo); quando un nodo esce dai nodi attivi;
-   - **crescita verso molti topic**, a tappe (10, 30, 100), misurando a ogni tappa il costo per 1.000 articoli e per nodo
-     e il lavoro della redazione; prima: archivio fuori da git, un server sempre acceso, un database;
-   - **nodi: scelta e linguaggio** (13 novembre, indicazioni della redazione). Le proposte di nodo dalle Matrici non
-     convincono: sono discrepanze di una settimana («quante TPU…», «quanti fermati…»), lontane dal lettore, scritte con
-     la voce media di un modello. Indicazioni: (1) un nodo è una controversia che dura e su cui si prende posizione; le
-     storie settimanali ne sono episodi, le discrepanze fatti da verificare dentro; (2) pochi nodi approfonditi, luoghi
-     scelti dove concentrare la partecipazione di una comunità ancora piccola; (3) la scelta pesa quanto un evento è
-     rilanciato (temperatura sui social, durata, vicinanza al lettore italiano), ma non dipende tutta dal trend: Ubik
-     deve anche creare eventi che meritano di essere rilanciati, e arrivare prima; (4) titolo e sintesi devono
-     agganciare: uno studio dedicato del linguaggio, capacità narrativa ed evocativa del marketing più raffinato, senza
-     falso allarmismo né clickbait; la domanda nel titolo non è obbligatoria; (5) nessuna redazione umana per ora: il
-     gusto della redazione entra attraverso le sue scelte (esempi, preferenze tra alternative) e le revisioni di Claude;
-   - **visibilità e parte gratuita** (da ragionare con la redazione): pagine dei nodi pubbliche, con data
-     d'aggiornamento, dati strutturati (`ClaimReview` per le verifiche: Fact Check Explorer di Google, chiave rinviata),
-     sitemap, crawler dei modelli ammessi; a pagamento il servizio (giornale completo, seguire un nodo, archivio,
-     avvisi). Dubbio aperto della redazione: se il nodo è una sintesi di fonti trovabili, un motore o un modello possono
-     rifarla da sé, e pubblicarlo cede le fonti trovate con fatica; da pesare contro il traffico e le citazioni. Leva:
-     i crawler che raccolgono per l'addestramento sono distinti da quelli che cercano per rispondere (OpenAI GPTBot e
-     OAI-SearchBot, Anthropic ClaudeBot e Claude-SearchBot, Google-Extended per Gemini senza toccare la ricerca): si può
-     chiudere l'addestramento e restare citabili; e pubblicare il nodo con le fonti principali tenendo riservati
-     l'archivio completo, i documenti estratti e lo storico;
-   - **il formato comune** (`docs/modello-dati.md`): fatti un documento-un pezzo (10 novembre) e il catalogo comune
-     delle fonti (11 novembre, `data/schede.json`, correzioni con `tools/schede.py`; 14 schede con valori discordi da
-     rivedere). Resta che le pipeline scrivano gli oggetti direttamente: si fa quando si prepara il sito; i nodi che ricevono come novità i pezzi delle Matrici; le proposte di
-     nodo dalle Matrici a ogni settimana nuova, e la costruzione dei nodi accettati;
-   - Telegram e Press corner: bilancio dopo due settimane (quanti post tenuti servono ai nodi e alle Matrici);
-     Novaya Gazeta Europe da ritrovare; l'API dei dati aperti del Parlamento (solo identificativi, un'interrogazione
-     per testo) da valutare;
-   - un modello locale per la prima scrematura, addestrato sulle decisioni registrate (serve qualche centinaio di
-     decisioni con il motivo e un computer con scheda grafica): rinviato dalla redazione a molto più avanti;
-   - le strade verso le fonti provate l'11 novembre, da decidere con la redazione: le decisioni provvisoriamente prese
-     da Claude sui documenti dei cinque nodi (21 da far entrare, 22 da lasciare fuori; 16 già confermate dalla redazione,
-     registrate il 12 novembre; le altre provvisorie confermate da Claude il 14 novembre per delega, con le 33 novità dei
-     quattro nodi: una sola lasciata alla redazione, il rapporto di Nord Stream AG ripreso da un sito bielorusso) e la loro integrazione nelle catene
-     e nei punti; gli originali che mancano (Bloomberg, Reuters, Wall Street Journal: a pagamento, titolo e data); gli
-     autori dei documenti trovati come voci candidate (bacino); lo stesso passo sulle newsletter e sui canali;
-     l'automazione della catena dopo ogni giornale (oggi `mode=tutto` su richiesta);
-   - registri e raccolta, ancora aperti dalla prima scheda del documento: le newsletter per le fonti bloccate (ILO, Eurofound, ETUI) e la redazione registrata come mittente delle
-     segnalazioni; i feed di EurekAlert, ANSA e SINC per il registro Scienza;
-   - prima del lancio pubblico: il diritto degli editori sugli estratti;
-   - feed fermi di ANSA, Corriere e Wired; variabilità del raggruppamento delle Matrici; simulazione della conservazione
-     dei testi (rinviata dalla redazione);
-   - da valutare alle stesse regole: Common Crawl, Wikidata, le raccomandazioni di Substack; GDELT accantonato finché
-     rifiuta i server di GitHub.
+Fuori da questa fase: strade di ricerca nuove, nuovi tipi di fonti, il modello locale, la crescita verso molti topic, il
+sito pubblico. Restano annotati per dopo: la visibilità e la parte gratuita, il diritto degli editori sugli estratti
+prima del lancio, gli originali a pagamento, le newsletter per le fonti bloccate, Common Crawl, Wikidata, Substack.
 
 ## 11. Come si lancia un'esecuzione
 
