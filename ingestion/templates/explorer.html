@@ -68,6 +68,9 @@ aside.toc a { display: block; padding: 3px 0 3px 10px; border-left: 2px solid va
 aside.toc a:hover { color: var(--ink); border-left-color: var(--muted) }
 aside.toc a.on { color: var(--accent); border-left-color: var(--accent); font-weight: 500 }
 .toc-row { display: none }
+#search { display: grid; gap: 4px }
+#search input { font: 400 14px var(--body); color: var(--ink); background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 7px 10px; width: 100% }
+mark { background: var(--accent-soft); color: inherit; padding: 0 1px; border-radius: 2px }
 main > * { min-width: 0 }
 .index a.brand { display: block; padding: 0; color: var(--ink) }
 .index a.brand:hover { background: none }
@@ -179,7 +182,9 @@ details > summary { cursor: pointer; font-weight: 600; padding: 4px 0 }
 
 <div class="topbar"><a class="brand" href="#cantiere">Ubik</a><button type="button" id="menu-btn" aria-expanded="false" aria-controls="index">Menu</button></div>
 <div class="shell" id="shell">
-  <nav class="index" id="index" aria-label="Sezioni"></nav>
+  <nav class="index" id="index" aria-label="Sezioni"><a class="brand" href="#cantiere">Ubik<small>Esploratore privato</small></a>
+    <form id="search" role="search"><label for="q" class="label">Cerca</label><input id="q" type="search" placeholder="Matrici, nodi, fonti…" autocomplete="off"></form>
+    <div id="tree" style="display:grid;gap:14px"></div></nav>
   <main id="view" tabindex="-1"></main>
   <aside class="toc" id="toc" aria-label="In questa pagina"></aside>
 </div>
@@ -431,8 +436,7 @@ function buildIndex() {
   }).join("") + (() => { const rest = nodes.filter(n => !NODE_GROUPS.some(([id]) => id === n.topic)); return rest.length ? `<li><details open><summary><span>Altri</span></summary><ul>${rest.map(nodeLink).join("")}</ul></details></li>` : ""; })();
   const archive = archived.length ? `<li><details${archived.some(n => cur === "#n-" + n.id) ? " open" : ""}><summary><span>Archivio</span><span class="k">${archived.length}</span></summary><ul>${archived.map(nodeLink).join("")}</ul></details></li>` : "";
   const props = (ia.nodi_proposti || []).filter(g => g.proposta).length;
-  $("#index").innerHTML = `
-    <a class="brand" href="#cantiere">Ubik<small>Esploratore privato</small></a>
+  $("#tree").innerHTML = `
     <div class="grp"><h4>Panoramica</h4><ul>${link("#cantiere", "Cantiere: tutti gli oggetti")}${link("#topic-ia", esc(ia.nome), "Topic")}</ul></div>
     <div class="grp"><h4>Giornale della settimana</h4><ul>${weeks}</ul></div>
     <div class="grp"><h4>Verso i nodi</h4><ul>${link("#storie", "Storie candidate a nodo", ia.graduatoria?.storie?.length || "")}${link("#proposte", "Nodi proposti dalle Matrici", props || "")}</ul></div>
@@ -635,25 +639,73 @@ function viewNode(id) {
   const n = D.nodi[id];
   if (!n) return notFound();
   const topic = D.topic[n.topic];
-  let body = "";
-  if (n.forma === "nodo leggero") body = nodeLight(n);
-  else if (n.forma === "catene e anelli" || n.tipo === "fatto") body = nodeFact(n);  // the architecture of every node since 6 November
-  else if (n.tipo === "affermazione") body = nodeClaim(n);
-  else if (n.tipo === "analisi") body = nodePositions(n);
-  else body = nodeClaim(n);
-  return `<div><div class="crumb">${topic ? `<a href="#topic-${esc(topic.id)}">${esc(topic.nome)}</a>` : "Banco di prova"} · ${esc(NODE_KIND[n.tipo] || "Nodo")}${n.forma && n.forma !== (NODE_KIND[n.tipo] || "").toLowerCase() ? " · " + esc(n.forma) : ""}</div>
+  const head = `<div><div class="crumb">${topic ? `<a href="#topic-${esc(topic.id)}">${esc(topic.nome)}</a>` : "Banco di prova"} · ${esc(n.forma === "nodo approfondito" ? "Nodo approfondito" : n.punti ? "Nodo" : (NODE_KIND[n.tipo] || "Nodo"))}${n.aggiornato ? ` · aggiornato il ${esc(fmtDay(n.aggiornato))}` : ""}</div>
     <h1>${esc(n.titolo)}</h1>${n.domanda !== n.titolo ? `<p class="lead">${esc(n.domanda)}</p>` : ""}
     ${n.archivio ? `<p class="muted" style="margin:8px 0 0;font-size:14px"><span class="chip">archivio</span> ${esc(n.archivio)}</p>` : ""}
-    ${n.artefatto ? `<p class="muted" style="margin:6px 0 0;font-size:13px">Pagina del prototipo: <a href="${esc(n.artefatto)}" target="_blank" rel="noopener">apri</a></p>` : ""}<div class="toc-row" style="margin-top:12px"></div></div>
-    ${body}
-    ${n.voci_social?.length ? `<section><h2>Voci dai social</h2><details class="panel"><summary>Voci dai social (${n.voci_social.length}): opinioni di persone, non resoconti né documenti; passate dai filtri di seguito, account e pertinenza</summary><div style="display:grid;gap:10px;margin-top:8px">${n.voci_social.map(x => `<div><div><a href="${esc(x.url)}" target="_blank" rel="noopener">${esc(x.nome || x.handle)}</a> <span class="muted" style="font-size:12px">${({mastodon: "Mastodon", telegram: "Telegram"})[x.rete] || "Bluesky"} · @${esc(x.handle)}${x.canale?.tipo ? " · canale: " + esc(x.canale.tipo) + (x.canale.di_chi ? ", " + esc(x.canale.di_chi) : "") : ""}$${x.competenza ? " · " + esc(x.competenza) : " · senza competenza dichiarata"}</span></div><div>${esc(x.posizione || "")}</div><div class="muted num" style="font-size:12px">${esc(x.data || "")} · ${x.rete === "telegram" ? esc(x.viste ?? 0) + " visualizzazioni · " + esc(x.mi_piace ?? 0) + " reazioni" : esc(x.mi_piace ?? 0) + " mi piace · " + esc(x.condivisioni ?? 0) + " condivisioni"} · ${esc(x.follower ?? 0)} follower${x.parti > 1 ? " · filo di " + esc(x.parti) + " post" : ""}</div></div>`).join("")}</div></details></section>` : ""}
-    ${n.fascicoli?.length ? `<section><h2>Atti delle cause</h2><details class="panel"><summary>Atti delle cause del nodo, scelti dai fascicoli (${n.fascicoli.length}): pareri, dichiarazioni di esperti, memorie, risposte alle citazioni; senza gli atti di procedura</summary><div style="display:grid;gap:6px;margin-top:8px">${n.fascicoli.map(x => `<div><span class="chip">${esc(x.tipo)}</span> ${docLink(x.pezzo)} <span class="muted num" style="font-size:12px">${esc(D.pezzi[x.pezzo]?.data || "")} · ${esc(x.parole)} parole</span></div>`).join("")}</div></details></section>` : ""}
-    ${n.documenti_proposti?.length ? `<section><h2>Documenti su cui poggiano le fonti</h2><p class="muted" style="margin:0;max-width:72ch">Le fonti del nodo descrivono ${esc(n.documenti_controllo.riferimenti)} documenti: ${esc(n.documenti_controllo.gia_nel_nodo)} sono già nel nodo, questi sono stati trovati e confermati ma non ci sono ancora.</p>
-      <div class="panel" style="display:grid;gap:10px">${n.documenti_proposti.map(x => `<div><div class="row"><strong>${docLink(x.pezzo)}</strong><span class="chip">${esc(x.tipo || "")}</span><span class="muted" style="font-size:13px">trovato ${esc({link: "nei link della fonte", corpus: "nel corpus", OpenAlex: "in OpenAlex", arXiv: "in arXiv"}[x.via] || x.via || "")}</span></div>
-        <div>${esc(x.descrizione || "")}</div>${x.descritto_da ? `<div class="muted" style="font-size:13px">Descritto da ${srcShort(x.descritto_da)}</div>` : ""}${decideBox(n.id, x, "documento")}</div>`).join("")}</div></section>` : ""}
-    ${n.nodi_collegati?.length ? `<div class="panel" data-toc="Nodi collegati"><span class="label">Nodi collegati</span>${n.nodi_collegati.map(x => `<div class="row" style="margin-top:6px"><a href="#n-${esc(x.nodo)}">${esc(D.nodi[x.nodo].titolo)}</a><span class="muted">${x.fonti_comuni.length} ${x.fonti_comuni.length === 1 ? "fonte" : "fonti"} in comune</span></div>`).join("")}</div>` : ""}
-    ${n.matrici?.length ? `<div class="panel" data-toc="Matrici collegate"><span class="label">Matrici collegate</span>${n.matrici.map(x => `<div class="row" style="margin-top:6px"><a href="#m-${esc(x.matrice)}">${esc(D.matrici[x.matrice].titolo)}</a><span class="muted">${x.fonti_comuni.length} fonti in comune</span></div>`).join("")}</div>` : ""}
-    <div class="panel" data-toc="Scheda di lavoro"><span class="label">Scheda di lavoro</span>${site(n.cantiere)}</div>`;
+    <div class="toc-row" style="margin-top:12px"></div></div>`;
+  if (!n.punti) return head + legacyNode(n);  // the archived prototypes keep their first form
+  return head + layeredNode(n);
+}
+// ---------- one structure for every node (15 November): what a reader sees on top, the workbench folded at the bottom
+function chainBlock(n, c) {
+  return `<div class="chain" style="margin-top:8px">${c.anelli.map(a => `<div class="ring"><div class="dot"></div><div>
+      <div class="row"><strong>${srcShort(a.pezzo)}</strong>${a.relazione ? relChip(a.relazione.tipo, a.relazione.verbo) : ""}</div>
+      <div>${esc(a.afferma)}</div>${a.citazione ? quote(a.citazione.testo, a.citazione.it) : ""}
+      ${a.relazione?.nota ? `<div class="muted" style="font-size:13px">${esc(a.relazione.nota)}</div>` : ""}
+      ${a.id && decisionOf(n.id, a) ? decideBox(n.id, a, "anello") : ""}</div></div>`).join("")}</div>
+    <div style="margin-top:4px"><span class="label">Sintesi della catena</span><div>${esc(c.sintesi)}</div></div>
+    ${c.scioglie ? `<div class="muted" style="font-size:14px;margin-top:6px"><span class="label">Cosa la scioglierebbe</span> ${esc(c.scioglie)}</div>` : ""}`;
+}
+function voiceLine(x) {
+  return `<div><div><a href="${esc(x.url)}" target="_blank" rel="noopener">${esc(x.nome || x.handle)}</a> <span class="muted" style="font-size:12px">${({mastodon: "Mastodon", telegram: "Telegram"})[x.rete] || "Bluesky"} · @${esc(x.handle)}${x.canale?.tipo ? " · canale: " + esc(x.canale.tipo) + (x.canale.di_chi ? ", " + esc(x.canale.di_chi) : "") : ""}${x.competenza ? " · " + esc(x.competenza) : " · senza competenza dichiarata"}</span></div><div>${esc(x.posizione || "")}</div><div class="muted num" style="font-size:12px">${esc(x.data || "")} · ${x.rete === "telegram" ? esc(x.viste ?? 0) + " visualizzazioni · " + esc(x.mi_piace ?? 0) + " reazioni" : esc(x.mi_piace ?? 0) + " mi piace · " + esc(x.condivisioni ?? 0) + " condivisioni"} · ${esc(x.follower ?? 0)} follower${x.parti > 1 ? " · filo di " + esc(x.parti) + " post" : ""}</div></div>`;
+}
+function layeredNode(n) {
+  const side = (label, s) => s ? `<div><span class="label">${esc(label)}</span><div class="muted" style="font-size:13px">${srcShort(s.pezzo)}</div>${s.citazione ? quote(s.citazione) : `<div class="muted" style="font-size:13px">citazione non mostrata</div>`}</div>` : "";
+  const chains = Object.fromEntries((n.catene || []).map(c => [c.id, c]));
+  const used = new Set(n.punti.flatMap(p => p.catene || []));
+  const loose = (n.catene || []).filter(c => !used.has(c.id));
+  const pending = pendingCount(n);
+  const since = n.aggiornato ? new Date(Date.parse(n.aggiornato) - 14 * 864e5).toISOString().slice(0, 10) : "";
+  const recent = (n.cambiato || []).filter(x => x.data && x.data >= since);  // the last two weeks of the node's life
+  const changed = recent.filter(x => x.dove !== "documenti"), newDocs = recent.length - changed.length;
+  const noS = s => String(s || "").replace(/\s*\((?:S\d+[a-z]?(?:,\s*)?)+\)/g, "");  // the draft's internal source codes (S1, S2…)
+  return `<div class="panel" data-toc="Stato della questione" style="display:grid;gap:10px"><span class="label">Stato della questione</span><div style="font-size:16px">${esc(noS(n.stato_testo))}</div>
+      ${(n.stato_fonti || []).filter(Boolean).map(s => `<div><div class="muted" style="font-size:13px">${srcShort(s.pezzo)}</div>${s.citazione ? quote(s.citazione) : ""}</div>`).join("")}</div>
+    ${changed.length || newDocs ? `<section><h2>Cosa è cambiato</h2><div class="panel" style="display:grid;gap:8px">${newDocs ? `<div class="muted" style="font-size:14px">${newDocs} documenti cardine aggiunti: sono nella sezione «Documenti cardine».</div>` : ""}${changed.map(x => `<div><div class="row"><span class="num muted" style="font-size:13px">${esc(fmtDay(x.data))}</span>${x.pezzo ? `<span style="font-size:13px">${srcShort(x.pezzo)}</span>` : ""}${x.dove ? `<span class="chip">${esc(x.dove)}</span>` : ""}</div><div>${esc(x.testo || "")}</div></div>`).join("")}</div></section>` : ""}
+    <section><h2>Punti del contendere</h2>${n.punti.map((p, i) => `<div class="panel" style="display:grid;gap:10px">
+      <div class="row"><h3>${i + 1}. ${esc(p.affermazione)}</h3><span class="chip ${p.esito === "accertato" || p.esito === "smentito" ? "rel-dichiarata" : ""}">${esc(OUTCOME[p.esito] || p.esito)}</span>
+        ${p.verifica === "da rivedere" ? `<span class="chip rel-simulata">da rivedere</span>` : ""}</div>
+      ${side("A favore", p.a_favore)}${side("Contro", p.contro)}
+      ${p.poggia && p.poggia.pezzo !== p.a_favore?.pezzo && p.poggia.pezzo !== p.contro?.pezzo ? side("Su che cosa poggia l'esito", p.poggia) : (p.poggia ? `<div class="muted" style="font-size:13px">L'esito poggia su: ${srcShort(p.poggia.pezzo)}</div>` : "")}
+      ${p.deciderebbe ? `<div><span class="label">Che cosa deciderebbe</span><div>${esc(p.deciderebbe)}</div></div>` : ""}
+      ${p.nota ? `<div class="muted" style="font-size:13px">${esc(p.nota)}</div>` : ""}
+      ${(p.anche || []).length ? `<details><summary>Altre fonti nel punto (${p.anche.length})</summary><div style="display:grid;gap:8px;margin-top:8px">${p.anche.map(a => side({favore: "Anche a favore", contro: "Anche contro"}[a.lato] || "Contesto", a) + (a.perche ? `<div class="muted" style="font-size:13px">${esc(a.perche)}</div>` : "")).join("")}</div></details>` : ""}
+      ${(p.catene || []).filter(c => chains[c]).map(c => `<details><summary>Catena delle fonti: ${esc(chains[c].titolo)} (${chains[c].anelli.length} anelli, ${esc(chains[c].stato)})</summary>${chainBlock(n, chains[c])}</details>`).join("")}
+      ${p.id && decisionOf(n.id, p) ? decideBox(n.id, p, "punto") : ""}</div>`).join("")}</section>
+    ${loose.length ? `<section><h2>Altre catene</h2>${loose.map(c => `<details class="panel"><summary>${esc(c.titolo)} (${c.anelli.length} anelli, ${esc(c.stato)})</summary><div class="muted">${esc(c.domanda)}</div>${chainBlock(n, c)}</details>`).join("")}</section>` : ""}
+    ${n.documenti?.length ? `<section><h2>Documenti cardine</h2><div class="panel" style="display:grid;gap:8px">${n.documenti.map(d => `<div><strong>${srcShort(d.pezzo)}</strong><div class="muted" style="font-size:14px">${esc(d.perche || "")}</div></div>`).join("")}</div></section>` : ""}
+    ${n.voci_social?.length ? `<section><h2>Voci dai social</h2><details class="panel"><summary>${n.voci_social.length} voci: opinioni di persone, non resoconti né documenti</summary><div style="display:grid;gap:10px;margin-top:8px">${n.voci_social.map(voiceLine).join("")}</div></details></section>` : ""}
+    ${n.matrici?.length || n.nodi_collegati?.length ? `<section><h2>Collegamenti</h2><div class="panel" style="display:grid;gap:6px">
+      ${(n.matrici || []).map(x => `<div class="row"><span class="chip">Matrice</span><a href="#m-${esc(x.matrice)}">${esc(D.matrici[x.matrice]?.titolo || x.matrice)}</a><span class="muted" style="font-size:13px">${esc(D.matrici[x.matrice] ? weekLabel(D.matrici[x.matrice].settimana) : "")} · ${x.fonti_comuni.length} fonti in comune</span></div>`).join("")}
+      ${(n.nodi_collegati || []).map(x => `<div class="row"><span class="chip">Nodo</span><a href="#n-${esc(x.nodo)}">${esc(D.nodi[x.nodo].titolo)}</a><span class="muted" style="font-size:13px">${x.fonti_comuni.length} ${x.fonti_comuni.length === 1 ? "fonte" : "fonti"} in comune</span></div>`).join("")}</div></section>` : ""}
+    ${n.approfondire?.length ? `<section><h2>Per approfondire</h2><details class="panel"><summary>${n.approfondire.length}${n.approfondire_totale > n.approfondire.length ? " dei " + n.approfondire_totale : ""} contributi non usati nei punti</summary>${n.approfondire.map(p => srcLine(p)).join("")}</details></section>` : ""}
+    <section data-toc="Cantiere"><h2>Cantiere</h2><details class="panel"${pending ? " open" : ""}><summary>Decisioni, proposte, atti e scheda di lavoro${pending ? ` · ${pending} da decidere` : ""}</summary><div style="display:grid;gap:18px;margin-top:10px">
+      ${n.novita?.length ? `<div><h3>Novità</h3><div style="display:grid;gap:10px;margin-top:8px">${n.novita.map(x => `<div><div class="row"><strong>${srcShort(x.pezzo)}</strong><span class="chip">${esc(x.lato || "")}</span><span class="muted">${esc(x.trovata || "")}</span></div><div>${esc(x.contributo || "")}</div>${x.citazione ? quote(x.citazione) : ""}${x.id ? decideBox(n.id, x, "novita") : ""}</div>`).join("")}</div></div>` : ""}
+      ${n.documenti_proposti?.length ? `<div><h3>Documenti su cui poggiano le fonti</h3><p class="muted" style="margin:4px 0 8px;font-size:14px">Trovati e confermati: ${esc(n.documenti_controllo?.riferimenti ?? "")} descritti dalle fonti, ${esc(n.documenti_controllo?.gia_nel_nodo ?? "")} già nel nodo.</p><div style="display:grid;gap:10px">${n.documenti_proposti.map(x => `<div><div class="row"><strong>${docLink(x.pezzo)}</strong><span class="chip">${esc(x.tipo || "")}</span></div><div>${esc(x.descrizione || "")}</div>${x.descritto_da ? `<div class="muted" style="font-size:13px">Descritto da ${srcShort(x.descritto_da)}</div>` : ""}${decideBox(n.id, x, "documento")}</div>`).join("")}</div></div>` : ""}
+      ${proposalsSection(n)}
+      ${n.fascicoli?.length ? `<div><h3>Atti delle cause</h3><div style="display:grid;gap:6px;margin-top:8px">${n.fascicoli.map(x => `<div><span class="chip">${esc(x.tipo)}</span> ${docLink(x.pezzo)} <span class="muted num" style="font-size:12px">${esc(D.pezzi[x.pezzo]?.data || "")} · ${esc(x.parole)} parole</span></div>`).join("")}</div></div>` : ""}
+      ${n.sotto_domande?.length ? `<div><h3>Sotto-domande da cui è partita la ricerca</h3><ul>${n.sotto_domande.map(s => `<li><strong>${esc(s.titolo)}</strong>: ${esc(s.domanda)}</li>`).join("")}</ul></div>` : ""}
+      ${n.aperte?.length ? `<div><h3>Domande aperte</h3><ul>${n.aperte.map(x => `<li>${esc(x)}</li>`).join("")}</ul></div>` : ""}
+      ${n.decisioni?.length ? `<div><h3>Decisioni della redazione sulla bozza</h3><ul>${n.decisioni.map(d => `<li><strong>${esc(d.point)}</strong>: ${esc(d.decision)}. <span class="muted">${esc(d.why)}</span></li>`).join("")}</ul></div>` : ""}
+      <div><h3>Scheda di lavoro</h3>${site(n.cantiere)}${n.origine ? `<p class="muted" style="font-size:13px;margin:6px 0 0">Origine: ${esc(n.origine)}</p>` : ""}</div>
+    </div></details></section>`;
+}
+function legacyNode(n) {
+  let body = "";
+  if (n.forma === "catene e anelli" || n.tipo === "fatto") body = nodeFact(n);
+  else if (n.tipo === "analisi") body = nodePositions(n);
+  else body = nodeClaim(n);
+  return body + `<div class="panel" data-toc="Scheda di lavoro"><span class="label">Scheda di lavoro</span>${site(n.cantiere)}</div>`;
 }
 function rootText(items, fmt) {
   return `<section><h2>Da dove parte tutto</h2><div class="panel" style="display:grid;gap:12px">${items.map(fmt).join("")}</div></section>`;
@@ -738,6 +790,23 @@ function viewVoices() {
       <td>${esc(v.ruolo)}</td><td class="muted">${esc(v.posizione)}</td><td><div class="row" style="gap:4px">${v.canali.map(ch).join("")}</div></td></tr>`).join("")}
     </tbody></table></div>`;
 }
+let SEARCH = "";
+function viewSearch() {
+  const q = SEARCH.trim();
+  const words = q.toLowerCase().split(/\s+/).filter(w => w.length > 1);
+  const hit = s => { const l = String(s || "").toLowerCase(); return words.length && words.every(w => l.includes(w)); };
+  const mark = s => { let out = esc(s || ""); for (const w of words) out = out.replace(new RegExp("(" + w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + ")", "ig"), "<mark>$1</mark>"); return out; };
+  if (!words.length) return `<div><div class="crumb">Ricerca</div><h1>Cerca</h1><p class="lead">Scrivi nel campo «Cerca» del menù: una o più parole, cercate nei titoli e nei testi di Matrici, nodi e fonti.</p></div>`;
+  const nodes = Object.values(D.nodi).filter(n => hit([n.titolo, n.domanda, n.stato_testo, ...(n.punti || []).map(p => p.affermazione)].join(" ")));
+  const mats = Object.values(D.matrici).filter(m => hit([m.titolo, m.essenza, ...m.card.map(c => (c.titolo || "") + " " + (c.testo || ""))].join(" ")))
+    .sort((a, b) => (b.settimana || "").localeCompare(a.settimana || ""));
+  const srcs = Object.entries(D.pezzi).filter(([k, p]) => hit([p.titolo, p.testata].join(" "))).slice(0, 60);
+  return `<div><div class="crumb">Ricerca</div><h1>«${esc(q)}»</h1><p class="lead">${nodes.length} nodi, ${mats.length} Matrici, ${srcs.length >= 60 ? "più di 60" : srcs.length} fonti.</p><div class="toc-row"></div></div>
+    ${nodes.length ? `<section><h2>Nodi</h2><div class="grid">${nodes.map(nodeCard).join("")}</div></section>` : ""}
+    ${mats.length ? `<section><h2>Matrici</h2><div class="panel" style="display:grid;gap:10px">${mats.slice(0, 60).map(m => `<div><a href="#m-${esc(m.id)}">${mark(m.titolo)}</a> <span class="muted" style="font-size:13px">${esc(SUB[m.sottotopic] || m.sottotopic)} · ${esc(weekLabel(m.settimana))}</span><div class="muted" style="font-size:14px">${mark(m.essenza)}</div></div>`).join("")}</div></section>` : ""}
+    ${srcs.length ? `<section><h2>Fonti</h2><div class="panel">${srcs.map(([k, p]) => `<div class="src"><div class="title">${p.url ? `<a href="${esc(p.url)}" target="_blank" rel="noopener">${mark(p.titolo || p.url)}</a>` : mark(p.titolo)}</div><div class="meta">${[p.testata, p.data].filter(Boolean).map(esc).join(" · ")}${(p.usato_in || []).length ? " · in " + p.usato_in.slice(0, 3).map(u => u.tipo === "nodo" ? `<a href="#n-${esc(u.id)}">${esc(D.nodi[u.id]?.titolo || u.id)}</a>` : `<a href="#m-${esc(u.id)}">${esc(D.matrici[u.id]?.titolo || u.id)}</a>`).join(", ") : ""}</div></div>`).join("")}</div></section>` : ""}
+    ${!nodes.length && !mats.length && !srcs.length ? `<div class="empty">Nessun risultato: prova con meno parole o con un nome.</div>` : ""}`;
+}
 function notFound() { return `<h1>Pagina non trovata</h1><p><a href="#cantiere">Torna al cantiere</a></p>`; }
 
 function render() {
@@ -752,6 +821,7 @@ function render() {
   else if (h === "proposte") html = viewProposte();
   else if (h === "topic-euromaidan") html = viewTopicEM();
   else if (h === "voci") html = viewVoices();
+  else if (h === "cerca") html = viewSearch();
   else if (h.startsWith("m-")) html = viewMatrix(h.slice(2));
   else if (h.startsWith("n-")) html = viewNode(h.slice(2));
   else html = notFound();
@@ -772,6 +842,13 @@ function setMenu(open) {
 document.addEventListener("input", e => {
   const box = e.target.closest(".decide");
   if (box && e.target.tagName === "TEXTAREA") DRAFT[box.dataset.k] = e.target.value;
+});
+document.addEventListener("submit", e => {
+  if (e.target.id !== "search") return;
+  e.preventDefault();
+  SEARCH = $("#q").value;
+  setMenu(false);
+  if (location.hash === "#cerca") { render(); window.scrollTo(0, 0); } else location.hash = "cerca";
 });
 document.addEventListener("change", e => {
   if (e.target.id === "week-pick") { const sub = (location.hash.match(/--(.+)$/) || [])[1]; location.hash = gHref(e.target.value, subsOf(e.target.value).includes(sub) ? sub : undefined).slice(1); }
