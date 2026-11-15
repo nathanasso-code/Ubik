@@ -406,6 +406,15 @@ L'elenco unico di Ubik: ciò che è fatto, in corso e da fare. Aggiornato il 13 
 
 **Fatto di recente**
 
+- 15 novembre: **quello che si è fatto a mano su Nord Stream, ora per ogni nodo attivo, ogni settimana**. Già
+  automatici: la catena con i doveri nuovi (tutta la storia, testo integrale), le strade verso i tribunali UE, Telegram
+  e gli articoli segnalati dalle testate, le voci da Bluesky, Mastodon e Telegram con l'altra parte, l'archivio. Aggiunti
+  oggi all'aggiornamento settimanale: i documenti su cui poggiano le fonti (`node_refs.py`: sentenze, rapporti, leggi,
+  CourtListener, link nel testo) e le novità della settimana nella bozza del nodo (`light_node.py update`). Tetto della
+  settimana portato a 4 dollari (massimo teorico 3,5 per quattro nodi a due giri; la prima settimana reale è costata
+  0,66). Restano fuori dall'automatico: la misura contro Wikipedia e Fable (è un banco di prova, non serve a ogni
+  nodo), la nascita dei nodi nuovi (rinviata ai criteri nuovi di scelta), le decisioni sulle novità (Claude, nelle
+  sessioni, per delega) e l'accensione del calendario (redazione).
 - 14 novembre: **delega della redazione a Claude**. Le fonti da esaminare sono troppe per la redazione: Claude decide
   in autonomia su fonti, documenti, novità dei nodi, canali e voci, e porta alla redazione solo i casi più dubbi.
   Confermate e registrate nei nodi le 140 decisioni provvisorie di Claude sui documenti (fair use, data center,
