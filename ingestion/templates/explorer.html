@@ -421,7 +421,7 @@ function buildIndex() {
     return `<li><details data-week="${esc(w)}"${open ? " open" : ""}><summary><span>${esc(weekLabel(w))}</span>${i === 0 ? `<span class="latest">ultima</span>` : `<span class="k">${n}</span>`}</summary>
       <ul>${subsOf(w).map(s => link(gHref(w, s), esc(SUB[s] || s), issueOf(w, s).matrici.length)).join("")}</ul></details></li>`;
   }).join("");
-  const nodes = Object.values(D.nodi);
+  const nodes = Object.values(D.nodi).filter(n => !n.archivio), archived = Object.values(D.nodi).filter(n => n.archivio);
   const nodeLink = n => { const k = pendingCount(n); return link("#n-" + esc(n.id), esc(n.titolo.length > 46 ? n.titolo.slice(0, 44) + "…" : n.titolo), k ? k + " da decidere" : "", "todo"); };
   const groups = NODE_GROUPS.map(([id, name]) => {
     const list = nodes.filter(n => n.topic === id);
@@ -429,13 +429,14 @@ function buildIndex() {
     return `<li><details open><summary><span>${esc(name)}</span><span class="k">${list.length}</span></summary><ul>
       ${id === "euromaidan" ? link("#topic-euromaidan", "Mappa del Topic") : ""}${list.map(nodeLink).join("")}</ul></details></li>`;
   }).join("") + (() => { const rest = nodes.filter(n => !NODE_GROUPS.some(([id]) => id === n.topic)); return rest.length ? `<li><details open><summary><span>Altri</span></summary><ul>${rest.map(nodeLink).join("")}</ul></details></li>` : ""; })();
+  const archive = archived.length ? `<li><details${archived.some(n => cur === "#n-" + n.id) ? " open" : ""}><summary><span>Archivio</span><span class="k">${archived.length}</span></summary><ul>${archived.map(nodeLink).join("")}</ul></details></li>` : "";
   const props = (ia.nodi_proposti || []).filter(g => g.proposta).length;
   $("#index").innerHTML = `
     <a class="brand" href="#cantiere">Ubik<small>Esploratore privato</small></a>
     <div class="grp"><h4>Panoramica</h4><ul>${link("#cantiere", "Cantiere: tutti gli oggetti")}${link("#topic-ia", esc(ia.nome), "Topic")}</ul></div>
     <div class="grp"><h4>Giornale della settimana</h4><ul>${weeks}</ul></div>
     <div class="grp"><h4>Verso i nodi</h4><ul>${link("#storie", "Storie candidate a nodo", ia.graduatoria?.storie?.length || "")}${link("#proposte", "Nodi proposti dalle Matrici", props || "")}</ul></div>
-    <div class="grp"><h4>Nodi</h4><ul>${groups}</ul></div>
+    <div class="grp"><h4>Nodi</h4><ul>${groups}${archive}</ul></div>
     <div class="grp"><h4>Fonti</h4><ul>${link("#voci", "Registro delle voci", D.voci.length)}</ul></div>`;
 }
 
@@ -532,7 +533,7 @@ function studyLine(x) {
 }
 function viewTopicIA() {
   const t = D.topic.ia;
-  const nodes = t.nodi.map(id => D.nodi[id]);
+  const nodes = t.nodi.map(id => D.nodi[id]).filter(n => n && !n.archivio);
   const props = (t.nodi_proposti || []).filter(g => g.proposta).length;
   return `<div><div class="crumb">Topic d'attualità</div><h1>${esc(t.nome)}</h1><p class="lead">${esc(t.perimetro)}</p><div class="toc-row"></div></div>
     <div class="stats">
@@ -642,6 +643,7 @@ function viewNode(id) {
   else body = nodeClaim(n);
   return `<div><div class="crumb">${topic ? `<a href="#topic-${esc(topic.id)}">${esc(topic.nome)}</a>` : "Banco di prova"} · ${esc(NODE_KIND[n.tipo] || "Nodo")}${n.forma && n.forma !== (NODE_KIND[n.tipo] || "").toLowerCase() ? " · " + esc(n.forma) : ""}</div>
     <h1>${esc(n.titolo)}</h1>${n.domanda !== n.titolo ? `<p class="lead">${esc(n.domanda)}</p>` : ""}
+    ${n.archivio ? `<p class="muted" style="margin:8px 0 0;font-size:14px"><span class="chip">archivio</span> ${esc(n.archivio)}</p>` : ""}
     ${n.artefatto ? `<p class="muted" style="margin:6px 0 0;font-size:13px">Pagina del prototipo: <a href="${esc(n.artefatto)}" target="_blank" rel="noopener">apri</a></p>` : ""}<div class="toc-row" style="margin-top:12px"></div></div>
     ${body}
     ${n.voci_social?.length ? `<section><h2>Voci dai social</h2><details class="panel"><summary>Voci dai social (${n.voci_social.length}): opinioni di persone, non resoconti né documenti; passate dai filtri di seguito, account e pertinenza</summary><div style="display:grid;gap:10px;margin-top:8px">${n.voci_social.map(x => `<div><div><a href="${esc(x.url)}" target="_blank" rel="noopener">${esc(x.nome || x.handle)}</a> <span class="muted" style="font-size:12px">${({mastodon: "Mastodon", telegram: "Telegram"})[x.rete] || "Bluesky"} · @${esc(x.handle)}${x.canale?.tipo ? " · canale: " + esc(x.canale.tipo) + (x.canale.di_chi ? ", " + esc(x.canale.di_chi) : "") : ""}$${x.competenza ? " · " + esc(x.competenza) : " · senza competenza dichiarata"}</span></div><div>${esc(x.posizione || "")}</div><div class="muted num" style="font-size:12px">${esc(x.data || "")} · ${x.rete === "telegram" ? esc(x.viste ?? 0) + " visualizzazioni · " + esc(x.mi_piace ?? 0) + " reazioni" : esc(x.mi_piace ?? 0) + " mi piace · " + esc(x.condivisioni ?? 0) + " condivisioni"} · ${esc(x.follower ?? 0)} follower${x.parti > 1 ? " · filo di " + esc(x.parti) + " post" : ""}</div></div>`).join("")}</div></details></section>` : ""}
