@@ -918,9 +918,18 @@ forma definitiva e automatica)
    - 15 workflow di esperimenti chiusi in `.github/workflows-archivio/` (ne restano 16).
    Resta: il rodaggio, cioè un sabato sorvegliato con il ciclo intero, e poi l'accensione del calendario
    (`automatico: true`, decisione della redazione).
-3. **L'esploratore nella forma finale**: un solo formato di nodo (stato, punti con le due parti, documenti cardine,
-   voci, cosa è cambiato; le catene come approfondimento); «cosa è cambiato questa settimana» con la data; i legami tra
-   Matrici e nodi nei due sensi; sopra ciò che vede un lettore, sotto, chiuso, il cantiere; una ricerca testuale.
+3. **L'esploratore nella forma finale.** Fatto il 15 novembre:
+   - una sola pagina per ogni nodo, a strati: lo stato della questione; cosa è cambiato nelle ultime due settimane
+     (novità collocate, punti nuovi, documenti aggiunti); i punti del contendere con le due parti, su che cosa poggia
+     l'esito e, per i nodi approfonditi, la catena di fonti che lo dimostra, sotto il punto; i documenti cardine; le
+     voci; i collegamenti con Matrici e nodi; le fonti per approfondire; in fondo, chiuso, il cantiere (novità e documenti
+     da decidere, proposte, atti, sotto-domande, scheda di lavoro), aperto solo quando c'è qualcosa da decidere;
+   - la profondità è il lavoro fatto sul nodo, non un formato: fair use e Maidan («nodi approfonditi») hanno ora stato e
+     punti in testa (per Maidan scritti da Claude dalle sue quattro catene), con le catene agganciate ai punti;
+     `build_model.py` unisce la bozza (`light.json`, i punti con `chains`) e le catene; i prototipi in archivio restano
+     nella forma di allora;
+   - una ricerca testuale su Matrici, nodi e fonti, nel menù;
+   - i codici interni delle fonti (S1, S2…) tolti dal testo mostrato.
 4. **Lo studio sul linguaggio** (indicazioni della redazione del 13 novembre): un banco di 30 titoli e sintesi reali con
    varianti in registri diversi, le scelte a coppie della redazione salvate, una guida di stile ricavata dalle scelte e
    messa nei prompt; lo stesso metodo per i criteri di scelta dei nodi, sulle 17 proposte delle Matrici.
