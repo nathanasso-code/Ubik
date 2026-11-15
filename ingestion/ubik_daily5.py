@@ -60,13 +60,24 @@ def partial_text(it):
         or len(it["text"].split()) < 200
 
 
-def admits(keep):
+BIG_STORY_ORIGINS = 10  # a story told by this many outlets is the week's news even when most of them touch the sub-topic only in part
+
+
+def admits(keep, items=None):
     """A matrice stays in a sub-topic only if at least two of its items, and at least half, are mainly about that
     sub-topic ("yes"). Items only partly about the sub-topic can join a matrice but cannot carry one. Applied inside the
-    build, before the titles, so refused matrici cost nothing to write."""
+    build, before the titles, so refused matrici cost nothing to write.
+
+    15 November 2026: the week's biggest story (Jensen Huang leaving Nvidia, 73 articles from 25 outlets) was refused by
+    every sub-topic, because most articles touched the economy of AI only in part (21 mainly, 46 in part), and did not
+    appear in the newspaper. A story from at least BIG_STORY_ORIGINS outlets now stays when at least five of its items,
+    and a quarter, are mainly about the sub-topic: it lands where it belongs most and not in the others."""
     def ok(m):
         ys = sum(keep[i]["in_perimeter"] == "yes" for i in m["items"])
-        return ys >= 2 and ys * 2 >= len(m["items"])
+        if ys >= 2 and ys * 2 >= len(m["items"]):
+            return True
+        origins = {(items.get(i) or {}).get("origin") or (items.get(i) or {}).get("source_id") for i in m["items"]} if items else set()
+        return len(origins) >= BIG_STORY_ORIGINS and ys >= 5 and ys * 4 >= len(m["items"])
     return ok
 
 
@@ -218,7 +229,7 @@ def main(selection_path, out_dir):
         if len(keep) < 2:
             continue
         try:
-            d4.build(keep, items, out, old, p_group, h_group, p_write, admit=admits(keep))
+            d4.build(keep, items, out, old, p_group, h_group, p_write, admit=admits(keep, items))
         except Exception as exc:
             out["errors"].append({"stage": "build", "error": f"{type(exc).__name__}: {exc}"[:300]})
             path.write_text(json.dumps(out, ensure_ascii=False, indent=1) + "\n")
