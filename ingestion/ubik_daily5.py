@@ -228,11 +228,20 @@ def main(selection_path, out_dir):
                 keep[iid] = {**n, "in_perimeter": t}
         if len(keep) < 2:
             continue
-        try:
-            d4.build(keep, items, out, old, p_group, h_group, p_write, admit=admits(keep, items))
-        except Exception as exc:
-            out["errors"].append({"stage": "build", "error": f"{type(exc).__name__}: {exc}"[:300]})
-            path.write_text(json.dumps(out, ensure_ascii=False, indent=1) + "\n")
+        for attempt in range(2):  # 15 November: a truncated model answer lost a whole sub-topic; one more try, then the old file stays
+            try:
+                d4.build(keep, items, out, old, p_group, h_group, p_write, admit=admits(keep, items))
+                break
+            except Exception as exc:
+                out["errors"].append({"stage": "build", "attempt": attempt + 1, "error": f"{type(exc).__name__}: {exc}"[:300]})
+                out.update({"matrici": [], "singles": [], "log": []})
+        else:
+            if old.get("status") != "completed":  # never overwrite a completed sub-topic with a failed one
+                path.write_text(json.dumps(out, ensure_ascii=False, indent=1) + "\n")
+            else:
+                index["topics"][key] = {"name": name, "items": len(keep), "yes": sum(n["in_perimeter"] == "yes" for n in keep.values()),
+                                        "summary": old.get("summary"), "cost": old.get("cost", {}), "kept_from_previous_run": True,
+                                        "matrici": [{"title": m["title"], "items": len(m["items"]), "origins": len(m["origins"])} for m in old.get("matrici", [])]}
             continue
         topic_filter(out, keep, items)
         out["total_cost_usd"] = sum(out["cost"].values())
