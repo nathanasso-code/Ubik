@@ -473,6 +473,11 @@ Casa Bianca su Hersh), le indagini e gli arresti in Germania e Polonia, i dettag
 l'ONU. Costo: 0,62 dollari la catena, 0,70 le due misure. In sostanza: un nodo nato da solo arriva in quattro giri al
 livello del dossier di Fable; servono più giri, o una catena che chieda esplicitamente le posizioni delle parti, per
 arrivare al nodo seguito a mano. Mancava la strada Telegram (l'avvio non scriveva le ricerche per Telegram): aggiunta.
+Due giri in più con i doveri nuovi della catena (sentire ogni parte con le sue parole; non ricercare due volte invano lo
+stesso documento) e con il piano che riprova quando riscrive ricerche già fatte (al quinto giro su 59 proposte 30 erano
+ripetute: per questo le ricerche calavano da 30 a 4): 247 documenti, Wikipedia 57 su 93 (prima 54), Fable 64 su 90
+(prima 62), circa 0,25 dollari. Restano fuori soprattutto le indagini e gli arresti in Germania e Polonia, le
+dichiarazioni di Kyiv e della Casa Bianca, i dettagli tecnici.
 
 ## 9. Giudizio e indicazioni
 
