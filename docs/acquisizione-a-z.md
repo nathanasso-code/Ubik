@@ -478,6 +478,14 @@ stesso documento) e con il piano che riprova quando riscrive ricerche già fatte
 ripetute: per questo le ricerche calavano da 30 a 4): 247 documenti, Wikipedia 57 su 93 (prima 54), Fable 64 su 90
 (prima 62), circa 0,25 dollari. Restano fuori soprattutto le indagini e gli arresti in Germania e Polonia, le
 dichiarazioni di Kyiv e della Casa Bianca, i dettagli tecnici.
+Due giri che seguono le fonti del nodo (i link nei loro testi, strada `fonti`; i documenti che descrivono come prova,
+`node_refs.py` dopo ogni giro, strada `riferimenti`, e quelli non trovati passati al piano): 314 documenti, circa 0,55
+dollari. Poi la misura corretta: le parole delle affermazioni ora anche nelle lingue dei nodi (tedesco, svedese, danese,
+polacco, russo, ucraino), le stesse per i due nodi, perché fatti che il nodo aveva in pagine tedesche o svedesi venivano
+contati assenti. Con la misura corretta: nodo a mano 75 affermazioni di Wikipedia su 93, nodo nato dalla sola domanda
+68 (Fable 52). La distanza scende da 15 a 7; ognuno ha affermazioni che l'altro non ha (il nodo a mano 14, quello dalla
+domanda 7). Il passaggio sui documenti citati ha elencato circa 1.000 riferimenti ma ne ha cercati pochi (budget speso
+nella lettura): da separare.
 
 ## 9. Giudizio e indicazioni
 
