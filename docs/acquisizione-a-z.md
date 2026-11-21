@@ -521,6 +521,19 @@ L'elenco unico di Ubik: ciò che è fatto, in corso e da fare. Aggiornato il 15 
 
 **Fatto di recente**
 
+- 21 novembre: **bilancio delle fonti in prova dopo due settimane** (attività programmata del 7 novembre;
+  `ubik-corpus/reports/fonti/bilancio-prova-2026-11-21.md`, gratuito). 101 fonti dei tre registri in prova: per ciascuna
+  raccolti dal 7 novembre, testi, pertinenza all'IA per codice, ingresso nelle Matrici della settimana del 2 novembre
+  (l'unica con tutte le fonti), uso nei nodi. Proposte: 20 da promuovere (BBC, Scientific American, Semafor, CNBC,
+  Futurism, Pew, Authors Alliance, FAI, Publishing Perspectives, CCIA; i Studiosi dei nodi, arXiv cs.AI e cs.LG; EUR-Lex,
+  Press corner, AI Security Institute, Hugging Face, DeepMind, NVIDIA, Google) perché hanno dato contributi ai nodi o
+  pezzi alle Matrici; 2 da correggere (Microsoft AI blog senza voci; OpenAI notizie con 1.200 voci e nessun testo); le
+  altre 79 in prova. Promuovere il feed conta perché il giornale legge solo gli approvati: nella settimana del 9
+  novembre nessuna di queste fonti vi è entrata, anche quando il sito era già approvato in `siti.json`. La misura non
+  dice ancora nulla delle testate italiane e dei feed di tutto il sito, arrivati dopo la settimana del 2 novembre. La
+  misura di Brave prevista con il bilancio non si ripete: Brave è accantonato dal 13 novembre. In attesa: l'applicazione
+  delle promozioni (delega a Claude) e, per misurare le fonti nuove, un giornale di confronto con tutte le fonti su una
+  settimana (circa 1 dollaro, decisione della redazione).
 - 15 novembre: **giornale della settimana dal 9 novembre** (936 articoli, 23 Matrici, 1,09 dollari: regole 7, data
   center ed energia 9, economia 5, lavoro e diritto d'autore 1 ciascuno) e **prova pulita di Nord Stream** (sezione 8):
   dalla sola domanda, in quattro giri, 54 affermazioni di Wikipedia su 93 (a mano 69, Fable 52). Correzioni: il primo
@@ -798,7 +811,7 @@ L'elenco unico di Ubik: ciò che è fatto, in corso e da fare. Aggiornato il 15 
   - **Istituzioni e siti citati dalle fonti** (`reports/fonti/istituzioni-candidate.md`): i siti dei documenti
     confermati non ancora nei registri e le istituzioni nominate da almeno tre testate (Goldman Sachs, Gartner, Apollo,
     McKinsey, Wood Mackenzie, Öko-Institut, Tech Oversight Project…). Nessuna fonte aggiunta: l'elenco va alla redazione,
-    con il bilancio delle fonti in prova del 21 novembre.
+    con il bilancio delle fonti in prova del 21 novembre (fatto: `reports/fonti/bilancio-prova-2026-11-21.md`).
 - 10 novembre: **segnalazioni** (`tools/segnalazione.py`, workflow `segnalazione.yml`: un testo in
   `runs/segnalazioni/`). Il testo non diventa una fonte (se ne tiene l'impronta): il modello elenca i riferimenti che
   descrive, il codice li cerca nell'indice del corpus e dice dove sono usati, poi in OpenAlex e arXiv. «Trovato» solo con
@@ -823,7 +836,7 @@ L'elenco unico di Ubik: ciò che è fatto, in corso e da fare. Aggiornato il 15 
   descrive, poi OpenAlex e arXiv per studi e benchmark; il modello conferma il candidato. Prova sulla settimana del 2
   novembre: 528 riferimenti presi in esame, 304 senza alcun candidato, 224 confermati o respinti, 43 trovati (34 dai link
   degli articoli, 9 da OpenAlex), 6 centesimi. Il terzo passo, Brave per i rapporti senza titolo né link degli
-  articoli nelle Matrici, è da decidere dopo il bilancio di Brave del 21 novembre.
+  articoli nelle Matrici, era da decidere dopo il bilancio di Brave del 21 novembre, che non si è fatto perché Brave è accantonato: resta da decidere se usare Exa per quel passo.
 - 10 novembre: **dalle Matrici ai nodi** (`tools/matrix_nodes.py`, workflow `matrix-nodes.yml`, su richiesta). Una
   chiamata per Matrice (almeno tre pezzi da due testate) chiede se le fonti si dividono su qualcosa che un nodo
   deciderebbe o mapperebbe; il codice tiene un lato solo se le sue citazioni sono quelle verificate dei pezzi. Prime due
