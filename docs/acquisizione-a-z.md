@@ -957,6 +957,16 @@ forma definitiva e automatica)
    in parallelo e controllo di copertura settimanale già fatti il 15 novembre; resta l'indice del corpus in cache); un
    riepilogo settimanale dei costi.
 
+22 novembre. Dal 20 sera al 22 mattina non è partito nulla: GitHub Actions aveva raggiunto il tetto di spesa di 10 $,
+alzato dalla redazione a 20 $. Rilanciati raccolta, siti e aggiornamento settimanale. Lo stesso giorno: Nebius non serve
+più DeepSeek V4.1 Flash e ogni chiamata riceveva 404 (anche l'aggiornamento del 21, rimasto vuoto); ora Nebius resta il
+primo fornitore e gli altri seguono (`ingestion/ubik_extraction_pilot.py`, `tools/judge_candidates.py`). Prova alla
+cieca dei modelli economici sulle decisioni registrate (`tools/model_bench.py`, modo `bench=` di `runs/judge.request`;
+`reports/bench/`): su 180 decisioni con 40 esempi DeepSeek V4.1 Flash concorda al 77,6%, Qwen3.8 Flash al 76,2%, Claude
+Haiku 5.5 al 70,7% (con 40 dubbie), Gemini 3.1 Flash Lite al 67%; GPT-5 Mini consuma la risposta nel ragionamento. Il
+modello resta DeepSeek; la prova sulla scrittura (punto 4) è da fare a parte, giudicata dalla redazione. Avviato il nodo
+`bolla-ia` dalla sola domanda (tipo previsione: dati separati dalle previsioni attribuite).
+
 Fuori da questa fase: strade di ricerca nuove, nuovi tipi di fonti, il modello locale, la crescita verso molti topic, il
 sito pubblico. Restano annotati per dopo: la visibilità e la parte gratuita, il diritto degli editori sugli estratti
 prima del lancio, gli originali a pagamento, le newsletter per le fonti bloccate, Common Crawl, Wikidata, Substack.
