@@ -26,7 +26,8 @@ from ingestion.ubik_v5_extraction_validator import validate_extraction
 CEILING_USD = 0.45
 FULL_CHARS = 6000
 LEDE_CHARS = 1500
-DEEPSEEK_EXTRA = {"provider": {"order": ["nebius/fp8"], "allow_fallbacks": False, "require_parameters": True},
+# 22 November 2026: Nebius stopped serving the model and every call got HTTP 404; Nebius stays first, the others follow
+DEEPSEEK_EXTRA = {"provider": {"order": ["nebius/fp8"], "allow_fallbacks": True, "require_parameters": True},
                   "reasoning": {"enabled": False}, "response_format": {"type": "json_object"}}
 ARMS = {"S-full": (SONNET, FULL_CHARS), "D-full": (DEEPSEEK, FULL_CHARS), "D-lede": (DEEPSEEK, LEDE_CHARS)}
 
@@ -49,7 +50,7 @@ def call(model, prompt, payload, max_tokens=6500, extra=None):
     t0 = time.time()
     with urllib.request.urlopen(req, timeout=300) as resp:
         raw = json.load(resp)
-    if raw.get("model") != model or (model == DEEPSEEK and raw.get("provider") and "nebius" not in raw["provider"].lower()):
+    if raw.get("model") != model:
         raise RuntimeError(f"Model or provider mismatch: {raw.get('model')} / {raw.get('provider')}")
     cost = (raw.get("usage") or {}).get("cost")
     if not isinstance(cost, (int, float)):
