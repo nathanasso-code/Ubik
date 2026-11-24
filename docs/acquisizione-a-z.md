@@ -1,4 +1,4 @@
-# Ubik dalla A alla Z: acquisizione, selezione, nodi (aggiornato al 15 novembre 2026)
+# Ubik dalla A alla Z: acquisizione, selezione, nodi (aggiornato al 24 novembre 2026)
 
 Questo documento descrive il sistema com'è oggi, dall'inizio alla fine, ed è il punto di partenza per chi riprende il
 lavoro in una nuova conversazione. I documenti di dettaglio restano: `docs/daily-spec.md` (Matrici),
@@ -17,7 +17,7 @@ Un **Topic** (per ora Intelligenza artificiale, con quattro sotto-topic: regole,
 d'autore; ed Euromaidan come prova storica) è il perimetro. I nodi di oggi: d'attualità, aggiornati ogni settimana
 (`registry/nodi-attivi.json`): `fair-use` (addestramento e diritto d'autore), `data-center-comunita`,
 `uso-dei-contenuti-pubblicati` (avviato dalle Matrici senza intervento), `nord-stream` (banco di prova contro Wikipedia
-e un dossier di Fable); storici o di prova: `weight-space`, `maidan-20-febbraio`, `coinvolgimento-americano`,
+e un dossier di Fable); in lavorazione come «nodo-studio»: `bolla-ia` (la bolla dell'IA è destinata a scoppiare?, sezione 10); storici o di prova: `weight-space`, `maidan-20-febbraio`, `coinvolgimento-americano`,
 `inverno-ia`.
 
 ## 2. Dove sta ogni cosa
@@ -517,7 +517,79 @@ reso di più: da adottare nell'aggiornamento settimanale.
 
 ## 10. Da fare
 
-L'elenco unico di Ubik: ciò che è fatto, in corso e da fare. Aggiornato il 15 novembre.
+L'elenco unico di Ubik: ciò che è fatto, in corso e da fare. Aggiornato il 24 novembre.
+
+**Ripartire da qui (24 novembre): lo stato in una pagina, per chi riprende in una nuova conversazione**
+
+- *Come si lavora.* Claude guida; la redazione (Gio, a volte Paola) approva. Sempre in italiano. Nessun segreto in
+  chat; robots.txt e riserve TDM rispettati; Internet Archive solo per pagine scomparse; esecuzioni a pagamento solo da
+  `runs/*.request` su `main` o a mano; tetti: 20 $ per la parte di IA, 20 $ di GitHub Actions; i log che stampano
+  risultati di ricerca (BRAVE-ONLY) si cancellano dopo la lettura; mai uno scout.request mentre uno è in attesa;
+  Wikipedia esclusa dai banchi di prova; nessuna fonte esclusa per sempre; scelta dei nodi e spese nuove restano alla
+  redazione; Claude dichiara il conflitto d'interessi quando scrive di Anthropic o di coscienza delle IA. Questo è
+  l'unico elenco di cose da fare: niente documenti nuovi.
+- *Attenzione ai file di richiesta.* I workflow cercano le parole chiave in tutto il file, commenti compresi: un
+  commento con «solo_decisioni» ha fatto partire quel modo (22 novembre). Nei commenti niente parole chiave né `=`.
+- *Su che cosa si lavora: il nodo come studio.* La redazione vuole nodi che emergano dal dibattito tra i più
+  competenti di un ambito e che diano risultati paragonabili a una ricerca originale, scegliendo le questioni dove Ubik
+  fa la differenza. Tre domande proposte: per molti matematici la ricerca non ha più senso? I modelli evoluti possono
+  dirsi coscienti? La bolla dell'IA è destinata a scoppiare? Si è partiti dalla bolla (`ubik-corpus/reports/nodi/bolla-ia/`),
+  con il massimo di automatismo.
+- *Che cosa ha detto la redazione sulla forma* (in ordine): le etichette «accertato/conteso» sono giudizi del modello,
+  meglio una forma descrittiva che dia il peso di documenti e fonti, con un giudizio solo in casi limitati di forte
+  evidenza; i resoconti lunghi del modello forte (A/B/C) troppo lunghi, fitti di dati non essenziali e poco
+  aggiornabili; quelli brevi ancora no; il prototipo a nove nuclei in tabelle «troppe tabelle»; la direzione giusta è
+  quella dei **moduli** («matrici di nodo»): ogni nucleo un paragrafo discorsivo con le fonti dentro, la sintesi che
+  emerge dalla somma delle parti, tabelle standardizzate con una grafica propria, una modularità trasversale con le
+  Matrici. Il prototipo a moduli (24 novembre) «è la base giusta»: piacciono i numeri delle note colorati per tipo di
+  fonte (potrebbero diventare punti di discussione o di modifica della comunità: ipotesi), l'eredità dei vecchi nodi
+  dell'esploratore («Da notare», «Manca», l'interesse delle fonti); la grafica rischia di essere un formato che Claude
+  propone di default. Indicazione del 24 sera: testo più divulgativo ma non didascalico (riferimento Wikipedia senza
+  l'intenzione enciclopedica), ogni nucleo un resoconto esaustivo, i dati in sequenza presentati con una formula di
+  confronto non dispersiva.
+- *Il prototipo a moduli.* `ubik-corpus/reports/nodi/bolla-ia/prototipo-moduli.html` (scritto a mano da Claude dal
+  materiale della pipeline; pubblicato anche come artefatto «Nodo bolla AI»). Ogni modulo: sotto-domanda, tesi in
+  grassetto (le tesi in fila fanno la sintesi d'apertura), paragrafo con note numerate colorate per tipo di fonte che
+  si aprono su una scheda (chi, tipo, interesse, che cosa dice, passaggio verificato, link), striscia della composizione
+  delle fonti per tipo, «Da notare», «Manca», Matrici collegate; in apertura la mappa delle nove strisce; in fondo
+  previsioni attribuite, metodo, conflitto d'interessi. Accanto alla pagina: `moduli-strisce.json` (composizione
+  delle fonti per nucleo) e `moduli-materiale.txt` (il materiale verificato per nucleo da cui sono scritti i paragrafi).
+- *In corso (24 novembre sera).* Una catena sulla bolla con le vie social che aveva Nord Stream: prima le voci da
+  Bluesky, Mastodon e Telegram, poi due giri su Bluesky, Hacker News, OpenAlex, i link delle voci (segnalati) e le fonti
+  delle fonti (`runs/catena.request` con `routes=` e `social_voices`, nuovi il 24). Poi: i nove moduli riscritti in
+  chiave divulgativa con le fonti nuove; poi la generazione automatica dei moduli dalla pipeline, confrontata alla cieca
+  con la versione a mano; la grafica dopo.
+- *Aperto con la redazione.* Un indirizzo email di contatto per lo User-Agent di SEC EDGAR (la via delle istituzioni
+  riceve 403 senza), da salvare come segreto; se mettere `bolla-ia` tra i nodi attivi del giro settimanale.
+
+**Fatto di recente**
+
+- 22-24 novembre: **il nodo sulla bolla, dalla domanda allo studio** (`ubik-corpus`):
+  - *forma descrittiva* della bozza (`tools/light_node.py`, `forma=descrittiva` in `runs/light.request` o
+    `UBIK_FORMA`): punti con citazioni a favore e contro, tipo di fonte, interesse, peso, un giudizio solo per i tipi
+    che giudicano; previsioni attribuite, raggruppate per posizione, con l'orizzonte solo se dichiarato; controllo sì/no
+    di ogni citazione; un passaggio finale riscrive peso e stato sulle citazioni sopravvissute;
+  - *sotto-domande*: a parità di spesa 8 sotto-domande danno 61 affermazioni di Wikipedia su 93 (37 piene), 5 ne
+    danno 64 (44): si resta a 3-5 e si investe nel seguire le fonti (`UBIK_SUBQ`, `subq=`);
+  - *la data di oggi ai planner* (`node_pick.py`, `entity_rounds.py`): le ricerche dicevano 2024 e 2025;
+  - *la via delle istituzioni* (`path_istituzioni` in `tools/scout.py`): ultimi 10-K e 10-Q su SEC EDGAR delle società
+    nominate in almeno tre pagine, ricerche ristrette a banche centrali, FMI, BIS, OCSE, uffici statistici e
+    autorità; EDGAR risponde 403 senza un contatto nello User-Agent (aperto);
+  - *ricerca approfondita* come Nord Stream (quattro giri, prima i documenti citati): pagine giudicate da 470 a 841,
+    buone da 233 a 386, documenti primari da 26 a 71, 20 pubblicazioni istituzionali (BIS, FMI, BCE, Banca
+    d'Inghilterra, Fed, Banca d'Italia, INSEE, BEA, ESMA, ONS, Commissione); circa 0,12 $ di giudizio. 570 pagine
+    archiviate in `corpus/targeted/bolla-ia/`, 359 siti nel registro (353 approvati, 96 con feed raccolto ogni giorno),
+    132 autori (19 in prova);
+  - *strumenti dello studio*: `tools/figures.py` (cifre nel testo), `tools/node_genealogy.py` (genealogia delle cifre
+    chiave: valore esatto più contesto), `tools/node_report.py` (resoconto del modello forte con controllo per codice
+    che ogni numero stia nelle fonti citate; versioni A/B/C alla cieca, chiave a parte; forma compatta a blocchi con
+    impronta, per aggiornare solo i blocchi le cui fonti cambiano; `resoconto=` in `runs/judge.request`);
+  - *elenco di riferimento automatico*: `tools/competence.py` (seguito e citazioni da parte delle voci, citazioni nei
+    nodi, OpenAlex, pagine verificate, ruolo dichiarato; l'attenzione a parte; `reports/bacino/competenza-ia.json`);
+    da correggere: distinguere esperto, parte e cronista, misurare le relazioni tra voci, il peso di Bluesky;
+  - *banco dei modelli* (`tools/model_bench.py`) e fornitore di DeepSeek con ripiego (sopra);
+  - *workflow*: quando il rebase fallisce sui registri condivisi, l'ultimo tentativo tiene le righe di `main`
+    (23 novembre: una catena aveva perso il nodo per un conflitto).
 
 **Fatto di recente**
 
@@ -984,6 +1056,10 @@ Scrivere una riga nel file di richiesta e spingerla su `main` di `ubik-corpus`:
 | `runs/coverage.request` | `fetch=yes` per raccogliere anche le pagine citate |
 | `runs/week-refs.request` | `mode=tutto weeks=2026-11-02` (riferimenti descritti, scout dei riferimenti, originali, bibliografia); `nodes=fair-use` (documenti delle fonti dei nodi); `mode=originals`, `mode=biblio`, `resolve` per un passo solo |
 | `runs/matrix-nodes.request` | `weeks=… budget=0.10` (proposte di nodo dalle Matrici) |
+| `runs/catena.request` | `nodes=bolla-ia rounds=4 engines=exa q=30 k=200 budget=0.3 refs=0.05 find=0.3 refs_first min=5`; `routes=bluesky,hn,…` per scegliere le vie; `social_voices` per raccogliere prima le voci; `bootstrap` per un nodo dalla sola domanda (`runs/domande/NODO.txt`); `subq=` |
+| `runs/light.request` | la bozza di un nodo; `forma=descrittiva` |
+| `runs/judge.request` | anche `bench=` (banco dei modelli) e `resoconto=NODO models=… [forma=compatto] [solo_genealogia\|senza_genealogia]` |
+| `runs/settimana.request` | l'aggiornamento settimanale a mano (i nodi da `registry/nodi-attivi.json`) |
 | `runs/segnalazioni/NOME.txt` | un testo segnalato dalla redazione: i suoi riferimenti, nel corpus e fuori |
 
 Dopo uno scout con Brave: leggere i risultati, poi cancellare l'esecuzione. Ogni commit di Claude termina con le righe
