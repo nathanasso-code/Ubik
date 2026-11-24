@@ -564,9 +564,19 @@ L'elenco unico di Ubik: ciò che è fatto, in corso e da fare. Aggiornato il 24 
   scala, periodo e fonte riga per riga, valori negativi e intervalli), le voci social separate dalle fonti («Nel
   dibattito»), le previsioni divise per posizione. Le strisce ora contano le fonti per parole chiave
   (`ubik-corpus/.design/proto/material.py`, locale).
-- *Prossimo passo.* La generazione automatica dei moduli dalla pipeline (tesi, paragrafi, riquadro di confronto,
-  «Da notare», «Manca», voci, Matrici collegate), confrontata alla cieca con la versione a mano; la grafica dopo, perché
-  la redazione teme che sia un formato che Claude propone di default.
+- *25 novembre, notte: i moduli scritti dalla pipeline* (`tools/node_modules.py`, modo `moduli=NODO models=…
+  [nuclei=…]` di `runs/judge.request`; nuclei in `reports/nodi/NODO/moduli-nuclei.json`). Per ogni nucleo il codice
+  sceglie fino a 24 contributi che lo toccano (documenti e istituzioni prima) e le voci social (al massimo due post per
+  autore); il modello scrive tesi, paragrafi con le fonti dentro, un riquadro di confronto, «Da notare», «Manca», voci;
+  il codice controlla ancore e numeri. Indicazioni della redazione nel prompt: un pizzico più divulgativo, un po' di
+  contesto per ogni nucleo. Prima prova sulla bolla: DeepSeek 0,008 $ (121 numeri, 4 non trovati nelle fonti citate, uno
+  attribuito alla società sbagliata), Sonnet 0,59 $ (123, 3), Opus 1,16 $ (87, 0; il più attento alla provenienza delle
+  cifre). DeepSeek va chiamato senza ragionamento e con risposta JSON (prima tornava vuoto); Opus ha ricevuto 402 da
+  OpenRouter su due moduli e li ha scritti al secondo lancio. Le quattro versioni (a mano, aggiornata con più contesto, e
+  i tre modelli) sono alla cieca in `reports/nodi/bolla-ia/moduli-cieco/`, la chiave in `moduli-auto/chiave-cieca.json`,
+  in attesa del giudizio della redazione. Se nessun modello soddisfa: integrare un modello forte nella pipeline con un
+  flusso stabile e dedicato, sostenibile se i nodi non sono troppi (indicazione della redazione). Idea annotata, da non
+  sviluppare ora: ogni nucleo somiglia a una Matrice e potrebbe avere una sua indipendenza nel feed.
 - *Aperto con la redazione.* Un indirizzo email di contatto per lo User-Agent di SEC EDGAR (la via delle istituzioni
   riceve 403 senza), da salvare come segreto; se mettere `bolla-ia` tra i nodi attivi del giro settimanale.
 
