@@ -554,11 +554,19 @@ L'elenco unico di Ubik: ciò che è fatto, in corso e da fare. Aggiornato il 24 
   delle fonti per tipo, «Da notare», «Manca», Matrici collegate; in apertura la mappa delle nove strisce; in fondo
   previsioni attribuite, metodo, conflitto d'interessi. Accanto alla pagina: `moduli-strisce.json` (composizione
   delle fonti per nucleo) e `moduli-materiale.txt` (il materiale verificato per nucleo da cui sono scritti i paragrafi).
-- *In corso (24 novembre sera).* Una catena sulla bolla con le vie social che aveva Nord Stream: prima le voci da
-  Bluesky, Mastodon e Telegram, poi due giri su Bluesky, Hacker News, OpenAlex, i link delle voci (segnalati) e le fonti
-  delle fonti (`runs/catena.request` con `routes=` e `social_voices`, nuovi il 24). Poi: i nove moduli riscritti in
-  chiave divulgativa con le fonti nuove; poi la generazione automatica dei moduli dalla pipeline, confrontata alla cieca
-  con la versione a mano; la grafica dopo.
+- *Fatto il 24 sera.* (1) La bolla con le vie social che aveva Nord Stream (`runs/catena.request` con `routes=` e
+  `social_voices`, nuovi il 24): 26 voci (23 Bluesky, 3 Mastodon, 0 Telegram; 12 dello stesso autore, Ed Zitron, contate
+  come una voce), poi due giri su Bluesky, Hacker News, OpenAlex, link segnalati e fonti delle fonti: 440 pagine
+  giudicate, contributi da 386 a 442 (Bluesky 11 su 25 giudicate, OpenAlex 21, snowball 44), meno di 0,10 $ in tutto.
+  Il primo lancio si era fermato perché il giudizio stimato (0,30) superava il tetto (0,25): con molti candidati il
+  tetto va alzato. (2) Seconda versione dei moduli, sullo stesso file e artefatto: testo divulgativo (i termini tecnici
+  spiegati nella frase), resoconti più completi, un riquadro «a confronto» per i dati in serie (barre sulla stessa
+  scala, periodo e fonte riga per riga, valori negativi e intervalli), le voci social separate dalle fonti («Nel
+  dibattito»), le previsioni divise per posizione. Le strisce ora contano le fonti per parole chiave
+  (`ubik-corpus/.design/proto/material.py`, locale).
+- *Prossimo passo.* La generazione automatica dei moduli dalla pipeline (tesi, paragrafi, riquadro di confronto,
+  «Da notare», «Manca», voci, Matrici collegate), confrontata alla cieca con la versione a mano; la grafica dopo, perché
+  la redazione teme che sia un formato che Claude propone di default.
 - *Aperto con la redazione.* Un indirizzo email di contatto per lo User-Agent di SEC EDGAR (la via delle istituzioni
   riceve 403 senza), da salvare come segreto; se mettere `bolla-ia` tra i nodi attivi del giro settimanale.
 
