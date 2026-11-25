@@ -590,9 +590,21 @@ L'elenco unico di Ubik: ciò che è fatto, in corso e da fare. Aggiornato il 24 
   quando, con quale rendimento) e misura la distanza dai ricavi di oggi (`moduli-cieco/necessari-stime-ripulite.html`).
   Da fare: estrazione con i campi in italiano, il calcolo con rapporti da studi (Wachter) più che da analisi, poi gli
   altri nuclei. Regola nel prompt: mai «trilioni».
-- *Credito OpenRouter quasi finito (25 novembre).* Saldo: 50 $ caricati, 49,70 usati; consumo della chiave nel mese
-  36,79 $. Il modello forte riceve 402; anche giudizio e aggiornamento settimanale si fermeranno finché la redazione non
-  ricarica. Il saldo si legge con `saldo_openrouter` in `runs/judge.request`.
+- *25 novembre, il metodo reso strutturale e il nodo intero rifatto.* `tools/node_estimates.py` per ogni nucleo: uno
+  schema delle grandezze da confrontare (modello forte), le cifre di tutte le pagine del nucleo estratte contro lo schema
+  (modello economico, verificate dal codice), una ricerca per ogni autore noto solo di seconda mano sul suo stesso sito
+  (Exa; trovate per esempio le pagine di Goldman Sachs; Gartner e il Substack di GeometricInvestor rispondono 403 e si
+  lasciano), il calcolo di Ubik solo da un rapporto vero (tra 0 e 5 dollari per dollaro). Nel riquadro il modello
+  sceglie le righe tra le cifre verificate e il codice prende i valori, scarta le righe di un'altra grandezza e calcola
+  la quota coperta (barra chiara: quanto servirebbe; scura: quanto c'è con lo stesso ambito; accanto le due cifre e la
+  percentuale). Costi del nodo: estrazione 0,45 $ (2.112 pagine lette in nove nuclei, 1.808 cifre), scrittura Sonnet
+  1,08 $, Opus 2,19 $; 6 moduli su 18 tagliati a 5.000 token, ora 9.000 e tre tentativi. Pagine:
+  `moduli-cieco/nodo-opus.html`, `nodo-sonnet.html`. Da fare: i nuclei e le loro parole scelti dalla pipeline (oggi
+  sono quelli scritti a mano), le grandezze che si ripetono tra nuclei (i ricavi necessari compaiono anche in chip,
+  adozione, stabilità), i campi in italiano, la riga «Manca» che diventa una ricerca mirata, l'aggiornamento per
+  impronta dei soli moduli con fonti nuove.
+- *Credito OpenRouter (25 novembre).* Era finito (49,70 $ usati su 50; consumo della chiave nel mese 36,79 $); la
+  redazione ha ricaricato. Il saldo si legge con `saldo_openrouter` in `runs/judge.request`.
 - *Aperto con la redazione.* Un indirizzo email di contatto per lo User-Agent di SEC EDGAR (la via delle istituzioni
   riceve 403 senza), da salvare come segreto; se mettere `bolla-ia` tra i nodi attivi del giro settimanale.
 
