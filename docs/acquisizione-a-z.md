@@ -577,6 +577,22 @@ L'elenco unico di Ubik: ciò che è fatto, in corso e da fare. Aggiornato il 24 
   in attesa del giudizio della redazione. Se nessun modello soddisfa: integrare un modello forte nella pipeline con un
   flusso stabile e dedicato, sostenibile se i nodi non sono troppi (indicazione della redazione). Idea annotata, da non
   sviluppare ora: ogni nucleo somiglia a una Matrice e potrebbe avere una sua indipendenza nel feed.
+- *25 novembre, mattina: le stime ripulite.* La redazione ha notato che i moduli mettono insieme cifre che misurano
+  cose diverse, per frammentarietà e parzialità delle fonti; mia classifica dichiarata in conflitto d'interessi: Opus,
+  Sonnet, la versione a mano, DeepSeek (che scrive che le stime «convergono»). Nuovo passaggio `tools/node_estimates.py`
+  (modo `con_stime` di `runs/judge.request`): tutte le pagine del nucleo, senza il tetto di 24 fonti, e gli originali
+  elencati in `reports/nodi/NODO/originali-NUCLEO.txt` (per la bolla: Sequoia, Bain, J.P. Morgan, Apollo, Damodaran;
+  Gartner risponde 403 e non si aggira), ogni stima in schede uguali (chi la fa, valore, che cosa misura, ambito,
+  orizzonte, rendimento, originale o ripresa, frase esatta), tenuta solo se la frase è nella pagina e il numero nella
+  frase, riunita per autore; il riquadro lo costruisce il codice con le sole stime annue di settore e di gruppo; il
+  «calcolo di Ubik» applica il rapporto di un autore al capitale indicato da un altro. Sul nucleo dei ricavi necessari:
+  51 pagine, 162 stime verificate, 0,014 $; il testo di Sonnet ora è ordinato per domanda (chi deve incassare, entro
+  quando, con quale rendimento) e misura la distanza dai ricavi di oggi (`moduli-cieco/necessari-stime-ripulite.html`).
+  Da fare: estrazione con i campi in italiano, il calcolo con rapporti da studi (Wachter) più che da analisi, poi gli
+  altri nuclei. Regola nel prompt: mai «trilioni».
+- *Credito OpenRouter quasi finito (25 novembre).* Saldo: 50 $ caricati, 49,70 usati; consumo della chiave nel mese
+  36,79 $. Il modello forte riceve 402; anche giudizio e aggiornamento settimanale si fermeranno finché la redazione non
+  ricarica. Il saldo si legge con `saldo_openrouter` in `runs/judge.request`.
 - *Aperto con la redazione.* Un indirizzo email di contatto per lo User-Agent di SEC EDGAR (la via delle istituzioni
   riceve 403 senza), da salvare come segreto; se mettere `bolla-ia` tra i nodi attivi del giro settimanale.
 
