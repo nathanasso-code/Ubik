@@ -1,8 +1,103 @@
-# Ubik dalla A alla Z: acquisizione, selezione, nodi (aggiornato al 24 novembre 2026)
+# Ubik dalla A alla Z: acquisizione, selezione, nodi (aggiornato al 26 novembre 2026)
 
 Questo documento descrive il sistema com'è oggi, dall'inizio alla fine, ed è il punto di partenza per chi riprende il
 lavoro in una nuova conversazione. I documenti di dettaglio restano: `docs/daily-spec.md` (Matrici),
 `docs/nodi-spec.md` (nodi), `docs/acquisizione-nodi.md` (diario delle prove, con tutte le misure), `docs/modello-dati.md`.
+
+## 0. Per una nuova conversazione: leggere prima questo (26 novembre 2026)
+
+Questa sezione è il punto d'ingresso: chi la legge deve potersi calare nel progetto senza altro. Il dettaglio sta
+nelle sezioni che seguono; il diario delle cose fatte sta nella sezione 10.
+
+### 0.1 Che cos'è Ubik e dove va
+
+Ubik è un servizio d'informazione che seleziona fonti credibili e mostra che cosa dicono, con quali prove e con quale
+interesse, lasciando giudicare al lettore. Tre oggetti: le **Card** (una fonte o più fonti sullo stesso punto), le
+**Matrici** (fatti attuali accorpati attorno a un fulcro, nel feed dei Topic) e i **nodi**, il prodotto di punta: una
+domanda importante di un dibattito, trattata come un piccolo studio. La promessa: dire che cosa si sa, che cosa no e
+perché, e permettere di controllare tutto da sé. Lingua: inglese quanto e più dell'italiano.
+
+**Il nodo a moduli** (deciso tra il 23 e il 26 novembre): un nodo è diviso in 6-9 moduli («matrici di nodo»), ciascuno
+una sotto-domanda con una tesi in apertura, due o tre paragrafi divulgativi ma non didascalici, le fonti dentro il
+testo come numeri colorati per tipo di fonte, un riquadro che mette a confronto solo cifre che misurano la stessa cosa,
+«Da notare», «Manca», le voci del dibattito social tenute a parte e le Matrici collegate; la sintesi d'apertura è fatta
+delle tesi dei moduli. Esempi: `ubik-corpus/reports/nodi/bolla-ia/` (la bolla dell'IA) e
+`ubik-corpus/reports/nodi/delega-conoscenza/nodo.html` (delegare la conoscenza all'IA).
+
+**La visione della redazione (26 novembre), da progettare, non ancora costruita:**
+- Ogni numero (citazione) di ogni modulo apre un pannello che scorre da destra con: le fonti a cui si riferisce; un
+  modulo per proporre una modifica della frase o dei documenti citati, o aggiungerne di nuovi; i commenti su quel solo
+  passaggio; l'albero delle fonti che sostengono o smentiscono quella fonte.
+- Le modifiche proposte dagli utenti iscritti (forse paganti) passano prima da un modello e poi dalla comunità: una
+  modifica approvata dal modello compare nel pannello e lì si vota; una modifica approvata dalla comunità la integra
+  il modello nel testo, se possibile. Da decidere se e come distinguere le proposte di modifica dai commenti.
+- Ogni nodo ha anche una sezione commenti generale, ben visibile. All'inizio un commento della redazione (Gio, con
+  l'etichetta OP, utente come gli altri) accoglie gli utenti in ogni sezione commenti.
+- Ipotesi per un futuro vicino: ogni modulo è formalmente una Matrice, etichettata «matrice di un nodo», presente e
+  duratura nel feed dei Topic; un clic apre il contenuto nel pannello da destra con il link al passaggio del nodo. Solo
+  le matrici dei nodi si possono modificare e commentare.
+- Gli utenti potranno pubblicare pezzi originali: card speciali indipendenti, che possono diventare fonti di un nodo
+  (nel pannello, in quel caso con il testo integrale). I contributori con più contributi valutati bene potrebbero
+  essere pagati.
+- I nodi possono fare anche da aggregatori e selettori di studi scientifici su un argomento.
+- Abbonamenti: forse uno da 0,99 € al mese solo per sostenere il progetto, oltre a uno superiore con vantaggi da
+  definire (in precedenza: circa 4,99 € al mese, obiettivo iniziale 1.000 utenti).
+- Trasparenza totale, dichiarata nel sito: le intenzioni, l'uso esclusivo di fonti documentate, il rispetto della
+  volontà degli autori delle fonti (robots.txt, riserve TDM), i testi integrali mai mostrati.
+- I nodi saranno relativamente pochi, ma tra i migliori stati della conoscenza disponibili su quelle questioni.
+
+### 0.2 Regole vincolanti per i nodi scritti in chat
+
+Dal 26 novembre la strada principale, all'inizio, è questa: **Claude scrive i nodi in chat, con la redazione**, usando
+tutti gli strumenti a disposizione per trovare fonti e rispondere in modo esauriente; la pipeline automatica dovrà poi
+riprodurre questo risultato il più fedelmente possibile per i nodi che la redazione non può seguire. In chat valgono,
+senza eccezioni, le regole di Ubik:
+1. **Fedeltà assoluta alle fonti trovate: non si inventa nulla.** Ogni frase che dà un fatto, una cifra o una
+   posizione porta la fonte su cui poggia; ogni numero sta nella fonte citata, come la fonte lo dà (niente conversioni,
+   arrotondamenti che cambiano la cifra, calcoli nuovi se non dichiarati come «calcolo di Ubik» con i dati di partenza).
+2. **La conoscenza propria del modello serve solo a cercare e a dare contesto** (definizioni, raccordi, che cosa
+   manca e dove cercarlo), mai come fonte di fatti o cifre. Ciò che il modello sa ma non trova in una fonte verificata
+   non entra nel testo.
+3. Ogni fonte entra nella pipeline (corpus, giudizio, archivio) prima di essere citata: le citazioni mostrate sono solo
+   quelle che il codice ritrova parola per parola nel testo raccolto. robots.txt e riserve TDM rispettati sempre.
+4. Niente giudizi del modello come etichette: si descrive il peso delle prove e l'interesse di chi parla; un giudizio
+   solo dove un documento, un dato ufficiale o uno studio chiude la questione, dicendo quale.
+5. Scrittura: comprensibile a chi sa poco, né didascalica né telegrafica, termini spiegati dentro la frase, mai
+   «trilioni» (si scrive «2.000 miliardi»); le serie di cifre vanno nel riquadro di confronto, non elencate nel testo.
+6. Il testo scritto in chat passa dagli stessi controlli della pipeline (`check()` e `chosen_box()` di
+   `tools/node_modules.py`), nel formato della pipeline: procedura nella sezione 10, «Fare un nodo in chat».
+7. Conflitto d'interessi dichiarato quando Claude scrive di Anthropic, dei suoi modelli o della coscienza delle IA.
+
+### 0.3 Come si lavora
+
+Claude guida; la redazione (Gio, a volte Paola) approva. Sempre in italiano. Niente segreti in chat. Esecuzioni a
+pagamento solo da `runs/*.request` su `main` o a mano. La scelta dei nodi e le spese nuove restano alla redazione.
+Un solo elenco delle cose da fare (sezione 10), niente documenti nuovi. Repository: `nathanasso-code/Ubik` (pubblico,
+codice e documenti) e `nathanasso-code/ubik-corpus` (privato: registri, corpus, report, testi integrali). I dettagli
+operativi (richieste, workflow, insidie) sono nelle sezioni 3, 10 e 11.
+
+### 0.4 Stato al 26 novembre
+
+- **Nodi a moduli:** `bolla-ia` (versioni a mano, Sonnet e Opus via API) e `delega-conoscenza` (otto moduli scritti in
+  chat, il primo da Opus via API; giudizio della redazione: «superiore a quanto rese Opus nella pipeline»). Nodi
+  precedenti nella forma vecchia: fair use, data center, uso dei contenuti, Nord Stream, Euromaidan.
+- **Pipeline dei moduli:** `tools/node_nuclei.py` (nuclei), `tools/node_estimates.py` (cifre ripulite e originali),
+  `tools/node_modules.py` (scrittura, riquadro, controlli), `tools/node_gaps.py` («Manca» → ricerche),
+  `tools/node_modules_blind.py` (pagine). Costo di un nodo via API: circa 0,5 $ di estrazione più 1-2 $ di scrittura.
+- **Crediti:** OpenRouter esaurito (60 $ caricati, consumo del mese 46,65 $, sopra il tetto di 20 $ della sezione 3:
+  il tetto va rivisto con la redazione); Exa esaurito (402); Tavily al tetto del mese; le ricerche usano Brave
+  (`engines=brave`). La redazione ricarica il 26 novembre e crea il segreto `SEC_USER_AGENT` per SEC EDGAR.
+
+### 0.5 Prossimi passi
+
+1. Altri nodi scritti in chat con la redazione, per consolidare il formato; a ogni nodo, ciò che si impara passa nel
+   prompt e nei controlli della pipeline.
+2. Un controllo di aderenza frase per frase anche per il testo scritto in chat (oggi il codice controlla numeri e
+   ancore, non il senso delle frasi).
+3. Una chat dedicata, con un'attività programmata, che cerca e propone nuovi temi di nodo su tutti i fronti.
+4. Il sito vero e proprio: prima il modello dei dati (nodo, modulo, passaggio, fonte, proposta di modifica, commento,
+   voto, utente), poi un prototipo in sola lettura generato dai file dei nodi, poi i contributi.
+5. Un registro dei nodi generato dalla pipeline (domanda, data, fonti, costi, stato, link).
 
 ## 1. Che cosa fa Ubik
 
@@ -57,7 +152,7 @@ a pagamento parte solo da un file `runs/<nome>.request` scritto e spinto nel rep
   `shown_quote`).
 - **Una citazione si mostra solo se il codice la ritrova parola per parola nel testo raccolto.** Lo stesso vale per i
   giudizi del modello: contano solo se indicano una frase che il codice ritrova.
-- **Motori di ricerca** (Exa principale, Tavily nella quota gratuita, Brave accantonato dal 13 novembre; tetti mensili in
+- **Motori di ricerca** (Exa principale finché ha credito, Tavily nella quota gratuita, Brave di nuovo in uso dal 26 novembre quando Exa e Tavily sono finiti; tetti mensili in
   `data/search-usage.json`): non si conservano le liste dei risultati, solo la nostra selezione e gli identificativi
   cifrati dei risultati per confrontare i motori. Per Brave, finché si usava: Le pagine trovate solo da Brave vivono
   nella cartella temporanea dell'esecuzione (`scout-transient/`); se non vengono scelte si contano e basta; il registro
@@ -519,7 +614,7 @@ reso di più: da adottare nell'aggiornamento settimanale.
 
 L'elenco unico di Ubik: ciò che è fatto, in corso e da fare. Aggiornato il 24 novembre.
 
-**Ripartire da qui (24 novembre): lo stato in una pagina, per chi riprende in una nuova conversazione**
+**Ripartire da qui: la sintesi aggiornata è la sezione 0; qui sotto il diario dal 22 novembre**
 
 - *Come si lavora.* Claude guida; la redazione (Gio, a volte Paola) approva. Sempre in italiano. Nessun segreto in
   chat; robots.txt e riserve TDM rispettati; Internet Archive solo per pagine scomparse; esecuzioni a pagamento solo da
