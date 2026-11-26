@@ -603,6 +603,26 @@ L'elenco unico di Ubik: ciò che è fatto, in corso e da fare. Aggiornato il 24 
   sono quelli scritti a mano), le grandezze che si ripetono tra nuclei (i ricavi necessari compaiono anche in chip,
   adozione, stabilità), i campi in italiano, la riga «Manca» che diventa una ricerca mirata, l'aggiornamento per
   impronta dei soli moduli con fonti nuove.
+- *26 novembre, notte: il nodo sulla delega della conoscenza* (proposto dalla redazione; `runs/domande/delega-conoscenza.txt`).
+  Quattro catene su tutte le vie; 225 pagine buone, quasi tutte studi; 25 voci social. Correzioni lungo la strada:
+  `q=` letto da solo (con `subq=5` i giri pianificavano 5 ricerche invece di 30), caratteri surrogati dei PDF puliti
+  prima della scrittura (riferimenti e archivio fallivano), il pianificatore salta i file vuoti. Nuovi passaggi:
+  `tools/node_nuclei.py` (i nuclei li sceglie la pipeline: 9, tutti tenuti), lo schema di ogni nucleo esclude le
+  grandezze degli altri, `tools/node_gaps.py` (la riga «Manca» diventa ricerca del giro successivo, modo `lacune`).
+  SEC EDGAR: il codice usa il segreto `SEC_USER_AGENT` (da creare dalla redazione in GitHub, Settings → Secrets and
+  variables → Actions); senza, salta EDGAR e lo annota. **Esauriti:** il credito OpenRouter (60 $ caricati, 59,56 usati;
+  402 dopo il primo modulo), il credito Exa (402) e il tetto mensile di Tavily: le catene passano da Brave
+  (`engines=brave`). Per questo, e come prova dell'idea della redazione, gli altri otto moduli li ha scritti Claude in
+  chat nello stesso formato, controllati dal codice della pipeline (`reports/nodi/delega-conoscenza/chat/`, pagina
+  `nodo.html`).
+- *Fare un nodo in chat (idea della redazione, 26 novembre: usare l'abbonamento per i passaggi di giudizio).* La
+  pipeline fa ricerca, giudizio, nuclei, estrazione delle cifre e controlli (pochi decimi di dollaro); in chat si
+  scrivono i moduli. Procedura provata: (1) catena con `bootstrap` da `runs/domande/NODO.txt`; (2) `runs/judge.request`
+  con `moduli=NODO nuclei_auto con_stime lacune` (o il solo modello economico); (3) in chat, per ogni nucleo, il
+  materiale compatto (`reports/nodi/delega-conoscenza/chat/build.py` mostra come si assemblano fonti S, cifre E e
+  voci V come fa `tools/node_modules.py`); (4) i moduli in `moduli.py` nel formato della pipeline; (5) `build.py`
+  esegue `check()` e `chosen_box()` e scrive `moduli-auto/chat-claude.json`; (6) la pagina e l'artefatto. Da fare: un
+  registro dei nodi generato dalla pipeline.
 - *Credito OpenRouter (25 novembre).* Era finito (49,70 $ usati su 50; consumo della chiave nel mese 36,79 $); la
   redazione ha ricaricato. Il saldo si legge con `saldo_openrouter` in `runs/judge.request`.
 - *Aperto con la redazione.* Un indirizzo email di contatto per lo User-Agent di SEC EDGAR (la via delle istituzioni
