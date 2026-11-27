@@ -720,7 +720,13 @@ L'elenco unico di Ubik: ciò che è fatto, in corso e da fare. Aggiornato il 24 
   web, che nel codice si chiama ancora `brave` (in `routes=` va scritto `brave`); il primo confronto è stato rifiutato
   dal giudice per un tetto troppo basso (`budget=0.18` contro una stima di 0,47). Il tetto di Tavily nel codice era 900
   e fermava Tavily con credito residuo. EDGAR risponde dopo aver tolto gli a capo dal segreto (`InvalidHeader`).
-  Da fare: una quota di opinioni e analisi tra le fonti passate a chi scrive; filtrare le copie e i siti di riassunti.
+  Fatto lo stesso giorno: in `tools/node_modules.py` un terzo delle fonti di ogni nucleo va ad analisi e opinioni
+  (prima le opinioni finivano in «altro», ultime). Seconda versione del nodo scritta in chat
+  (`reports/nodi/delega-conoscenza/chat/moduli2.py`, `build2.py`, `gen_page2.py`): ogni modulo si apre con «Le
+  posizioni», chi sostiene che cosa e con quali argomenti, e i dati vengono dopo, ridotti; tre riquadri invece di otto.
+  Le fonti nuove hanno passaggi copiati dalla pagina archiviata e ritrovati dal codice parola per parola; escluse le
+  pagine di dubbia autenticità (un'intervista dichiarata «ricostruzione editoriale»). Da fare: filtrare le copie e i
+  siti di riassunti; portare il blocco delle posizioni nella pipeline automatica (`PROMPT` di `node_modules.py`).
 - *Fare un nodo in chat (idea della redazione, 26 novembre: usare l'abbonamento per i passaggi di giudizio).* La
   pipeline fa ricerca, giudizio, nuclei, estrazione delle cifre e controlli (pochi decimi di dollaro); in chat si
   scrivono i moduli. Procedura provata: (1) catena con `bootstrap` da `runs/domande/NODO.txt`; (2) `runs/judge.request`
