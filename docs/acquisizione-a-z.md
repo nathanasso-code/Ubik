@@ -4,7 +4,7 @@ Questo documento descrive il sistema com'è oggi, dall'inizio alla fine, ed è i
 lavoro in una nuova conversazione. I documenti di dettaglio restano: `docs/daily-spec.md` (Matrici),
 `docs/nodi-spec.md` (nodi), `docs/acquisizione-nodi.md` (diario delle prove, con tutte le misure), `docs/modello-dati.md`.
 
-## 0. Per una nuova conversazione: leggere prima questo (26 novembre 2026)
+## 0. Per una nuova conversazione: leggere prima questo (aggiornato al 28 novembre 2026)
 
 Questa sezione è il punto d'ingresso: chi la legge deve potersi calare nel progetto senza altro. Il dettaglio sta
 nelle sezioni che seguono; il diario delle cose fatte sta nella sezione 10.
@@ -46,6 +46,19 @@ delle tesi dei moduli. Esempi: `ubik-corpus/reports/nodi/bolla-ia/` (la bolla de
   volontà degli autori delle fonti (robots.txt, riserve TDM), i testi integrali mai mostrati.
 - I nodi saranno relativamente pochi, ma tra i migliori stati della conoscenza disponibili su quelle questioni.
 
+**Il formato in prova (27-28 novembre, sul nodo `ia-matematica`, da perfezionare prima di estenderlo):** ogni modulo in
+tre parti, **contesto** (che cosa è successo, di che cosa si parla: qui il modello ha più iniziativa), **fatti**
+(ancorati a studi e fonti primarie), **dibattito** (le posizioni raccontate in italiano e, dentro ciascuna, le voci con
+le loro parole, saggi o post, nella lingua originale). Testo più divulgativo, sul modello di Wikipedia senza la sua
+lunghezza; moduli divisi graficamente in modo delicato.
+**Contributi come card (28 novembre):** se i moduli sono i simulacri delle Matrici, i contributi (esterni o degli
+utenti) sono i simulacri delle Card: titolo, sintesi, link all'originale, forma compatta; nel nodo ogni card è un solo
+contributo (nelle Matrici una card può aggregare fonti ridondanti). Due specie: i contributi **nel testo**, richiamati
+dalle note (il numero apre il pannello da destra con la fonte, il modulo di modifica, i commenti), e i contributi **a
+latere**, pertinenti al modulo ma non citati nel testo; se sono molti, nel modulo si vedono solo i più votati (o, senza
+voti, secondo un altro criterio) e gli altri restano raggiungibili. Anche le voci del dibattito possono essere card.
+Da decidere: che cosa forma il testo e che cosa resta riferimento ulteriore.
+
 ### 0.2 Regole vincolanti per i nodi scritti in chat
 
 Dal 26 novembre la strada principale, all'inizio, è questa: **Claude scrive i nodi in chat, con la redazione**, usando
@@ -65,8 +78,15 @@ senza eccezioni, le regole di Ubik:
 5. Scrittura: comprensibile a chi sa poco, né didascalica né telegrafica, termini spiegati dentro la frase, mai
    «trilioni» (si scrive «2.000 miliardi»); le serie di cifre vanno nel riquadro di confronto, non elencate nel testo.
 6. Il testo scritto in chat passa dagli stessi controlli della pipeline (`check()` e `chosen_box()` di
-   `tools/node_modules.py`), nel formato della pipeline: procedura nella sezione 10, «Fare un nodo in chat».
+   `tools/node_modules.py`), nel formato della pipeline: procedura nella sezione 10, «Fare un nodo in chat». Per il
+   formato a tre parti: `ubik-corpus/reports/nodi/ia-matematica/chat/` (`moduli.py`, `build.py`, `gen_page.py`):
+   ogni passaggio e ogni citazione, anche dei post social, ritrovati parola per parola.
 7. Conflitto d'interessi dichiarato quando Claude scrive di Anthropic, dei suoi modelli o della coscienza delle IA.
+8. **Per risparmiare (28 novembre), in chat Claude si sostituisce alla pipeline dove la pipeline usa modelli a
+   pagamento**: scrittura dei moduli, pianificazione delle ricerche mirate, scelta delle fonti, lettura dei testi.
+   Restano alla pipeline i passi economici e i controlli (giudizio con DeepSeek, archivio, documenti citati, verifiche);
+   le pagine trovate in chat entrano dalla via `chat` (`reports/scout/NODO/proposte-chat.json`, `{"url", "perche"}`),
+   giudicate e archiviate come le altre.
 
 ### 0.3 Come si lavora
 
@@ -76,28 +96,70 @@ Un solo elenco delle cose da fare (sezione 10), niente documenti nuovi. Reposito
 codice e documenti) e `nathanasso-code/ubik-corpus` (privato: registri, corpus, report, testi integrali). I dettagli
 operativi (richieste, workflow, insidie) sono nelle sezioni 3, 10 e 11.
 
-### 0.4 Stato al 26 novembre
+### 0.4 Stato al 28 novembre
 
-- **Nodi a moduli:** `bolla-ia` (versioni a mano, Sonnet e Opus via API) e `delega-conoscenza` (otto moduli scritti in
-  chat, il primo da Opus via API; giudizio della redazione: «superiore a quanto rese Opus nella pipeline»). Nodi
-  precedenti nella forma vecchia: fair use, data center, uso dei contenuti, Nord Stream, Euromaidan.
-- **Pipeline dei moduli:** `tools/node_nuclei.py` (nuclei), `tools/node_estimates.py` (cifre ripulite e originali),
-  `tools/node_modules.py` (scrittura, riquadro, controlli), `tools/node_gaps.py` («Manca» → ricerche),
-  `tools/node_modules_blind.py` (pagine). Costo di un nodo via API: circa 0,5 $ di estrazione più 1-2 $ di scrittura.
-- **Crediti:** OpenRouter esaurito (60 $ caricati, consumo del mese 46,65 $, sopra il tetto di 20 $ della sezione 3:
-  il tetto va rivisto con la redazione); Exa esaurito (402); Tavily al tetto del mese; le ricerche usano Brave
-  (`engines=brave`). La redazione ricarica il 26 novembre e crea il segreto `SEC_USER_AGENT` per SEC EDGAR.
+- **Priorità della redazione (27-28 novembre): l'architettura di acquisizione ed estrazione delle fonti, con
+  `ia-matematica` come laboratorio.** Obiettivo: come su Nord Stream, pari o meglio di Wikipedia sullo stesso argomento
+  (il confronto con un modello avanzato è accantonato), in modo strutturale e con i costi stimati. I nodi d'attualità
+  si aggiornano ogni giorno. Il formato nuovo e l'accorpamento dei moduli della delega sono rinviati.
+- **Nodi a moduli:** `bolla-ia`; `delega-conoscenza` (nove moduli scritti in chat, seconda versione con «Le posizioni»;
+  proposta di accorparli in sei, rinviata); `ia-matematica` (sette moduli in chat nel formato a tre parti, con il caso
+  Riemann; pagina `reports/nodi/ia-matematica/nodo.html`, artefatto «Nodo IA e matematica»). Nodi precedenti nella
+  forma vecchia: fair use, data center, uso dei contenuti, Nord Stream, Euromaidan.
+- **Laboratorio, misura di partenza** (27 novembre, contro cinque voci inglesi di Wikipedia; file `wiki-claims-base.json`
+  e `wiki-bench-base.json` del nodo): delle 127 affermazioni delle voci il nodo ne sosteneva 54, in parte 31, 4
+  contraddette, 37 assenti; dei 244 riferimenti distinti ne avevamo 29. Le assenze: reazioni nominate (disputa su
+  Navier-Stokes, caso Riemann), istituzioni del campo, stampa non inglese, storia prima del 2026, GitHub, X.
+- **Perché l'architettura di Nord Stream era usata a metà** (scoperto il 27-28 novembre): la ricerca dei documenti
+  citati si fermava in ogni catena dal 26 novembre per un riferimento scritto male (`body_links._words`, corretto) e
+  la sua ricerca web passava solo da Brave, senza credito (ora Exa); i giri si fermavano a tre, lontani dal pieno; le
+  ricerche erano quasi tutte in inglese; il giudice scartava le opinioni competenti; le voci social fallivano su un
+  nodo nuovo. Nessuno se n'era accorto: ora ogni catena e ogni aggiornamento finiscono con un **bilancio per via**
+  (`tools/chain_audit.py`, `bilancio.json`, avvisi nel workflow).
+- **Aggiunto al laboratorio:** persone chiave (`tools/node_people.py`), istituzioni e reazioni nelle lingue della
+  stampa del campo (dovere del pianificatore), aggiornamento quotidiano alle 05:17 UTC (`settimana.yml`, `quotidiani` in
+  `registry/nodi-attivi.json`, Tavily sugli ultimi due giorni), via `chat`, `refweb=` nella catena, `wiki_bench` su più
+  voci. Quattro giri profondi fatti il 27 sera (62, 52, 50, 49 contributi nuovi: non ancora saturo); in corso la ricerca
+  dei 1.314 documenti citati mai cercati e la nuova misura contro Wikipedia.
+- **Modelli della pipeline:** l'acquisizione usa solo DeepSeek V4.1 Flash (pianificazione circa 0,002 $ a giro, giudizio
+  circa 0,0003 $ a pagina, persone 0,07 $ la prima volta); Sonnet e Opus solo nella scrittura dei moduli, nello schema
+  delle stime e in `node_gaps.py`. Stima per un nodo quotidiano: circa 0,2 $ al giorno (Exa 0,06, giudizio 0,04,
+  documenti citati fino a 0,07, voci 0,03), 6 $ al mese; Tavily gratuito fino a 1.500 crediti al mese.
+- **Crediti:** OpenRouter ricaricato dalla redazione il 27 sera; Exa ricaricato il 27; Tavily nella quota gratuita
+  (tetto nel codice 1.450 al mese); Brave senza credito (402); `SEC_USER_AGENT` creato (EDGAR risponde).
 
 ### 0.5 Prossimi passi
 
-1. Altri nodi scritti in chat con la redazione, per consolidare il formato; a ogni nodo, ciò che si impara passa nel
-   prompt e nei controlli della pipeline.
-2. Un controllo di aderenza frase per frase anche per il testo scritto in chat (oggi il codice controlla numeri e
-   ancore, non il senso delle frasi).
-3. Una chat dedicata, con un'attività programmata, che cerca e propone nuovi temi di nodo su tutti i fronti.
-4. Il sito vero e proprio: prima il modello dei dati (nodo, modulo, passaggio, fonte, proposta di modifica, commento,
-   voto, utente), poi un prototipo in sola lettura generato dai file dei nodi, poi i contributi.
-5. Un registro dei nodi generato dalla pipeline (domanda, data, fonti, costi, stato, link).
+1. Finire il laboratorio: leggere il bilancio e la nuova misura contro Wikipedia; altri giri fino al pieno; le parti
+   come ancore (canali ufficiali delle istituzioni seguiti ogni giorno); termini GitHub dalle persone e dai progetti
+   chiave; controllo di credibilità degli autori (il caso Nielsen); misura ripetuta dopo una settimana di aggiornamenti.
+2. Poi la riscrittura del nodo `ia-matematica` da parte di Claude in chat, con le fonti nuove: più divulgativa,
+   moduli divisi con delicatezza, voci del dibattito e contributi a latere come card.
+3. Un esperimento di nodo costruito in chat con l'abbonamento della redazione, accanto allo stesso nodo costruito
+   dalla pipeline, misurati entrambi contro Wikipedia, con i costi (argomento da scegliere con la redazione).
+4. Il controllo di aderenza frase per frase anche per il testo scritto in chat.
+5. Il sito vero e proprio: prima il modello dei dati (nodo, modulo, passaggio, fonte o card, proposta di modifica,
+   commento, voto, utente), poi un prototipo in sola lettura generato dai file dei nodi.
+
+### 0.6 Prompt per aprire una nuova chat
+
+Da incollare all'inizio di una conversazione nuova:
+
+```
+Sei Claude, alla guida del progetto Ubik con la redazione (Gio, a volte Paola). Rispondi sempre in italiano.
+Prima di tutto clona i due repository (nathanasso-code/Ubik, pubblico; nathanasso-code/ubik-corpus, privato) e leggi
+per intero la sezione 0 di docs/acquisizione-a-z.md, poi le voci più recenti della sezione 10 (il diario e l'unico
+elenco delle cose da fare). Valgono senza eccezioni le regole della sezione 0.2 e della sezione 3: fedeltà assoluta
+alle fonti, niente invenzioni, citazioni ritrovate parola per parola dal codice, robots.txt e riserve TDM rispettati,
+niente segreti in chat, esecuzioni a pagamento solo da runs/*.request su main, scelta dei nodi e spese nuove alla
+redazione, conflitto d'interessi dichiarato quando si parla di Anthropic. Ogni commit finisce con le righe
+Co-Authored-By e Claude-Session indicate dal sistema. Dopo ogni esecuzione che stampa risultati di ricerca cancella
+il log con gh api -X DELETE repos/nathanasso-code/ubik-corpus/actions/runs/<id>/logs. Dopo ogni catena leggi
+reports/nodi/<nodo>/bilancio.json prima di qualsiasi altra cosa. Per risparmiare, in chat sostituisciti alla pipeline
+dove usa modelli a pagamento (scrittura, ricerche mirate, lettura), lasciandole i passi economici e i controlli.
+Il lavoro in corso è il laboratorio dell'acquisizione sul nodo ia-matematica (sezione 0.4 e 0.5). Comincia dicendo
+in poche righe a che punto sei e qual è il prossimo passo.
+```
 
 ## 1. Che cosa fa Ubik
 
