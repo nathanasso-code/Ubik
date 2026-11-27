@@ -749,6 +749,36 @@ L'elenco unico di Ubik: ciò che è fatto, in corso e da fare. Aggiornato il 24 
   istituti di una sola persona, chi dichiara di aver risolto più problemi del millennio): un articolo di J. L. Nielsen,
   che la redazione segnala come non attendibile, era entrato tra i contributi del nodo sulla delega; (d) una sezione
   «Letture» nei nodi per i saggi lunghi, che il dibattito può solo riassumere.
+- *27 novembre, sera: il laboratorio dell'acquisizione (nodo ia-matematica).* Decisione della redazione: prima
+  l'architettura di acquisizione ed estrazione, poi il formato (accorpamenti e formato nuovo rinviati); i nodi
+  d'attualità aggiornati ogni giorno; obiettivo, come su Nord Stream, pari o meglio di Wikipedia e di un modello
+  avanzato sullo stesso argomento, in modo strutturale, con i costi stimati.
+  **Misura di partenza** (`wiki_bench.py` ora legge più voci: `wikiq=en:A|en:B|…`; cinque voci inglesi: Mathematics
+  and artificial intelligence, Alpöge's proof of the Riemann hypothesis, List of mathematical discoveries made with
+  artificial intelligence, Navier–Stokes priority controversy, Millennium Prize Problems). Documenti: 244 riferimenti
+  distinti, 29 anche nostri; noi 297 documenti, 273 assenti dalle voci. Affermazioni: delle 127 delle voci il nodo ne
+  sostiene 54, in parte 31, ne contraddice 4, non ne copre 37; delle nostre 150 scoperte 123 non sono nelle voci.
+  Le assenze: le reazioni nominate alla disputa su Navier-Stokes (Clay Institute, AMS, Sarnak, Córdoba, Yau,
+  matematici tedeschi), quelle su Riemann (Saha, Marcus, LeCun, Nuccio, Bloom), la storia prima del 2026 (AlphaTensor,
+  nodi, cap set, AlphaEvolve); tra i riferimenti mancati GitHub 21, X 15 (non raggiungibile), arXiv 15, Clay 11.
+  **Fatto**: (1) le persone chiave (`tools/node_people.py`, `reports/nodi/NODO/persone.json`): un modello economico
+  legge ogni pagina archiviata e ne elenca le persone con un ruolo; chi è citato da due fonti o ne ha scritte due è una
+  persona chiave, e il pianificatore cerca le sue parole più recenti, anche sui suoi canali (prima lettura: 248
+  pagine, 188 persone, Tao 54 fonti, Alpöge 53, Buzzard 32; 0,07 $); nella catena prima di ogni giro, con l'archivio
+  dopo ogni giro; (2) il dovere del pianificatore di sentire le istituzioni del campo e le reazioni nominate, nelle
+  lingue della sua stampa; (3) l'**aggiornamento quotidiano** (`settimana.yml`, ogni giorno alle 05:17 UTC; nodi in
+  `registry/nodi-attivi.json` → `quotidiani`, impostazioni in `quotidiano`): un giro, Tavily solo sugli ultimi due
+  giorni (`SEARCH_SINCE`, `start_date`), Exa senza finestra per le pagine senza data, le vie del nodo. Prima prova
+  ferma al pianificatore: credito OpenRouter esaurito (HTTP 402).
+  **Da fare**: le parti come ancore (i canali ufficiali delle istituzioni del nodo seguiti ogni giorno); i termini
+  GitHub dalle persone e dai progetti chiave; il controllo di credibilità degli autori; il confronto con un dossier
+  scritto alla cieca da un modello avanzato in un'altra chat (`textbench=`); poi la misura ripetuta dopo una settimana
+  di aggiornamenti.
+  **Stima dei costi per nodo quotidiano** (dai consumi misurati): pianificazione 0,002 $ a giro; persone 0,07 $ la
+  prima volta, poi meno di 0,01 al giorno; giudizio circa 0,0003 $ a pagina (120 candidati, 0,04); riferimenti fino a
+  0,07; voci circa 0,03; Exa 20 ricerche, circa 0,06 $; Tavily 20 crediti (gratuiti fino a 1.500 al mese, quindi al
+  massimo due nodi quotidiani senza pagare). In tutto circa 0,2 $ al giorno, 6 $ al mese per nodo; la misura contro
+  Wikipedia 0,06 $; il dossier del modello avanzato, nell'abbonamento della redazione, nulla.
 - *Fare un nodo in chat (idea della redazione, 26 novembre: usare l'abbonamento per i passaggi di giudizio).* La
   pipeline fa ricerca, giudizio, nuclei, estrazione delle cifre e controlli (pochi decimi di dollaro); in chat si
   scrivono i moduli. Procedura provata: (1) catena con `bootstrap` da `runs/domande/NODO.txt`; (2) `runs/judge.request`
