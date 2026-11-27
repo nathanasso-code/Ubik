@@ -152,7 +152,7 @@ a pagamento parte solo da un file `runs/<nome>.request` scritto e spinto nel rep
   `shown_quote`).
 - **Una citazione si mostra solo se il codice la ritrova parola per parola nel testo raccolto.** Lo stesso vale per i
   giudizi del modello: contano solo se indicano una frase che il codice ritrova.
-- **Motori di ricerca** (Exa principale finché ha credito, Tavily nella quota gratuita, Brave di nuovo in uso dal 26 novembre quando Exa e Tavily sono finiti; tetti mensili in
+- **Motori di ricerca** (Exa principale finché ha credito, Tavily nella quota gratuita di 1.500 crediti al mese, tetto nel codice 1.450 dal 27 novembre; Brave senza credito dal 26 novembre; tetti mensili in
   `data/search-usage.json`): non si conservano le liste dei risultati, solo la nostra selezione e gli identificativi
   cifrati dei risultati per confrontare i motori. Per Brave, finché si usava: Le pagine trovate solo da Brave vivono
   nella cartella temporanea dell'esecuzione (`scout-transient/`); se non vengono scelte si contano e basta; il registro
@@ -710,6 +710,17 @@ L'elenco unico di Ubik: ciò che è fatto, in corso e da fare. Aggiornato il 24 
   (`engines=brave`). Per questo, e come prova dell'idea della redazione, gli altri otto moduli li ha scritti Claude in
   chat nello stesso formato, controllati dal codice della pipeline (`reports/nodi/delega-conoscenza/chat/`, pagina
   `nodo.html`).
+- *27 novembre: le opinioni argomentate sulla delega della conoscenza.* Delle 221 fonti del nodo una sola era
+  un'opinione: le vie accademiche (OpenAlex, citazioni a catena, riferimenti) erano le sole attive, i motori web senza
+  credito. Claude ha scritto 15 ricerche su saggi, interviste ed editoriali di persone competenti
+  (`ricerche-manca.json`); con le 15 del pianificatore, le stesse 30 ricerche sono state fatte prima su Exa poi su
+  Tavily (`replay=110:140`, giudice solo sulle pagine nuove): Exa 74 contributi nuovi (7 opinioni, 30 analisi), Tavily
+  34 in più oltre a Exa (2 opinioni, 15 analisi, forte sulla matematica), 9 trovati da entrambi; giudice 0,11 $.
+  Errori lungo la strada: il giro 8 non aveva interrogato nessun motore perché `routes=` escludeva la via della ricerca
+  web, che nel codice si chiama ancora `brave` (in `routes=` va scritto `brave`); il primo confronto è stato rifiutato
+  dal giudice per un tetto troppo basso (`budget=0.18` contro una stima di 0,47). Il tetto di Tavily nel codice era 900
+  e fermava Tavily con credito residuo. EDGAR risponde dopo aver tolto gli a capo dal segreto (`InvalidHeader`).
+  Da fare: una quota di opinioni e analisi tra le fonti passate a chi scrive; filtrare le copie e i siti di riassunti.
 - *Fare un nodo in chat (idea della redazione, 26 novembre: usare l'abbonamento per i passaggi di giudizio).* La
   pipeline fa ricerca, giudizio, nuclei, estrazione delle cifre e controlli (pochi decimi di dollaro); in chat si
   scrivono i moduli. Procedura provata: (1) catena con `bootstrap` da `runs/domande/NODO.txt`; (2) `runs/judge.request`
