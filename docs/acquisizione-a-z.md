@@ -727,6 +727,15 @@ L'elenco unico di Ubik: ciò che è fatto, in corso e da fare. Aggiornato il 24 
   Le fonti nuove hanno passaggi copiati dalla pagina archiviata e ritrovati dal codice parola per parola; escluse le
   pagine di dubbia autenticità (un'intervista dichiarata «ricostruzione editoriale»). Da fare: filtrare le copie e i
   siti di riassunti; portare il blocco delle posizioni nella pipeline automatica (`PROMPT` di `node_modules.py`).
+- *27 novembre: il nodo sull'IA e la matematica* (chiesto dalla redazione, nato dal modulo sulla matematica del nodo
+  sulla delega; `runs/domande/ia-matematica.txt`, catena con tutte le vie, Exa e Tavily, voci social). Prima stesura
+  scritta in chat dalle fonti del nodo sulla delega (`reports/nodi/ia-matematica/chat/`): sei moduli nel formato chiesto
+  dalla redazione, **contesto** (spiega che cosa è successo, il modello ha più iniziativa), **fatti** (ancorati a studi
+  e fonti primarie), **dibattito** (le posizioni raccontate e, dentro ciascuna, le citazioni letterali delle voci, saggi
+  o social, al posto del blocco separato «Nel dibattito»). Ogni passaggio e ogni citazione ritrovati parola per parola.
+  Proposta per il nodo sulla delega, da decidere con la redazione: da nove a sei moduli (apprendimento e competenze;
+  lavoro; matematica e verifica, breve, con rimando al nodo dedicato; scienza fatta dagli agenti; dipendenza da pochi
+  sistemi; previsioni), con i disaccordi distribuiti nei dibattiti di ciascun modulo.
 - *Fare un nodo in chat (idea della redazione, 26 novembre: usare l'abbonamento per i passaggi di giudizio).* La
   pipeline fa ricerca, giudizio, nuclei, estrazione delle cifre e controlli (pochi decimi di dollaro); in chat si
   scrivono i moduli. Procedura provata: (1) catena con `bootstrap` da `runs/domande/NODO.txt`; (2) `runs/judge.request`
