@@ -736,6 +736,19 @@ L'elenco unico di Ubik: ciò che è fatto, in corso e da fare. Aggiornato il 24 
   Proposta per il nodo sulla delega, da decidere con la redazione: da nove a sei moduli (apprendimento e competenze;
   lavoro; matematica e verifica, breve, con rimando al nodo dedicato; scienza fatta dagli agenti; dipendenza da pochi
   sistemi; previsioni), con i disaccordi distribuiti nei dibattiti di ciascun modulo.
+- *27 novembre, pomeriggio: perché l'acquisizione non trovava da sola ciò che la redazione ha trovato per caso.* Tre
+  cause misurate sul nodo sull'IA e la matematica. (1) **Il giudice scartava le opinioni competenti**: il saggio di
+  Tao e colleghi «Egoless Mathematics» aveva 4,5 punti (sotto 5) perché ogni studio prende un punto per il tipo e
+  un'opinione zero; ora analisi e opinioni pesano 0,8 e `reband` ricalcola i punteggi (9 e 8 contributi in più, nessuno
+  perso). (2) **Le voci social del primo giro sono fallite** perché il nodo non aveva ancora la scheda: la catena la crea
+  prima degli strumenti delle voci. (3) **Le notizie in divenire**: la catena pianifica dalla domanda del nodo, non dagli
+  ultimi giorni; il caso Riemann (20-27 novembre) è entrato solo con le ricerche scritte da Claude
+  (`ricerche-manca.json`). Da fare: (a) un giro di aggiornamento periodico per i nodi con un caso aperto, che cerchi
+  per nomi e fatti degli ultimi giorni; (b) seguire i canali delle persone chiave del nodo (blog, Mastodon, GitHub),
+  con `author_channels.py`; (c) un controllo di credibilità degli autori (affiliazione verificabile su OpenAlex o ORCID,
+  istituti di una sola persona, chi dichiara di aver risolto più problemi del millennio): un articolo di J. L. Nielsen,
+  che la redazione segnala come non attendibile, era entrato tra i contributi del nodo sulla delega; (d) una sezione
+  «Letture» nei nodi per i saggi lunghi, che il dibattito può solo riassumere.
 - *Fare un nodo in chat (idea della redazione, 26 novembre: usare l'abbonamento per i passaggi di giudizio).* La
   pipeline fa ricerca, giudizio, nuclei, estrazione delle cifre e controlli (pochi decimi di dollaro); in chat si
   scrivono i moduli. Procedura provata: (1) catena con `bootstrap` da `runs/domande/NODO.txt`; (2) `runs/judge.request`
