@@ -138,6 +138,19 @@ operativi (richieste, workflow, insidie) sono nelle sezioni 3, 10 e 11.
   561 già nel nodo, 977 non trovati; 60 ricerche web), tre giri con 45, 61 e 41 contributi nuovi (609 in tutto, non
   ancora saturo); il bilancio segnala che le ricerche restano in gran parte inglesi (23 su 29) nonostante il dovere
   nel pianificatore: serve un vincolo nel codice.
+- **Il nodo `ia-matematica` riscritto in chat, seconda versione (28 novembre)**: otto moduli (nuovo: la disputa su
+  Navier-Stokes), circa 4.700 parole, 100 fonti citate nel testo con le note; le voci del dibattito come card; gli altri
+  490 contributi del nodo come card a latere sotto ogni modulo (titolo, sintesi della pipeline, link; i primi quattro
+  visibili, ordinati per il punteggio del giudizio finché non ci sono voti; le copie delle fonti citate escluse).
+  File: `reports/nodi/ia-matematica/chat/moduli2.py` (fonti citate per chiave, `[chiave]`, numerate dal codice),
+  `build2.py` (controlli: 0 problemi), `gen_page2.py`, `nodo2.json`; pagina `nodo.html`, artefatto «Nodo IA e
+  matematica». Le card a latere non sono rilette una per una: tra i siti ci sono aggregatori di dubbia affidabilità
+  (serve il controllo di credibilità degli autori e dei siti).
+- **Misura contro Wikipedia dopo i giri del 27-28** (stesse 127 affermazioni, `wiki-claims.json`, `wiki-bench.json`):
+  sostenute da 54 a 56, in parte da 31 a 35, assenti da 37 a 34, contraddette da 4 a 2; riferimenti di Wikipedia
+  trovati da 29 a 44 su 244; documenti nostri da 297 a 793 (750 assenti dalle voci). La copertura delle affermazioni
+  cresce poco: le assenze sono ancora le reazioni nominate riportate da testate chiuse ai programmi (Nature, Al Jazeera,
+  WSJ, Guardian, New York Times: 403 o robots) e la storia prima del 2026.
 - **Crediti (28 novembre, mattina):** OpenRouter ricaricato il 27 sera; GitHub Actions ricaricato il 28 mattina (la
   misura contro Wikipedia è ripartita); **Exa senza credito dalle 01:37 UTC del 28 (HTTP 402): gli ultimi due giri hanno
   cercato solo con Tavily; da ricaricare o da passare a un piano** (decisione della redazione); Tavily 1.290 crediti su
@@ -169,7 +182,8 @@ operativi (richieste, workflow, insidie) sono nelle sezioni 3, 10 e 11.
    inglese); altri giri fino al pieno, dopo la ricarica di Exa; le parti
    come ancore (canali ufficiali delle istituzioni seguiti ogni giorno); termini GitHub dalle persone e dai progetti
    chiave; controllo di credibilità degli autori (il caso Nielsen); misura ripetuta dopo una settimana di aggiornamenti.
-2. La riscrittura del nodo `ia-matematica` da parte di Claude in chat (iniziata il 28 novembre), con le fonti nuove:
+2. Fatta il 28 novembre (vedi 0.4); da decidere con la redazione che cosa entra nel testo e che cosa resta a latere,
+   e se i siti delle card vanno filtrati per credibilità. In origine: la riscrittura del nodo `ia-matematica` da parte di Claude in chat, con le fonti nuove:
    più divulgativa, sulla falsariga di Wikipedia ma senza esagerare nella lunghezza; moduli divisi con delicatezza;
    voci del dibattito come card; contributi distinti tra quelli nel testo (con le note) e quelli a latere (card con
    titolo, sintesi, link; nel modulo i primi per un criterio dichiarato, gli altri accessibili).
@@ -881,6 +895,9 @@ L'elenco unico di Ubik: ciò che è fatto, in corso e da fare. Aggiornato il 24 
   0,07; voci circa 0,03; Exa 20 ricerche, circa 0,06 $; Tavily 20 crediti (gratuiti fino a 1.500 al mese, quindi al
   massimo due nodi quotidiani senza pagare). In tutto circa 0,2 $ al giorno, 6 $ al mese per nodo; la misura contro
   Wikipedia 0,06 $; il dossier del modello avanzato, nell'abbonamento della redazione, nulla.
+- *28 novembre, mattina: il nodo della matematica riscritto e la misura.* Sezione 0.4. Da fare: le reazioni nominate
+  dalle testate chiuse ai programmi arrivano solo da rassegne (Post-Cutoff): cercare le stesse parole in fonti
+  leggibili (comunicati delle istituzioni, blog degli autori, agenzie); la storia prima del 2026 come sotto-domanda.
 - *28 novembre, mattina: i costi a regime e due tagli.* Domanda della redazione: quanto costeranno (a) un nodo da
   zero con la pipeline, (b) un nodo da zero con la ricerca della pipeline e la scrittura in chat, (c) l'aggiornamento
   quotidiano; correzioni della redazione alle prime stime: i minuti di GitHub vanno contati, il runner proprio non è
