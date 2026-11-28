@@ -125,6 +125,16 @@ operativi (richieste, workflow, insidie) sono nelle sezioni 3, 10 e 11.
   circa 0,0003 $ a pagina, persone 0,07 $ la prima volta); Sonnet e Opus solo nella scrittura dei moduli, nello schema
   delle stime e in `node_gaps.py`. Stima per un nodo quotidiano: circa 0,2 $ al giorno (Exa 0,06, giudizio 0,04,
   documenti citati fino a 0,07, voci 0,03), 6 $ al mese; Tavily gratuito fino a 1.500 crediti al mese.
+- **GitHub Actions bloccato (28 novembre, 03:20 UTC):** «spending limit» raggiunto; nessun workflow parte finché la
+  redazione non alza il limite o fino al rinnovo mensile. Minuti di novembre circa 4.300 (escluso un'esecuzione
+  annullata dell'11 novembre che il conteggio di GitHub dà per 21.516 minuti): catene profonde da 2 a 5 ore, il resto
+  a minuti. **Nella stima dei costi i minuti di GitHub pesano più dei modelli**: un nodo quotidiano da 20-40 minuti al
+  giorno sono 600-1.200 minuti al mese. Da fare: misurare i minuti di ogni passo nel bilancio, accorciare i passi lenti
+  (lettura delle pagine, documenti citati), valutare un runner sul computer della redazione.
+- **Ultimi risultati del laboratorio (28 novembre, notte):** documenti citati tutti cercati (1.942 letti, 320 proposte,
+  561 già nel nodo, 977 non trovati; 60 ricerche web), tre giri con 45, 61 e 41 contributi nuovi (609 in tutto, non
+  ancora saturo); il bilancio segnala che le ricerche restano in gran parte inglesi (23 su 29) nonostante il dovere
+  nel pianificatore: serve un vincolo nel codice. La misura contro Wikipedia non è partita (Actions bloccato).
 - **Crediti:** OpenRouter ricaricato dalla redazione il 27 sera; Exa ricaricato il 27; Tavily nella quota gratuita
   (tetto nel codice 1.450 al mese); Brave senza credito (402); `SEC_USER_AGENT` creato (EDGAR risponde).
 
