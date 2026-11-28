@@ -213,50 +213,98 @@ archivio, i nodi a cui ha contribuito, il modo in cui la raccogliamo; per ogni t
 aggiorna alla fine di ogni catena e di ogni aggiornamento. Il passo successivo è che i raccoglitori leggano il registro
 unico, uno alla volta (sezione 10).
 
-### 4.2 La raccolta (`tools/collect.py`, `collect.yml`, ogni 12 ore)
+I registri delle liste di ottobre (numeri di allora; oggi si allargano per criterio):
 
-Per ogni fonte il raccoglitore legge il canale dichiarato: feed RSS o Atom, sitemap con filtro sui percorsi, OpenAlex,
-arXiv, ricerche GNews. Per ogni voce nuova apre la pagina se robots.txt lo consente e non c'è la riserva TDM, estrae il
-testo (trafilatura, pypdf) e lo salva in `corpus/<ambito>/` con origine, testata, livello, data. Le testate seguite per
-sezione hanno anche il feed di tutto il sito, filtrato con le parole dei Topic (`tools/feed_wide.py`). Costo: zero, più
-l'abbonamento GNews.
+| File | Che cosa | Livello |
+| --- | --- | --- |
+| `ai.json`, `ai-regulation.json` | Testate e fonti approvate (67 e 46) | approvato |
+| `ai-regulation-newsletters.json`, `ai-regulation-social.json` | Newsletter (casella Gmail di Ubik) e account social | approvato |
+| `ai-voices.json` | Le 42 voci (persone) approvate il 4 novembre, con i loro canali | approvato |
+| `ai-probation.json` | 65 fonti in prova: blog e autori dal bacino, testate dalla verifica della copertura, sette testate italiane, Terence Tao | prova |
+| `research-ai-probation.json` | 16 raccoglitori di studi: cinque categorie di arXiv, NBER, riviste via OpenAlex, i 24 studiosi trovati dalle citazioni dei nodi | prova |
+| `primary-ai-probation.json` | 15 fonti primarie: notiziari di aziende (sempre «parte in causa»), AI Security Institute, GOV.UK, l'avviso EUR-Lex della redazione, il Press corner della Commissione | prova |
+| `gnews-ai.json` | Quattro ricerche GNews (IA ed energia, inglese e italiano) | prova |
+| `telegram-probation.json` | 12 canali pubblici di Telegram, ucraini e russi; solo i post su Euromaidan e IA (10 novembre) | prova |
+| `*-candidates.json`, `bacino-ia.json` | Candidati non ancora approvati, con la storia di come sono stati trovati | — |
 
-### 4.3 Le pagine citate (`tools/fetch_cited.py`, `coverage.yml`, il lunedì)
+### 4.2 Raccolta (`tools/collect.py`, workflow `collect.yml`, ogni 12 ore)
 
-Le pagine citate da almeno due fonti del corpus, quelle condivise dalle antenne (account Bluesky e Mastodon seguiti da
-molte voci) e le storie sull'IA in prima pagina su Hacker News, raccolte con le stesse regole in `corpus/cited/`.
+Per ogni fonte il raccoglitore legge il canale dichiarato: feed RSS o Atom, sitemap con filtro sui percorsi
+(`sitemap_filter`, per i siti senza feed: Anthropic, Artificial Analysis), filtro di OpenAlex (`openalex`: una rivista
+per ISSN o un elenco di autori; si conserva l'abstract), API di arXiv, ricerche GNews (finestra di 30 ore, fino a otto
+pagine, aggregatori esclusi, la testata vera come origine). Per ogni voce nuova apre la pagina dell'editore se robots.txt
+lo consente e non c'è la riserva TDM, estrae il testo (trafilatura, PDF con pypdf) e lo salva in `corpus/<ambito>/` con
+origine, testata, livello, data e «trovata con». Al massimo 40 voci nuove per fonte a giro. Costo: zero, tranne
+l'abbonamento GNews (49,99 euro al mese, circa 32 richieste al giorno su 1.000).
 
-### 4.4 I siti approvati (`tools/sites.py`, `sites.yml`, ogni giorno)
+Le testate seguite per sezione hanno anche il feed di tutto il sito, filtrato con le parole dei Topic
+(`tools/feed_wide.py`, `registry/parole-topic.json`). Corpus al 28 novembre (documenti nell'indice): circa 24.750 in
+`ai`, 11.000 in `ai-regulation`, 5.500 in `ai-research`, 2.600 in `science`, 830 pagine citate, 120.000 voci dei feed
+dei siti, circa 6.300 pagine archiviate per i nodi.
 
-Ogni sito che ha dato a un nodo un contributo con un fatto nuovo verificato è approvato in automatico (`siti.json`,
-1.835 siti al 28 novembre). Se ne cerca il feed e ogni giorno se ne raccolgono le voci nuove (`corpus/siti/HOST/MESE.jsonl`:
-titolo, sintesi, indirizzo, data). Le pagine buone di ogni nodo sono in `corpus/targeted/NODO/pagine/`
-(`tools/archive_node.py`).
+### 4.3 Le pagine citate (`tools/fetch_cited.py`, `coverage.yml`, il lunedì dal 15 novembre)
 
-### 4.5 Autori e loro canali (`tools/authors.py`, `tools/author_channels.py`, ogni giorno)
+Il dibattito legge una coda lunghissima di siti, ciascuno citato una o due volte, che nessun abbonamento copre. Ogni
+lunedì si raccolgono, con le stesse regole, le pagine citate da almeno due fonti del corpus, quelle condivise da
+un'antenna (sotto) e le storie sull'IA in prima pagina su Hacker News. `tools/coverage.py` misura la copertura su quattro
+insiemi di riferimento: le pagine citate da due fonti sono passate dal 7% al 71% nel corpus, i link delle antenne dal 22%
+all'87%, Hacker News dal 7% al 40%.
 
-Il giudice nomina l'autore competente di ogni contributo; una persona con almeno 2 pagine con un fatto nuovo
-verificato, su 2 nodi o in 3 pagine, entra «in prova»; un controllo sull'attività rende «storico» chi non è più attivo.
-Per ogni autore si cercano i canali (OpenAlex, pagina personale, Bluesky, Mastodon, Substack); i casi incerti li rivede
-un modello, quelli ancora incerti Claude (`reports/fonti/canali-da-rivedere.md`).
+### 4.4 Il bacino delle fonti (`tools/bacino.py`, `bacino.yml`, su richiesta)
 
-### 4.6 Telegram e Mastodon
+Il bacino è l'anticamera del registro: siti e persone scoperti da qualsiasi strumento, ciascuno con la sua storia. Passi:
+`seed` (voci, siti dei nodi, firme), `expand` (chi seguono le voci su Bluesky, i siti che citano), `channels` (robots.txt,
+feed, quota di articoli sull'IA, riserva TDM), `clean` (doppioni, rumore, classe di canale), `resolve` (Brave per chi ha
+solo Bluesky), `mastodon` (account e chi seguono), `antennas` (i link condivisi da voci e antenne, in
+`reports/bacino/ia-antenne.json`), `cited` (gli autori degli studi che citano o sono citati dagli studi dei nodi, da
+OpenAlex), `measure` (che cosa avrebbe portato un feed in due settimane). Le **antenne** sono 186 account Bluesky e 181
+Mastodon seguiti da molte voci: non sono fonti, i loro link servono a scoprire pagine. Il bacino propone; dal 13 novembre le fonti entrano per criterio (sezione 3).
 
-**Telegram**: i canali inoltrati o citati da quelli seguiti, esaminati se citati da almeno 2 fonti; il modello dice che
-cosa sono (istituzione, testata, giornalista, analista, OSINT, testimone, aggregatore, propaganda, spam) e se servono uno
-Stato; spam e aggregatori fuori, il resto in prova con le etichette; «primario» solo se l'istituzione garantisce il
-canale. **Mastodon**: gli account delle istanze governative (primari per costruzione) e gli account degli autori
-approvati, per RSS; robots.txt e la scelta di chi non vuole essere indicizzato.
+### 4.5 I siti approvati e i loro feed (`tools/sites.py`, ogni giorno in `sites.yml`)
 
-### 4.7 Le voci dai social
+Ogni sito che ha dato a un nodo un contributo con un fatto nuovo verificato nel testo è approvato in automatico
+(`registry/siti.json`, 1.835 siti al 28 novembre). Del sito si cerca il feed (dichiarato nella home, gli indirizzi usuali, le
+sitemap di robots.txt; mai per gli archivi generali come GitHub o arXiv) e ogni giorno se ne raccolgono le voci nuove
+(`corpus/siti/HOST/MESE.jsonl`: titolo, sintesi, indirizzo, data). La ricerca proprietaria (4.9) le interroga per ogni nodo; nel giornale
+entrano solo le voci di siti con almeno due fatti verificati e un termine dell'IA nel titolo, fino a 40 a settimana.
+Le pagine buone di ogni nodo sono conservate in `corpus/targeted/NODO/pagine/` (`tools/archive_node.py`).
 
-Per ogni nodo attivo: Bluesky (`tools/social_voices.py`), Mastodon (`tools/mastodon_voices.py`), Telegram
-(`tools/telegram_voices.py`). Filtri: lunghezza, seguito, account, giudice (aggiunge una posizione o una competenza che
-le fonti non danno?); chi non dichiara una competenza entra solo con qualcosa di verificabile e un seguito triplo; un
-secondo passaggio cerca le parti non ancora sentite. Le voci si sommano nel tempo
-(`reports/nodi/NODO/voci-social.json`).
+### 4.6 Autori e loro canali (`tools/authors.py`, `tools/author_channels.py`, ogni giorno)
 
-### 4.8 La ricerca proprietaria (`tools/corpus_index.py`)
+Il giudice nomina per ogni contributo l'autore competente. I nomi si normalizzano una volta (persona, istituzione o
+redazione); una persona con almeno 2 pagine con un fatto nuovo verificato, e 2 nodi o 3 pagine, entra «in prova»
+(`registry/autori.json`); un controllo sull'attività rende «storico» chi non è più attivo (Lighthill). Per ogni autore
+si cercano i canali: OpenAlex, la pagina personale, Bluesky, Mastodon, Substack (X e LinkedIn solo annotati). I casi
+incerti (un omonimo) li rivede un modello come li rivedeva Claude (17 su 18 uguali alla prova); quelli che restano
+incerti vanno a Claude, 8 alla volta (`reports/fonti/canali-da-rivedere.md`).
+
+### 4.7 Telegram e Mastodon
+
+**Telegram** (`registry/telegram-probation.json`, 12 canali fissi; `registry/telegram-canali.json`, approvati in
+automatico): i canali inoltrati o citati da quelli seguiti, dalle pagine del corpus o dal giudice; esame se citati da
+almeno 2 fonti, di cui una non di Stato né di propaganda; anteprima pubblica, 1.000 iscritti, 5 post; il modello dice
+che cosa sono (istituzione, testata, giornalista, analista, OSINT, testimone, aggregatore, propaganda, spam) e se un
+canale serve uno Stato (il paese da solo non basta). Spam e aggregatori fuori, il resto in prova con le etichette.
+«Primario» solo se l'istituzione garantisce il canale (un sito governativo lo cita, o il suo sito rimanda al canale):
+i suoi post sono documenti. Raccolta ogni 12 ore.
+
+**Mastodon** (`tools/mastodon.py`, `registry/mastodon-istanze.json`, `registry/mastodon-canali.json`): gli account
+delle istanze governative (social.bund.de, social.overheid.nl: 81 in prova, primari per costruzione), raccolti per RSS
+ogni giorno; l'account Mastodon degli autori approvati; robots.txt e la scelta di chi chiede di non essere indicizzato.
+
+### 4.8 Le voci dai social (opinioni, separate da resoconti e documenti)
+
+Per ogni nodo attivo, a ogni aggiornamento (e nelle catene con `social_voices`): Bluesky (`tools/social_voices.py`: ricerche brevi dai termini e dalla catena; i
+fili dello stesso autore ricomposti), Mastodon (`tools/mastodon_voices.py`: hashtag scelti dal modello su 12 istanze e
+la ricerca a testo col nostro account), Telegram (`tools/telegram_voices.py`: solo canali di giornalisti, analisti,
+OSINT e testimoni, con visualizzazioni e reazioni). Filtri in ordine: lunghezza, seguito (contro bot, spam e uscite
+estemporanee), account (età, post, follower), giudice (aggiunge una posizione o una competenza che le fonti non
+danno?). Chi non dichiara una competenza entra solo con qualcosa di verificabile e un seguito triplo; una voce non
+ripete una posizione già tenuta; le testate tra le voci diventano fonti (strada `segnalati`); un secondo passaggio
+cerca le parti non ancora sentite. Le voci si sommano di settimana in settimana (`reports/nodi/NODO/voci-social.json`)
+e si vedono nell'esploratore con la loro rete.
+
+### 4.9 La ricerca proprietaria (`tools/corpus_index.py`)
 
 Un indice a testo pieno (SQLite FTS5) su tutto ciò che Ubik ha raccolto o archiviato: corpus delle Matrici, voci dei
 feed dei siti, autori, Mastodon, Telegram, pagine citate e, dal 28 novembre, le pagine archiviate di tutti i nodi
@@ -273,6 +321,16 @@ lo provano; servono due origini indipendenti e una fonte approvata o primaria), 
 testi. Le grandi storie restano nel sotto-topic dove sono principalmente a tema, con rimandi negli altri. In calendario
 il lunedì alle 4:23 UTC sulla settimana chiusa (`daily.yml`); a mano da `runs/daily.request`. Costo: circa 0,7-1,3 $ a
 settimana. Specifica: `docs/daily-spec.md`.
+
+I passi del modello, in breve (dettaglio in `docs/daily-spec.md`):
+
+1. **nota** per articolo: pertinenza, tipo, evento (attore, azione, oggetto, data), sintesi e citazione, sotto-topic;
+2. **raggruppamento** per sotto-topic in Matrici e card, con il motivo di ogni card separata;
+3. **conferma del codice**: due articoli stanno insieme solo se date e parole di attore o oggetto lo provano; servono
+   almeno due origini indipendenti, e almeno un articolo da una fonte approvata o primaria (una Matrice fatta solo di
+   fonti in prova si scioglie);
+4. **secondo giro** sulle card singole e fusione delle Matrici gemelle; controllo delle card;
+5. **filtro del sotto-topic** e **testi** (titolo neutro, essenza, testi delle card) solo dalle sintesi.
 
 ## 6. I nodi: l'acquisizione
 
@@ -298,7 +356,7 @@ contributo nuovo nel giro prima (almeno 8 e un terzo di `q=`, al più `q=`; `ric
 
 | Via | Che cosa porta |
 | --- | --- |
-| `home` | La ricerca proprietaria (4.8), in ogni giro |
+| `home` | La ricerca proprietaria (4.9), in ogni giro |
 | `brave` (il nome è storico: sono i motori a pagamento) | Le ricerche della catena su Exa e, come complemento, Tavily (sotto) |
 | `corpus`, `corpus-cited` | Gli articoli del corpus che citano le ancore e i link che citano |
 | `fonti` | I link nei testi delle fonti del nodo |
@@ -317,13 +375,29 @@ senza credito, si passa all'altro e il bilancio dà l'allarme.
 
 ### 6.4 Filtro e giudizio
 
-Il **filtro per codice** (`tools/rank_candidates.py`, costo zero): senza aprire le pagine, da indirizzo, titolo e vie,
-tiene ciò che nomina il caso o è uno studio, un documento, un repository; toglie piattaforme, pagine di servizio,
-titoli da motore. Il **giudizio** (`tools/judge_candidates.py`, `prompts/judge-node.txt`, DeepSeek V4.1 Flash, circa
-0,0003 $ a pagina): per i primi `k=` della classifica apre la pagina e chiede se è pertinente, che tipo è, se è derivata,
-se porta prove proprie, novità, argomenti contro, fonti primarie, un autore competente; ogni «sì» deve citare una frase
-che il codice ritrova. Punteggio del codice; analisi e opinioni competenti pesano 0,8 come i resoconti. Fasce:
-**contributo** (da 5), **copertura** (pertinente, da 3: serve alle Matrici e alle card), **scarto**.
+**Primo livello, il filtro per codice** (`tools/rank_candidates.py`). Senza aprire le pagine, da indirizzo, titolo, menzioni e voci: nomina il caso (frasi, coppie di parole come «fair use»,
+parole distintive, traslitterazioni, plurali), è uno studio, un documento ufficiale, un repository; la data del caso
+nell'indirizzo; trovato cercando il caso (Bluesky, Hacker News, casa) con un titolo. Toglie piattaforme e post social,
+pagine di servizio, titoli da motore di ricerca. Ogni segnale ha un peso visibile nella classifica
+(`reports/scout/<nodo>/rank.json`). Tiene circa un terzo dei candidati. Costo zero.
+
+**Secondo livello, il giudizio** (`tools/judge_candidates.py`, `prompts/judge-node.txt`). Gira nello stesso giro dello scout, così
+vede anche le pagine trovate solo dai motori (che non si conservano). Per i primi `k=` della classifica apre la pagina, ne prende le prime 1.400 parole e chiede a DeepSeek V4.1 Flash (circa 0,0003 $ a pagina): è pertinente? che tipo di pagina? è
+derivata da un'altra? porta prove proprie, qualcosa di nuovo per le catene del nodo, argomenti contro, fonti primarie, un
+autore competente? Ogni «sì» deve citare una frase che il codice ritrova nel testo. Il codice calcola il punteggio (prove
+proprie 2,5, novità 2, argomenti contro 1, autore 1, fonti primarie 0,5, più il peso del tipo, con analisi e opinioni
+competenti a 0,8 come i resoconti dal 27 novembre; una pagina derivata perde 2,5). Le copie dello stesso documento e
+le riprese di una stessa voce si riconoscono (fasce «copia» e «ripresa»).
+
+Tre fasce: **contributo** (punteggio da 5), **copertura** (pertinente, da 3 a 5: non serve al nodo, serve alle Matrici e
+alle card), **scarto**.
+
+**Setaccio**: i link citati dalle pagine «contributo» (solo nel corpo del testo) diventano i candidati del giro
+successivo, in ordine di quante pagine buone li citano, fino a 250 per giro. Si ferma quando un giro non trova nulla. Nelle catene il giudizio fa un giro solo (`rounds=1`):
+il setaccio lo fanno le vie `fonti` e `snowball` del giro di catena successivo.
+
+Risultato in `reports/scout/<nodo>/judge.json` (con le vie che hanno trovato ogni pagina); i testi delle pagine buone
+si archiviano (6.5). Nelle catene il giudizio legge solo le pagine nuove (`only_new`).
 
 Con **`tutti`** nella richiesta (dal 28 novembre) ogni pagina restituita dai motori si apre e si giudica durante
 l'esecuzione, oltre ai `k=` migliori delle altre vie, e le pagine pertinenti ma sotto la fascia contributo si archiviano
