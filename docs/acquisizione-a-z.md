@@ -151,6 +151,26 @@ operativi (richieste, workflow, insidie) sono nelle sezioni 3, 10 e 11.
   trovati da 29 a 44 su 244; documenti nostri da 297 a 793 (750 assenti dalle voci). La copertura delle affermazioni
   cresce poco: le assenze sono ancora le reazioni nominate riportate da testate chiuse ai programmi (Nature, Al Jazeera,
   WSJ, Guardian, New York Times: 403 o robots) e la storia prima del 2026.
+- **Autonomia per tema e registro unico (decisione della redazione, 28 novembre).** Strategia: su un tema circoscritto
+  (per esempio «matematica») si cerca con le API finché portano fonti nuove, aprendo e giudicando tutti i risultati con
+  una scrematura blanda e archiviando tutto ciò che è pertinente; quando le API non portano più nulla di
+  significativamente migliore della ricerca proprietaria, il tema è autonomo e le API servono solo di tanto in tanto
+  per scovare fonti nuove. Si fa nel tempo, man mano che nascono nodi su quel tema (non con giri a vuoto); i nodi e le
+  Matrici dello stesso tema partono con le fonti già in casa. Ubik resta anche un aggregatore: il registro serve
+  alle Matrici e alle card quanto ai nodi.
+  Vincolo dei termini: i link delle pagine che apriamo sono nostri (archivio); la lista dei risultati non aperti no
+  (Tavily e Brave vietano di conservarla; Exa da verificare sul testo originale). Per non perderli si aprono tutti
+  durante l'esecuzione (`tutti` in `runs/catena.request`: `JUDGE_ALL_ENGINES`, `ARCHIVE_PERTINENT`); stima per un nodo
+  approfondito circa 2,5-3 $ in più (giudizio circa 1,5 $, minuti di GitHub 1-1,5 $); prima si giudicavano 572 pagine
+  su 5.474 restituite. Fatto (`ubik-corpus`): `registry/temi.json` (sette temi proposti da Claude, da confermare;
+  regola di autonomia: quota dei contributi nuovi trovati solo dalle API sotto il 10% per tre giri di fila);
+  `tools/registro.py` (registro unico per tema: ogni fonte una volta, con temi, pagine per archivio, nodi, modo di
+  raccolta; per tema fonti, pagine, autonomia; `registry/registro.json`, `reports/fonti/registro.md`; alla fine di
+  ogni catena e aggiornamento; per ora una vista: i raccoglitori leggono ancora i propri registri); la ricerca
+  proprietaria (`tools/corpus_index.py`) ora con le pagine di tutti i nodi (174.625 documenti, circa un minuto) e
+  ricerche per parole qualsiasi ordinate per pertinenza, via `home` in ogni giro (c'era nello scout ma in nessuna
+  catena); misura per giro in `catena.json` (`vie_contributi`) e nel bilancio (`autonomia`). Punto di partenza: sulle
+  277 ricerche del laboratorio la ricerca di casa ritrova 95 dei 609 contributi del nodo (16%).
 - **Crediti (28 novembre, mattina):** OpenRouter ricaricato il 27 sera; GitHub Actions ricaricato il 28 mattina (la
   misura contro Wikipedia è ripartita); **Exa senza credito dalle 01:37 UTC del 28 (HTTP 402): gli ultimi due giri hanno
   cercato solo con Tavily; da ricaricare o da passare a un piano** (decisione della redazione); Tavily 1.290 crediti su
@@ -187,10 +207,13 @@ operativi (richieste, workflow, insidie) sono nelle sezioni 3, 10 e 11.
    più divulgativa, sulla falsariga di Wikipedia ma senza esagerare nella lunghezza; moduli divisi con delicatezza;
    voci del dibattito come card; contributi distinti tra quelli nel testo (con le note) e quelli a latere (card con
    titolo, sintesi, link; nel modulo i primi per un criterio dichiarato, gli altri accessibili).
-3. Un esperimento di nodo costruito in chat con l'abbonamento della redazione, accanto allo stesso nodo costruito
+3. Autonomia per tema: qualche giro sul nodo della matematica con `tutti` per farsi un'idea (dopo la ricarica di Exa);
+   la redazione conferma temi e soglia; poi i raccoglitori passano uno alla volta al registro unico (prima i siti, poi
+   autori e canali, infine i topic delle Matrici); per ogni nodo nuovo, il tema e la misura di autonomia.
+4. Un esperimento di nodo costruito in chat con l'abbonamento della redazione, accanto allo stesso nodo costruito
    dalla pipeline, misurati entrambi contro Wikipedia, con i costi (argomento da scegliere con la redazione).
-4. Il controllo di aderenza frase per frase anche per il testo scritto in chat.
-5. Il sito vero e proprio: prima il modello dei dati (nodo, modulo, passaggio, fonte o card, proposta di modifica,
+5. Il controllo di aderenza frase per frase anche per il testo scritto in chat.
+6. Il sito vero e proprio: prima il modello dei dati (nodo, modulo, passaggio, fonte o card, proposta di modifica,
    commento, voto, utente), poi un prototipo in sola lettura generato dai file dei nodi.
 
 ### 0.6 Prompt per aprire una nuova chat
@@ -895,6 +918,10 @@ L'elenco unico di Ubik: ciò che è fatto, in corso e da fare. Aggiornato il 24 
   0,07; voci circa 0,03; Exa 20 ricerche, circa 0,06 $; Tavily 20 crediti (gratuiti fino a 1.500 al mese, quindi al
   massimo due nodi quotidiani senza pagare). In tutto circa 0,2 $ al giorno, 6 $ al mese per nodo; la misura contro
   Wikipedia 0,06 $; il dossier del modello avanzato, nell'abbonamento della redazione, nulla.
+- *28 novembre, tarda mattina: autonomia per tema e registro unico.* Domanda della redazione: le fonti raggiunte dalle
+  API sono tutte acquisite? No: 572 pagine giudicate su 5.474 restituite, le liste non conservate per i termini d'uso.
+  Strategia decisa e primo codice nella sezione 0.4. Da fare: confermare temi e soglia; i raccoglitori sul registro unico;
+  i termini di Exa; le card dei siti poco credibili.
 - *28 novembre, mattina: il nodo della matematica riscritto e la misura.* Sezione 0.4. Da fare: le reazioni nominate
   dalle testate chiuse ai programmi arrivano solo da rassegne (Post-Cutoff): cercare le stesse parole in fonti
   leggibili (comunicati delle istituzioni, blog degli autori, agenzie); la storia prima del 2026 come sotto-domanda.
