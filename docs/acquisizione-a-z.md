@@ -86,9 +86,8 @@ senza eccezioni, le regole di Ubik:
    pagamento** (scrittura dei moduli, scelta dei nuclei, estrazione delle cifre, lacune), **ma non nella ricerca**:
    la ricerca la fa la pipeline per intero, con tutte le vie, fino al pieno; la ricerca di Claude in chat si
    aggiunge a quella (casi in divenire, reazioni nominate, controllo delle fonti dubbie), non la sostituisce; poi
-   Claude fa la parte finale. Costo stimato di un nodo così: circa 5-6 $ (ricerca della pipeline), contro 6-8 $ di un
-   nodo fatto tutto dalla pipeline; aggiornamento quotidiano circa 11-13 $ al mese per nodo (minuti di GitHub inclusi,
-   0,006 $ al minuto oltre la quota). Restano alla pipeline anche i passi economici e i controlli (giudizio con DeepSeek, archivio, documenti citati, verifiche);
+   Claude fa la parte finale. Costo stimato a regime, senza quote gratuite (con 2-3 nodi nuovi al giorno non
+   contano): sezione 0.4, «Costi». Restano alla pipeline anche i passi economici e i controlli (giudizio con DeepSeek, archivio, documenti citati, verifiche);
    le pagine trovate in chat entrano dalla via `chat` (`reports/scout/NODO/proposte-chat.json`, `{"url", "perche"}`),
    giudicate e archiviate come le altre.
 
@@ -129,8 +128,8 @@ operativi (richieste, workflow, insidie) sono nelle sezioni 3, 10 e 11.
   circa 0,0003 $ a pagina, persone 0,07 $ la prima volta); Sonnet e Opus solo nella scrittura dei moduli, nello schema
   delle stime e in `node_gaps.py`. Stima per un nodo quotidiano: circa 0,2 $ al giorno (Exa 0,06, giudizio 0,04,
   documenti citati fino a 0,07, voci 0,03), 6 $ al mese; Tavily gratuito fino a 1.500 crediti al mese.
-- **GitHub Actions bloccato (28 novembre, 03:20 UTC):** «spending limit» raggiunto; nessun workflow parte finché la
-  redazione non alza il limite o fino al rinnovo mensile. Minuti di novembre circa 4.300 (escluso un'esecuzione
+- **GitHub Actions bloccato il 28 novembre alle 03:20 UTC** («spending limit»), ricaricato dalla redazione in
+  mattinata; l'aggiornamento quotidiano delle 05:17 non è partito. Minuti di novembre circa 4.300 (escluso un'esecuzione
   annullata dell'11 novembre che il conteggio di GitHub dà per 21.516 minuti): catene profonde da 2 a 5 ore, il resto
   a minuti. **Nella stima dei costi i minuti di GitHub pesano più dei modelli**: un nodo quotidiano da 20-40 minuti al
   giorno sono 600-1.200 minuti al mese. Da fare: misurare i minuti di ogni passo nel bilancio, accorciare i passi lenti
@@ -138,17 +137,42 @@ operativi (richieste, workflow, insidie) sono nelle sezioni 3, 10 e 11.
 - **Ultimi risultati del laboratorio (28 novembre, notte):** documenti citati tutti cercati (1.942 letti, 320 proposte,
   561 già nel nodo, 977 non trovati; 60 ricerche web), tre giri con 45, 61 e 41 contributi nuovi (609 in tutto, non
   ancora saturo); il bilancio segnala che le ricerche restano in gran parte inglesi (23 su 29) nonostante il dovere
-  nel pianificatore: serve un vincolo nel codice. La misura contro Wikipedia non è partita (Actions bloccato).
-- **Crediti:** OpenRouter ricaricato dalla redazione il 27 sera; Exa ricaricato il 27; Tavily nella quota gratuita
-  (tetto nel codice 1.450 al mese); Brave senza credito (402); `SEC_USER_AGENT` creato (EDGAR risponde).
+  nel pianificatore: serve un vincolo nel codice.
+- **Crediti (28 novembre, mattina):** OpenRouter ricaricato il 27 sera; GitHub Actions ricaricato il 28 mattina (la
+  misura contro Wikipedia è ripartita); **Exa senza credito dalle 01:37 UTC del 28 (HTTP 402): gli ultimi due giri hanno
+  cercato solo con Tavily; da ricaricare o da passare a un piano** (decisione della redazione); Tavily 1.290 crediti su
+  1.500 (tetto nel codice 1.450); Brave senza credito (402); `SEC_USER_AGENT` creato (EDGAR risponde).
+- **Costi a regime (28 novembre).** Con 2-3 nodi nuovi al giorno le quote gratuite non contano: Tavily 0,008 $ a
+  credito oltre i 1.000 gratuiti (piani 0,005-0,0075), Exa 7 $ ogni 1.000 ricerche a listino (circa 3 osservati),
+  GitHub 0,006 $ al minuto (runner sul computer della redazione 0,002 dal 1° marzo 2026). Prima dei tagli: nodo nuovo
+  (ricerca della pipeline, scrittura in chat) circa 8-9 $, aggiornamento quotidiano circa 15-17 $ al mese per nodo;
+  60-90 nodi al mese, 500-800 $. **Tagli decisi dalla redazione: due su cinque.**
+  (1) *Un motore per ricerca, il secondo come complemento* (`_complement` in `tools/scout.py`). Misura sulle 238
+  ricerche fatte dal laboratorio con entrambi i motori: insieme 459 contributi; solo Exa 365, solo Tavily 199; la
+  scelta migliore possibile di un motore per ricerca 384, a caso 330. I contributi in più di Tavily sono sparsi su ogni
+  tipo di ricerca: il motore non si sceglie dal tipo. Funziona Exa per primo e Tavily solo quando dei 20 risultati di
+  Exa al massimo 8 sono pagine nuove per il nodo: 88 ricerche Tavily su 238, 425 contributi su 459 (meno 7%).
+  `SEARCH_ROUTING=entrambi` torna ai due motori, `SEARCH_COMPLEMENT_MAX` cambia la soglia.
+  (3) *Ricerche adattive* (`adapt` in `tools/entity_rounds.py`): dal Nord Stream c'era lo stop a saturazione (meno di
+  `min=` contributi nuovi), ma le ricerche per giro restavano fisse; ora, nella stessa esecuzione, un giro ha il doppio
+  delle ricerche che hanno portato un contributo nuovo nel giro prima (`ricerche_fruttuose` in `catena.json`), almeno
+  8 e un terzo di `q=`, al massimo `q=`.
+  Restano fuori: (2) prima le vie gratuite (la redazione: le lacune degli strumenti gratuiti sono sistematiche e non si
+  misurano senza fare davvero le ricerche con tutti); (4) minuti di GitHub e (5) due livelli di profondità, per il
+  futuro. Il bilancio conta ora le ricerche per motore e dà l'allarme quando un motore si ferma; i documenti citati
+  passano al motore successivo quando uno è senza credito.
 
 ### 0.5 Prossimi passi
 
-1. Finire il laboratorio: leggere il bilancio e la nuova misura contro Wikipedia; altri giri fino al pieno; le parti
+1. Finire il laboratorio: leggere la nuova misura contro Wikipedia (ripartita il 28 mattina) e misurare il primo giro
+   con il complemento tra i motori e le ricerche adattive; il vincolo sulle lingue nel codice (23 ricerche su 29 in
+   inglese); altri giri fino al pieno, dopo la ricarica di Exa; le parti
    come ancore (canali ufficiali delle istituzioni seguiti ogni giorno); termini GitHub dalle persone e dai progetti
    chiave; controllo di credibilità degli autori (il caso Nielsen); misura ripetuta dopo una settimana di aggiornamenti.
-2. Poi la riscrittura del nodo `ia-matematica` da parte di Claude in chat, con le fonti nuove: più divulgativa,
-   moduli divisi con delicatezza, voci del dibattito e contributi a latere come card.
+2. La riscrittura del nodo `ia-matematica` da parte di Claude in chat (iniziata il 28 novembre), con le fonti nuove:
+   più divulgativa, sulla falsariga di Wikipedia ma senza esagerare nella lunghezza; moduli divisi con delicatezza;
+   voci del dibattito come card; contributi distinti tra quelli nel testo (con le note) e quelli a latere (card con
+   titolo, sintesi, link; nel modulo i primi per un criterio dichiarato, gli altri accessibili).
 3. Un esperimento di nodo costruito in chat con l'abbonamento della redazione, accanto allo stesso nodo costruito
    dalla pipeline, misurati entrambi contro Wikipedia, con i costi (argomento da scegliere con la redazione).
 4. Il controllo di aderenza frase per frase anche per il testo scritto in chat.
@@ -170,7 +194,9 @@ redazione, conflitto d'interessi dichiarato quando si parla di Anthropic. Ogni c
 Co-Authored-By e Claude-Session indicate dal sistema. Dopo ogni esecuzione che stampa risultati di ricerca cancella
 il log con gh api -X DELETE repos/nathanasso-code/ubik-corpus/actions/runs/<id>/logs. Dopo ogni catena leggi
 reports/nodi/<nodo>/bilancio.json prima di qualsiasi altra cosa. Per risparmiare, in chat sostituisciti alla pipeline
-dove usa modelli a pagamento (scrittura, ricerche mirate, lettura), lasciandole i passi economici e i controlli.
+dove usa modelli a pagamento (scrittura dei moduli, nuclei, cifre, lacune), ma non nella ricerca: la ricerca la fa la
+pipeline con tutte le vie, la tua si aggiunge; i passi economici e i controlli restano alla pipeline. A regime le
+quote gratuite non contano (sezione 0.4, «Costi»).
 Il lavoro in corso è il laboratorio dell'acquisizione sul nodo ia-matematica (sezione 0.4 e 0.5). Comincia dicendo
 in poche righe a che punto sei e qual è il prossimo passo.
 ```
@@ -456,7 +482,7 @@ il tetto; se non ci sta, resta fuori il nodo aggiornato più di recente. Il cale
 | GNews | 49,99 euro al mese | Fisso |
 | Brave | Accantonato il 13 novembre: niente più credito gratuito (5 dollari ogni 1.000 ricerche, con l'obbligo di citarlo) | — |
 | Exa (motore principale dal 12 novembre) | Da verificare nel pannello: il listino dice 7 dollari ogni 1.000 ricerche con 10 risultati più 1 per ogni risultato oltre il decimo (17 con i nostri 20); il consumo osservato sembrava molto più basso. I risultati dall'11° al 20° portano circa il 30% dei contributi | Ricerche dei nodi |
-| Tavily (secondo motore) | Gratuito fino a 1.000 ricerche al mese (tetto nostro 900), poi 8 dollari ogni 1.000 | Ricerche dei nodi |
+| Tavily (secondo motore) | Gratuito fino a 1.000 crediti al mese (il piano della redazione ne dà 1.500; tetto nostro 1.450), poi 8 dollari ogni 1.000; dal 28 novembre solo come complemento di Exa (sezione 0.4) | Ricerche dei nodi |
 | Aggiornamento settimanale dei nodi | Circa 0,17 dollari a nodo per giro (piano, giudizio, voci) più 20-25 ricerche; prima settimana 0,66 dollari per quattro nodi | Nodi attivi × giri |
 | Voci dai social, autori, revisione dei canali | 2-6 centesimi a nodo; meno di un centesimo per il resto | Nodi e autori nuovi |
 | Matrici | 0,7-1,3 dollari a settimana per Topic | Articoli della settimana (le note sono il grosso) |
@@ -855,6 +881,13 @@ L'elenco unico di Ubik: ciò che è fatto, in corso e da fare. Aggiornato il 24 
   0,07; voci circa 0,03; Exa 20 ricerche, circa 0,06 $; Tavily 20 crediti (gratuiti fino a 1.500 al mese, quindi al
   massimo due nodi quotidiani senza pagare). In tutto circa 0,2 $ al giorno, 6 $ al mese per nodo; la misura contro
   Wikipedia 0,06 $; il dossier del modello avanzato, nell'abbonamento della redazione, nulla.
+- *28 novembre, mattina: i costi a regime e due tagli.* Domanda della redazione: quanto costeranno (a) un nodo da
+  zero con la pipeline, (b) un nodo da zero con la ricerca della pipeline e la scrittura in chat, (c) l'aggiornamento
+  quotidiano; correzioni della redazione alle prime stime: i minuti di GitHub vanno contati, il runner proprio non è
+  gratuito, nel nodo in chat la ricerca resta alla pipeline, a 2-3 nodi al giorno le quote gratuite non contano.
+  Stime e tagli nella sezione 0.4 («Costi»); fatti i tagli 1 (complemento tra i motori, misurato sui dati del
+  laboratorio) e 3 (ricerche adattive). Scoperto: Exa senza credito dalla notte, senza allarme (corretto il bilancio).
+  La misura contro Wikipedia, bloccata alle 03:20 dal limite di GitHub, rilanciata a mano dopo la ricarica.
 - *Fare un nodo in chat (idea della redazione, 26 novembre: usare l'abbonamento per i passaggi di giudizio).* La
   pipeline fa ricerca, giudizio, nuclei, estrazione delle cifre e controlli (pochi decimi di dollaro); in chat si
   scrivono i moduli. Procedura provata: (1) catena con `bootstrap` da `runs/domande/NODO.txt`; (2) `runs/judge.request`
