@@ -39,19 +39,40 @@ testo come numeri colorati per tipo di fonte, un riquadro che mette a confronto 
 delle tesi dei moduli. Esempi: `ubik-corpus/reports/nodi/bolla-ia/` (la bolla dell'IA) e
 `ubik-corpus/reports/nodi/delega-conoscenza/nodo.html` (delegare la conoscenza all'IA).
 
-**La visione della redazione (26-28 novembre), da progettare, non ancora costruita:**
-- ogni numero di nota apre un pannello da destra con le fonti, un modulo per proporre una modifica della frase o delle
-  fonti, i commenti su quel passaggio, l'albero delle fonti che sostengono o smentiscono quella fonte;
-- le modifiche proposte dagli utenti iscritti passano prima da un modello e poi dalla comunità (voto); una modifica
-  approvata il modello la integra nel testo;
-- ogni nodo ha una sezione commenti generale; un commento della redazione (Gio, etichetta OP) accoglie gli utenti;
-- ogni modulo potrebbe essere una Matrice «di nodo», duratura nel feed dei Topic, la sola modificabile e commentabile;
-- gli utenti potranno pubblicare pezzi originali (card speciali, che possono diventare fonti di un nodo); i
-  contributori migliori potrebbero essere pagati;
-- i nodi possono fare anche da selettori di studi scientifici su un argomento;
-- abbonamenti: forse 0,99 € al mese di sostegno più uno superiore con vantaggi da definire;
-- trasparenza totale dichiarata nel sito: intenzioni, solo fonti documentate, rispetto della volontà degli autori
-  (robots.txt, riserve TDM), testi integrali mai mostrati.
+**La visione della redazione (26 novembre), da progettare, non ancora costruita:**
+- Ogni numero (citazione) di ogni modulo apre un pannello che scorre da destra con: le fonti a cui si riferisce; un
+  modulo per proporre una modifica della frase o dei documenti citati, o aggiungerne di nuovi; i commenti su quel solo
+  passaggio; l'albero delle fonti che sostengono o smentiscono quella fonte.
+- Le modifiche proposte dagli utenti iscritti (forse paganti) passano prima da un modello e poi dalla comunità: una
+  modifica approvata dal modello compare nel pannello e lì si vota; una modifica approvata dalla comunità la integra
+  il modello nel testo, se possibile. Da decidere se e come distinguere le proposte di modifica dai commenti.
+- Ogni nodo ha anche una sezione commenti generale, ben visibile. All'inizio un commento della redazione (Gio, con
+  l'etichetta OP, utente come gli altri) accoglie gli utenti in ogni sezione commenti.
+- Ipotesi per un futuro vicino: ogni modulo è formalmente una Matrice, etichettata «matrice di un nodo», presente e
+  duratura nel feed dei Topic; un clic apre il contenuto nel pannello da destra con il link al passaggio del nodo. Solo
+  le matrici dei nodi si possono modificare e commentare.
+- Gli utenti potranno pubblicare pezzi originali: card speciali indipendenti, che possono diventare fonti di un nodo
+  (nel pannello, in quel caso con il testo integrale). I contributori con più contributi valutati bene potrebbero
+  essere pagati.
+- I nodi possono fare anche da aggregatori e selettori di studi scientifici su un argomento.
+- Abbonamenti: forse uno da 0,99 € al mese solo per sostenere il progetto, oltre a uno superiore con vantaggi da
+  definire (in precedenza: circa 4,99 € al mese, obiettivo iniziale 1.000 utenti).
+- Trasparenza totale, dichiarata nel sito: le intenzioni, l'uso esclusivo di fonti documentate, il rispetto della
+  volontà degli autori delle fonti (robots.txt, riserve TDM), i testi integrali mai mostrati.
+- I nodi saranno relativamente pochi, ma tra i migliori stati della conoscenza disponibili su quelle questioni.
+
+**Il formato in prova (27-28 novembre, sul nodo `ia-matematica`, da perfezionare prima di estenderlo):** ogni modulo in
+tre parti, **contesto** (che cosa è successo, di che cosa si parla: qui il modello ha più iniziativa), **fatti**
+(ancorati a studi e fonti primarie), **dibattito** (le posizioni raccontate in italiano e, dentro ciascuna, le voci con
+le loro parole, saggi o post, nella lingua originale). Testo più divulgativo, sul modello di Wikipedia senza la sua
+lunghezza; moduli divisi graficamente in modo delicato.
+**Contributi come card (28 novembre):** se i moduli sono i simulacri delle Matrici, i contributi (esterni o degli
+utenti) sono i simulacri delle Card: titolo, sintesi, link all'originale, forma compatta; nel nodo ogni card è un solo
+contributo (nelle Matrici una card può aggregare fonti ridondanti). Due specie: i contributi **nel testo**, richiamati
+dalle note (il numero apre il pannello da destra con la fonte, il modulo di modifica, i commenti), e i contributi **a
+latere**, pertinenti al modulo ma non citati nel testo; se sono molti, nel modulo si vedono solo i più votati (o, senza
+voti, secondo un altro criterio) e gli altri restano raggiungibili. Anche le voci del dibattito possono essere card.
+Da decidere: che cosa forma il testo e che cosa resta riferimento ulteriore.
 
 ### 0.2 Regole vincolanti per i nodi scritti in chat
 
@@ -68,10 +89,12 @@ non può seguire. Senza eccezioni:
    entrano dalla via `chat` (`reports/scout/NODO/proposte-chat.json`, `{"url", "perche", "titolo"}`).
 4. Niente giudizi del modello come etichette: si descrive il peso delle prove e l'interesse di chi parla; un giudizio
    solo dove un documento, un dato ufficiale o uno studio chiude la questione, dicendo quale.
-5. Scrittura: divulgativa, sulla falsariga di Wikipedia senza la sua lunghezza; termini spiegati dentro la frase; mai
+5. Scrittura: comprensibile a chi sa poco, né didascalica né telegrafica; divulgativa, sulla falsariga di Wikipedia senza
+   la sua lunghezza; termini spiegati dentro la frase; mai
    «trilioni» (si scrive «2.000 miliardi»); le serie di cifre in un riquadro di confronto, non elencate nel testo.
 6. Il testo passa dagli stessi controlli della pipeline (`check()` di `tools/node_modules.py`: ogni numero nelle fonti
-   citate dalla frase). Procedura e file: sezione 7.2.
+   citate dalla frase; `chosen_box()` per il riquadro di confronto). Procedura e file: sezione 7.2 (formato a tre parti)
+   e appendice B, «Fare un nodo in chat» (procedura del nodo sulla delega).
 7. Conflitto d'interessi dichiarato quando Claude scrive di Anthropic, dei suoi modelli o della coscienza delle IA.
 8. **Per risparmiare, in chat Claude si sostituisce alla pipeline dove la pipeline usa modelli a pagamento costosi**
    (scrittura dei moduli, nuclei, cifre, lacune), **ma non nella ricerca**: la ricerca la fa la pipeline con tutte le
@@ -104,11 +127,15 @@ non può seguire. Senza eccezioni:
   nuovo agli altri nodi, l'accorpamento dei moduli della delega, la scelta dei temi (trattazione a parte).
 - **Nodi.** A moduli: `ia-matematica` (seconda versione scritta in chat il 28 novembre: otto moduli, circa 4.700
   parole, 63 fonti distinte nel testo, 490 contributi a latere; artefatto «Nodo IA e matematica»), `delega-conoscenza`
-  (nove moduli in chat), `bolla-ia` (moduli della pipeline). Nella forma precedente (bozza a punti con catene):
+  (nove moduli in chat, seconda versione con «Le posizioni»; proposta di accorparli in sei, rinviata), `bolla-ia` (moduli della pipeline). Nella forma precedente (bozza a punti con catene):
   `fair-use`, `data-center-comunita`, `uso-dei-contenuti-pubblicati`, `nord-stream`, `maidan-20-febbraio`,
   `coinvolgimento-americano`, `inverno-ia`, `brain-llm`. In archivio come storia: `weight-space`, `usaid-maidan`,
   `nord-stream-cieco`.
-- **Il laboratorio.** Undici giri profondi tra il 27 e il 28 novembre, 609 contributi, non ancora saturo (l'ultimo giro
+- **Il laboratorio.** Misura di partenza del 27 novembre (file `wiki-claims-base.json`, `wiki-bench-base.json`): delle 127
+  affermazioni 54 sostenute, 31 in parte, 4 contraddette, 37 assenti; dei 244 riferimenti distinti 29 nostri. Poi persone
+  chiave, istituzioni e reazioni nelle lingue della stampa del campo, aggiornamento quotidiano, via `chat`, `refweb=`,
+  `wiki_bench` su più voci; documenti citati tutti cercati (1.942 letti, 320 proposte, 561 già nel nodo, 977 non
+  trovati; 60 ricerche web). Undici giri profondi tra il 27 e il 28 novembre, 609 contributi, non ancora saturo (l'ultimo giro
   41 nuovi). Contro le stesse 127 affermazioni di cinque voci inglesi di Wikipedia: sostenute da 54 a 56, in parte da
   31 a 35, assenti da 37 a 34; riferimenti di Wikipedia trovati da 29 a 44 su 244; nostri documenti 793, 750 assenti
   dalle voci. Le assenze: reazioni nominate riportate da testate chiuse ai programmi (Nature, Al Jazeera, WSJ,
@@ -122,7 +149,7 @@ non può seguire. Senza eccezioni:
   proprietaria ritrova 95 dei 609 contributi del laboratorio (16%).
 - **Crediti e spesa.** OpenRouter ricaricato il 27; GitHub Actions bloccato la notte del 28 per il tetto di spesa e
   ricaricato; Exa ricaricato con 20 $ il 28 sera dopo essere rimasto senza credito; Tavily sul piano mensile da 30 $
-  (5.000 crediti a novembre, 1.465 già usati); Brave senza credito. Le chiamate ai modelli nell'ambito IA hanno superato
+  (5.000 crediti a novembre, 1.465 già usati); Brave senza credito; `SEC_USER_AGENT` creato (EDGAR risponde). Le chiamate ai modelli nell'ambito IA hanno superato
   il tetto di 20 $ (46,65 $ a novembre): da discutere con la redazione. **La redazione è preoccupata della spesa
   crescente**: ogni esecuzione nuova va giustificata e misurata (sezione 8).
 
@@ -138,7 +165,8 @@ non può seguire. Senza eccezioni:
 4. Con la redazione: che cosa entra nel testo di un modulo e che cosa resta a latere; i temi (più specifici o più
    generici, come e quando nascono); i termini di Exa sulla conservazione dei risultati.
 5. Un nodo nuovo fatto con la stessa strada (ricerca della pipeline, scrittura in chat), misurato contro Wikipedia con
-   i costi, quando la redazione sceglie l'argomento.
+   i costi, quando la redazione sceglie l'argomento; e l'esperimento proposto il 27 novembre: lo stesso nodo costruito
+   anche tutto dalla pipeline, misurati entrambi contro Wikipedia, con i costi.
 6. Il sito: prima il modello dei dati (`docs/modello-dati.md`), poi un prototipo in sola lettura dai file dei nodi.
 
 ### 0.6 Prompt per aprire una nuova chat
@@ -176,6 +204,7 @@ topic delle Matrici sullo stesso soggetto, perché tutti partano dalle stesse fo
 | `nathanasso-code/Ubik` (pubblico) | Codice delle Matrici (`ingestion/`), prompt delle Matrici (`prompts/`), documenti (`docs/`) |
 | `nathanasso-code/ubik-corpus` (privato) | Registri (`registry/`), corpus dei testi (`corpus/`), strumenti (`tools/`), prompt dei nodi (`prompts/`), workflow (`.github/workflows/`), richieste (`runs/`), risultati (`reports/`) |
 | Segreti di `ubik-corpus` (solo i nomi) | `OPENROUTER_API_KEY`, `EXA_API_KEY`, `TAVILY_API_KEY`, `BRAVE_API_KEY` (senza credito), `BLUESKY_HANDLE`, `BLUESKY_APP_PASSWORD`, `MASTODON_TOKEN`, `MASTODON_INSTANCE`, `GNEWS_API_KEY`, `UBIK_GMAIL_*`, `COURTLISTENER_API_KEY`, `GOVINFO_API_KEY`, `SEC_USER_AGENT` |
+| Documento «Ubik — Acquisizione delle fonti» (Claude Docs) | La versione per la redazione: scheda «Dalla A alla Z (28 novembre)», accanto a quella del 15 novembre |
 | Artefatti | «Nodo IA e matematica», i nodi della delega e della bolla, l'esploratore delle Matrici e dei nodi |
 
 Tutto gira sui server di GitHub (Actions): il contenitore di lavoro di Claude non raggiunge le API esterne.
@@ -187,10 +216,15 @@ Tutto gira sui server di GitHub (Actions): il contenitore di lavoro di Claude no
   (stato «rimosso», mai riapprovato). Nessuna fonte si esclude per sempre. Le fonti in prova non bastano da sole a fare
   una Matrice.
 - **robots.txt e riserva TDM rispettati**, sempre: un sito che vieta o rifiuta (403) non si aggira, si registra.
-- **Seconde copie** (`tools/second_copy.py`): la copia ad accesso aperto indicata da OpenAlex o Crossref quando
-  l'editore di un DOI rifiuta; la copia dell'Internet Archive solo per le pagine che non esistono più (404, 410, dominio
-  inesistente) e solo se il sito originale non vieta i programmi; mai per le pagine che rifiutano (per quelle si può
-  mostrare al lettore il link alla copia, senza raccoglierla né citarla).
+- **Seconde copie** (decise il 9 novembre, `tools/second_copy.py`):
+  - *copia ad accesso aperto*: quando l'editore di un DOI rifiuta, si usa la copia indicata da OpenAlex
+    (`best_oa_location`) o da Crossref, di solito un archivio istituzionale o un preprint, cioè un sito che quella copia la
+    pubblica apposta. Nel record: dove si trova e se è la versione pubblicata o il preprint;
+  - *copia d'archivio* (Internet Archive): solo per le pagine che non esistono più (404, 410, dominio inesistente), e solo se
+    il sito originale, quando è ancora raggiungibile, non vieta i programmi in robots.txt e non ha la riserva TDM. Anche
+    web.archive.org passa il controllo di robots.txt. Nel record: «copia d'archivio» con la data della copia;
+  - mai per le pagine che rifiutano (403, 401, robots.txt, riserva TDM): per quelle Ubik può mostrare al lettore il link
+    alla copia dell'Internet Archive, senza raccoglierla né citarla.
 - **CourtListener attraverso l'API** (approvata l'8 novembre, `tools/courtlistener.py`): robots.txt chiude il sito ai
   programmi e nello stesso file li manda all'API; gli indirizzi dell'API, con il token e nei suoi limiti, sono l'unica
   eccezione al controllo di robots.txt (dettaglio in appendice A.4).
@@ -374,7 +408,7 @@ contributo nuovo nel giro prima (almeno 8 e un terzo di `q=`, al più `q=`; `ric
 | `corpus`, `corpus-cited` | Gli articoli del corpus che citano le ancore e i link che citano |
 | `fonti` | I link nei testi delle fonti del nodo |
 | `riferimenti` | I documenti che le fonti descrivono come prova (`tools/node_refs.py`, 6.6) |
-| `snowball` | I link citati dalle pagine migliori; un link citato da due pagine è forte |
+| `snowball` | Apre i 40 candidati migliori e le ancore e raccoglie i link che citano (solo nel corpo del testo; per le ancore anche le altre pagine dello stesso archivio); un link citato da due pagine è forte |
 | `atti`, `istituzioni` | Numeri di causa risolti su EUR-Lex; documenti di banche centrali, FMI, BIS, OCSE, uffici statistici, SEC EDGAR |
 | `telegram`, `bluesky`, `hn`, `github` | Le ricerche del nodo nei canali approvati, nei post, su Hacker News, nei repository |
 | `openalex`, `s2`, `wikipedia` | Letteratura; i riferimenti di Wikipedia (spenti nei banchi di prova contro Wikipedia) |
@@ -518,7 +552,7 @@ Esempio completo: `ubik-corpus/reports/nodi/ia-matematica/chat/`.
 
 | Voce | Prezzo |
 | --- | --- |
-| Modelli: DeepSeek V4.1 Flash (acquisizione, Matrici) | Giudizio circa 0,0003 $ a pagina (la stima preventiva ne conta 0,0015); piano della catena circa 0,002 $ a giro |
+| Modelli: DeepSeek V4.1 Flash (acquisizione, Matrici) | Giudizio circa 0,0003 $ a pagina (la stima preventiva ne conta 0,0015); piano della catena circa 0,002 $ a giro; persone chiave 0,07 $ la prima volta, poi meno di 0,01 al giorno; voci circa 0,03 $; documenti citati fino a 0,07 $ a giro. Stima del 27 novembre per un nodo quotidiano, senza minuti di GitHub e con le quote gratuite: circa 0,2 $ al giorno |
 | Modelli: Sonnet, Opus (moduli della pipeline, lacune) | Decimi di dollaro per modulo |
 | Exa | 7 $ ogni 1.000 ricerche a listino (circa 3 osservati a novembre); ricaricato con 20 $ il 28 novembre |
 | Tavily | Piano mensile da 30 $ (5.000 crediti a novembre, uno per ricerca base); oltre 0,008 $ a credito |
@@ -626,6 +660,12 @@ Scrivere una riga nel file di richiesta (un commento sotto, senza parole che sia
 | `runs/sites.request` | `archive=NODI` (archivio delle pagine buone) |
 | `runs/daily.request` | le Matrici a mano: `version=5 label=… tiers=… notes=…` |
 | `runs/light.request` | la bozza di un nodo nella forma precedente (`forma=descrittiva`) |
+| `runs/scout.request` | lo scout fuori dalla catena: `nodes=… mode=discover judge=yes known k=500 budget=0.6 rounds=2` (mai una nuova mentre un'altra è in corso) |
+| `runs/judge.request` (altri modi) | rank, giudizio e proposte senza scout (`propose=only` per le sole proposte); `bench=` (banco dei modelli); `resoconto=NODO models=… [forma=compatto] [solo_genealogia\|senza_genealogia]` |
+| `runs/week-refs.request` (altri modi) | `mode=tutto weeks=2026-11-02` (riferimenti descritti dagli articoli della settimana, scout dei riferimenti, originali delle riprese, bibliografia); `mode=originals`, `mode=biblio`, `resolve` per un passo solo; `nodepick` (un nodo scelto dalle Matrici) |
+| `runs/matrix-nodes.request` | `weeks=… budget=0.10` (proposte di nodo dalle Matrici) |
+| `runs/bacino.request` | `ambito=ia steps=seed,expand,channels,clean,measure` |
+| `runs/coverage.request` | `fetch=yes` per raccogliere anche le pagine citate |
 | `runs/segnalazioni/NOME.txt` | un testo segnalato dalla redazione: i suoi riferimenti, nel corpus e fuori |
 
 Dopo un'esecuzione che stampa risultati di ricerca: leggerli e cancellare il log (0.3).
@@ -878,6 +918,122 @@ reso di più: da adottare nell'aggiornamento settimanale.
 Le voci del diario come erano nella sezione 10 prima della riscrittura del 28 novembre (le cose da fare aggiornate
 sono nella sezione 10). Contengono le indicazioni della redazione sulla forma dei nodi, le procedure provate, le
 misure giro per giro.
+
+
+- **Priorità della redazione (27-28 novembre): l'architettura di acquisizione ed estrazione delle fonti, con
+  `ia-matematica` come laboratorio.** Obiettivo: come su Nord Stream, pari o meglio di Wikipedia sullo stesso argomento
+  (il confronto con un modello avanzato è accantonato), in modo strutturale e con i costi stimati. I nodi d'attualità
+  si aggiornano ogni giorno. Il formato nuovo e l'accorpamento dei moduli della delega sono rinviati.
+- **Nodi a moduli:** `bolla-ia`; `delega-conoscenza` (nove moduli scritti in chat, seconda versione con «Le posizioni»;
+  proposta di accorparli in sei, rinviata); `ia-matematica` (sette moduli in chat nel formato a tre parti, con il caso
+  Riemann; pagina `reports/nodi/ia-matematica/nodo.html`, artefatto «Nodo IA e matematica»). Nodi precedenti nella
+  forma vecchia: fair use, data center, uso dei contenuti, Nord Stream, Euromaidan.
+- **Laboratorio, misura di partenza** (27 novembre, contro cinque voci inglesi di Wikipedia; file `wiki-claims-base.json`
+  e `wiki-bench-base.json` del nodo): delle 127 affermazioni delle voci il nodo ne sosteneva 54, in parte 31, 4
+  contraddette, 37 assenti; dei 244 riferimenti distinti ne avevamo 29. Le assenze: reazioni nominate (disputa su
+  Navier-Stokes, caso Riemann), istituzioni del campo, stampa non inglese, storia prima del 2026, GitHub, X.
+- **Perché l'architettura di Nord Stream era usata a metà** (scoperto il 27-28 novembre): la ricerca dei documenti
+  citati si fermava in ogni catena dal 26 novembre per un riferimento scritto male (`body_links._words`, corretto) e
+  la sua ricerca web passava solo da Brave, senza credito (ora Exa); i giri si fermavano a tre, lontani dal pieno; le
+  ricerche erano quasi tutte in inglese; il giudice scartava le opinioni competenti; le voci social fallivano su un
+  nodo nuovo. Nessuno se n'era accorto: ora ogni catena e ogni aggiornamento finiscono con un **bilancio per via**
+  (`tools/chain_audit.py`, `bilancio.json`, avvisi nel workflow).
+- **Aggiunto al laboratorio:** persone chiave (`tools/node_people.py`), istituzioni e reazioni nelle lingue della
+  stampa del campo (dovere del pianificatore), aggiornamento quotidiano alle 05:17 UTC (`settimana.yml`, `quotidiani` in
+  `registry/nodi-attivi.json`, Tavily sugli ultimi due giorni), via `chat`, `refweb=` nella catena, `wiki_bench` su più
+  voci. Quattro giri profondi fatti il 27 sera (62, 52, 50, 49 contributi nuovi: non ancora saturo); in corso la ricerca
+  dei 1.314 documenti citati mai cercati e la nuova misura contro Wikipedia.
+- **Modelli della pipeline:** l'acquisizione usa solo DeepSeek V4.1 Flash (pianificazione circa 0,002 $ a giro, giudizio
+  circa 0,0003 $ a pagina, persone 0,07 $ la prima volta); Sonnet e Opus solo nella scrittura dei moduli, nello schema
+  delle stime e in `node_gaps.py`. Stima per un nodo quotidiano: circa 0,2 $ al giorno (Exa 0,06, giudizio 0,04,
+  documenti citati fino a 0,07, voci 0,03), 6 $ al mese; Tavily gratuito fino a 1.500 crediti al mese.
+- **GitHub Actions bloccato il 28 novembre alle 03:20 UTC** («spending limit»), ricaricato dalla redazione in
+  mattinata; l'aggiornamento quotidiano delle 05:17 non è partito. Minuti di novembre circa 4.300 (escluso un'esecuzione
+  annullata dell'11 novembre che il conteggio di GitHub dà per 21.516 minuti): catene profonde da 2 a 5 ore, il resto
+  a minuti. **Nella stima dei costi i minuti di GitHub pesano più dei modelli**: un nodo quotidiano da 20-40 minuti al
+  giorno sono 600-1.200 minuti al mese. Da fare: misurare i minuti di ogni passo nel bilancio, accorciare i passi lenti
+  (lettura delle pagine, documenti citati), valutare un runner sul computer della redazione.
+- **Ultimi risultati del laboratorio (28 novembre, notte):** documenti citati tutti cercati (1.942 letti, 320 proposte,
+  561 già nel nodo, 977 non trovati; 60 ricerche web), tre giri con 45, 61 e 41 contributi nuovi (609 in tutto, non
+  ancora saturo); il bilancio segnala che le ricerche restano in gran parte inglesi (23 su 29) nonostante il dovere
+  nel pianificatore: serve un vincolo nel codice.
+- **Il nodo `ia-matematica` riscritto in chat, seconda versione (28 novembre)**: otto moduli (nuovo: la disputa su
+  Navier-Stokes), circa 4.700 parole, 63 fonti distinte citate nel testo con le note (100 citazioni tra i moduli); le voci del dibattito come card; gli altri
+  490 contributi del nodo come card a latere sotto ogni modulo (titolo, sintesi della pipeline, link; i primi quattro
+  visibili, ordinati per il punteggio del giudizio finché non ci sono voti; le copie delle fonti citate escluse).
+  File: `reports/nodi/ia-matematica/chat/moduli2.py` (fonti citate per chiave, `[chiave]`, numerate dal codice),
+  `build2.py` (controlli: 0 problemi), `gen_page2.py`, `nodo2.json`; pagina `nodo.html`, artefatto «Nodo IA e
+  matematica». Le card a latere non sono rilette una per una: tra i siti ci sono aggregatori di dubbia affidabilità
+  (serve il controllo di credibilità degli autori e dei siti).
+- **Misura contro Wikipedia dopo i giri del 27-28** (stesse 127 affermazioni, `wiki-claims.json`, `wiki-bench.json`):
+  sostenute da 54 a 56, in parte da 31 a 35, assenti da 37 a 34, contraddette da 4 a 2; riferimenti di Wikipedia
+  trovati da 29 a 44 su 244; documenti nostri da 297 a 793 (750 assenti dalle voci). La copertura delle affermazioni
+  cresce poco: le assenze sono ancora le reazioni nominate riportate da testate chiuse ai programmi (Nature, Al Jazeera,
+  WSJ, Guardian, New York Times: 403 o robots) e la storia prima del 2026.
+- **Autonomia per tema e registro unico (decisione della redazione, 28 novembre).** Strategia: su un tema circoscritto
+  (per esempio «matematica») si cerca con le API finché portano fonti nuove, aprendo e giudicando tutti i risultati con
+  una scrematura blanda e archiviando tutto ciò che è pertinente; quando le API non portano più nulla di
+  significativamente migliore della ricerca proprietaria, il tema è autonomo e le API servono solo di tanto in tanto
+  per scovare fonti nuove. Si fa nel tempo, man mano che nascono nodi su quel tema (non con giri a vuoto); i nodi e le
+  Matrici dello stesso tema partono con le fonti già in casa. Ubik resta anche un aggregatore: il registro serve
+  alle Matrici e alle card quanto ai nodi.
+  Vincolo dei termini: i link delle pagine che apriamo sono nostri (archivio); la lista dei risultati non aperti no
+  (Tavily e Brave vietano di conservarla; Exa da verificare sul testo originale). Per non perderli si aprono tutti
+  durante l'esecuzione (`tutti` in `runs/catena.request`: `JUDGE_ALL_ENGINES`, `ARCHIVE_PERTINENT`); stima per un nodo
+  approfondito circa 2,5-3 $ in più (giudizio circa 1,5 $, minuti di GitHub 1-1,5 $); prima si giudicavano 572 pagine
+  su 5.474 restituite. Fatto (`ubik-corpus`): `registry/temi.json` (sette temi proposti da Claude, da confermare;
+  regola di autonomia: quota dei contributi nuovi trovati solo dalle API sotto il 10% per tre giri di fila);
+  `tools/registro.py` (registro unico per tema: ogni fonte una volta, con temi, pagine per archivio, nodi, modo di
+  raccolta; per tema fonti, pagine, autonomia; `registry/registro.json`, `reports/fonti/registro.md`; alla fine di
+  ogni catena e aggiornamento; per ora una vista: i raccoglitori leggono ancora i propri registri); la ricerca
+  proprietaria (`tools/corpus_index.py`) ora con le pagine di tutti i nodi (174.625 documenti, circa un minuto) e
+  ricerche per parole qualsiasi ordinate per pertinenza, via `home` in ogni giro (c'era nello scout ma in nessuna
+  catena); misura per giro in `catena.json` (`vie_contributi`) e nel bilancio (`autonomia`). Punto di partenza: sulle
+  277 ricerche del laboratorio la ricerca di casa ritrova 95 dei 609 contributi del nodo (16%).
+- **Crediti (28 novembre, mattina):** OpenRouter ricaricato il 27 sera; GitHub Actions ricaricato il 28 mattina (la
+  misura contro Wikipedia è ripartita); **Exa senza credito dalle 01:37 UTC del 28 (HTTP 402): gli ultimi due giri hanno
+  cercato solo con Tavily; da ricaricare o da passare a un piano** (decisione della redazione); Tavily 1.290 crediti su
+  1.500 (tetto nel codice 1.450); Brave senza credito (402); `SEC_USER_AGENT` creato (EDGAR risponde).
+- **Costi a regime (28 novembre).** Con 2-3 nodi nuovi al giorno le quote gratuite non contano: Tavily 0,008 $ a
+  credito oltre i 1.000 gratuiti (piani 0,005-0,0075), Exa 7 $ ogni 1.000 ricerche a listino (circa 3 osservati),
+  GitHub 0,006 $ al minuto (runner sul computer della redazione 0,002 dal 1° marzo 2026). Prima dei tagli: nodo nuovo
+  (ricerca della pipeline, scrittura in chat) circa 8-9 $, aggiornamento quotidiano circa 15-17 $ al mese per nodo;
+  60-90 nodi al mese, 500-800 $. **Tagli decisi dalla redazione: due su cinque.**
+  (1) *Un motore per ricerca, il secondo come complemento* (`_complement` in `tools/scout.py`). Misura sulle 238
+  ricerche fatte dal laboratorio con entrambi i motori: insieme 459 contributi; solo Exa 365, solo Tavily 199; la
+  scelta migliore possibile di un motore per ricerca 384, a caso 330. I contributi in più di Tavily sono sparsi su ogni
+  tipo di ricerca: il motore non si sceglie dal tipo. Funziona Exa per primo e Tavily solo quando dei 20 risultati di
+  Exa al massimo 8 sono pagine nuove per il nodo: 88 ricerche Tavily su 238, 425 contributi su 459 (meno 7%).
+  `SEARCH_ROUTING=entrambi` torna ai due motori, `SEARCH_COMPLEMENT_MAX` cambia la soglia.
+  (3) *Ricerche adattive* (`adapt` in `tools/entity_rounds.py`): dal Nord Stream c'era lo stop a saturazione (meno di
+  `min=` contributi nuovi), ma le ricerche per giro restavano fisse; ora, nella stessa esecuzione, un giro ha il doppio
+  delle ricerche che hanno portato un contributo nuovo nel giro prima (`ricerche_fruttuose` in `catena.json`), almeno
+  8 e un terzo di `q=`, al massimo `q=`.
+  Restano fuori: (2) prima le vie gratuite (la redazione: le lacune degli strumenti gratuiti sono sistematiche e non si
+  misurano senza fare davvero le ricerche con tutti); (4) minuti di GitHub e (5) due livelli di profondità, per il
+  futuro. Il bilancio conta ora le ricerche per motore e dà l'allarme quando un motore si ferma; i documenti citati
+  passano al motore successivo quando uno è senza credito.
+
+**Prossimi passi, 28 novembre mattina**
+
+1. Finire il laboratorio: leggere la nuova misura contro Wikipedia (ripartita il 28 mattina) e misurare il primo giro
+   con il complemento tra i motori e le ricerche adattive; il vincolo sulle lingue nel codice (23 ricerche su 29 in
+   inglese); altri giri fino al pieno, dopo la ricarica di Exa; le parti
+   come ancore (canali ufficiali delle istituzioni seguiti ogni giorno); termini GitHub dalle persone e dai progetti
+   chiave; controllo di credibilità degli autori (il caso Nielsen); misura ripetuta dopo una settimana di aggiornamenti.
+2. Fatta il 28 novembre (vedi 0.4); da decidere con la redazione che cosa entra nel testo e che cosa resta a latere,
+   e se i siti delle card vanno filtrati per credibilità. In origine: la riscrittura del nodo `ia-matematica` da parte di Claude in chat, con le fonti nuove:
+   più divulgativa, sulla falsariga di Wikipedia ma senza esagerare nella lunghezza; moduli divisi con delicatezza;
+   voci del dibattito come card; contributi distinti tra quelli nel testo (con le note) e quelli a latere (card con
+   titolo, sintesi, link; nel modulo i primi per un criterio dichiarato, gli altri accessibili).
+3. Autonomia per tema: qualche giro sul nodo della matematica con `tutti` per farsi un'idea (dopo la ricarica di Exa);
+   la redazione conferma temi e soglia; poi i raccoglitori passano uno alla volta al registro unico (prima i siti, poi
+   autori e canali, infine i topic delle Matrici); per ogni nodo nuovo, il tema e la misura di autonomia.
+4. Un esperimento di nodo costruito in chat con l'abbonamento della redazione, accanto allo stesso nodo costruito
+   dalla pipeline, misurati entrambi contro Wikipedia, con i costi (argomento da scegliere con la redazione).
+5. Il controllo di aderenza frase per frase anche per il testo scritto in chat.
+6. Il sito vero e proprio: prima il modello dei dati (nodo, modulo, passaggio, fonte o card, proposta di modifica,
+   commento, voto, utente), poi un prototipo in sola lettura generato dai file dei nodi.
 
 - *Su che cosa si lavora: il nodo come studio.* La redazione vuole nodi che emergano dal dibattito tra i più
   competenti di un ambito e che diano risultati paragonabili a una ricerca originale, scegliendo le questioni dove Ubik
