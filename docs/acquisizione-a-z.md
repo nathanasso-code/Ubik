@@ -140,7 +140,7 @@ non può seguire. Senza eccezioni:
   31 a 35, assenti da 37 a 34; riferimenti di Wikipedia trovati da 29 a 44 su 244; nostri documenti 793, 750 assenti
   dalle voci. Le assenze: reazioni nominate riportate da testate chiuse ai programmi (Nature, Al Jazeera, WSJ,
   Guardian, New York Times), la storia prima del 2026. Le ricerche restano in gran parte inglesi (23 su 29): serve un
-  vincolo nel codice. Il 28 sera: tre giri con la ricerca proprietaria e tutti i risultati delle API aperti (`tutti`).
+  vincolo nel codice. Il 28 sera: tre giri con la ricerca proprietaria e tutti i risultati delle API aperti (`tutti`): 59 minuti, 39 ricerche (Exa 35, Tavily 4 come complemento; le ricerche adattive le hanno ridotte da 30 a 19, 6 e 10), 455 pagine giudicate, 74 contributi nuovi (45, 15, 14: non saturo), 693 in tutto, 948 pagine archiviate; trovati solo dalle API 16 su 46, 9 su 15, 4 su 14 (35%, 60%, 29%: lontano dal 10%); costo circa 0,6-0,8 $ (modelli 0,14, Exa circa 0,13-0,31, minuti di GitHub circa 0,35). Le ricerche ancora per l'80% in inglese.
 - **Autonomia per tema e registro unico** (decisione della redazione del 28 novembre, sezione 6.10): su un tema si cerca
   con le API finché portano fonti nuove, acquisendo tutto ciò che è pertinente; quando non portano più nulla di
   significativamente migliore della ricerca proprietaria, il tema è autonomo e le API servono solo di tanto in tanto.
@@ -599,8 +599,8 @@ via d'uscita dai costi delle API è l'autonomia per tema (6.10). Le stime si rif
 L'elenco unico di Ubik. Aggiornato il 28 novembre.
 
 **In corso**
-- I tre giri del 28 sera sul laboratorio, con `tutti` e la via `home`: leggere il bilancio (contributi in più, quota
-  solo API, ricerche per motore, costo, minuti) e tirare le somme.
+- Tirare le somme con la redazione sui tre giri del 28 sera (risultati nella 0.4); rifare la misura contro Wikipedia
+  sulle stesse 127 affermazioni (circa 0,06 $ più i minuti).
 - L'aggiornamento quotidiano del laboratorio (5:17 UTC): verificare ogni giorno che parta e che il bilancio sia pulito.
 
 **Da fare, acquisizione**
