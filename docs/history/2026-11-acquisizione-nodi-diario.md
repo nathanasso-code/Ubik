@@ -1,6 +1,6 @@
 # Acquisizione per i nodi — metodo e diario delle prove (6-8 novembre 2026)
 
-Quadro completo e aggiornato: `docs/acquisizione-a-z.md`. Questo file conserva il metodo e le misure, giro per giro.
+**Documento storico** (spostato in `docs/history/` il 28 novembre 2026): il metodo e le misure delle prime prove, giro per giro, quando lo scout girava da `runs/scout.request` con Brave. Il sistema attuale è descritto in `docs/acquisizione-a-z.md`.
 
 Il limite principale di ogni nodo è trovare i contributi di qualità. I feed portano solo ciò che le fonti approvate
 pubblicano; la ricerca a mano non si replica. Il metodo parte da un'osservazione: i contributi buoni si trovano seguendo

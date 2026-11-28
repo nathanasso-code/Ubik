@@ -26,3 +26,10 @@ Aggiunti il 2 novembre 2026:
 
 Il 1 novembre la v6 è stata superata dalle Matrici della settimana (`docs/daily-spec.md`): non più una pagina
 composta dal modello, ma Matrici di articoli interi proposte dal modello e confermate dal codice.
+
+
+Aggiunto il 28 novembre 2026:
+
+- `2026-11-acquisizione-nodi-diario.md`: metodo dello scout e diario delle prove sull'acquisizione per i nodi
+  (6-15 novembre), con le misure giro per giro. Superato dalla catena di ricerche, dal giudizio nello stesso giro e
+  dall'autonomia per tema descritti in `docs/acquisizione-a-z.md`.

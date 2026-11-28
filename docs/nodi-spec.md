@@ -1,127 +1,76 @@
-# Nodi di dibattito — specifica del prototipo (aggiornata l'8 novembre 2026)
+# Nodi — specifica (aggiornata il 28 novembre 2026)
 
-Quadro completo del sistema, dalla raccolta ai nodi: `docs/acquisizione-a-z.md`.
+Quadro completo del sistema, dall'acquisizione alla scrittura: `docs/acquisizione-a-z.md` (sezioni 6 e 7). Dati dei
+nodi nel repository privato (`ubik-corpus/reports/nodi/<nodo>/`). Questa specifica descrive il formato in prova sul
+nodo `ia-matematica` (27-28 novembre), da perfezionare prima di estenderlo agli altri nodi. Le architetture precedenti
+(lo spettro di posizioni del 2 novembre, le catene di anelli del 6 novembre, la bozza a punti del 9-15 novembre, ancora
+in uso per i nodi d'attualità non riscritti) sono nella storia del repository.
 
-Seconda modalità di Ubik accanto all'attualità (Matrici della settimana, `docs/daily-spec.md`): la conoscenza.
-Un Topic è una mappa di pochi nodi progettati in redazione; ogni nodo è una domanda su cui il racconto si divide.
-Regola Topic / nodo, modalità del Topic (attualità, conoscenza) e formato dei dati: `docs/modello-dati.md`.
-Dati dei prototipi nel repository privato (`ubik-corpus/reports/nodi/`). Acquisizione dei contributi: `docs/acquisizione-nodi.md`.
+## Che cos'è un nodo
 
-**Un'architettura sola (decisa il 6 novembre 2026).** Ogni nodo, di fatto o d'analisi, usa quella del nodo sul 20 febbraio:
-un testo da cui parte tutto, catene di anelli e relazioni tipizzate tra fonti. Lo spettro di posizioni del primo
-prototipo sul fair use è superato: il nodo è stato convertito il 6 novembre (`reports/nodi/fair-use/node.json`).
+Una domanda importante di un dibattito, trattata come un piccolo studio: dice che cosa si sa, che cosa no e perché, con
+le prove e l'interesse di chi parla, e permette di controllare tutto. I nodi sono relativamente pochi e scelti dalla
+redazione; nascono da una Matrice in cui le fonti si dividono, da un caso in corso o da una domanda della redazione.
+Ogni nodo appartiene a un **tema** (`ubik-corpus/registry/temi.json`), che ne condivide le fonti con gli altri nodi e
+con le Matrici dello stesso soggetto.
 
 ## Struttura
 
 | Elemento | Definizione |
 | --- | --- |
-| Topic | Mappa di 6–8 nodi (per Euromaidan: motivo scatenante, eventi salienti, massacro del 20 febbraio, presunto golpe, presunto coinvolgimento americano, peso dell'estrema destra, conseguenze immediate). |
-| Nodo di fatto | Una domanda su cosa è accaduto o perché (di fatto, causale, conteso). Si scompone in catene e anelli, con verifiche sui documenti primari. |
-| Nodo d'analisi | Una domanda aperta su cui contano le interpretazioni (per esempio: un risultato di ricerca segna un salto qualitativo?). Stessa struttura del nodo di fatto: le voci sono anelli, collegati da relazioni (risponde a, contesta, riproduce, estende); un nodo su uno studio ha in più le catene di verifica (cosa regge alla riproduzione). |
-| Voce | Una persona del registro che compare come anello: chi è e perché conta, la tesi in due righe, una o due citazioni verificate, il link. Relazioni tra voci: risponde a, concorda, contesta, estende. I fatti che una voce dichiara (per esempio una riproduzione di esperimenti) portano l'etichetta «dichiarato». |
-| Testo da cui parte tutto | Poche affermazioni basate sulle fonti; ognuna rimanda alle catene che la sostengono. Più che discorsivo, è la sintesi delle catene. Nel nodo d'analisi mappa le posizioni: dove le voci convergono, dove si dividono e su cosa; non stabilisce il vero. |
-| Catena | Sequenza di anelli: ogni fonte risponde a un'affermazione precisa della fonte sopra. Stato: aperta, chiusa, stallo. Sintesi di una o due frasi e cosa la scioglierebbe. |
-| Anello | La fonte intera, ciò che afferma in quella catena, la citazione verificata con traduzione, la relazione con l'anello sopra (verbo e tipo). |
-| Affermazione in circolazione | Un post o una dichiarazione che tocca il nodo: una riga con chi, quanta diffusione, quali anelli tocca, dove regge e dove no. Non diventa un nodo suo. |
+| Domanda e apertura | La domanda del nodo, una presentazione di poche righe (con il conflitto d'interessi quando c'è), la sintesi: le frasi d'apertura dei moduli, ciascuna un link al suo modulo |
+| Modulo | Una sotto-domanda (6-9 per nodo). Sintesi in apertura, poi tre parti divise con delicatezza (un filo sottile e un'etichetta piccola): contesto, fatti, dibattito. In fondo «Da notare», «Manca», la striscia «Su che cosa si regge» (fonti citate per tipo) e i contributi a latere |
+| Contesto | Di che cosa si parla e che cosa è successo, con i termini spiegati; una cronologia quando serve. Qui il modello ha più iniziativa, ma ogni fatto porta la sua fonte |
+| Fatti | Ciò che studi, documenti e fonti primarie stabiliscono, con le cifre come le fonti le danno |
+| Dibattito | Le posizioni, ciascuna con un titolo, un resoconto in italiano e le card delle voci |
+| Voce (card) | La citazione nella lingua originale, chi parla, ruolo, data, il numero della nota e il link all'originale. Da un saggio o articolo archiviato, o da un post (Bluesky, Mastodon, Telegram) raccolto in `voci-social.json` |
+| Contributo nel testo | Una fonte citata da una frase: nota numerata, colorata per tipo (documento ufficiale, istituzione, studio, analisi, opinione, dichiarazione di parte, stampa); il numero apre la scheda della fonte (chi, tipo, interesse, che cosa dice, il passaggio su cui poggia la frase, il link) |
+| Contributo a latere (card) | Un contributo del nodo pertinente al modulo ma non citato nel testo: titolo, sintesi della pipeline, sito, tipo, link. Una card, un contributo. Nel modulo i primi quattro, gli altri dietro un pulsante. Ordine: il giudizio della pipeline finché non ci sono voti dei lettori, poi i più votati |
+| Da notare | Ciò che il lettore deve sapere per pesare il modulo: chi ha prodotto i risultati, conflitti d'interessi, limiti delle fonti |
+| Manca | Ciò che le fonti raccolte non coprono, detto apertamente |
 
-Un nodo d'analisi può affiancare un fatto dell'attualità (una card o una Matrice): è la discussione degli esperti su quel fatto.
+I moduli sono i simulacri delle Matrici; i contributi, esterni o degli utenti, i simulacri delle Card (nelle Matrici una
+card può aggregare fonti ridondanti, nel nodo no).
 
-Tipi di relazione: **dichiarata** (la fonte cita quella a cui risponde), **ricostruita** (il collegamento l'ha fatto Ubik),
-**verifica di Ubik** (lettura del documento primario), **simulata** (contributo scritto da Ubik dove manca una risposta
-esterna, dichiarato come tale; tiene il posto della comunità).
+Da decidere con la redazione: il criterio per cui un contributo entra nel testo o resta a latere (oggi: nel testo le
+fonti che sostengono un fatto o una posizione, tutto il resto a latere); se filtrare per credibilità i siti delle card.
 
-## Fonti
+## Regole
 
-- Si cercano per domanda, non dai feed: documenti primari, la versione più forte di ogni tesi, le verifiche indipendenti.
-- Opinioni solo se di valore e non ridondanti. Media di Stato solo come voce di parte dichiarata.
-- Registro delle voci per Topic, accanto a quello delle testate (per l'IA: `ubik-corpus/registry/ai-voices.json`,
-  42 voci approvate il 4 novembre 2026, ciascuna con i suoi canali: feed, newsletter, social, ricerca per domanda).
-  Criteri da rendere espliciti per le prossime approvazioni: competenza dimostrata sul tema (ricerca, pratica,
-  giornalismo di settore), argomenti propri e non rilanci, citazioni e verifiche ricostruibili, posizione dichiarata
-  quando è di parte; il registro deve coprire le posizioni in disaccordo, non solo le più vicine al consenso.
-  Venti-quaranta persone approvate dalla redazione,
-  ognuna con i suoi canali raccoglibili (blog, Substack, Bluesky, Mastodon, YouTube, podcast). La qualità si decide
-  sulla persona, non sul singolo testo. Si allarga dalle voci che le voci citano; dopo un fatto importante si cerca
-  chi del registro ne ha scritto. Testi segnalati dalla redazione: testo e link, conservati nel corpus privato,
-  pubblicati solo come citazioni brevi più link.
-- Raccolta mirata senza modelli: `reports/nodi/<nodo>/seeds.json` e il workflow `fetch.yml` del repository privato.
-  Le citazioni si mostrano solo se ritrovate parola per parola nei testi raccolti; le fonti non raccolte si riassumono
-  senza virgolettati.
-- Video: rimando con link, punto del filmato, cosa mostra e cosa dimostra; trascrizione assistita (per esempio Gemini)
-  dichiarata come tale finché il passaggio non è controllato.
-- Obsolescenza: copia al momento della raccolta, con data e impronta. Da fare: segnalare i collegamenti morti e
-  rimandare a una copia d'archivio pubblica.
+- Fedeltà assoluta alle fonti: niente invenzioni, ogni frase con un fatto o una cifra ha la sua fonte, ogni numero sta
+  nella fonte citata come la fonte lo dà. La conoscenza del modello solo per cercare e dare contesto.
+- Passaggi e citazioni si mostrano solo se il codice li ritrova parola per parola nella pagina archiviata o nel post.
+- Niente etichette di giudizio del modello («accertato», «conteso»): si descrivono il peso delle prove e l'interesse di
+  chi parla; un giudizio solo dove un documento, un dato ufficiale o uno studio chiude la questione, dicendo quale.
+- Le serie di cifre vanno in un riquadro di confronto, solo tra cifre che misurano la stessa cosa.
+- Scrittura divulgativa, sulla falsariga di Wikipedia senza la sua lunghezza (il laboratorio: circa 4.700 parole per
+  otto moduli); termini spiegati dentro la frase.
+- Conflitto d'interessi dichiarato quando chi scrive (Claude) parla di Anthropic, dei suoi modelli o della coscienza
+  delle IA.
 
-## Prototipi
+## Citazioni mostrate
 
-| Nodo | Struttura | Esito |
-| --- | --- | --- |
-| Addestramento e diritto d'autore (2 novembre) | Spettro di quattro posizioni, 22 fonti, 25 relazioni, 5 contributi simulati | Funziona come mappa, ma una lista di fonti per tema raccoglie materiale poco rilevante |
-| Il massacro del 20 febbraio, Topic Euromaidan (3 novembre) | Tre catene, 11 fonti, 8 citazioni verificate | Versione cieca registrata prima delle fonti della redazione (impronta f9484416035d) |
-| Il massacro del 20 febbraio, ampliato (5–6 novembre) | Tre catene, 24 anelli: testo integrale della sentenza (catena sull'Hotel Ukraina chiusa) e sei fonti dallo scout | Le perizie balistiche, l'appello annunciato e la letteratura dominata da un autore entrano nelle catene |
-| Addestramento e diritto d'autore, convertito (6 novembre) | Cinque catene, 33 anelli, 26 fonti; i contributi simulati non sono stati riportati | Stessa architettura del 20 febbraio; aggiunti Lemley e Casey, EFF 2025, Courthouse News, FSF |
-| Leggere e scrivere i pesi: il rapporto del MIT (6 novembre) | Sei catene, 30 anelli, 13 fonti, tutte le citazioni verificate | Primo nodo costruito con lo scout: le repliche indipendenti ridimensionano il risultato su Qwen |
-
-## Prossimi passi
-
-Sono nell'elenco unico, `docs/acquisizione-a-z.md`, sezione 10: per i nodi contano la bozza automatica in forma leggera,
-il quarto nodo d'attualità e i difetti del giudizio e delle proposte. Il nodo «Il presunto coinvolgimento
-americano» (`reports/nodi/usaid-maidan/`) è un lavoro di contenuto storico, separato dalla prova del metodo.
-
-## Costi stimati (4 novembre 2026)
-
-I tre prototipi sono stati costruiti in conversazione: costo non misurato. Stima per un nodo automatico (una ventina
-di ricerche, 15–25 fonti lette): 1,8–2,5 $ con un modello di punta, 1–1,3 $ con un modello intermedio, 0,5–0,9 $ a due
-livelli. Le Matrici della settimana costano 0,74 $ per 900 articoli e quattro sotto-topic. Nessuna tabella di marcia
-fissa per i nodi: ognuno va scelto, e si aggiorna con le sole fonti nuove invece di ricostruirlo.
-
-## Citazioni mostrate (8 novembre 2026)
-
-I testi integrali restano nel corpus privato; nelle pagine si mostrano sintesi di Ubik e citazioni brevi. Regola applicata
-dal codice (`ubik-corpus/tools/build_model.py`, `shown_quote`), per nodi e card:
+I testi integrali restano nel corpus privato. Regola per nodi e card:
 
 | Fonte | Citazioni mostrate |
 | --- | --- |
-| Articoli di giornale e stampa di settore (diritto degli editori, art. 43-bis della legge sul diritto d'autore) | Al massimo una per articolo, entro circa 150 caratteri (gli «estratti molto brevi») |
+| Articoli di giornale e stampa di settore (diritto degli editori, art. 43-bis della legge sul diritto d'autore) | Al massimo una per articolo, entro circa 150 caratteri |
 | Studi, blog, memorie, documenti delle parti | Citazione per discussione (art. 70), entro 300 caratteri |
-| Atti ufficiali (sentenze, leggi, documenti delle istituzioni) | Entro 300 caratteri; non protetti dal diritto d'autore |
+| Atti ufficiali (sentenze, leggi, documenti delle istituzioni) | Entro 300 caratteri |
+| Post pubblici | La parte del post che porta la posizione, con il link |
 
-Una citazione oltre la regola resta nel file privato del nodo e non si mostra; l'anello mantiene la sintesi e il link. Il
-cantiere del nodo dice quante citazioni sono state nascoste.
+## File di un nodo (`ubik-corpus/reports/nodi/<nodo>/`)
 
-## Selezione automatica: prima prova (8 novembre 2026)
+| File | Che cosa |
+| --- | --- |
+| `node.json`, `scout.json` | Domanda, sotto-domande, lingue, termini, ancore |
+| `catena.json`, `bilancio.json`, `persone.json` | Giri di ricerca, bilancio dell'ultima esecuzione, persone chiave |
+| `voci-social.json` | Le voci raccolte dai social |
+| `chat/moduli2.py`, `chat/build2.py`, `chat/gen_page2.py`, `chat/nodo2.json` | I moduli scritti in chat, i controlli, la pagina (procedura: `acquisizione-a-z.md`, 7.2) |
+| `moduli-auto/` | I moduli scritti dalla pipeline (`tools/node_modules.py`) |
+| `nodo.html` | La pagina, pubblicata come artefatto |
+| `wiki-claims*.json`, `wiki-bench*.json` | Le misure contro Wikipedia |
+| `light.json`, `light.md` | La bozza a punti dei nodi nella forma precedente |
 
-Tre livelli, in `ubik-corpus/tools/`, sui candidati dello scout dei tre nodi:
-
-| Livello | Strumento | Cosa fa | Costo |
-| --- | --- | --- | --- |
-| 1 | `rank_candidates.py` | Filtro per codice su indirizzo, titolo, menzioni, voci: toglie piattaforme, pagine di servizio, repository fuori tema; tiene ciò che nomina il caso o porta prove | zero |
-| 2 | `judge_candidates.py`, `prompts/judge-node.txt` | DeepSeek legge l'inizio di ogni pagina tenuta (1.400 parole) e giudica: pertinenza, tipo, pagina derivata, prove proprie, novità per il nodo, argomenti contro, fonti primarie, autore competente. Ogni sì porta una frase che il codice ritrova nel testo; i testi non si conservano | 0,45 dollari per 1.050 pagine |
-| 3 | `propose_links.py`, `prompts/propose-link.txt` | Per le pagine con punteggio da 5 in su, propone l'anello nel formato del nodo; il codice controlla la citazione e la regola per la stampa. Le proposte vanno in `reports/nodi/<nodo>/proposte.json`, il nodo non si tocca | 0,07 dollari per 60 proposte |
-
-Il primo livello tiene circa un terzo dei candidati (475, 294, 281) e 25 delle 26 pagine scelte a mano presenti tra i
-candidati. Il secondo livello, con criteri severi («contributi, non copertura»: le pagine derivate perdono), mette in alto
-le scelte a mano leggibili (nel nodo del MIT 7 su 8 sopra 5) e trova molto che la selezione a mano non aveva: nel MIT
-una ventina di repliche e studi nuovi, nel fair use i documenti primari (sentenza d'appello su Ross, ordinanze di
-Chhabria, atto di citazione contro Meta, consultazione britannica) e uno studio su 14.419 libri che misura la
-diluizione del mercato, nel 20 febbraio testimonianze di manifestanti armati e le critiche metodologiche a Katchanovski.
-
-Revisione a campione delle 60 proposte: circa 22 su 25 utili nel MIT, 20 su 25 nel fair use, 8 su 10 nel 20 febbraio.
-Difetti da correggere prima di usarle: doppioni dello stesso documento a indirizzi diversi; troppe proposte per catena;
-fonti di propaganda statale etichettate solo come «parte interessata»; affermazioni su un documento primario (per
-esempio «la sentenza conferma…») proposte come verificate senza il confronto con il documento, che resta il lavoro
-della verifica di Ubik. Le pagine trovate solo da Brave non sono entrate nella prova: il giudizio va portato dentro il
-giro dello scout, prima che i risultati di Brave vengano cancellati.
-
-## Selezione automatica: Brave, setaccio e profondità (8 novembre 2026, sera)
-
-Il giudizio ora gira nello stesso workflow dello scout (`scout.yml` con `judge=yes`), così legge anche le pagine trovate
-solo da Brave, e segue i riferimenti delle pagine buone per giri successivi (il setaccio). Esiti, dettagli e misure in
-`docs/acquisizione-a-z.md`, sezione 8. In breve: Brave porta tra il 13% e il 29% dei contributi; il setaccio si satura al
-secondo giro; contro le scelte a mano il MIT regge (16 su 23), fair use e 20 febbraio no (2 su 13), per il taglio della
-classifica, i siti che rifiutano i programmi e la severità sulla stampa. Correzioni dello stesso giorno: riferimenti presi
-solo dal corpo del testo, primo livello più largo (coppie di parole, plurali, data del caso, via di ricerca, post del
-fediverso esclusi), fascia «copertura» per le pagine pertinenti senza contributo nuovo, rimbalzo sulle pagine
-dell'archivio delle ancore. Prova di profondità su un tema storico (il primo inverno dell'IA, Wikipedia spenta): 9 delle
-20 fonti d'oro raggiunte, più 20 contributi che la lista non aveva; mancano le storie divulgative e le fonti citate solo
-nei PDF.
+Le pagine giudicate stanno in `ubik-corpus/reports/scout/<nodo>/judge.json`, quelle archiviate in
+`ubik-corpus/corpus/targeted/<nodo>/pagine/`.

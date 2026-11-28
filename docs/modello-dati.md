@@ -1,24 +1,17 @@
-# Modello dei dati — bozza (aggiornata il 6 novembre 2026)
+# Modello dei dati — bozza (aggiornata il 28 novembre 2026)
 
-Scopo: un formato unico da cui si generano tutte le pagine di Ubik (Topic, Matrici, card, nodi), l'esploratore
-privato e, più avanti, il sito. Oggi ogni prototipo ha un JSON suo (`daily-v5-*.json`, `node-cieco.json`,
-`fair-use-*.json`, `claim.json`) e un HTML scritto a mano: ogni cambio di struttura va rifatto pagina per pagina.
-Il formato serve anche a tenere sotto controllo il cantiere: ogni oggetto dice in che stato è, quanto è costato e
-cosa manca.
+Scopo: un formato unico da cui si generano tutte le pagine di Ubik (Topic, Matrici, card, nodi) e, più avanti, il
+sito. Oggi ogni prodotto ha un JSON suo (le Matrici `daily-v5-*.json`, i nodi `nodo2.json` o `moduli-auto/*.json`, i
+nodi nella forma precedente `node.json` e `light.json`) e una pagina generata da uno script suo. È il passo 6 della
+sezione 0.5 di `docs/acquisizione-a-z.md`: prima il modello dei dati, poi un prototipo del sito in sola lettura.
 
-## Regola Topic / nodo (decisa il 4 novembre 2026)
+## Regola Topic, tema, nodo
 
-| | Topic | Nodo |
-| --- | --- | --- |
-| Che cos'è | Un'area d'attenzione stabile | Una domanda su cui fonti credibili si dividono |
-| Si giudica su | Flusso di notizie da testate diverse per mesi (orientativo: 20 articoli a settimana da 5 testate indipendenti) e interesse | Si formula come domanda; c'è un disaccordo reale o un'affermazione contestata in circolazione; esistono documenti o voci di valore che lo ancorano |
-| Contiene | Sotto-topic, Matrici della settimana, card, nodi | Catene e anelli (nodo di fatto) o voci (nodo d'analisi), affermazioni in circolazione |
-| Numero | Pochi (5–8 al lancio) | Senza tabella di marcia fissa; ogni nodo costa e va scelto |
-
-Due modalità di Topic: **d'attualità** (flusso, Matrici, qualche nodo; es. Intelligenza artificiale) e **di
-conoscenza** (nessun flusso, una mappa di nodi; es. Euromaidan). Un nodo che genera molte domande e un flusso suo
-può diventare Topic. I nodi nascono da una Matrice in cui le fonti si dividono, da un'affermazione in circolazione o
-dalla mappa che la redazione disegna per un Topic di conoscenza.
+| | Topic | Tema | Nodo |
+| --- | --- | --- | --- |
+| Che cos'è | Il perimetro delle Matrici: un'area con un flusso di notizie da testate diverse | Il perimetro delle fonti: nodi e topic delle Matrici sullo stesso soggetto (`registry/temi.json`) | Una domanda su cui fonti credibili si dividono |
+| Contiene | Sotto-topic, Matrici, card | Fonti, pagine archiviate, misura di autonomia | Moduli, voci, contributi a latere |
+| Chi lo decide | La redazione | Provvisori di Claude, da ridefinire con la redazione | La redazione |
 
 ## Oggetti
 
@@ -26,22 +19,26 @@ Ogni oggetto ha `id` stabile, `asof` (data dell'ultimo aggiornamento) e un blocc
 
 | Oggetto | Campi principali | Dove sta oggi |
 | --- | --- | --- |
-| `fonte` | id, origin, nome, tipo, livello, lingua, accesso al testo (pieno/parziale), canale (feed, newsletter, social, ricerca) | registri in `ubik-corpus/registry/` |
-| `voce` | id, nome, ruolo, posizione, sotto-topic, canali → fonti | `registry/ai-voices.json` |
-| `pezzo` | id, fonte, url, data, titolo originale, lingua, testo parziale sì/no. Il testo resta solo nel corpus privato. Tipi di provenienza: feed, newsletter, ricerca, scout, segnalazione della redazione, documento primario (`corpus/documents/`) | corpus privato |
-| `nota` | pezzo, tipo (cronaca, analisi…), evento, sintesi, citazione verificata con traduzione, sotto-topic | `notes-v5.json` |
+| `fonte` | id, nome, tipo (testata, sito, autore, voce, canale, istituzione), stato, temi, modo di raccolta, pagine per archivio, nodi | `registry/registro.json` (vista sopra i registri) |
+| `pezzo` | id, fonte, url, data, titolo, lingua, testo pieno o parziale (il testo resta nel corpus privato), copie dello stesso documento | corpus privato; `data/schede.json` (una scheda per documento) |
+| `nota` | pezzo, tipo, evento, sintesi, citazione verificata, sotto-topic | note delle Matrici |
 | `card` | pezzi, titolo, testo (solo se più fonti) | dentro le Matrici |
-| `matrice` | id, settimana, sotto-topic, titolo, essenza, card, origini, numeri non ritrovati, nodi collegati | `daily-v5-*.json` |
-| `topic` | id, nome, modalità (attualità/conoscenza), perimetro, sotto-topic, nodi, voci | `TOPICS` in `ubik_daily5.py`, mappe nei documenti |
-| `nodo` | id, topic, tipo (fatto/analisi), domanda, testo da cui parte tutto (affermazioni → catene), catene, domande aperte, affermazioni in circolazione. Un'architettura sola per tutti i tipi (6 novembre): catene di anelli con relazioni | `reports/nodi/<nodo>/` (`node.json`; per il 20 febbraio `node-cieco.json`) |
-| `catena` | id, domanda, stato (aperta/chiusa/stallo), sintesi, anelli | dentro il nodo |
-| `anello` | pezzo, cosa afferma, citazione verificata, relazione con l'anello sopra | dentro la catena |
-| `relazione` | da, a, verbo (conferma, contesta, smentisce, estende, risponde a…), tipo (dichiarata, ricostruita, verifica di Ubik, simulata), nota | `relations`, `rel` |
-| `affermazione` | chi, testo, diffusione, anelli toccati, dove regge e dove no | `claim.json` |
-| `nodo leggero` | domanda, stato in una riga con le sue fonti, punti del contendere (affermazione, fonte a favore e contro con citazione verificata, esito: accertato, smentito, conteso, aperto; che cosa deciderebbe), documenti cardine, per approfondire, decisioni della redazione con il motivo, ancore che lo legano alle Matrici (9 novembre) | `reports/nodi/<nodo>/light.json` |
+| `matrice` | id, settimana, sotto-topic, titolo, essenza, card, origini, nodi collegati | `daily-v5-*.json` |
+| `topic` | id, nome, sotto-topic, temi | `TOPICS` in `ubik_daily5.py` |
+| `tema` | id, nome, nodi, registri delle Matrici, stato (in acquisizione, autonomo), misure di autonomia per giro | `registry/temi.json`, `registry/registro.json` |
+| `nodo` | id, tema, domanda, apertura, moduli, conflitto d'interessi | `reports/nodi/<nodo>/` |
+| `modulo` | id, nodo, sotto-domanda, sintesi, contesto, cronologia, fatti, posizioni, da notare, manca, fonti citate, contributi a latere | `nodo2.json` |
+| `passaggio` | modulo, testo della frase, note (fonti), passaggi delle fonti su cui poggia | dentro il modulo |
+| `posizione` | modulo, titolo, resoconto, voci | dentro il modulo |
+| `voce` | chi, ruolo, data, citazione, rete o fonte, link | `voci-social.json` e fonti archiviate |
+| `contributo a latere` | modulo, pezzo, titolo, sintesi, tipo, punteggio della pipeline, voti | `nodo2.json` (`a_latere`) |
+| `proposta di modifica` | passaggio, utente, testo proposto, fonti nuove, esito del modello, voti, esito | da progettare |
+| `commento` | passaggio o nodo, utente, testo, risposte | da progettare |
+| `voto` | utente, oggetto (proposta, contributo a latere), valore | da progettare |
+| `utente` | id, iscrizione, abbonamento, etichetta (OP per la redazione), contributi | da progettare |
 
-Le fonti dei nodi oggi sono descritte dentro ciascun nodo (`who`, `kind`, `url`): diventano `pezzo` con un id
-comune, così la stessa fonte compare in Matrici, nodi e voci senza doppioni.
+La stessa fonte compare in Matrici, nodi e voci con lo stesso `pezzo`: le copie dello stesso documento a indirizzi
+diversi sono un pezzo solo (`tools/doc_ids.py`), e una correzione della scheda (`tools/schede.py`) vale ovunque.
 
 ## Cantiere
 
@@ -50,40 +47,25 @@ Ogni oggetto porta:
 ```json
 "cantiere": {
   "stato": "bozza | verificato | pubblicato | da aggiornare | sospeso",
-  "costruito": {"data": "2026-11-04", "come": "pipeline daily-v5 | a mano | modello", "modello": "deepseek-v4", "prompt_sha256": "…", "codice": "commit"},
+  "costruito": {"data": "2026-11-28", "come": "pipeline | in chat | a mano", "modello": "…", "codice": "commit"},
   "costo_usd": 0.03,
-  "verifiche": ["citazioni ritrovate 8/8", "numeri non ritrovati 0"],
-  "da_fare": ["manca la decisione d'appello"]
+  "verifiche": ["passaggi ritrovati 100/100", "numeri non ritrovati 0"],
+  "da_fare": ["…"]
 }
 ```
 
-L'esploratore ne ricava la vista d'insieme: cosa c'è, in che stato, quanto è costato, cosa manca.
-
 ## Pubblico e privato
 
-- Privato (`ubik-corpus/data/`): tutti gli oggetti, con i rimandi ai testi del corpus.
-- Esportazione pubblicabile (`ubik-corpus/export/`): solo campi pubblicabili, cioè sintesi, citazioni brevi
-  verificate con traduzione, link, date, relazioni. Mai testi interi.
-- Le pagine (artefatti oggi, sito domani) si generano solo dall'esportazione.
+- Privato (`ubik-corpus`): tutti gli oggetti, con i rimandi ai testi del corpus.
+- Pubblicabile: solo sintesi, citazioni brevi verificate, link, date, relazioni. Mai testi interi.
+- Le pagine (artefatti oggi, sito domani) si generano solo dalla parte pubblicabile.
 
 ## Passi
 
-1. Convertire i dati esistenti: Topic IA e la settimana 26 ottobre, i nodi fair use, 20 febbraio e USAID. Fatto il
-   4 novembre (`ubik-corpus/tools/build_model.py`); il 6 novembre i nodi usano tutti lo stesso convertitore a catene.
-2. Esploratore privato generato dall'esportazione: Topic → Matrici → nodi, con la vista del cantiere. Fatto
-   (`ingestion/ubik_explorer.py`). Le card mostrano una sintesi comune e l'elenco delle fonti; il dettaglio per
-   fonte resta come controllo.
-3. Un documento, un pezzo (10 novembre): le copie dello stesso documento a indirizzi diversi sono un pezzo solo
-   (`tools/doc_ids.py`), ogni pezzo sa dove è usato (`usato_in`), i nodi sanno quali fonti hanno in comune.
-4. Il catalogo comune delle fonti (11 novembre): `ubik-corpus/data/schede.json`, una scheda per documento con testata,
-   titolo, data, lingua, copie e l'etichetta di media di Stato. Un valore, una volta nella scheda, resta: lo stesso
-   documento è descritto allo stesso modo in ogni nodo e Matrice. Una correzione (`tools/schede.py correggi ID CAMPO
-   VALORE MOTIVO`) vale ovunque al giro successivo, con chi l'ha fatta e perché. Quando due posti descrivono il documento
-   in modo diverso, gli altri valori restano come `alternative` da rivedere (`tools/schede.py discordi`: 14 all'11
-   novembre, quasi tutti nodi che indicano la voce citata dentro l'articolo al posto della testata). Le fonti dei nodi
-   portano l'identificativo della scheda (`pezzo`); il ruolo di una fonte in un nodo (parte in causa, memoria di terzi)
-   resta nel nodo, perché dipende dal nodo.
-
-Resta: che le pipeline scrivano gli oggetti direttamente invece dei loro JSON (oggi li traduce `tools/build_model.py`).
-Con il catalogo comune il guadagno è piccolo; si fa quando si prepara il sito. È nell'elenco unico:
-`docs/acquisizione-a-z.md`, sezione 10.
+1. Fatto (4-11 novembre): il convertitore dei dati esistenti (`tools/build_model.py`), l'esploratore privato
+   (`ingestion/ubik_explorer.py`), un documento un pezzo (`tools/doc_ids.py`), il catalogo comune delle schede
+   (`data/schede.json`, `tools/schede.py`).
+2. Da fare: gli oggetti del nodo a moduli (modulo, passaggio, posizione, voce, contributo a latere) scritti direttamente
+   da `build2.py` e da `tools/node_modules.py` nello stesso formato.
+3. Da progettare con la redazione: proposte di modifica, commenti, voti, utenti, abbonamenti.
+4. Un prototipo del sito in sola lettura generato da questi oggetti.

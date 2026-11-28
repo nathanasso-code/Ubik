@@ -1,4 +1,4 @@
-# Matrici della settimana — specifica (aggiornata il 4 novembre 2026)
+# Matrici della settimana — specifica (aggiornata il 28 novembre 2026)
 
 Pipeline corrente di Ubik: `ingestion/ubik_daily5.py` (macro Topic e sotto-topic) sul motore di
 `ingestion/ubik_daily4.py`. Prompt in `prompts/daily-v5/` (nota) e `prompts/daily-v4/` (raggruppamento,
@@ -77,8 +77,13 @@ Un sotto-topic nuovo = una voce in `TOPICS` con nome e perimetro; nota e selezio
 
 ## Esecuzione e costi
 
-Le esecuzioni partono solo da `ubik-corpus/runs/daily.request` (`version=5`; `reuse` riusa raggruppamento e
-secondo giro già pagati) o a mano. Le note si riusano finché il prompt non cambia.
+In calendario ogni lunedì alle 4:23 UTC sulla settimana chiusa (`daily.yml`, dal 15 novembre), con le sole fonti
+approvate; a mano da `ubik-corpus/runs/daily.request` (`version=5`; `reuse` riusa raggruppamento e secondo giro già
+pagati). Le note si riusano finché il prompt non cambia. Dal 15 novembre le testate seguite per sezione hanno anche il
+feed di tutto il sito filtrato con le parole dei Topic (`tools/feed_wide.py`, `registry/parole-topic.json`); le grandi
+storie (almeno 10 testate) restano nel sotto-topic dove almeno un quarto degli articoli è principalmente a tema, e gli
+altri sotto-topic mostrano un rimando. Le fonti delle Matrici sono le stesse dei nodi: il registro unico per tema
+(`acquisizione-a-z.md`, 4.1 e 6.10) le descrive insieme.
 
 Settimana 26 ottobre – 1 novembre 2026: 919 articoli, 653 sull'IA, 0,62 $ di note e 0,12 $ per quattro sotto-topic
 (raggruppamento, secondo giro, testi): 0,74 $. Risultato: Regole 7 Matrici, Lavoro 5, Data center ed energia 4,
