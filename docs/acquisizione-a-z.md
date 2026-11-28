@@ -139,7 +139,7 @@ operativi (richieste, workflow, insidie) sono nelle sezioni 3, 10 e 11.
   ancora saturo); il bilancio segnala che le ricerche restano in gran parte inglesi (23 su 29) nonostante il dovere
   nel pianificatore: serve un vincolo nel codice.
 - **Il nodo `ia-matematica` riscritto in chat, seconda versione (28 novembre)**: otto moduli (nuovo: la disputa su
-  Navier-Stokes), circa 4.700 parole, 100 fonti citate nel testo con le note; le voci del dibattito come card; gli altri
+  Navier-Stokes), circa 4.700 parole, 63 fonti distinte citate nel testo con le note (100 citazioni tra i moduli); le voci del dibattito come card; gli altri
   490 contributi del nodo come card a latere sotto ogni modulo (titolo, sintesi della pipeline, link; i primi quattro
   visibili, ordinati per il punteggio del giudizio finché non ci sono voti; le copie delle fonti citate escluse).
   File: `reports/nodi/ia-matematica/chat/moduli2.py` (fonti citate per chiave, `[chiave]`, numerate dal codice),
