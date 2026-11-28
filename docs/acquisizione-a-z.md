@@ -83,8 +83,12 @@ senza eccezioni, le regole di Ubik:
    ogni passaggio e ogni citazione, anche dei post social, ritrovati parola per parola.
 7. Conflitto d'interessi dichiarato quando Claude scrive di Anthropic, dei suoi modelli o della coscienza delle IA.
 8. **Per risparmiare (28 novembre), in chat Claude si sostituisce alla pipeline dove la pipeline usa modelli a
-   pagamento**: scrittura dei moduli, pianificazione delle ricerche mirate, scelta delle fonti, lettura dei testi.
-   Restano alla pipeline i passi economici e i controlli (giudizio con DeepSeek, archivio, documenti citati, verifiche);
+   pagamento** (scrittura dei moduli, scelta dei nuclei, estrazione delle cifre, lacune), **ma non nella ricerca**:
+   la ricerca la fa la pipeline per intero, con tutte le vie, fino al pieno; la ricerca di Claude in chat si
+   aggiunge a quella (casi in divenire, reazioni nominate, controllo delle fonti dubbie), non la sostituisce; poi
+   Claude fa la parte finale. Costo stimato di un nodo così: circa 5-6 $ (ricerca della pipeline), contro 6-8 $ di un
+   nodo fatto tutto dalla pipeline; aggiornamento quotidiano circa 11-13 $ al mese per nodo (minuti di GitHub inclusi,
+   0,006 $ al minuto oltre la quota). Restano alla pipeline anche i passi economici e i controlli (giudizio con DeepSeek, archivio, documenti citati, verifiche);
    le pagine trovate in chat entrano dalla via `chat` (`reports/scout/NODO/proposte-chat.json`, `{"url", "perche"}`),
    giudicate e archiviate come le altre.
 
